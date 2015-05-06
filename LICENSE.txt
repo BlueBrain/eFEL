@@ -1,6 +1,6 @@
 eFEL - Electrophysiology Feature Extraction Library
 
-Livre is licensed under the LGPL, unless noted otherwise, e.g., for external 
+eFEL is licensed under the LGPL, unless noted otherwise, e.g., for external 
 dependencies. See file LGPL.txt for the full license. 
 External dependencies are either LGPL or BSD-licensed. 
 See file ACKNOWLEDGEMENTS.txt and AUTHORS.txt for further details.
