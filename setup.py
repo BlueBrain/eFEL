@@ -35,9 +35,11 @@ BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
 def parse_reqs(reqs_file):
     ''' parse the requirements '''
+    # pylint: disable=E1123
     install_reqs = pip.req.parse_requirements(
         reqs_file,
         session=False)
+    # pylint: enable=E1123
     return [str(ir.req) for ir in install_reqs]
 
 REQS = parse_reqs(os.path.join(BASEDIR, "requirements.txt"))
@@ -70,7 +72,7 @@ cppcore_sources = [
         cppcore_dir,
         filename) for filename in cppcore_sources]
 
-cppcore = Extension('cppwrapper',
+cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
                     include_dirs=['efel/cppcore/'])
 setup(

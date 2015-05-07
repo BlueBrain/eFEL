@@ -21,14 +21,13 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
-import sys
-sys.path.append("/home/vangeit/local/Feature/lib")
-import felipy
 import numpy
 import os
-import fel
 
-settings = fel.Settings()
+import efel
+import efel.cppcore as cppcore
+
+settings = efel.Settings()
 
 
 def printelements(iterat):
@@ -93,38 +92,38 @@ def getFeatureValues(traces, featureNames):
         else:
             raise Exception('stim_start or stim_end missing from trace')
 
-        felipy.Initialize(settings.dependencyfile_path, "log")
+        cppcore.Initialize(settings.dependencyfile_path, "log")
 
         # First set some settings that are used by the feature extraction
-        felipy.setFeatureDouble('spike_skipf', [0.1])
-        felipy.setFeatureInt('max_spike_skip', [2])
-        felipy.setFeatureDouble('Threshold',
-                                [settings.threshold])
-        felipy.setFeatureDouble('DerivativeThreshold',
-                                [settings.derivative_threshold])
-        felipy.setFeatureDouble('interp_step', [0.1])
-        felipy.setFeatureDouble('burst_factor', [1.5])
-        felipy.setFeatureDouble("initial_perc", [0.1])
+        cppcore.setFeatureDouble('spike_skipf', [0.1])
+        cppcore.setFeatureInt('max_spike_skip', [2])
+        cppcore.setFeatureDouble('Threshold',
+                                 [settings.threshold])
+        cppcore.setFeatureDouble('DerivativeThreshold',
+                                 [settings.derivative_threshold])
+        cppcore.setFeatureDouble('interp_step', [0.1])
+        cppcore.setFeatureDouble('burst_factor', [1.5])
+        cppcore.setFeatureDouble("initial_perc", [0.1])
 
         # Next set time, voltage and the stimulus start and end
         for item in trace.keys():
-            felipy.setFeatureDouble(item, [x for x in trace[item]])
+            cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
         for featureName in featureNames:
-            featureType = felipy.featuretype(featureName)
+            featureType = cppcore.featuretype(featureName)
             if featureType == "double":
-                felipyFeatureValues = list()
+                cppcoreFeatureValues = list()
                 try:
-                    exitCode = felipy.getFeatureDouble(
+                    exitCode = cppcore.getFeatureDouble(
                         featureName,
-                        felipyFeatureValues)
+                        cppcoreFeatureValues)
                 except:
                     exitCode = -1
             elif featureType == "int":
-                felipyFeatureValues = list()
-                exitCode = felipy.getFeatureInt(
+                cppcoreFeatureValues = list()
+                exitCode = cppcore.getFeatureInt(
                     featureName,
-                    felipyFeatureValues)
+                    cppcoreFeatureValues)
             else:
                 print "Feature %s has an unknown type: %s" % \
                     (featureName, featureType)
@@ -133,11 +132,11 @@ def getFeatureValues(traces, featureNames):
                 import warnings
                 warnings.warn(
                     "Error while calculating feature %s: %s" %
-                    (featureName, felipy.getgError()),
+                    (featureName, cppcore.getgError()),
                     RuntimeWarning)
                 featureDict[featureName] = None
             else:
-                featureDict[featureName] = numpy.array(felipyFeatureValues)
+                featureDict[featureName] = numpy.array(cppcoreFeatureValues)
 
         featureDicts.append(featureDict)
     return featureDicts
