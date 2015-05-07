@@ -1,3 +1,5 @@
+"""efel Settings class"""
+
 """
 Copyright (c) 2015, EPFL/Blue Brain Project
 
@@ -17,7 +19,12 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-# pylint: disable=W0611, W0401
 
-from efel.settings import Settings
-from efel.functions import *
+class Settings(object):
+
+    """FEL settings class"""
+
+    def __init__(self):
+        self.threshold = -20.0
+        self.derivative_threshold = 10.0
+        self.dependencyfile_path = '.'

@@ -72,7 +72,7 @@ cppcore_sources = [
 
 cppcore = Extension('cppwrapper',
                     sources=cppcore_sources,
-                    include_dirs=['src'])
+                    include_dirs=['efel/cppcore/'])
 setup(
     name="efel",
     version=VERSION,
