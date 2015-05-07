@@ -62,6 +62,16 @@ def setDerivativeThreshold(newDerivativeThreshold):
     settings.derivate_threshold = newDerivativeThreshold
 
 
+def getFeatureNames():
+    """Return a list with the name of all the available features"""
+
+    cppcore.Initialize(settings.dependencyfile_path, "log")
+    feature_names = []
+    cppcore.getFeatureNames(feature_names)
+
+    return feature_names
+
+
 def getFeatureValues(traces, featureNames):
     """
     input :

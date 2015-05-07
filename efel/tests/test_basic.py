@@ -6,7 +6,7 @@ import nose.tools as nt
 
 
 def test_import():
-    """Test importing of eFEL"""
+    """basic: Test importing of eFEL"""
 
     # pylint: disable=W0611
     import efel
@@ -14,7 +14,7 @@ def test_import():
 
 
 def test_empty_trace():
-    """Testing results for empty trace"""
+    """basic: Testing results for empty trace"""
 
     import efel
     import numpy
@@ -44,9 +44,7 @@ def test_empty_trace():
         'inv_fifth_ISI',
         'inv_last_ISI']
 
-    print "Here"
     efel.getFeatureValues([trace], features)
-    print "Here2"
 
     for feature, value in \
             efel.getFeatureValues([trace], features)[0].iteritems():
@@ -55,7 +53,7 @@ def test_empty_trace():
 
 
 def test_ISI_log_slope_skip():
-    """Test ISI_log_slope_skip"""
+    """basic: Test ISI_log_slope_skip"""
 
     import efel
     import numpy
@@ -63,7 +61,7 @@ def test_ISI_log_slope_skip():
     stim_start = 31.2
     stim_end = 431.2
 
-    data = numpy.loadtxt('testdata/zero_ISI_log_slope_skip95824004.abf.csv')
+    data = numpy.loadtxt('testdata/basic/zero_ISI_log_slope_skip95824004.abf.csv')
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -77,15 +75,18 @@ def test_ISI_log_slope_skip():
 
     features = ['ISI_log_slope_skip']
 
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            features)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                features)
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
 
 
 def test_mean_frequency1():
-    """Test mean_frequency 1"""
+    """basic: Test mean_frequency 1"""
 
     import efel
     import numpy
@@ -93,7 +94,7 @@ def test_mean_frequency1():
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt('testdata/mean_frequency_1.txt')
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -115,7 +116,7 @@ def test_mean_frequency1():
 
 
 def test_ap_amplitude_from_voltagebase1():
-    """Test AP_amplitude_from_voltagebase 1"""
+    """basic: Test AP_amplitude_from_voltagebase 1"""
 
     import efel
     import numpy
@@ -123,7 +124,7 @@ def test_ap_amplitude_from_voltagebase1():
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt('testdata/mean_frequency_1.txt')
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -152,7 +153,7 @@ def test_ap_amplitude_from_voltagebase1():
 
 
 def test_APlast_amp():
-    """Test APlast_amp"""
+    """basic: Test APlast_amp"""
 
     import efel
     import numpy
@@ -160,7 +161,7 @@ def test_APlast_amp():
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt('testdata/mean_frequency_1.txt')
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -185,7 +186,7 @@ def test_APlast_amp():
 
 
 def test_min_voltage_between_spikes1():
-    """Test min_voltage_between_spikes 1"""
+    """basic: Test min_voltage_between_spikes 1"""
 
     import efel
     import numpy
@@ -193,7 +194,7 @@ def test_min_voltage_between_spikes1():
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt('testdata/mean_frequency_1.txt')
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -228,10 +229,12 @@ def test_min_voltage_between_spikes1():
                         1]]),
             min_voltage_between_spikes_value)
 
-    """
-    for peak_voltage, ap_amplitude_from_voltagebase in zip(
-            feature_values[0]['peak_voltage'],
-            feature_values[0]['AP_amplitude_from_voltagebase']):
-        nt.assert_almost_equal(peak_voltage - voltage_base,
-                               ap_amplitude_from_voltagebase)
-    """
+
+def test_getFeatureNames():
+    """basic: Testing getting all feature names"""
+
+    import efel
+    import json
+    with open('featurenames.json', 'r') as featurenames_json:
+        expected_featurenames = json.load(featurenames_json)
+    nt.assert_equal(efel.getFeatureNames(), expected_featurenames)

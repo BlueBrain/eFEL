@@ -99,6 +99,16 @@ void PyList_from_vectordouble(vector<double> input, PyObject *output) {
     } 
 }
 
+void PyList_from_vectorstring(vector<string> input, PyObject *output) {
+    int vector_size;
+    int index;
+
+    vector_size = input.size();
+    for (index = 0; index < vector_size; index++) {
+        PyList_Append(output, Py_BuildValue("s", input[index].c_str()));
+    } 
+}
+
 static PyObject* setfeatureint(PyObject * self, PyObject * args) {
   char * feature_name;
   PyObject * py_values;
@@ -160,6 +170,20 @@ static PyObject* getfeaturedouble(PyObject * self, PyObject * args) {
   return Py_BuildValue("i", return_value); 
 }
 
+static PyObject* getFeatureNames(PyObject * self, PyObject * args) {
+  vector<string> feature_names;
+  PyObject * py_feature_names;
+  int return_value;
+  if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &py_feature_names)) {
+          return NULL;
+  }
+ 
+  pFeature->get_feature_names(feature_names);
+  PyList_from_vectorstring(feature_names, py_feature_names);
+
+  return Py_BuildValue("");
+}
+
 static PyObject* featuretype(PyObject * self, PyObject * args) {
   char * feature_name;
   string feature_type;
@@ -193,6 +217,8 @@ static PyMethodDef CppCoreMethods[] = {
                                "Get the type of a feature"},                               
             {"getgError",  getgerrorstr, METH_VARARGS,                      
                                "Get CppCore error string"},                               
+            {"getFeatureNames",  getFeatureNames, METH_VARARGS,                      
+                               "Get the names of all the available features"},                               
                     {NULL, NULL, 0, NULL}        /* Sentinel */                              
 };                                                                               
                                                                                  
