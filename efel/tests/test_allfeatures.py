@@ -3,8 +3,8 @@
 import nose.tools as nt
 
 
-def test_allfeatures():
-    """allfeatures: Regression testing all features on a trace"""
+def test_somatic_features():
+    """allfeatures: Regression testing somatic features on a trace"""
     import efel
     import numpy
 
