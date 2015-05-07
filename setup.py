@@ -96,6 +96,6 @@ setup(
                  'Operating System :: POSIX',
                  'Topic :: Scientific/Engineering',
                  'Topic :: Utilities'],
-    package_data={'': ['VERSION.txt']},
+    package_data={'': ['VERSION.txt', 'DependencyV5.txt']},
     ext_modules=[cppcore]
 )

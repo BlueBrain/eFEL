@@ -19,6 +19,17 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import inspect
+import os
+
+
+def _get_script_path():
+    """Get directory path of current script"""
+    script_filename = inspect.getframeinfo(inspect.currentframe()).filename
+    script_path = os.path.dirname(os.path.abspath(script_filename))
+
+    return script_path
+
 
 class Settings(object):
 
@@ -27,4 +38,6 @@ class Settings(object):
     def __init__(self):
         self.threshold = -20.0
         self.derivative_threshold = 10.0
-        self.dependencyfile_path = '.'
+        self.dependencyfile_path = os.path.join(
+            _get_script_path(),
+            'DependencyV5.txt')
