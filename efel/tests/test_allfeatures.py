@@ -10,22 +10,28 @@ def get_allfeature_values():
 
     import efel
     import numpy
+    import os
 
     all_featurenames = efel.getFeatureNames()
 
-    soma_data = numpy.loadtxt('testdata/allfeatures/testdata.txt')
+    testdata_dir = os.path.join(
+        os.path.dirname(
+            os.path.abspath(__file__)),
+        'testdata/allfeatures')
+
+    soma_data = numpy.loadtxt(os.path.join(testdata_dir, 'testdata.txt'))
     soma_time = soma_data[:, 0]
     soma_voltage = soma_data[:, 1]
 
-    bac_data = numpy.loadtxt('testdata/allfeatures/testbacdata.txt')
+    bac_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbacdata.txt'))
     bac_time = bac_data[:, 0]
     bac_voltage = bac_data[:, 1]
 
-    bap1_data = numpy.loadtxt('testdata/allfeatures/testbap1data.txt')
+    bap1_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbap1data.txt'))
     bap1_time = bap1_data[:, 0]
     bap1_voltage = bap1_data[:, 1]
 
-    bap2_data = numpy.loadtxt('testdata/allfeatures/testbap2data.txt')
+    bap2_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbap2data.txt'))
     bap2_time = bap2_data[:, 0]
     bap2_voltage = bap2_data[:, 1]
 
