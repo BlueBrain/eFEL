@@ -72,7 +72,7 @@ int getFeatureInt(const char *strName, int **A) {
     return -1;
   }
   *A = new int[vec.size()];
-  for (int i = 0; i < vec.size(); i++) {
+  for (unsigned i = 0; i < vec.size(); i++) {
     (*A)[i] = vec[i];
   }
   return vec.size();
@@ -85,7 +85,7 @@ int getFeatureDouble(const char *strName, double **A) {
     return -1;
   }
   *A = new double[vec.size()];
-  for (int i = 0; i < vec.size(); i++) {
+  for (unsigned i = 0; i < vec.size(); i++) {
     (*A)[i] = vec[i];
   }
   // printf("\nInside featureLibrary.. After getdouble [%s= %f ]\n", strName,
@@ -120,6 +120,6 @@ double getDistance(const char *strName, double mean, double std) {
 }
 
 int printFptr() {
-  printf("\n size of fptrlookup %d", pFeature->fptrlookup.size());
+  printf("\n size of fptrlookup %d", (int)pFeature->fptrlookup.size());
   return 1;
 }

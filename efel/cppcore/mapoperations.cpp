@@ -157,7 +157,7 @@ void getTraces(mapStr2doubleVec& mapDoubleData, const string& wildcards,
        ++map_it) {
     featurename = map_it->first;
     // find traces
-    if (featurename.find("V;") != -1) {
+    if (featurename.find("V;") != string::npos) {
       bool match = true;
       int nextpos;
       int oldpos = 1;
@@ -168,12 +168,12 @@ void getTraces(mapStr2doubleVec& mapDoubleData, const string& wildcards,
           nextpos = wildcards.size();
         }
         param = wildcards.substr(oldpos, nextpos - oldpos - 1);
-        if (featurename.find(param) == -1) {
+        if (featurename.find(param) == string::npos) {
           match = false;
           break;
         }
         oldpos = nextpos;
-      } while (nextpos != wildcards.size());
+      } while (nextpos != (int)wildcards.size());
       if (match) {
         params.push_back(featurename.substr(1));
       }
@@ -189,10 +189,10 @@ int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
   vector<string> stim_params;
   getTraces(DoubleFeatureData, stimulus_name, stim_params);
   if (stim_params.size() > 0) {
-    for (int i = 0; i < stim_params.size(); i++) {
+    for (unsigned i = 0; i < stim_params.size(); i++) {
       vector<double> elem_feature;
       getDoubleParam(DoubleFeatureData, feature + stim_params[i], elem_feature);
-      if (i_elem > elem_feature.size() - 1 || elem_feature.size() == 0) {
+      if (i_elem > (int)elem_feature.size() - 1 || elem_feature.size() == 0) {
         GErrorStr +=
             "mean_traces_double: feature vector of the elementary feature does "
             "not contain that many elements.\n";
@@ -218,10 +218,10 @@ int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
   vector<string> stim_params;
   getTraces(DoubleFeatureData, stimulus_name, stim_params);
   if (stim_params.size() > 0) {
-    for (int i = 0; i < stim_params.size(); i++) {
+    for (unsigned i = 0; i < stim_params.size(); i++) {
       vector<double> elem_feature;
       getDoubleParam(DoubleFeatureData, feature + stim_params[i], elem_feature);
-      if (i_elem > elem_feature.size() - 1 || elem_feature.size() == 0) {
+      if (i_elem > (int)elem_feature.size() - 1 || (int)elem_feature.size() == 0) {
         GErrorStr +=
             "std_traces_double: feature vector of the elementary feature does "
             "not contain that many elements.\n";

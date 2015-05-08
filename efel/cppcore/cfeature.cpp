@@ -245,7 +245,7 @@ cFeature::~cFeature() {
 }
 
 void cFeature::appendtolog(const vector<double>& v) {
-  for (int i = 0; i < v.size() && i < 10; i++) {
+  for (unsigned i = 0; i < v.size() && i < 10; i++) {
     logfile << " " << v[i];
   }
   if (v.size() > 10) {
@@ -254,7 +254,7 @@ void cFeature::appendtolog(const vector<double>& v) {
 }
 
 void cFeature::appendtolog(const vector<int>& v) {
-  for (int i = 0; i < v.size() && i < 10; i++) {
+  for (unsigned i = 0; i < v.size() && i < 10; i++) {
     logfile << " " << v[i];
   }
   if (v.size() > 10) {
@@ -332,7 +332,7 @@ void cFeature::getTraces(const string& wildcards, vector<string>& params) {
        ++map_it) {
     featurename = map_it->first;
     // find traces
-    if (featurename.find("V;") != -1) {
+    if (featurename.find("V;") != string::npos) {
       bool match = true;
       int nextpos;
       int oldpos = 1;
@@ -343,12 +343,12 @@ void cFeature::getTraces(const string& wildcards, vector<string>& params) {
           nextpos = wildcards.size();
         }
         param = wildcards.substr(oldpos, nextpos - oldpos - 1);
-        if (featurename.find(param) == -1) {
+        if (featurename.find(param) == string::npos) {
           match = false;
           break;
         }
         oldpos = nextpos;
-      } while (nextpos != wildcards.size());
+      } while (nextpos != (int)wildcards.size());
       if (match) {
         params.push_back(featurename.substr(1));
       }
@@ -405,7 +405,7 @@ int cFeature::calc_features(const string& name) {
         GErrorStr += "\nMissing trace with wildcards " + pfptrstring->second;
         return -1;
       }
-      for (int i = 0; i < params.size(); i++) {
+      for (unsigned i = 0; i < params.size(); i++) {
         // setting the "params" entry here makes sure that the required features
         // require specific traces also
         setFeatureString("params", params[i]);
@@ -549,8 +549,8 @@ int cFeature::printFeature(const char* strFileName) {
       string str = mapItrInt->first;
       vector<int>* v = &(mapItrInt->second);
       fprintf(fp, "\n ParameterName = [%s] size = [%d]\n\t", str.c_str(),
-              v->size());
-      for (int j = 0; j < v->size(); j++) {
+              (int)v->size());
+      for (unsigned j = 0; j < v->size(); j++) {
         fprintf(fp, "[%d]", v->at(j));
       }
     }
@@ -563,8 +563,8 @@ int cFeature::printFeature(const char* strFileName) {
       string str = mapItrDouble->first;
       vector<double>* v = &(mapItrDouble->second);
       fprintf(fp, "\n ParameterName = [%s] size = [%d]\n\t", str.c_str(),
-              v->size());
-      for (int j = 0; j < v->size(); j++) {
+              (int)v->size());
+      for (unsigned j = 0; j < v->size(); j++) {
         fprintf(fp, "[%f]", v->at(j));
       }
     }
@@ -577,7 +577,7 @@ double cFeature::calc_error_bio(const vector<int>& v, double bio_mean,
                                 double bio_sd) {
   if (v.size() != 0) {
     double error = 0.;
-    for (int i = 0; i < v.size(); i++) {
+    for (unsigned i = 0; i < v.size(); i++) {
       error += fabs((double)v[i] - bio_mean);
     }
     return error / bio_sd / v.size();
@@ -590,7 +590,7 @@ double cFeature::calc_error_bio(const vector<double>& v, double bio_mean,
                                 double bio_sd) {
   if (v.size() != 0) {
     double error = 0.;
-    for (int i = 0; i < v.size(); i++) {
+    for (unsigned i = 0; i < v.size(); i++) {
       error += fabs(v[i] - bio_mean);
     }
     return error / bio_sd / v.size();
@@ -604,7 +604,7 @@ double cFeature::getDistance(string strName, double mean, double std) {
   vector<double> feature_vec;
   vector<int> feature_veci;
   string featureType;
-  int retVal, i, intFlag;
+  int retVal, intFlag;
   double dError = 0;
 
   // Check if a the trace doesn't contain any spikes outside of the stimulus
@@ -635,7 +635,7 @@ double cFeature::getDistance(string strName, double mean, double std) {
     return 250;
   } else {
     if (intFlag) {
-      for (i = 0; i < feature_veci.size(); i++) {
+      for (unsigned i = 0; i < feature_veci.size(); i++) {
         // printf("%d\t", feature_veci[i]);
         dError = dError + fabs(feature_veci[i] - mean);
       }
@@ -648,7 +648,7 @@ double cFeature::getDistance(string strName, double mean, double std) {
       // printf("] TotalError = %f\n", dError);
       return dError;
     } else {
-      for (i = 0; i < feature_vec.size(); i++) {
+      for (unsigned i = 0; i < feature_vec.size(); i++) {
         // printf("%f\t", feature_vec[i]);
         dError = dError + fabs(feature_vec[i] - mean);
       }

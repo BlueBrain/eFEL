@@ -36,7 +36,7 @@ cTree::cTree(const char *strFileName) {
   getAllParents(vecFeature);
 }
 int cTree::getDependencyList(string) {
-  for (int i = 0; i < strDependencyFile.size(); i++) {
+  for (unsigned i = 0; i < strDependencyFile.size(); i++) {
   }
   return 1;
 }
@@ -88,7 +88,7 @@ int cTree::setFeaturePointers(
 
   // vecFeature is a list with all the feature names in the first column
   // of the dependency file
-  for (int i = 0; i < vecFeature.size(); i++) {
+  for (unsigned i = 0; i < vecFeature.size(); i++) {
 
     FinalList.clear();
     strLibFeature = vecFeature[i];
@@ -157,7 +157,7 @@ int cTree::setFeaturePointers(
 int cTree::getAllParents(vector<string> &lstFeature) {
   string strLine, FeatureName;
   int nPos;
-  for (int i = 0; i < strDependencyFile.size(); i++) {
+  for (unsigned i = 0; i < strDependencyFile.size(); i++) {
     strLine = strDependencyFile[i];
     deblank(strLine);
     nPos = int(strLine.find_first_of('#'));
@@ -171,7 +171,7 @@ int cTree::getChilds(string str, list<string> &childs) {
   string strLine, FeatureName;
   int nPos;
   deblank(str);
-  for (int i = 0; i < strDependencyFile.size(); i++) {
+  for (unsigned i = 0; i < strDependencyFile.size(); i++) {
     strLine = strDependencyFile[i];
     deblank(strLine);
     nPos = int(strLine.find_first_of('#'));

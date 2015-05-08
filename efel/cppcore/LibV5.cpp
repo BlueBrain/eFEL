@@ -2123,7 +2123,7 @@ int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
                                                                                  
     vector<double> apamplitude;                                                  
     apamplitude.resize(peakvoltage.size());                                      
-    for (int i = 0; i < apamplitude.size(); i++) {                               
+    for (unsigned i = 0; i < apamplitude.size(); i++) {                               
       apamplitude[i] = peakvoltage[i] - voltage_base;                    
     }                                                                            
     setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase", 
@@ -2170,7 +2170,7 @@ int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
       return -1;                                                                 
     }                                                                            
     
-    for (int i = 0; i < peak_indices.size() - 1; i++) {
+    for (unsigned i = 0; i < peak_indices.size() - 1; i++) {
       min_voltage_between_spikes.push_back(
           *min_element(
               v.begin() + peak_indices[i], v.begin() + peak_indices[i+1]));         
