@@ -28,7 +28,7 @@ except ImportError:
 import pip.req
 import os
 
-VERSION = "2.2.0"
+execfile("efel/version.py")
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -83,7 +83,7 @@ setup(
     include_package_data=True,
     author="Werner Van Geit",
     author_email="werner.vangeit@epfl.ch",
-    description="Electrophysiological Feature Extraction Library",
+    description="Electrophys Feature Extraction Library",
     license="BBP-internal-confidential",
     keywords=('feature',
               'extraction',
@@ -96,6 +96,7 @@ setup(
                  'Operating System :: POSIX',
                  'Topic :: Scientific/Engineering',
                  'Topic :: Utilities'],
-    package_data={'': ['VERSION.txt', 'DependencyV5.txt']},
+    package_data={'': ['DependencyV5.txt']},
+    data_files=[('', ['efel/VERSION.txt', 'efel/GITHASH.txt'])],
     ext_modules=[cppcore]
 )
