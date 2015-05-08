@@ -1724,6 +1724,10 @@ int LibV2::E29(mapStr2intVec& IntFeatureData,
 int LibV2::E29_cod(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
+  // These features are disabled, since there is a serious bug in getTraces()
+  GErrorStr += "\nE29 not implemented\n";
+  return -1;
+    
   int retval;
   int nsize;
   retval = CheckInDoublemap(DoubleFeatureData, StringData, "E29_cod", nsize);
