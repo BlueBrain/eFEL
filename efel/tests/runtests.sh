@@ -1,1 +1,0 @@
-nosetests -s -v -x
