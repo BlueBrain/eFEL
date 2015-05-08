@@ -1,3 +1,5 @@
+#!/bin/env python
+
 """Test all features on an example trace"""
 
 """
@@ -31,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 
 if __name__ == '__main__':
+    print 'Update expected results of allfeatures test ...',
     import test_allfeatures
     feature_values = test_allfeatures.get_allfeature_values()
 
@@ -48,3 +51,5 @@ if __name__ == '__main__':
             separators=(
                 ',',
                 ': '))
+    print 'done'
+

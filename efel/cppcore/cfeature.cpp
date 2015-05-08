@@ -93,8 +93,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["time_constant"] = "double";
   featuretypes["voltage_deflection"] = "double";
   featuretypes["ohmic_input_resistance"] = "double";
-  featuretypes["ohmic_input_resistance_mean"] = "double";
-  featuretypes["ohmic_input_resistance_std"] = "double";
   featuretypes["maximum_voltage"] = "double";
   featuretypes["minimum_voltage"] = "double";
   featuretypes["steady_state_voltage"] = "double";
@@ -150,12 +148,8 @@ void cFeature::fillfeaturetypes() {
   featuretypes["E25"] = "double";
   featuretypes["E26"] = "double";
   featuretypes["E27"] = "double";
-  featuretypes["E29"] = "double";
-  featuretypes["steady_state_hyper"] = "double";
-  featuretypes["E29_cod"] = "double";
   featuretypes["E40"] = "double";
-  featuretypes["time_constant_std"] = "double";
-  featuretypes["time_constant_mean"] = "double";
+  featuretypes["steady_state_hyper"] = "double";
   featuretypes["AP_width"] = "double";
   featuretypes["doublet_ISI"] = "double";
   featuretypes["adaptation_index2"] = "double";

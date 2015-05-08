@@ -129,21 +129,13 @@ int FillFptrTable() {
   FptrTableV2["E25"] = &LibV2::E25;
   FptrTableV2["E26"] = &LibV2::E26;
   FptrTableV2["E27"] = &LibV2::E27;
-  FptrTableV2["steady_state_hyper"] = &LibV2::steady_state_hyper;
-  FptrTableV2["E29"] = &LibV2::E29;
-  FptrTableV2["E29_cod"] = &LibV2::E29_cod;
   FptrTableV2["E40"] = &LibV2::E40;
+  FptrTableV2["steady_state_hyper"] = &LibV2::steady_state_hyper;
   FptrTableV2[string("amp_drop_first_second")] = &LibV2::amp_drop_first_second;
   FptrTableV2[string("amp_drop_first_last")] = &LibV2::amp_drop_first_last;
   FptrTableV2[string("amp_drop_second_last")] = &LibV2::amp_drop_second_last;
   FptrTableV2[string("max_amp_difference")] = &LibV2::max_amp_difference;
   // end of feature definition
-  FptrTableV2["time_constant_mean"] = &LibV2::time_constant_mean;
-  FptrTableV2["time_constant_std"] = &LibV2::time_constant_std;
-  FptrTableV2["ohmic_input_resistance_mean"] =
-      &LibV2::ohmic_input_resistance_mean;
-  FptrTableV2["ohmic_input_resistance_std"] =
-      &LibV2::ohmic_input_resistance_std;
   //****************** end of FptrTableV2 *****************************
 
   //******************  FptrTableV3 *****************************

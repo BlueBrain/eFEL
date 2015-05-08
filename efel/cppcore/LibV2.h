@@ -193,10 +193,6 @@ int __steady_state_hyper(const vector<double>& v, const vector<double>& t,
 int steady_state_hyper(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
-int E29(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E29_cod(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-            mapStr2Str& StringData);
 int E40(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
         mapStr2Str& StringData);
 int __amp_drop_first_second(const vector<double>& peakvoltage,
@@ -220,17 +216,5 @@ int max_amp_difference(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
 // end of feature definition
-int time_constant_mean(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
-int time_constant_std(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData);
-int ohmic_input_resistance_mean(mapStr2intVec& IntFeatureData,
-                                mapStr2doubleVec& DoubleFeatureData,
-                                mapStr2Str& StringData);
-int ohmic_input_resistance_std(mapStr2intVec& IntFeatureData,
-                               mapStr2doubleVec& DoubleFeatureData,
-                               mapStr2Str& StringData);
 }
 #endif

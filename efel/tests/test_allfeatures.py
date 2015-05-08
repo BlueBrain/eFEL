@@ -145,6 +145,7 @@ def test_allfeatures():
         expected_results = json.load(expected_json)
 
     all_equal = True
+    nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
     for feature_name, feature_value in feature_values.items():
         # feature_value = feature_values[feature_name]
         expected_value = expected_results[feature_name]

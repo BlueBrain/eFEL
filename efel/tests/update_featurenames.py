@@ -1,3 +1,5 @@
+#!/bin/env python
+
 """Update the featurenames json file that contains the expected names"""
 
 """
@@ -31,15 +33,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import efel
 import json
 
-efel.cppcore.Initialize(efel.settings.dependencyfile_path, "log")
+if __name__ == '__main__':
+    print "Updating featurenames.json ...",
+    efel.cppcore.Initialize(efel.settings.dependencyfile_path, "log")
 
-with open('featurenames.json', 'w') as featurenames_json:
-    feature_names = []
-    efel.cppcore.getFeatureNames(feature_names)
-    json.dump(
-        feature_names,
-        featurenames_json,
-        indent=4,
-        separators=(
-            ',',
-            ': '))
+    with open('featurenames.json', 'w') as featurenames_json:
+        feature_names = []
+        efel.cppcore.getFeatureNames(feature_names)
+        json.dump(
+            feature_names,
+            featurenames_json,
+            indent=4,
+            separators=(
+                ',',
+                ': '))
+    print "done"

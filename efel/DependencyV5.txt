@@ -22,8 +22,6 @@ LibV1:AHP_slow_time         #LibV1:AHP_depth_abs_slow
 LibV1:time_constant
 LibV1:voltage_deflection
 LibV1:ohmic_input_resistance    #LibV1:voltage_deflection
-LibV2:ohmic_input_resistance_mean   #LibV1:ohmic_input_resistance;IV
-LibV2:ohmic_input_resistance_std    #LibV2:ohmic_input_resistance_mean
 LibV1:maximum_voltage
 LibV1:minimum_voltage
 LibV1:interpolate
@@ -80,12 +78,8 @@ LibV2:E24	#LibV2:AP_duration_half_width_change;APWaveForm
 LibV2:E25	#LibV2:AP_rise_rate_change;APWaveForm
 LibV2:E26	#LibV2:AP_fall_rate_change;APWaveForm
 LibV2:E27	#LibV2:fast_AHP_change;APWaveForm
+LibV2:E40   #LibV1:time_to_first_spike;IDrest 
 LibV2:steady_state_hyper
-LibV2:E29	#LibV2:steady_state_hyper;IV
-LibV2:E29_cod   #LibV2:E29
-LibV2:E40	#LibV1:time_to_first_spike;IDrest
-LibV2:time_constant_mean #LibV1:time_constant;IV
-LibV2:time_constant_std #LibV2:time_constant_mean    #LibV1:time_constant;IV
 LibV2:amp_drop_first_second	#LibV1:peak_voltage
 LibV2:amp_drop_first_last	#LibV1:peak_voltage
 LibV2:amp_drop_second_last	#LibV1:peak_voltage
