@@ -35,7 +35,7 @@
  */
 
 #include <cfeature.h>
-#include <Feature.h>
+#include <efel.h>
 #include <Python.h>
 
 using namespace std;

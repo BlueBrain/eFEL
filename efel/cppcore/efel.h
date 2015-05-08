@@ -16,8 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
  */                                                                              
 
-#ifndef __FEATURE_H                                                       
-#define __FEATURE_H 
+#ifndef __EFEL_H                                                       
+#define __EFEL_H 
 #define FEATURELIB_API
 extern "C" {
 FEATURELIB_API int Initialize(const char *strDepFile, const char *outdir);

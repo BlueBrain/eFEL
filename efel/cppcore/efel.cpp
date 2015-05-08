@@ -17,7 +17,7 @@
  */      
 
 #include <time.h>
-#include "Feature.h"
+#include "efel.h"
 #include "cfeature.h"
 
 cFeature *pFeature = NULL;

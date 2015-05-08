@@ -64,7 +64,7 @@ cppcore_sources = ['cppcore.cpp',
                    'LibV5.cpp',
                    'FillFptrTable.cpp',
                    'DependencyTree.cpp',
-                   'Feature.cpp',
+                   'efel.cpp',
                    'cfeature.cpp',
                    'mapoperations.cpp']
 cppcore_sources = [

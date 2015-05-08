@@ -1831,7 +1831,7 @@ int LibV5::BPAPHeightLoc2(mapStr2intVec& IntFeatureData,
 
   // bpapheight.push_back(*max_element(v_dend.begin(), v_dend.end()) -
   // vb_dend[0]);
-  for (int i = 0; i < peakvoltage.size(); i++) {
+  for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapheight.push_back(peakvoltage[i] - vb_dend[0]);
     // printf("peak voltage: %f, voltage base: %f, height: %f", peakvoltage[i],
     // vb_dend[0], peakvoltage[0] - vb_dend[0]);
@@ -1881,7 +1881,7 @@ int LibV5::check_AISInitiation(mapStr2intVec& IntFeatureData,
   }
 
   // Testing if no spike in the soma start earlier than in the dendrites
-  for (int i = 0; i < apBeginSoma.size(); i++) {
+  for (unsigned i = 0; i < apBeginSoma.size(); i++) {
     /// printf("%f, %f\n", apBeginSoma[i], apBeginAIS[i]); fflush(stdout);
     if (apBeginSoma[i] < apBeginAIS[i]) {
       GErrorStr =
@@ -1987,7 +1987,7 @@ int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
   getCentralDifferenceDerivative(1., t, dt);
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
 
-  for (int i = 0; i < apbi.size(); i++) {
+  for (unsigned i = 0; i < apbi.size(); i++) {
     apbegin_index = apbi[i];
     apbegin_t = t[apbegin_index];
     range_min_index = apbegin_index - int(range);
@@ -1997,7 +1997,7 @@ int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
     // Use this if you want to define range as a time
     // int(upper_bound(t.begin(), t.end(), apbegin_t + range) - t.begin());
     if (range_min_index < 0 or range_max_index < 0) return -1;
-    if (range_min_index > t.size() or range_max_index > t.size()) return -1;
+    if (range_min_index > (int)t.size() or range_max_index > (int)t.size()) return -1;
     if (v[range_max_index] - v[range_min_index] == 0) return -1;
     ap_phaseslope = (dvdt[range_max_index] - dvdt[range_min_index]) /
                     (v[range_max_index] - v[range_min_index]);
@@ -2081,7 +2081,7 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
                   "\n Two spikes required for calculation of all_ISI_values.\n";
       return -1;
     }
-    for (int i = 1; i < pvTime.size(); i++) {
+    for (unsigned i = 1; i < pvTime.size(); i++) {
       VecISI.push_back(pvTime[i] - pvTime[i - 1]);
     }
     setDoubleVec(DoubleFeatureData, StringData, "all_ISI_values", VecISI);
