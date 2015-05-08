@@ -13,7 +13,7 @@ def _get_git_version(script_path):
     """Get version from git"""
 
     # Make sure we're not a git repository on much higher level
-    if os.path.exists(os.path.join(script_path, '.git')):
+    if os.path.exists(os.path.join(script_path, '../.git')):
         try:
             import subprocess
             p = subprocess.Popen(
