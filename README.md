@@ -1,7 +1,19 @@
 Introduction
 ============
 
-The Electrophysiological Feature Extract Library (eFEL).
+The Electrophysiological Feature Extract Library (eFEL) allows neuroscientists
+to automatically extract features from time series data recorded from neurons 
+(both in vitro and in silico). 
+Examples are the action potential width and amplitude in voltage traces recorded
+during whole-cell patch clamp experiments.
+The user of the library provides a set of traces and selects the features to
+be calculated. The library will then extract the requested features and return
+the values to the user.
+
+The core of the library is written in C++, and a Python wrapper is included.
+At the moment we provide a way to automatically compile and install the library
+as a Python module. Soon instructions will be added on how to link C++ code, 
+directly with the eFEL.
 
 Requirements
 ============
@@ -13,19 +25,19 @@ Requirements
 Installation
 ============
 
-The easiest way to install eFEL is to use [pip](https://pip.pypa.io).
+The easiest way to install eFEL is to use [pip](https://pip.pypa.io)
 
 ```bash
 pip install git+git://github.com/BlueBrain/eFEL
 ```
 In case you don't have administrator access this command might fail with a 
-permission error. In that case you could install it in your home directory
+permission error. In that case you could install eFEL in your home directory
 
 ```bash
 pip install --user git+git://github.com/BlueBrain/eFEL
 ```
 
-Or you could use a [python virtual environment]
+Or you could use a [python virtual environment](https://virtualenv.pypa.io)
 
 ```bash
 virtualenv pythonenv
