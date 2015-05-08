@@ -58,10 +58,45 @@ def get_allfeature_values():
     trace['stim_start;location_dend2'] = [295]
     trace['stim_end;location_dend2'] = [500]
 
+    bpap_featurenames = [
+        'BPAPHeightLoc1',
+        'BPAPHeightLoc2',
+        'BPAPAmplitudeLoc1',
+        'BPAPAmplitudeLoc2']
+
+    bac_featurenames = [
+        'BAC_width']
+
+    soma_featurenames = all_featurenames[:]
+
+    for feature_name in bpap_featurenames:
+        soma_featurenames.remove(feature_name)
+
+    for feature_name in bac_featurenames:
+        soma_featurenames.remove(feature_name)
+
     import warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        feature_values = efel.getFeatureValues([trace], all_featurenames)[0]
+        feature_values = efel.getFeatureValues([trace], soma_featurenames)[0]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        efel.setThreshold(-30)
+        feature_values = dict(
+            feature_values.items() +
+            efel.getFeatureValues(
+                [trace],
+                bpap_featurenames)[0].items())
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        efel.setThreshold(-55)
+        feature_values = dict(
+            feature_values.items() +
+            efel.getFeatureValues(
+                [trace],
+                bac_featurenames)[0].items())
 
     for feature_name in feature_values:
         if feature_values[feature_name] is not None:
