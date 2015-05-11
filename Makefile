@@ -10,8 +10,7 @@ doc_upload: doc
 	mv -fv docs/build/html/* ./
 	rm -rf docs/build
 	git add -A                                                                       
-	git commit -m "Generated github docs for `git log master -1 --pretty=short \     
-	--abbrev-commit`" && git push origin gh-pages ; git checkout master
+	git commit -m "Generated github docs for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout master
 test:
 	cd efel/tests; nosetests -s -v -x
 clean:
