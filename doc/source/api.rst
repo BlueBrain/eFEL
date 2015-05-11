@@ -3,6 +3,6 @@ API Documentation
                                                                                  
 .. autosummary::                                                                 
    :nosignatures:                                                                
-      :toctree: efel                                                           
+   :toctree: efel                                                           
                                                                                        
-      efel        
+   efel        
