@@ -45,7 +45,7 @@ int FeaturePrint(const char *strFile) {
 }
 int setFeatureInt(const char *strName, int *A, int nValue) {
   vector<int> v(nValue);
-  for (int i = 0; i < nValue; i++) {
+  for (unsigned i = 0; i < nValue; i++) {
     v[i] = A[i];
   }
   pFeature->setFeatureInt(string(strName), v);
@@ -56,7 +56,7 @@ int setFeatureDouble(const char *strName, double *A, int nValue) {
   // printf("\nInside featureLibrary.. Before setdouble [%s = %f add = %d nVal=
   // %d]\n", strName, A[0], pFeature, nValue);
   vector<double> v(nValue);
-  for (int i = 0; i < nValue; i++) {
+  for (unsigned i = 0; i < nValue; i++) {
     v[i] = A[i];
   }
   // mapDoubleData.insert(pair<string, vector< double > > (string(strName), v));

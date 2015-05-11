@@ -215,7 +215,7 @@ int cTree::getDependency(string strLine, string wildcards) {
   getChilds(strLine, tmpChild);
   if (tmpChild.size() != 0) {
     childCount = tmpChild.size();
-    for (int i = 0; i < childCount; i++) {
+    for (unsigned i = 0; i < childCount; i++) {
       string str = tmpChild.front();
       tmpChild.pop_front();
       getDependency(str, wildcards);

@@ -49,7 +49,7 @@ int getCentralDifferenceDerivative(double dx, const vector<double>& v,
   // because formula is ((vec[i+1]+vec[i-1])/2)/dx hence it should iterate
   // through 1 to length-1
   dv.push_back((v[1] - v[0]) / dx);
-  for (int i = 1; i < n - 1; i++) {
+  for (unsigned i = 1; i < n - 1; i++) {
     dv.push_back(((v[i + 1] - v[i - 1]) / 2) / dx);
   }
   dv.push_back((v[n - 1] - v[n - 2]) / dx);
@@ -88,7 +88,7 @@ void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
   double sum_y = 0.;
   double sum_x2 = 0.;
   double sum_xy = 0.;
-  for (int i = 0; i < x.size(); i++) {
+  for (unsigned i = 0; i < x.size(); i++) {
     sum_x += x[i];
     sum_y += y[i];
     sum_x2 += x[i] * x[i];
@@ -100,7 +100,7 @@ void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
   // calculate sum of squared residuals
   double yintercept = (sum_y - slope[0] * sum_x) / x.size();
   double residuals = 0.;
-  for (int i = 0; i < x.size(); i++) {
+  for (unsigned i = 0; i < x.size(); i++) {
     double res = y[i] - yintercept - slope[0] * x[i];
     residuals += res * res;
   }
@@ -108,7 +108,7 @@ void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
   // calculate the coefficient of determination R^2
   double y_av = sum_y / x.size();
   double sstot = 0.;
-  for (int i = 0; i < x.size(); i++) {
+  for (unsigned i = 0; i < x.size(); i++) {
     double dev = y[i] - y_av;
     sstot += dev * dev;
   }

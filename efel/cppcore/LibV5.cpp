@@ -43,7 +43,7 @@ int LibV5::__ISI_log_slope(const vector<double>& isiValues,
     if (maxnSpike - 1 < isisToRemove) isisToRemove = maxnSpike - 1;
 
     // Remove spikeToRemove spike from SpikeTime list
-    for (int i = 0; i < isisToRemove; i++) {
+    for (unsigned i = 0; i < isisToRemove; i++) {
       skippedISIValues.pop_front();
     }
   }
@@ -429,7 +429,7 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
     peak_indices_plus.push_back(end_index);
 
     int ahpindex;
-    for (int i = 0; i < peak_indices_plus.size() - 1; i++) {
+    for (unsigned i = 0; i < peak_indices_plus.size() - 1; i++) {
 
       ahpindex = distance(
           v.begin(), first_min_element(v.begin() + peak_indices_plus[i],
@@ -493,7 +493,7 @@ int LibV5::__spike_width1(const vector<double>& t, const vector<double>& v,
   vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   copy(min_ahp_indices.begin(), min_ahp_indices.end(),
        min_ahp_indices_plus.begin() + 1);
-  for (int i = 1; i < min_ahp_indices_plus.size(); i++) {
+  for (unsigned i = 1; i < min_ahp_indices_plus.size(); i++) {
     double v_half = (v[peak_indices[i - 1]] + v[min_ahp_indices_plus[i]]) / 2.;
     // interpolate this one time step where the voltage is close to v_half in
     // the rising and in the falling edge
@@ -587,7 +587,7 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   getCentralDifferenceDerivative(1., t, dt);
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
 
-  /*for (int i = 0; i < dvdt.size(); i++) {
+  /*for (unsigned i = 0; i < dvdt.size(); i++) {
       printf("%d %f %f\n", i, dvdt[i]);
   }
   printf("\n");*/
@@ -598,7 +598,7 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
       t.begin(),
       find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
   minima.push_back(stimbeginindex);
-  for (int i = 0; i < ahpi.size(); i++) {
+  for (unsigned i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
     }
@@ -613,7 +613,7 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   minima.push_back(endindex);
   //}
   // printf("Found %d minima\n", minima.size());
-  for (int i = 0; i < minima.size() - 1; i++) {
+  for (unsigned i = 0; i < minima.size() - 1; i++) {
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
@@ -693,7 +693,7 @@ int LibV5::__irregularity_index(vector<double>& isiValues,
   iRI = ISISub = 0;
   if (isiValues.size() == 0) return -1;
 
-  for (int i = 1; i < isiValues.size(); i++) {
+  for (unsigned i = 1; i < isiValues.size(); i++) {
     ISISub = abs(isiValues[i] - isiValues[i - 1]);
     iRI = iRI + (ISISub);
   }
@@ -1061,7 +1061,7 @@ int LibV5::__AHP_time_from_peak(const vector<double>& t,
                                 const vector<int>& minAHPIndices,
                                 vector<double>& ahpTimeFromPeak) {
   if (peakIndices.size() > minAHPIndices.size()) return -1;
-  for (int i = 0; i < peakIndices.size(); i++) {
+  for (unsigned i = 0; i < peakIndices.size(); i++) {
     ahpTimeFromPeak.push_back(t[minAHPIndices[i]] - t[peakIndices[i]]);
   }
   return ahpTimeFromPeak.size();
@@ -1107,7 +1107,7 @@ int LibV5::__AHP_depth_from_peak(const vector<double>& v,
                                  const vector<int>& minAHPIndices,
                                  vector<double>& ahpDepthFromPeak) {
   if (peakIndices.size() < minAHPIndices.size()) return -1;
-  for (int i = 0; i < minAHPIndices.size(); i++) {
+  for (unsigned i = 0; i < minAHPIndices.size(); i++) {
     ahpDepthFromPeak.push_back(v[peakIndices[i]] - v[minAHPIndices[i]]);
   }
   return ahpDepthFromPeak.size();
@@ -1222,7 +1222,7 @@ int LibV5::__AP_begin_width(const vector<double>& t, const vector<double>& v,
   // copy(min_ahp_indices.begin(), min_ahp_indices.end(),
   // min_ahp_indices_plus.begin());
   if (AP_begin_indices.size() < min_ahp_indices.size()) return -1;
-  for (int i = 0; i < min_ahp_indices.size(); i++) {
+  for (unsigned i = 0; i < min_ahp_indices.size(); i++) {
     double v_start = v[AP_begin_indices[i]];
     // interpolate this one time step where the voltage is close to v_start in
     // the falling edge
@@ -1547,7 +1547,7 @@ int LibV5::__voltage_deflection_begin(const vector<double>& v,
       range_begin + (stimEnd - stimStart) * (deflection_range_percentage);
   double base = 0.;
   int base_size = 0;
-  for (int i = 0; i < t.size(); i++) {
+  for (unsigned i = 0; i < t.size(); i++) {
     if (t[i] < stimStart) {
       base += v[i];
       base_size++;
@@ -1558,7 +1558,7 @@ int LibV5::__voltage_deflection_begin(const vector<double>& v,
   base /= base_size;
   double volt = 0;
   int volt_size = 0;
-  for (int i = 0; i < t.size(); i++) {
+  for (unsigned i = 0; i < t.size(); i++) {
     if (t[i] > range_stop) {
       break;
     }
@@ -1599,7 +1599,7 @@ int LibV5::is_not_stuck(mapStr2intVec& IntFeatureData,
     retval = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
     if (retval < 0) return -1;
     bool stuck = true;
-    for (int i = 0; i < peak_time.size(); i++) {
+    for (unsigned i = 0; i < peak_time.size(); i++) {
       if (peak_time[i] > stim_end[0] * 0.5 && peak_time[i] < stim_end[0]) {
         stuck = false;
         break;
@@ -1672,7 +1672,7 @@ int LibV5::mean_AP_amplitude(mapStr2intVec& IntFeatureData,
       return -1;
     }
     vector<double> mean_AP_amplitude;
-    for (int i = 0; i < AP_amplitude.size(); i++) {
+    for (unsigned i = 0; i < AP_amplitude.size(); i++) {
       mean_AP_amplitude[0] = mean_AP_amplitude[0] + AP_amplitude[i];
     }
     mean_AP_amplitude[0] = mean_AP_amplitude[0] / AP_amplitude.size();
@@ -1711,7 +1711,7 @@ int LibV5::BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
 
   // bpapheight.push_back(*max_element(v_dend.begin(), v_dend.end()) -
   // vb_dend[0]);
-  for (int i = 0; i < peakvoltage.size(); i++) {
+  for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapheight.push_back(peakvoltage[i] - vb_dend[0]);
     // printf("peak voltage: %f, voltage base: %f, height: %f", peakvoltage[i],
     // vb_dend[0], peakvoltage[0] - vb_dend[0]);
@@ -1752,7 +1752,7 @@ int LibV5::BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
   
   vector<double> bpapamplitude;
 
-  for (int i = 0; i < peakvoltage.size(); i++) {
+  for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 
@@ -1792,7 +1792,7 @@ int LibV5::BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
   
   vector<double> bpapamplitude;
 
-  for (int i = 0; i < peakvoltage.size(); i++) {
+  for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 

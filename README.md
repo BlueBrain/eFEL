@@ -20,8 +20,8 @@ directly with the eFEL.
 Requirements
 ============
 
-* [Python 2.7+](https://www.python.org/download/releases/2.7/) (not compatible with Python 3)
-* [Pip](https://pip.pypa.io) (installed by default in newer version of Python)
+* [Python 2.7+](https://www.python.org/download/releases/2.7/) (not compatible yet with Python 3)
+* [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
 
 Installation

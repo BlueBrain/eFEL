@@ -75,7 +75,7 @@ int LibV3::trace_check(mapStr2intVec& IntFeatureData,
     retval = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
     if (retval < 0) return -1;
     bool sane = true;
-    for (int i = 0; i < peak_time.size(); i++) {
+    for (unsigned i = 0; i < peak_time.size(); i++) {
       if (peak_time[i] < stim_start[0] || peak_time[i] > stim_end[0] * 1.05) {
         sane = false;
         break;
@@ -99,7 +99,7 @@ int LibV3::__peak_indices(double dThreshold, vector<double>& V,
   vector<int> upVec, dnVec;
   double dtmp;
   int itmp;
-  for (int i = 1; i < V.size(); i++) {
+  for (unsigned i = 1; i < V.size(); i++) {
     if (V[i] > dThreshold && V[i - 1] < dThreshold) {
       upVec.push_back(i);
     } else {
@@ -114,7 +114,7 @@ int LibV3::__peak_indices(double dThreshold, vector<double>& V,
   }
   PeakIndex.clear();
   int j = 0;
-  for (int i = 0; i < upVec.size(); i++) {
+  for (unsigned i = 0; i < upVec.size(); i++) {
     dtmp = -1e9;
     itmp = -1;
     for (j = upVec[i]; j <= dnVec[i]; j++) {
@@ -183,14 +183,14 @@ int LibV3::ISI_values(mapStr2intVec& IntFeatureData,
 int LibV3::__ISI_CV(const vector<double>& isivalues, vector<double>& isicv) {
   // mean
   double isi_mean = 0.;
-  for (int i = 0; i < isivalues.size(); i++) {
+  for (unsigned i = 0; i < isivalues.size(); i++) {
     isi_mean += isivalues[i];
   }
   isi_mean /= isivalues.size();
 
   // sigma^2
   double variance = 0.;
-  for (int i = 0; i < isivalues.size(); i++) {
+  for (unsigned i = 0; i < isivalues.size(); i++) {
     double dev = isivalues[i] - isi_mean;
     variance += dev * dev;
   }
@@ -243,7 +243,7 @@ int LibV3::peak_voltage(mapStr2intVec& IntFeatureData,
     {
       if (retVal <= 0) return -1;
     };
-    for (int i = 0; i < PeakI.size(); i++) {
+    for (unsigned i = 0; i < PeakI.size(); i++) {
       peakV.push_back(V[PeakI[i]]);
     }
     setDoubleVec(DoubleFeatureData, StringData, "peak_voltage", peakV);
@@ -280,7 +280,7 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
       if (retVal <= 0) return -1;
     };
     int nCount = 0;
-    for (int i = 0; i < peakVTime.size(); i++) {
+    for (unsigned i = 0; i < peakVTime.size(); i++) {
       if ((peakVTime[i] >= stimStart[0]) && (peakVTime[i] <= stimEnd[0])) {
         lastAPTime = peakVTime[i];
         nCount++;
@@ -311,7 +311,7 @@ int LibV3::peak_time(mapStr2intVec& IntFeatureData,
     if (retVal <= 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), T);
     if (retVal <= 0) return -1;
-    for (int i = 0; i < PeakI.size(); i++) {
+    for (unsigned i = 0; i < PeakI.size(); i++) {
       pvTime.push_back(T[PeakI[i]]);
     }
     setDoubleVec(DoubleFeatureData, StringData, "peak_time", pvTime);
@@ -362,7 +362,7 @@ int LibV3::__spike_width1(const vector<double>& t, const vector<double>& v,
   vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   copy(min_ahp_indices.begin(), min_ahp_indices.end(),
        min_ahp_indices_plus.begin() + 1);
-  for (int i = 1; i < min_ahp_indices_plus.size(); i++) {
+  for (unsigned i = 1; i < min_ahp_indices_plus.size(); i++) {
     double v_half = (v[peak_indices[i - 1]] + v[min_ahp_indices_plus[i]]) / 2.;
     // interpolate this one time step where the voltage is close to v_half in
     // the rising and in the falling edge
@@ -477,7 +477,7 @@ int LibV3::min_AHP_indices(mapStr2intVec& IntFeatureData,
     if (end_index > peak_indices_plus.back() + 5) {
       peak_indices_plus.push_back(end_index);
     }
-    for (int i = 0; i < peak_indices_plus.size() - 1; i++) {
+    for (unsigned i = 0; i < peak_indices_plus.size() - 1; i++) {
       int ahpindex = distance(
           v.begin(), min_element(v.begin() + peak_indices_plus[i],
                                  v.begin() + peak_indices_plus[i + 1]));
@@ -585,7 +585,7 @@ int LibV3::__adaptation_index2(double StimStart, double StimEnd, double Offset,
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
   // considet Offset also if it is given as input
-  for (int i = 0; i < peakVTime.size(); i++) {
+  for (unsigned i = 0; i < peakVTime.size(); i++) {
     if ((peakVTime[i] >= (StimStart - Offset)) &&
         (peakVTime[i] <= (StimEnd + Offset))) {
       SpikeTime.push_back(peakVTime[i]);
@@ -612,7 +612,7 @@ int LibV3::__adaptation_index2(double StimStart, double StimEnd, double Offset,
   // get addition and subtraction of ISIs
   double ISISum, ISISub, ADI;
   ADI = ISISum = ISISub = 0;
-  for (int i = 1; i < ISI.size(); i++) {
+  for (unsigned i = 1; i < ISI.size(); i++) {
     ISISum = ISI[i] + ISI[i - 1];
     ISISub = ISI[i] - ISI[i - 1];
     ADI = ADI + (ISISub / ISISum);
@@ -716,7 +716,7 @@ int LibV3::AP_amplitude(mapStr2intVec& IntFeatureData,
     }
     vector<double> apamplitude;
     apamplitude.resize(peakvoltage.size());
-    for (int i = 0; i < apamplitude.size(); i++) {
+    for (unsigned i = 0; i < apamplitude.size(); i++) {
       apamplitude[i] = peakvoltage[i] - v[apbeginindices[i]];
     }
     setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
@@ -747,7 +747,7 @@ int LibV3::__AP_width(const vector<double>& t, const vector<double>& v,
       find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
   indices[0] = start_index;
   copy(minahpindices.begin(), minahpindices.end(), indices.begin() + 1);
-  for (int i = 0; i < indices.size() - 1; i++) {
+  for (unsigned i = 0; i < indices.size() - 1; i++) {
     /*
     // FWHM (not used):
     // half maximum
@@ -864,7 +864,7 @@ int LibV3::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
       t.begin(),
       find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
   minima.push_back(stimbeginindex);
-  for (int i = 0; i < ahpi.size(); i++) {
+  for (unsigned i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
     }
@@ -880,7 +880,7 @@ int LibV3::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
                                     bind2nd(greater_equal<double>(), stimend)));
     minima.push_back(stimendindex);
   }
-  for (int i = 0; i < minima.size() - 1; i++) {
+  for (unsigned i = 0; i < minima.size() - 1; i++) {
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
@@ -956,7 +956,7 @@ int LibV3::__AP_end_indices(const vector<double>& t, const vector<double>& v,
   apei.resize(pi.size());
   vector<int> picopy(pi.begin(), pi.end());
   picopy.push_back(v.size() - 1);
-  for (int i = 0; i < apei.size(); i++) {
+  for (unsigned i = 0; i < apei.size(); i++) {
     // assure that the width of the slope is bigger than 4
     apei[i] = distance(
         dvdt.begin(),
@@ -998,7 +998,7 @@ int LibV3::AP_end_indices(mapStr2intVec& IntFeatureData,
 int LibV3::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& pi, vector<int>& apri) {
   apri.resize(apbi.size());
-  for (int i = 0; i < apri.size(); i++) {
+  for (unsigned i = 0; i < apri.size(); i++) {
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak;
     vpeak.resize(pi[i] - apbi[i]);
@@ -1045,7 +1045,7 @@ int LibV3::__AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& apei, const vector<int>& pi,
                              vector<int>& apfi) {
   apfi.resize(apbi.size());
-  for (int i = 0; i < apfi.size(); i++) {
+  for (unsigned i = 0; i < apfi.size(); i++) {
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
@@ -1096,7 +1096,7 @@ int LibV3::__AP_duration(const vector<double>& t,
                          const vector<int>& endindices,
                          vector<double>& apduration) {
   apduration.resize(apbeginindices.size());
-  for (int i = 0; i < apduration.size(); i++) {
+  for (unsigned i = 0; i < apduration.size(); i++) {
     apduration[i] = t[endindices[i]] - t[apbeginindices[i]];
   }
   return apduration.size();

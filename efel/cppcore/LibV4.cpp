@@ -45,7 +45,7 @@ int LibV4::__peak_indices(const vector<double>& v, double min_spike_height,
   } while (dv.begin() + minimum_index != dv.end());
   minimum_indices.push_back(dv.size() - 1);
 
-  for (int i = 0; i < minimum_indices.size() - 1; i++) {
+  for (unsigned i = 0; i < minimum_indices.size() - 1; i++) {
     int maximum_index =
         distance(v.begin(), max_element(v.begin() + minimum_indices[i],
                                         v.begin() + minimum_indices[i + 1]));
