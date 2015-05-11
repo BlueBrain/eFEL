@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/BlueBrain/eFEL.png?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
+
 Introduction
 ============
 
