@@ -85,18 +85,21 @@ setup(
     author_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extraction Library",
     license="BBP-internal-confidential",
-    keywords=('feature',
-              'extraction',
-              'electrophysiology',
-              'BlueBrainProject'),
+    keywords=(
+        'feature',
+        'extraction',
+        'electrophysiology',
+        'BlueBrainProject'),
     url="http://bluebrain.epfl.ch",
-    classifiers=['Development Status :: 3 - Alpha',
-                 'Environment :: Console',
-                 'License :: Proprietary',
-                 'Operating System :: POSIX',
-                 'Topic :: Scientific/Engineering',
-                 'Topic :: Utilities'],
-    package_data={'': ['DependencyV5.txt']},
-    data_files=[('', ['efel/VERSION.txt', 'efel/GITHASH.txt'])],
-    ext_modules=[cppcore]
-)
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: Console',
+        'License :: Proprietary',
+        'Operating System :: POSIX',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Utilities'],
+    package_data={
+        '': ['DependencyV5.txt',
+             'VERSION.txt',
+             'GITHASH.txt']},
+    ext_modules=[cppcore])

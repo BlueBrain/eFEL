@@ -35,7 +35,6 @@ def _get_version_number():
     githash_fullpath = os.path.join(script_path, githash_filename)
 
     git_version_return = _get_git_version(script_path)
-    print git_version_return
     if git_version_return is None:
         if os.path.exists(version_fullpath):
             with open(version_fullpath, 'r') as version_file:
