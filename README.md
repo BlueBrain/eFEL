@@ -71,9 +71,7 @@ trace are available
 """Basic example 1 for eFEL"""
 
 import efel
-
 import numpy
-
 
 def main():
     """Main"""
@@ -127,3 +125,13 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+
+The output of this example is
+```
+Feature AP_amplitude has the following values: 72.5782441262, 46.3672552618, 41.1546679158, 39.7631750953, 36.1614653031, 37.8489295737
+Feature voltage_base has the following values: -75.446665721
+```
+This means that the eFEL found 5 action potentials in the voltage trace. The
+amplitudes of these APs are the result of the 'AP_amplitude' feature.
+The voltage before the start of the stimulis is measured by 'voltage_base'.
+Results are in mV.
