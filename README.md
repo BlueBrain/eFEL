@@ -58,6 +58,6 @@ import efel
 
 To get a list with all the available feature names
 
-``python
+```python
 efel.getFeatureNames()
 ```
