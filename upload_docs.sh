@@ -7,7 +7,7 @@ SOURCES='doc/source efel doc/Makefile'
 
 git checkout gh-pages
 rm -rf build _sources _static _modules
-git checkout master $(SOURCES)
+git checkout master ${SOURCES}
 git reset HEAD
 make -f doc/Makefile html
 mv -fv build/html/* ./
