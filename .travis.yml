@@ -2,4 +2,4 @@ language: python
 python:
     - "2.7"
 install: "pip install . -v -v -v"
-script: runtests.sh
+script: ./runtests.sh
