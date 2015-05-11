@@ -3,6 +3,8 @@
 set -e
 set -x
 
+pip install . --upgrade
+
 SOURCES='doc/source efel doc/Makefile'
 
 git checkout gh-pages

@@ -19,5 +19,6 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 # pylint: disable=W0611, W0401
 
+from efel.version import *
 from efel.settings import Settings
 from efel.functions import *
