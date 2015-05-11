@@ -53,3 +53,9 @@ First you need to import the module
 ```python
 import efel
 ```
+
+To get a list with all the available feature names
+
+``python
+efel.getFeatureNames()
+```
