@@ -41,6 +41,14 @@ def test_import():
     # pylint: enable=W0611
 
 
+def test_version():
+    """basic: Test if version number exists"""
+
+    import efel
+
+    nt.assert_true(efel.version is not None)
+
+
 def test_empty_trace():
     """basic: Testing results for empty trace"""
 
