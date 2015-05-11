@@ -3,7 +3,7 @@
 set -e
 set -x
 
-python setup.py install
+pip install . --upgrade
 
 SOURCES='doc/source efel doc/Makefile'
 
