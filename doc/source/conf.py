@@ -89,6 +89,9 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+autosummary_generate = True
+autodoc_default_flags = ['show-inheritance']
+autoclass_content = 'both'
 
 # -- Options for HTML output ---------------------------------------------------
 
