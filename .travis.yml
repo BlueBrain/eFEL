@@ -1,5 +1,5 @@
 language: python
 python:
     - "2.7"
-install: "pip install ."
+install: "pip install . -v -v -v"
 script: nosetests -v -s -x
