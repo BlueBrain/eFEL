@@ -24,7 +24,7 @@ Requirements
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
 * The instruction below are written assuming you have access to a command shell
-on Linux/UNIX/MacOSX/Cygwin
+on Linux / UNIX / MacOSX / Cygwin
 
 Installation
 ============
