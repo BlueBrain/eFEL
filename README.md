@@ -1,7 +1,7 @@
 Introduction
 ============
 
-The Electrophysiological Feature Extract Library (eFEL) allows neuroscientists
+The Electrophys Feature Extract Library (eFEL) allows neuroscientists
 to automatically extract features from time series data recorded from neurons 
 (both in vitro and in silico). 
 Examples are the action potential width and amplitude in voltage traces recorded
@@ -12,7 +12,7 @@ the values to the user.
 
 The core of the library is written in C++, and a Python wrapper is included.
 At the moment we provide a way to automatically compile and install the library
-as a Python module. Soon instructions will be added on how to link C++ code, 
+as a Python module. Soon instructions will be added on how to link C++ code 
 directly with the eFEL.
 
 Requirements
