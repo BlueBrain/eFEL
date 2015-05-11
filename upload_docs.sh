@@ -5,7 +5,7 @@ set -x
 
 pip install . --upgrade
 
-SOURCES='doc/source efel doc/Makefile'
+SOURCES='doc/source doc/Makefile'
 
 git checkout gh-pages
 rm -rf build _sources _static _modules
