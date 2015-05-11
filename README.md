@@ -23,6 +23,8 @@ Requirements
 * [Python 2.7+](https://www.python.org/download/releases/2.7/) (not compatible yet with Python 3)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
+* The instruction below are written assuming you have access to a command shell
+on Linux/UNIX/MacOSX/Cygwin
 
 Installation
 ============
@@ -62,7 +64,7 @@ To get a list with all the available feature names
 efel.getFeatureNames()
 ```
 
-The python function you use to extract features is getFeatureValues(...). 
+The python function to extract features is getFeatureValues(...). 
 Below is a short example on how to use this function. The code and example 
 trace are available 
 [here](https://github.com/BlueBrain/eFEL/blob/master/examples/basic/basic_example1.py)
