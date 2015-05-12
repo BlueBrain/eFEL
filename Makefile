@@ -2,7 +2,7 @@ all: install
 install:
 	pip install . --upgrade
 doc: install
-	sphinx-apidoc -f -o docs/source efel
+	# sphinx-apidoc -f -o docs/source efel
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \

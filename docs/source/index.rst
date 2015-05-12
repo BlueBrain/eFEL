@@ -22,7 +22,7 @@ directly with the eFEL.
    :maxdepth: 2
 
    installation
-   modules
+   api
 
 Indices and tables
 ==================
