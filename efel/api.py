@@ -1,8 +1,10 @@
 """eFEL Python API functions.
 
-This module provides the interface between the Python API of the eFEL. 
+This module provides the user-facing Python API of the eFEL. 
 The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
+All functions in this module can be called as efel.functionname, it is 
+not necessary to include 'api' as in efel.api.functionname.
 """
 
 """
