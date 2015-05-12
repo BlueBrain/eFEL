@@ -4,13 +4,12 @@ install:
 doc: install
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
-	git checkout gh-pages                                                            
-	rm -rf build _sources _static _modules efel
-	git reset HEAD
-	mv -fv docs/build/html/* ./
-	rm -rf docs/build
-	git add -A                                                                       
-	git commit -m "Generated github docs for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout master
+	cd docs/build/html && \
+	git init . && \
+	git add . && \
+	git commit -m "Updating docs" && \
+	git push "git@github.com:BlueBrain/eFEL.git" master:gh-pages --force && \
+	rm -rf .git
 test:
 	cd efel/tests; nosetests -s -v -x
 clean:
