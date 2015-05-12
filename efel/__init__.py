@@ -21,4 +21,4 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 from efel.version import *
 from efel.settings import Settings
-from efel.functions import *
+from efel.api import *

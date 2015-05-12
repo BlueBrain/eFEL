@@ -1,7 +1,7 @@
 Python API
 ==========
 
-.. automodule:: efel.functions                                                   
+.. automodule:: efel.api
    :members:                                                                    
    :undoc-members:                                                              
    :show-inheritance:          

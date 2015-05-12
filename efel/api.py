@@ -1,4 +1,4 @@
-"""eFEL Python functions.
+"""eFEL Python API functions.
 
 This module provides the interface between the Python API of the eFEL. 
 The convenience functions defined here call the underlying 'cppcore' library
