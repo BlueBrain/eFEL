@@ -19,9 +19,10 @@ as a Python module. Soon instructions will be added on how to link C++ code
 directly with the eFEL.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    installation
+   examples
    api
 
 Indices and tables
