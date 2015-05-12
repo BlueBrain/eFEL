@@ -5,6 +5,7 @@ doc: install
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \
+	touch .nojekyll && \
 	git init . && \
 	git add . && \
 	git commit -m "Updating docs" && \
