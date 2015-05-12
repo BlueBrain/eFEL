@@ -63,7 +63,15 @@ def setDerivativeThreshold(newDerivativeThreshold):
 
 
 def getFeatureNames():
-    """Return a list with the name of all the available features"""
+    """Return a list with the name of all the available features
+    
+    Returns
+    =======
+    feature_names : list of strings
+                    A list that contains all the feature names available in
+                    the eFEL. These names can be used in the featureNames
+                    argument of e.g. getFeatureValues()
+    """
 
     cppcore.Initialize(settings.dependencyfile_path, "log")
     feature_names = []
@@ -73,7 +81,18 @@ def getFeatureNames():
 
 
 def getFeatureValues(traces, featureNames):
-    """
+    """Calculate feature values for a list of traces.
+
+    This function is the core of the eFEL API. A list of traces (in the form
+    of dictionaries) is passed as argument, together with a list of feature
+    names. 
+
+    The return value consists of a list of dictionaries, one for each input
+    trace. The keys in the dictionaries are the names of the calculated 
+    features, the corresponding values are lists with the feature values.
+    Beware that every feature returns an array of values. E.g. AP_amplitude
+    will return a list with the amplitude of every action potential.
+
     Parameters
     ==========
     traces : list of trace dicts
@@ -89,6 +108,8 @@ def getFeatureValues(traces, featureNames):
                      the same order). The dict contains the keys of
                      'feature_names', every key contains a numpy array with
                      the feature values returned by the C++ efel code.
+                     The value is None if an error occured during the 
+                     calculation of the feature.
     """
     featureDicts = []
 
