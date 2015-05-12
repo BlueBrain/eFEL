@@ -9,8 +9,12 @@ import efel
 
 
 def evaluate(individual, target_voltage1=-80, target_voltage2=-60):
-    """Evaluates the fitness and return the error on the price and the time
-    taken by the order if the chef can cook everything in parallel."""
+    """
+    Evaluate a neuron model with parameters e_pas and g_pas, extracts
+    features from resulting traces and returns a tuple with
+    abs(voltage_base-target_voltage1) and 
+    abs(steady_state_voltage-target_voltage2)
+    """
 
     neuron.h.v_init = target_voltage1
 
