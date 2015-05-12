@@ -74,14 +74,21 @@ def getFeatureNames():
 
 def getFeatureValues(traces, featureNames):
     """
-    input :
-       traces: dictionary with keys 'T' (time values list),
-               'V' (voltage values list), 'stim_start', stim_end'
-       featureNames: list of strings
-    output :
-       featureDicts: list of dictionaries (1 for each trace),
-                     featureNames are the keys in the dicts, the values in the
-                     dicts are lists with detected feature values per trace
+    Parameters
+    ==========
+    traces : list of trace dicts
+             Every trace dict represent one trace. The dict should have the
+             following keys: 'T', 'V', 'stim_start', 'stim_end'
+    feature_names : list of string
+                  List with the names of the features to be calculated on all
+                  the traces.
+    Returns
+    =======
+    feature_values : list of dicts
+                     For every input trace a feature value dict is return (in
+                     the same order). The dict contains the keys of
+                     'feature_names', every key contains a numpy array with
+                     the feature values returned by the C++ efel code.
     """
     featureDicts = []
 
@@ -169,37 +176,3 @@ def getMeanFeatureValues(traces, featureNames):
             featureDict[key] = numpy.mean(values)
 
     return featureDicts
-
-
-def main():
-    """Test main() function"""
-    setDependencyFileLocation("DependencyV5.txt")
-    featureNames = [
-        "burst_number",
-        "mean_frequency",
-        "voltage_base",
-        "AP_height",
-        "time_to_first_spike",
-        "adaptation_index",
-        "spike_half_width",
-        "AHP_depth_abs",
-        "AHP_depth_diff"]
-
-    fileNames = ["../test/allfeaturetest/testdata.txt"]
-
-    traces = []
-    for fileName in fileNames:
-        trace = {}
-        loadedTrace = numpy.loadtxt(fileName)
-        trace['T'] = loadedTrace[:, 0]
-        trace['V'] = loadedTrace[:, 1]
-        print trace['T']
-        trace['stim_start'] = [700]
-        trace['stim_end'] = [2700]
-        traces.append(trace)
-
-    print getFeatureValues(traces, featureNames)
-
-# This function is just for information purposes
-if __name__ == "__main__":
-    main()
