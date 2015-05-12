@@ -18,6 +18,9 @@ At the moment we provide a way to automatically compile and install the library
 as a Python module. Soon instructions will be added on how to link C++ code 
 directly with the eFEL.
 
+The source code of the eFEL is located on github: 
+`BlueBrain/eFEL <https://github.com/BlueBrain/eFEL>`_
+
 .. toctree::
    :maxdepth: 3
 
