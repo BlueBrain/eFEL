@@ -1,4 +1,4 @@
-"""XKCD / DEAP optimisation example"""
+"""Neuron / DEAP optimisation example evaluation function"""
 
 import neuron
 neuron.h.load_file('stdrun.hoc')
