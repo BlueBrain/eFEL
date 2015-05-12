@@ -5,7 +5,7 @@ doc: install
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	git checkout gh-pages                                                            
-	rm -rf build _sources _static _modules
+	rm -rf build _sources _static _modules efel
 	git reset HEAD
 	mv -fv docs/build/html/* ./
 	rm -rf docs/build
