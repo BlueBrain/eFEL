@@ -42,7 +42,7 @@ class TestCppcore(object):
     def setup(self):
         """Setup"""
         import efel
-        efel.cppcore.Initialize(efel.settings.dependencyfile_path, "log")
+        efel.cppcore.Initialize(efel.getDependencyFileLocation(), "log")
 
     def test_getFeatureNames(self):
         """cppcore: Testing getting all feature names"""

@@ -1,4 +1,9 @@
-"""efel main python functions"""
+"""eFEL Python functions.
+
+This module provides the interface between the Python API of the eFEL. 
+The convenience functions defined here call the underlying 'cppcore' library
+to hide the lower level API from the user.
+"""
 
 """
 Copyright (c) 2015, EPFL/Blue Brain Project
@@ -27,39 +32,46 @@ import os
 import efel
 import efel.cppcore as cppcore
 
-settings = efel.Settings()
-
-
-def printelements(iterat):
-    """Print all the elements of an iterator"""
-    return str([element for element in iterat])
+_settings = efel.Settings()
 
 
 def setDependencyFileLocation(location):
-    """Set the location of the DependencyV...txt file"""
+    """Set the location of the Dependency file
+    
+    The eFEL uses 'Dependency' files to let the user define which versions
+    of certain features are used to calculate.
+    The installation directory of the eFEL contains a default 
+    'DependencyV5.txt' file. Unless the user wants to change this file, 
+    it is not necessary to call this function.
+
+    Parameters
+    ==========
+    location : string
+               path to the location of a Dependency file    
+    """
 
     global dependencyFileLocation
     if not os.path.exists(location):
         raise Exception(
             "Path to dependency file {%s} doesn't exist" %
             location)
-    settings.dependencyfile_path = location
+    _settings.dependencyfile_path = location
 
 
 def getDependencyFileLocation():
     """Get the location of the DependencyV...txt file"""
 
-    return settings.dependencyfile_path
+    return _settings.dependencyfile_path
 
 
 def setThreshold(newThreshold):
     """Set the spike detection threshold in the FEL"""
-    settings.threshold = newThreshold
+    _settings.threshold = newThreshold
 
 
 def setDerivativeThreshold(newDerivativeThreshold):
     """Set the threshold for the derivate for detecting the spike onset"""
-    settings.derivate_threshold = newDerivativeThreshold
+    _settings.derivate_threshold = newDerivativeThreshold
 
 
 def getFeatureNames():
@@ -73,7 +85,7 @@ def getFeatureNames():
                     argument of e.g. getFeatureValues()
     """
 
-    cppcore.Initialize(settings.dependencyfile_path, "log")
+    cppcore.Initialize(_settings.dependencyfile_path, "log")
     feature_names = []
     cppcore.getFeatureNames(feature_names)
 
@@ -130,15 +142,15 @@ def getFeatureValues(traces, featureNames):
         else:
             raise Exception('stim_start or stim_end missing from trace')
 
-        cppcore.Initialize(settings.dependencyfile_path, "log")
+        cppcore.Initialize(_settings.dependencyfile_path, "log")
 
         # First set some settings that are used by the feature extraction
         cppcore.setFeatureDouble('spike_skipf', [0.1])
         cppcore.setFeatureInt('max_spike_skip', [2])
         cppcore.setFeatureDouble('Threshold',
-                                 [settings.threshold])
+                                 [_settings.threshold])
         cppcore.setFeatureDouble('DerivativeThreshold',
-                                 [settings.derivative_threshold])
+                                 [_settings.derivative_threshold])
         cppcore.setFeatureDouble('interp_step', [0.1])
         cppcore.setFeatureDouble('burst_factor', [1.5])
         cppcore.setFeatureDouble("initial_perc", [0.1])
