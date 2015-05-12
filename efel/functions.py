@@ -59,18 +59,46 @@ def setDependencyFileLocation(location):
 
 
 def getDependencyFileLocation():
-    """Get the location of the DependencyV...txt file"""
+    """Get the location of the Dependency file
+    
+    The eFEL uses 'Dependency' files to let the user define which versions
+    of certain features are used to calculate.
+    The installation directory of the eFEL contains a default 
+    'DependencyV5.txt' file.
+
+    Returns
+    =======
+    location : string
+               path to the location of a Dependency file
+    """
 
     return _settings.dependencyfile_path
 
 
 def setThreshold(newThreshold):
-    """Set the spike detection threshold in the FEL"""
+    """Set the spike detection threshold in the eFEL
+    
+    Parameters
+    ==========
+    threshold : float
+                The new spike detection threshold value (in the same units
+                as the traces, e.g. mV).
+    """
     _settings.threshold = newThreshold
 
 
 def setDerivativeThreshold(newDerivativeThreshold):
-    """Set the threshold for the derivate for detecting the spike onset"""
+    """Set the threshold for the derivate for detecting the spike onset
+    
+    Some feature us a threshold on dV/dt to calculate the beginning of an
+    action potential. This function allows you to set this threshold.
+
+    Parameters
+    ==========
+    derivative_threshold : float
+                The new derivative threshold value (in the same units
+                as the traces, e.g. mV/ms).
+    """
     _settings.derivate_threshold = newDerivativeThreshold
 
 
@@ -193,19 +221,38 @@ def getFeatureValues(traces, featureNames):
 
 
 def getMeanFeatureValues(traces, featureNames):
+    """Convenience function that returns the mean values from getFeatureValues().
+
+    Instead of return a list of values for every feature as getFeatureValues()
+    does, this function returns per trace one value for every feature, namely 
+    the mean value.
+
+    Parameters
+    ==========
+    traces : list of trace dicts
+             Every trace dict represent one trace. The dict should have the
+             following keys: 'T', 'V', 'stim_start', 'stim_end'
+    feature_names : list of string
+                    List with the names of the features to be calculated on all
+                    the traces.
+    Returns
+    =======
+    feature_values : list of dicts
+                     For every input trace a feature value dict is return (in
+                     the same order). The dict contains the keys of
+                     'feature_names', every key contains the mean of the array
+                     that is returned by getFeatureValues()
+                     The value is None if an error occured during the 
+                     calculation of the feature, or if the feature value array
+                     was empty.
     """
-    input :
-       traces: dictionary with keys 'T' (time values list),
-               'V' (voltage values list), 'stim_start', stim_end'
-       featureNames: list of strings
-    output :
-       featureDicts: list of dictionaries (1 for each trace),
-                     featureNames are the keys in the dicts,
-                     the values in the dicts are mean values per feature
-    """
+
     featureDicts = getFeatureValues(traces, featureNames)
     for featureDict in featureDicts:
         for (key, values) in featureDict.items():
-            featureDict[key] = numpy.mean(values)
+            if values is None or len(values) == 0:
+                featureDict[key] = None
+            else:
+                featureDict[key] = numpy.mean(values)
 
     return featureDicts

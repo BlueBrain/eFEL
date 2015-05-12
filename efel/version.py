@@ -1,4 +1,4 @@
-""" ibea_deap version  """
+"""eFEL version"""
 
 # pylint: disable=W0633, W0702
 

@@ -12,7 +12,7 @@ doc_upload: doc
 	git commit -m "Updating docs" && \
 	git push "git@github.com:BlueBrain/eFEL.git" master:gh-pages --force && \
 	rm -rf .git
-test:
+test: install
 	cd efel/tests; nosetests -s -v -x
 clean:
 	rm -rf build
