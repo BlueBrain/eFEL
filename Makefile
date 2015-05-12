@@ -2,7 +2,7 @@ all: install
 install:
 	pip install . --upgrade
 doc: install
-	cd docs; $(MAKE) html
+	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	git checkout gh-pages                                                            
 	rm -rf build _sources _static _modules
@@ -15,3 +15,4 @@ test:
 	cd efel/tests; nosetests -s -v -x
 clean:
 	rm -rf build
+	rm -rf docs/build

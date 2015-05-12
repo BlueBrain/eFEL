@@ -1,7 +1,7 @@
-efel
-====
+efel.functions
+==============
 
-.. automodule:: efel
+.. automodule:: efel.functions
 
    
    
@@ -22,12 +22,6 @@ efel
    
 
    
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      Settings
    
    
 

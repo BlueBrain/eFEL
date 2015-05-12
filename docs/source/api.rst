@@ -2,7 +2,7 @@ API Documentation
 =================                                                                
                                                                                  
 .. autosummary::                                                                 
-   :nosignatures:                                                                
    :toctree: efel                                                           
                                                                                        
-   efel        
+   efel.functions
+   efel.cppcore   

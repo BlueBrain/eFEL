@@ -18,7 +18,8 @@ import efel
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('.'))
+#sys.path.append('sphinxext')
 
 # -- General configuration -----------------------------------------------------
 
@@ -92,7 +93,7 @@ pygments_style = 'sphinx'
 autosummary_generate = True
 autodoc_default_flags = ['show-inheritance']
 autoclass_content = 'both'
-
+tolerate_sphinx_warnings = True
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
