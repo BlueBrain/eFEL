@@ -1,5 +1,5 @@
-eFeatures documentation
-=======================
+eFeature descriptions
+=====================
 
 A pdf document describing the eFeatures is available 
 `here <http://bluebrain.github.io/eFEL/efeature-documentation.pdf>`_. 
