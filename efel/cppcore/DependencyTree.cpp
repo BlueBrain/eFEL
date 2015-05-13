@@ -211,7 +211,7 @@ int cTree::getDependency(string strLine, string wildcards) {
     wildcards = strLine.substr(wcpos);
     strLine = strLine.substr(0, wcpos);
   }
-  int childCount = 0;
+  unsigned childCount = 0;
   getChilds(strLine, tmpChild);
   if (tmpChild.size() != 0) {
     childCount = tmpChild.size();

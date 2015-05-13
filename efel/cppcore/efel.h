@@ -22,8 +22,8 @@
 extern "C" {
 FEATURELIB_API int Initialize(const char *strDepFile, const char *outdir);
 FEATURELIB_API int setVersion(const char *strDepFile);
-FEATURELIB_API int setFeatureInt(const char *strName, int *A, int nValue);
-FEATURELIB_API int setFeatureDouble(const char *strName, double *A, int nValue);
+FEATURELIB_API int setFeatureInt(const char *strName, int *A, unsigned nValue);
+FEATURELIB_API int setFeatureDouble(const char *strName, double *A, unsigned nValue);
 FEATURELIB_API int getTotalIntData();
 FEATURELIB_API int getTotalDoubleData();
 FEATURELIB_API int FeaturePrint(const char *strName);

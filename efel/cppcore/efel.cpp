@@ -43,7 +43,7 @@ int FeaturePrint(const char *strFile) {
   pFeature->printFeature(strFile);
   return 1;
 }
-int setFeatureInt(const char *strName, int *A, int nValue) {
+int setFeatureInt(const char *strName, int *A, unsigned nValue) {
   vector<int> v(nValue);
   for (unsigned i = 0; i < nValue; i++) {
     v[i] = A[i];
@@ -52,7 +52,7 @@ int setFeatureInt(const char *strName, int *A, int nValue) {
   return 1;
 }
 
-int setFeatureDouble(const char *strName, double *A, int nValue) {
+int setFeatureDouble(const char *strName, double *A, unsigned nValue) {
   // printf("\nInside featureLibrary.. Before setdouble [%s = %f add = %d nVal=
   // %d]\n", strName, A[0], pFeature, nValue);
   vector<double> v(nValue);
