@@ -23,3 +23,5 @@ test: install
 clean:
 	rm -rf build
 	rm -rf docs/build
+push: clean install test doc doc_upload
+	git push
