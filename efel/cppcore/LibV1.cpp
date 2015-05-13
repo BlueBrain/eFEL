@@ -170,7 +170,7 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
                   "\n Three spikes required for calculation of ISI_values.\n";
       return -1;
     }
-    for (int i = 2; i < pvTime.size(); i++)
+    for (unsigned i = 2; i < pvTime.size(); i++)
       VecISI.push_back(pvTime[i] - pvTime[i - 1]);
     setDoubleVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
     return VecISI.size();
@@ -597,7 +597,6 @@ int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimStart, vRest;
     double startTime, endTime;
-    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -613,7 +612,7 @@ int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
     int nCount = 0;
     double vSum = 0;
     // calculte the mean of voltage between startTime and endTime
-    for (i = 0; i < t.size(); i++) {
+    for (unsigned i = 0; i < t.size(); i++) {
       if (t[i] >= startTime) {
         vSum = vSum + v[i];
         nCount++;
@@ -637,7 +636,7 @@ int LibV1::__burst_ISI_indices(double BurstFactor, vector<int>& PeakIndex,
 
   for (unsigned i = 1; i < (ISIValues.size() - 1); i++) {
     ISIpcopy.clear();
-    for (int j = count + 1; j < i; j++) ISIpcopy.push_back(ISIValues[j]);
+    for (unsigned j = count + 1; j < i; j++) ISIpcopy.push_back(ISIValues[j]);
     sort(ISIpcopy.begin(), ISIpcopy.end());
     n = ISIpcopy.size();
     if ((n % 2) == 0) {
@@ -699,9 +698,9 @@ int LibV1::__burst_mean_freq(vector<double>& PVTime, vector<int>& BurstIndex,
                              vector<double>& BurstMeanFreq) {
   vector<double> tmpVec;
   BurstIndex.insert(BurstIndex.begin(), 0);
-  int i;
-  for (i = 0; i < BurstIndex.size(); i++) tmpVec.push_back(0);
+  for (unsigned i = 0; i < BurstIndex.size(); i++) tmpVec.push_back(0);
   double span;
+  unsigned i;
   for (i = 0; i < BurstIndex.size() - 1; i++) {
     if (BurstIndex[i + 1] - BurstIndex[i] == 1) {
       tmpVec.push_back(0);
@@ -1086,12 +1085,12 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
   vector<double> v, dv1, dv2;
   double dx = t[1] - t[0];
   double VoltThreshold, VoltMax, HalfV, T0, V0, V1, fraction, TStart, TEnd;
-  int i, j, index;
-  for (i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
+  int j, index;
+  for (unsigned i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
     v.clear();
     dv1.clear();
     dv2.clear();
-    for (j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
+    for (unsigned j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
       v.push_back(V[j]);
     }
     index = v.size();  // tbr

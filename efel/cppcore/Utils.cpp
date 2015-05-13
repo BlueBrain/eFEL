@@ -21,7 +21,7 @@
 int LinearInterpolation(double Stepdx, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,
                         vector<double>& InterpY) {
-  int nCount = Y.size();
+  unsigned nCount = Y.size();
   int nPts = int((X[nCount - 1] - X[0]) / Stepdx);  // Because time is in
                                                     // millisecond and needs to
                                                     // be interpolated at 0.1 ms
@@ -62,7 +62,7 @@ void getfivepointstencilderivative(const vector<double>& v,
   dv.resize(v.size());
   dv[0] = v[1] - v[0];
   dv[1] = (v[2] - v[0]) / 2.;
-  for (int i = 2; i < v.size() - 2; i++) {
+  for (unsigned i = 2; i < v.size() - 2; i++) {
     dv[i] = -v[i + 2] + 8 * v[i + 1] - 8 * v[i - 1] + v[i - 2];
     dv[i] /= 12.;
   }
