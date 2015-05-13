@@ -8,9 +8,17 @@ Introduction
 Using the eFEL, pyNeuron and the DEAP optimisation library one can very easily 
 set up a genetic algorithm to fit parameters of a neuron model.
 
+We propose this setup because it leverages the power of the Python language 
+to load several software tools in a compact script. The DEAP 
+(Distributed Evolutionary Algorithms in Python) allows you to easily switch
+algorithms. Parallelising your evaluation function over cluster computers 
+becomes a matter of only adding a couple of lines to your 
+`code <http://deap.readthedocs.org/en/latest/tutorials/basic/part4.html>`_, 
+thanks to `pyScoop <http://pyscoop.org>`_.
+
 In this example we will assume you have installed 
 `eFEL <https://github.com/BlueBrain/eFEL>`_, 
-`pyNeuron <http://www.neuron.yale.edu/neuron/static/new_doc/index.html>`_ 
+`pyNeuron <http://www.neuron.yale.edu/neuron/download/compile_linux#otheroptions>`_ 
 and `DEAP <https://github.com/DEAP/deap>`_
 
 The code of the example below can be downloaded from 
