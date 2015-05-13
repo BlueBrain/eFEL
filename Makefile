@@ -11,7 +11,7 @@ doc: install doc_efeatures
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \
-	cp ../../build_efeatures/efeature-documentation.pdf .
+	cp ../../build_efeatures/efeature-documentation.pdf . \
 	touch .nojekyll && \
 	git init . && \
 	git add . && \
