@@ -405,7 +405,6 @@ int LibV3::spike_width1(mapStr2intVec& IntFeatureData,
     vector<int> PeakIndex, minAHPIndex;
     vector<double> V, t, dv1, dv2, spike_width1;
     vector<double> stim_start;
-    double InterpStep;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), V);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -484,11 +483,9 @@ int LibV3::min_AHP_indices(mapStr2intVec& IntFeatureData,
       min_ahp_indices.push_back(ahpindex);
       min_ahp_values.push_back(v[ahpindex]);
     }
-    if (min_ahp_indices.size() >= 0) {
-      setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-      setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
-                   min_ahp_values);
-    }
+    setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+    setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
+                 min_ahp_values);
     return min_ahp_indices.size();
   }
   return -1;
@@ -545,7 +542,7 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimStart, vRest;
     double startTime, endTime;
-    int StartIndex, EndIndex, i;
+    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -849,8 +846,6 @@ int LibV3::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   // derivative at peak start according to eCode specification 10mV/ms
   // according to Shaul 12mV/ms
   const double derivativethreshold = 12.;
-  // constant time steps due to 'interpolate'
-  double timestep = t[1] - t[0];
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;

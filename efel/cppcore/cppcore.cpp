@@ -173,7 +173,6 @@ static PyObject* getfeaturedouble(PyObject * self, PyObject * args) {
 static PyObject* getFeatureNames(PyObject * self, PyObject * args) {
   vector<string> feature_names;
   PyObject * py_feature_names;
-  int return_value;
   if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &py_feature_names)) {
           return NULL;
   }

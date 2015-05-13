@@ -440,11 +440,9 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
         min_ahp_values.push_back(v[ahpindex]);
       }
     }
-    if (min_ahp_indices.size() >= 0) {
-      setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-      setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
-                   min_ahp_values);
-    }
+    setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+    setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
+                 min_ahp_values);
     return min_ahp_indices.size();
   }
   return -1;
@@ -536,7 +534,6 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
     vector<int> PeakIndex, minAHPIndex;
     vector<double> V, t, dv1, dv2, spike_width1;
     vector<double> stim_start;
-    double InterpStep;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), V);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -578,8 +575,6 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               const vector<int>& ahpi, vector<int>& apbi,
                               double dTh) {
   const double derivativethreshold = dTh;
-  // constant time steps due to 'interpolate'
-  double timestep = t[1] - t[0];
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;
@@ -1226,10 +1221,6 @@ int LibV5::__AP_begin_width(const vector<double>& t, const vector<double>& v,
     double v_start = v[AP_begin_indices[i]];
     // interpolate this one time step where the voltage is close to v_start in
     // the falling edge
-    double v_dev;
-    double delta_v;
-    double t_dev_fall;
-    double delta_t;
     int rise_index = AP_begin_indices[i];
     int fall_index =
         distance(v.begin(), find_if(v.begin() + rise_index + 1,
@@ -1257,7 +1248,6 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
     vector<int> AP_begin_indices, minAHPIndex;
     vector<double> V, t, dv1, dv2, AP_begin_width;
     vector<double> stim_start;
-    double InterpStep;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), V);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -1628,7 +1618,7 @@ int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimEnd, vRest;
     double startTime, endTime;
-    int StartIndex, EndIndex, i;
+    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);

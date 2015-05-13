@@ -397,11 +397,9 @@ int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
       min_ahp_indices.push_back(ahpindex);
       min_ahp_values.push_back(v[ahpindex]);
     }
-    if (min_ahp_indices.size() >= 0) {
-      setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-      setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
-                   min_ahp_values);
-    }
+    setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+    setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
+                 min_ahp_values);
     return min_ahp_indices.size();
   }
   return -1;
@@ -599,7 +597,7 @@ int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimStart, vRest;
     double startTime, endTime;
-    int StartIndex, EndIndex, i;
+    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -777,7 +775,7 @@ int LibV1::__interburst_voltage(vector<int>& BurstIndex, vector<int>& PeakIndex,
                                 vector<double>& T, vector<double>& V,
                                 vector<double>& IBV) {
   if (BurstIndex.size() < 2) return 0;
-  int i, j, pIndex, tsIndex, teIndex, cnt;
+  int j, pIndex, tsIndex, teIndex, cnt;
   double tStart, tEnd, vTotal = 0;
   for (unsigned i = 0; i < BurstIndex.size(); i++) {
     pIndex = BurstIndex[i] - 1;
@@ -1157,7 +1155,6 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
   else {
     vector<int> PeakIndex, minAHPIndex;
     vector<double> V, t, dv1, dv2, spike_width2;
-    double InterpStep;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), V);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -1240,7 +1237,6 @@ int LibV1::spike_width1(mapStr2intVec& IntFeatureData,
     vector<int> PeakIndex, minAHPIndex;
     vector<double> V, t, dv1, dv2, spike_width1;
     vector<double> stim_start;
-    double InterpStep;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), V);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -1486,7 +1482,7 @@ int LibV1::__voltage_deflection(const vector<double>& v,
                                 const vector<double>& t, double stimStart,
                                 double stimEnd, vector<double>& vd) {
   int wind = 5;
-  unsigned stimendindex = 0;
+  int stimendindex = 0;
   double base = 0.;
   int base_size = 0;
   for (unsigned i = 0; i < t.size(); i++) {
@@ -1495,7 +1491,7 @@ int LibV1::__voltage_deflection(const vector<double>& v,
       base_size++;
     }
     if (t[i] > stimEnd) {
-      stimendindex = i;
+      stimendindex = (int)i;
       break;
     }
   }

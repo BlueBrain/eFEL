@@ -32,7 +32,6 @@ int LibV2::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   // according to Shaul 12mV/ms
   const double derivativethreshold = 12.;
   // constant time steps due to 'interpolate'
-  double timestep = t[1] - t[0];
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;
