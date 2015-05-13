@@ -38,7 +38,7 @@ int LibV5::__ISI_log_slope(const vector<double>& isiValues,
 
   if (skip) {
     // Remove n spikes given by spike_skipf or max_spike_skip
-    int isisToRemove = (int)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
+    unsigned isisToRemove = (unsigned)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
     // spike To remove is minimum of spike_skipf or max_spike_skip
     if (maxnSpike - 1 < isisToRemove) isisToRemove = maxnSpike - 1;
 
@@ -1618,7 +1618,6 @@ int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimEnd, vRest;
     double startTime, endTime;
-    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -1630,7 +1629,7 @@ int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
     int nCount = 0;
     double vSum = 0;
     // calculte the mean of voltage between startTime and endTime
-    for (i = 0; i < t.size(); i++) {
+    for (unsigned i = 0; i < t.size(); i++) {
       if (t[i] >= startTime) {
         vSum = vSum + v[i];
         nCount++;
@@ -1972,20 +1971,15 @@ int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
   vector<double> dv;
   vector<double> dt;
   int apbegin_index, range_max_index, range_min_index;
-  double apbegin_t, ap_phaseslope;
+  double ap_phaseslope;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
 
   for (unsigned i = 0; i < apbi.size(); i++) {
     apbegin_index = apbi[i];
-    apbegin_t = t[apbegin_index];
     range_min_index = apbegin_index - int(range);
-    // Use this if you want to define range as a time
-    // int(lower_bound(t.begin(), t.end(), apbegin_t - range) - t.begin());
     range_max_index = apbegin_index + int(range);
-    // Use this if you want to define range as a time
-    // int(upper_bound(t.begin(), t.end(), apbegin_t + range) - t.begin());
     if (range_min_index < 0 or range_max_index < 0) return -1;
     if (range_min_index > (int)t.size() or range_max_index > (int)t.size()) return -1;
     if (v[range_max_index] - v[range_min_index] == 0) return -1;
