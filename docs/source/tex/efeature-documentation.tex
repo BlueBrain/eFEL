@@ -1,0 +1,196 @@
+%\documentclass[a4paper, twocolumn]{report}
+\documentclass[a4paper]{article}
+
+%\usepackage[T1]{fontenc}
+%\usepackage{courier}
+\usepackage{amsmath}
+\usepackage{boxedminipage}
+\usepackage{color}
+\usepackage{fancyhdr}
+%\usepackage[draft]{pdfpages}
+\usepackage{xspace}
+%\usepackage{floatflt,graphicx}
+%\usepackage{sidecap}
+%\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
+%\usepackage{cite}
+%\usepackage{listings}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage[pdftex]{hyperref}
+\hypersetup{colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=black,%
+  urlcolor=black,%
+  pdftitle={efeature documentation},%
+  pdfauthor={Ruben J. Moor},%
+  pdfsubject={electrical features},%
+  frenchlinks,%
+}
+
+% configure fancy header
+\pagestyle{fancy}
+
+% emphasis of identifiers in the feature list appendix
+\newcommand{\myid}[1]{
+\texttt{#1}\xspace
+}
+
+% simple box around paragraph with bold fond title
+\newcommand{\mybox}[2]{
+\begin{flushleft}
+  \begin{boxedminipage}{\linewidth}
+    \textbf{#1}
+    #2
+  \end{boxedminipage}
+\end{flushleft}
+}
+
+% custom figure environment
+\newcommand*{\myfigurename}{}
+\newenvironment{myfigure}[2][t]
+{
+  \renewcommand*{\myfigurename}{#2}
+  \begin{figure}[#1]
+    \centering
+    \vspace{-15pt}
+    \includegraphics{figures/\myfigurename}
+    \vspace{-25pt}
+}
+{
+  \label{fig:\myfigurename}
+  \end{figure}
+}
+
+
+% custom side-caption figure environment
+\newcommand*{\myscfigurename}{}
+\newenvironment{myscfigure}[2][t]
+{
+  \renewcommand*{\myscfigurename}{#2}
+  \begin{SCfigure}
+    \centering
+    \vspace{-15pt}
+    \includegraphics{figures/\myscfigurename}
+}
+{
+  \label{fig:\myscfigurename}
+  \end{SCfigure}
+}
+
+\definecolor{MyGray}{rgb}{0.9,0.9,0.9}
+% entry in the list of electrical features, allows an appropriate database-like style
+\newcommand*{\fname}{}
+\newcommand*{\fnamespace}{}
+\newcommand*{\fidentifier}{}
+\newcommand*{\funit}{}
+\newcommand*{\frequiredfeatures}{}
+\newcommand*{\frequiredtracedata}{}
+\newcommand*{\frequiredparams}{}
+\newcommand*{\fsemantics}{}
+\newcommand*{\fdescription}{}
+\newcommand*{\fremarks}{}
+\newenvironment{efeature}[9]
+{
+  \renewcommand*{\fname}{#1}
+  \renewcommand*{\fnamespace}{#2}
+  \renewcommand*{\fidentifier}{#3}
+  \renewcommand*{\funit}{#4}
+  \renewcommand*{\frequiredfeatures}{#5}
+  \renewcommand*{\frequiredtracedata}{#6}
+  \renewcommand*{\frequiredparams}{#7}
+  \renewcommand*{\fsemantics}{#8}
+  \renewcommand*{\fdescription}{#9}
+
+  % headline
+  \subsection{\fname}
+
+  % indent
+  \hspace{.6cm}
+  %\begin{minipage}{\linewidth-0.6cm}
+  \begin{minipage}{\linewidth}
+
+  % semantics
+  \fsemantics
+
+  % technical details in a table
+  \vspace{.3cm}
+  \begin{tabular}{|l|p{6.2cm}|}
+    \hline
+    namespace / identifier & \texttt{\fnamespace:\fidentifier} \\
+    \hline
+    unit & \funit \\
+    \hline
+    required features & \frequiredfeatures \\
+    \hline
+    required trace data & \frequiredtracedata \\
+    \hline
+    required parameters & \frequiredparams \\
+    \hline
+  \end{tabular}
+
+  \vspace{.3cm}
+}
+% remarks
+{
+  \vspace{.3cm}
+
+  % detailed description / specification of the feature
+  \fcolorbox{black}{MyGray}{
+  \begin{minipage}{\linewidth}
+    \ttfamily
+    \scriptsize
+    \vspace{-2.5ex}
+    \begin{tabbing}
+      \quad \= \quad \= \quad \= \\
+      \fdescription
+    \end{tabbing}
+  \end{minipage}
+  }
+  % end of indentated block
+  %\end{list}
+  \end{minipage}
+
+  % end of list entry
+}
+
+% abbreviations for symbols in math mode
+\newcommand{\Xexp}{X_{\mathrm{exp}}}
+\newcommand{\sigmaexp}{\sigma_{\mathrm{exp}}}
+\newcommand{\Xsim}{X_{\mathrm{sim}}}
+\newcommand{\isi}{\textrm{ISI}}
+\newcommand{\tpeak}{t^{\mathrm{peak}}}
+% argmax
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{argmax}}}
+
+% abbreviations for terms
+\newcommand{\bglib}{\emph{bglib1.5}\xspace}
+
+% font
+\renewcommand{\rmdefault}{phv}
+
+\renewcommand{\cite}[1]{[#1]}
+
+\title{Electrophys Feature Extraction Library (eFEL)}
+\author{Ruben Moor, Werner Van Geit}
+
+\fancyfoot{}
+\fancyfoot[R]{\thepage}
+\fancyfoot[L]{\copyright\; 2015 BBP, EPFL. All Rights Reserved}
+
+\fancypagestyle{plain}{%
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[R]{\thepage}
+\fancyfoot[L]{\copyright\; 2015 BBP, EPFL. All Rights Reserved}}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+
+\section*{About this document}
+\input{efeatures}
+
+\end{document}

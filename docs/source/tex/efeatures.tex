@@ -1,0 +1,2010 @@
+\label{app:features}
+The following list is the result of the implementation of the feature concept.
+It serves as a reference for the user of the feature library as well as for the developer.
+In order to understand the meaning of a certain feature it is not necessary anymore to recover the extraction procedure from its implementation.
+
+\section{General remarks}
+
+In the feature library the voltage trace is represented by two vectors, the voltage vector \myid{V} and the corresponding time vector \myid{T}.
+\emph{Voltage trace indices} are indices of these two vectors.
+Some features require additional trace data, this is:
+
+\begin{itemize}
+  \item \myid{stim\_start}, the time at the beginning of the stimulus current.
+  \item \myid{stim\_end}, the time at the end of the stimulus current.
+\end{itemize}
+
+Some features require parameters in order to determine the extraction procedure.
+
+Feature values are represented as vectors as well.
+All elementary features which describe properties of action potentials have entries corresponding to one action potential.
+Other features have only one entry containing the feature value.
+For some features the extraction procedure can \emph{fail}.
+In case of failure the vector containing the feature values is \emph{empty} and an error message is issued.
+Note that a successful calculation of a feature can also result in an empty vector (e.g. \myid{peak indices} on a trace without action potentials).
+
+\section{Elementary features}
+
+% efeature
+% args:
+%   feature name
+%   namespace
+%   identifier
+%   type
+%   required features
+%   required trace data
+%   required parameters
+%   semantics
+%   detailed description / specification
+\begin{efeature}
+  {peak indices}
+  {LibV1}
+  {peak\_indices}
+  {(index)}
+  {none}
+  {V}
+  {Threshold}
+  {The voltage trace indices at the voltage maxima of the peaks}
+  {
+  v$_0, \ldots, $v$_{n-1} =$ V \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    IF v$_i <$ Threshold AND v$_{i+1} >$ Threshold THEN \+ \\
+      APPEND i TO upwardsIndices \- \\
+    ENDIF \\
+    IF v$_i >$ Threshold AND v$_{i+1} <$ Threshold THEN \+ \\
+      APPEND i TO downwardsIndices \- \\
+    ENDIF \- \\
+  ENDFOR \\
+  IF length of upwardsIndices $\neq$ length of downwardsIndices THEN \+ \\
+    FAIL "Bad trace shape." \- \\
+  ENDIF \\
+  u$_0, \ldots, $u$_{n-1} =$ upwardsIndices \\
+  d$_0, \ldots, $d$_{n-1} =$ downwardsIndices \\
+  FOR $j = 0, \ldots, n-1$ DO \+ \\
+    APPEND $i$ TO peak\_indices WITH v$_i$ maximal AND $u_j \le i < d_j$ \- \\
+  ENDFOR
+  }
+  Operating on the voltage trace starting at index 0, each upwards crossing of \myid{V} and the value of \myid{Threshold} is considered a peak onset, and each downwards crossing a peak offset respectively. 
+  The peak index is the index of the maximum in between.
+\end{efeature}
+\mybox{remarks:}{
+  The usage for experimental traces is not recommended.
+  For noisy traces small fluctuations around the value of \myid{Threshold} are counted as peaks.
+  Also traces have been observed where the minima between peaks laid above typical values of \myid{Threshold}, sometimes even above the maxima of other peaks.
+  This results in flawed peak count.
+  These issues have been addressed in \myid{LibV4:peak\_indices}.
+  }
+
+\begin{efeature}
+  {peak indices (2nd)}
+  {LibV4}
+  {peak\_indices}
+  {(index)}
+  {none}
+  {V\\&T}
+  {min spike height\\&threshold}
+  {The voltage trace indices at the voltage maxima of the peaks, noise save}
+  {
+  $\Delta$v$_0, \ldots, \Delta$v$_{n-1} = \Delta$V \\
+  APPEND $0$ TO minima \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    IF $\Delta$v$_i < 0$ AND $\Delta$v$_{i+1} > 0$ THEN \+ \\
+      APPEND $i + 1$ TO minima \- \\
+    ENDIF \- \\
+  ENDFOR \\
+  APPEND $n - 1$ TO minima \\
+  min$_0$, \ldots, min$_{n-1} =$ minima \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    max$_i = j$ WITH v$_j$ maximal AND min$_i \le j < $ min$_{i+1}$ \\
+    h1 = V[max$_i$] - min$_i$ \\
+    h2 = V[max$_i$] - min$_{i+1}$ \\
+    IF h1 > min\_spike\_height AND h2 > min\_spike\_height \\
+    OR \\
+    V[max$_i$] > threshold AND (h1 > min\_spike\_height OR h2 > min\_spike\_height) THEN \+ \\
+      APPEND max$_i$ TO peak\_indices \- \\
+    ENDIF \- \\
+  ENDFOR \\
+  }
+  The nulls of the first derivative of \myid{V} with a change of sign from $-$ to $+$ are the minima.
+  The maxima between adjacent minima are presumable peaks.
+  The left-hand (right-hand) height of a peak is the difference of the maximum and the left-hand (right-hand) minimum.
+  A peak is kept if boths heights are bigger than \myid{min spike height} \emph{or} the maximum is bigger than \myid{threshold} and one height is bigger than \myid{min spike height}.
+\end{efeature}
+
+\begin{efeature}
+  {peak voltage}
+  {LibV1}
+  {peak\_voltage}
+  {mV}
+  {peak indices}
+  {V}
+  {none}
+  {The voltages at the maxima of the peaks}
+  {
+  p$_0, \ldots, $p$_{n-1} =$ peak\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[p$_i$] TO peak\_voltage \- \\
+  ENDFOR
+  }
+  Iterating over the \myid{peak indices} peak voltage yields \myid{V} at each index.
+  
+\end{efeature}
+
+\begin{efeature}
+  {peak time}
+  {LibV1}
+  {peak\_time}
+  {ms}
+  {peak indices}
+  {T}
+  {none}
+  {The times of the maxima of the peaks}
+  {
+  p$_0, \ldots, $p$_{n-1} =$ peak\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND T[p$_i$] TO peak\_time \- \\
+  ENDFOR
+  }
+  Iterating over the \myid{peak indices}, yield \myid{T} at each index.
+  
+\end{efeature}
+
+\begin{efeature}
+  {trace check}
+  {LibV1}
+  {trace\_check}
+  {none}
+  {peak time}
+  {stim\_start\\&stim\_end}
+  { }
+  {Causes feature extraction failure with error message when peaks before or after the stimulus are detected}
+  {
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    IF pt$_i$ < stim\_start OR pt$_i > 1.05 \cdot$ stim\_end THEN \+ \\
+      FAIL "Trace sanity check failed, there were spike outside the stimulus interval." \- \\
+    ENDIF\- \\
+  ENDFOR \\
+  APPEND 0 TO trace\_check
+  }
+  Iterating over the values \myid{peak time}, yield 0 as long as all the time values are bigger than \myid{stim start} and smaller than \myid{stim end}. 
+  Otherwise fail.
+  
+\end{efeature}
+
+\begin{efeature}
+  {ISI values}
+  {LibV1}
+  {ISI\_values}
+  {ms}
+  {peak time}
+  {none}
+  {none}
+  {The interspike intervals (i.e. time intervals) between adjacent peaks, starting at the second peak}
+  {
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  IF $n < 3$ THEN \+ \\
+    FAIL "Three spikes required for calculation of ISI\_values." \- \\
+  ENDIF
+  FOR $i = 2, \dots, n - 1$ DO \+ \\
+  APPEND pt$_i$ - pt$_{i-1}$ TO ISI\_values \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {doublet ISI}
+  {LibV1}
+  {doublet\_ISI}
+  {ms}
+  {peak time}
+  {none}
+  {none}
+  {The time interval between the first too peaks}
+  { 
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  IF $n < 2$ THEN \+ \\
+    FAIL "Need at least two spikes for doublet\_ISI." \- \\
+  ENDIF \\
+  APPEND pt$_1$ - pt$_0$ TO doublet\_ISI \\
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {burst ISI indices}
+  {LibV1}
+  {burst\_ISI\_indices}
+  {(index)}
+  {ISI values\\&peak indices}
+  {none}
+  {burst factor (optional)}
+  {ISI indices of those ISIs which are the beginning of a burst}
+  {
+  isi$_0, \ldots, $isi$_{n-1} =$ ISI\_values \\
+  $c = 0$ \\
+  FOR $i = 1, \dots, n - 2$ DO \+ \\
+    median = median of $\{$ isi$_c$, \ldots, isi$_{n-1}\}$ \\
+    IF isi$_i$ > burst\_factor $\cdot$ median \\
+    AND isi$_{i+1}$ < isi$_i$ / burst\_factor THEN \+ \\
+      APPEND $i+1$ TO burst\_ISI\_indices \- \\
+    ENDIF \\
+    $c = i$ \- \\
+  ENDFOR
+  }
+  The median of the ISIs is determined.
+  The \myid{burst factor} defaults to 2.
+  Each ISI bigger than \myid{burst factor} times median divides two successive bursts, if it is also bigger than the following ISI times \myid{burst factor}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {mean frequency}
+  {LibV1}
+  {mean\_frequency}
+  {Hz}
+  {peak time}
+  {stim start\\&stim end}
+  {none}
+  {The mean frequency of the firing rate}
+  {
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  $c = 0$ \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    IF pt$_i \ge$ stim\_start AND pt$_i \le$ stim\_end THEN \+ \\
+      $c = c + 1$ \- \\
+    ENDIF \- \\
+  ENDFOR \\
+  APPEND $1000 \cdot c / ($stim\_end $-$ stim\_start$)$ TO mean\_frequency
+  }
+  Yield the number of peaks divided by the length of the stimulus time interval.
+  \mybox{remarks:}{
+  The resulting value might be unexpected for bursting or irregular spiking cells.
+  Regard \myid{ISI CV} and \myid{adaptation index} to assure that the cell is firing uniformly during the stimulus.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {time to first spike}
+  {LibV1}
+  {time\_to\_first\_spike}
+  {ms}
+  {peak time}
+  {stim start}
+  {none}
+  {Time from the start of the stimulus to the maximum of the first peak}
+  { 
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  IF $n < 1$ THEN \+ \\
+    FAIL "One spike required for time\_to\_first\_spike." \- \\
+  ENDIF \\
+  APPEND pt$_0 -$ stim\_start TO time\_to\_first\_spike
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {min AHP indices}
+  {LibV1}
+  {min\_AHP\_indices}
+  {(index)}
+  {peak indices}
+  {V\\&T\\&stim end}
+  {none}
+  {Voltage trace indices at the after-hyperpolarization}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  IF $n < 1$ THEN \+ \\
+    FAIL "At least one spike required for calculation of min\_AHP\_indices." \- \\
+  ENDIF \\
+  t$_0, \ldots, $t$_{n-1} =$ T \\ 
+  end\_index = minimal $i$ WITH t$_i \ge$ stim\_end \\
+  IF end\_index > pi$_{n-1} + 5$ THEN \+ \\
+    pi' = (pi$_0$, \ldots, pi$_{n-1}$, end\_index) \- \\
+  ENDIF \\
+  $m$ = length of pi' \\
+  FOR $i = 0, \dots, m - 2$ DO \+ \\
+    APPEND j TO min\_AHP\_indices  WITH V[j] minimal AND pi'$_i \le j <$ pi'$_{i+1}$ \- \\
+  ENDFOR
+  }
+  Yield the indices at the voltage minima between two peaks.
+  For the last peak yield the minimum between the last peak and the end of the stimulus. 
+  
+\end{efeature}
+
+\begin{efeature}
+  {min AHP values}
+  {LibV1}
+  {min\_AHP\_values}
+  {mV}
+  {min AHP indices}
+  {V\\&T\\&stim end}
+  {none}
+  {Voltage values at the after-hyperpolarization}
+  {
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[ahp$_i$] TO min\_AHP\_values \- \\
+  ENDFOR
+  }
+  Iterate over \myid{min AHP indices}.
+  Yield \myid{V} at every index.
+  
+\end{efeature}
+
+\begin{efeature}
+  {adaptation index}
+  {LibV1}
+  {adaptation\_index}
+  {none}
+  {peak time}
+  {stim start\\&stim end}
+  {spike skipf\\&max spike skip\\&offset (optional)}
+  {Normalized average difference of two consecutive ISIs}
+  {
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  pt$'_0$, \ldots, pt$'_{m-1}$  = $\{$ pt$_i$ | pt$_i \ge$ stim\_start $-$ offset AND pt$_i \le$ stim\_end $+$ offset $\}$ \\
+  $k = \min \{$ spike\_skipf $\cdot m$, max\_spike\_skip$\}$ \\
+  pt$''_0$, \ldots, pt$''_{l-1}$ = (pt$'_k$, \ldots, pt$'_m$) \\
+  IF $l$ < 4 THEN \+ \\
+    FAIL "Minimum 4 spike needed for feature [adaptation\_index]." \- \\
+  ENDIF \\
+  isi$_0$, \ldots, isi$_{j-1} =$ pt$''_1 -$ pt$''_0$, \ldots, pt$''_{l-1} -$ pt$''_{l-2}$ \\
+  sub$_0$, \ldots, sub$_{i-1} =$ isi$_1 -$ isi$_0$, \ldots, isi$_{j-1} -$ isi$_{j-2}$ \\
+  sum$_0$, \ldots, sum$_{i-1} =$ isi$_1 +$ isi$_0$, \ldots, isi$_{j-1} +$ isi$_{j-2}$ \\
+  APPEND $\frac{1}{i-1} \sum_{n=0}^{i-1} \frac{\mathrm{sub}_n}{\mathrm{sum}_n}$ TO adaptation\_index
+  }
+  All peaks in the time interval of \myid{stim start}$-$\myid{offset} and \myid{stim end}$+$\myid{offset} are regarded, \myid{offset} defaults to zero.
+  The adaptation index is zero for a constant firing rate and bigger than zero for a decreasing firing rate:
+  \begin{align*}
+    A &=  \frac{1}{N - k - 1} \sum_{i = k}^N \frac{\isi_i - \isi_{i-1}}{\isi_i + \isi_{i-1}} \\
+    &= \frac{1}{N - k - 1} \sum_{i = k}^N \frac{\tpeak_{i+1} - 2 \tpeak_i + \tpeak_{i-1}}{\tpeak_{i+1} - \tpeak_{i-1}}
+  \end{align*}
+  with
+  \begin{align*}
+    \textrm{the interspike intervals:    } & \isi_i = \tpeak_{i+1} - \tpeak_i, \\
+    \textrm{the number of peaks:    } & N.
+  \end{align*}
+  The first $k$ peaks are skipped.
+  The parameter \myid{spike skipf} is the fraction of skipped peaks, $k$ is the minimum of \myid{spike skipf} times $N$ and \myid{max spike skip}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {adaptation index 2}
+  {LibV1}
+  {adaptation\_index2}
+  {none}
+  {peak time}
+  {stim start\\&stim end}
+  {offset (optional)}
+  {Normalized average difference of two consecutive ISIs}
+  {
+  pt$_0, \ldots, $pt$_{n-1} =$ peak\_time \\
+  pt$'_0$, \ldots, pt$'_{m-1}$  = $\{$ pt$_i$ | pt$_i \ge$ stim\_start AND pt$_i \le$ stim\_end $\}$ \\
+  IF $m$ < 4 THEN \+ \\
+    FAIL "Minimum 4 spike needed for feature [adaptation\_index]." \- \\
+  ENDIF \\
+  isi$_0$, \ldots, isi$_{j-1} =$ pt$'_1 -$ pt$'_0$, \ldots, pt$'_{m-1} -$ pt$'_{m-2}$ \\
+  sub$_0$, \ldots, sub$_{i-1} =$ isi$_1 -$ isi$_0$, \ldots, isi$_{j-1} -$ isi$_{j-2}$ \\
+  sum$_0$, \ldots, sum$_{i-1} =$ isi$_1 +$ isi$_0$, \ldots, isi$_{j-1} +$ isi$_{j-2}$ \\
+  APPEND $\frac{1}{i-1} \sum_{n=0}^{i-1} \frac{\mathrm{sub}_n}{\mathrm{sum}_n}$ TO adaptation\_index
+  }
+  The extraction is identical to the one of \myid{adaptation index} for \myid{spike skipf} equal zero.
+  
+\end{efeature}
+
+\begin{efeature}
+  {spike width 2}
+  {LibV1}
+  {spike\_width2}
+  {ms}
+  {min AHP indices}
+  {V\\&T}
+  {none}
+  {The FWHM of each peak}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    onset\_index = $\arg\max_j$ d$^2$V[j] WITH ahp$_i \le j \le$ pi$_{i+1}$ \\
+    onset\_voltage = V[onset\_index] \\
+    peak\_voltage = V[pi$_{i+1}$] \\
+    half\_voltage = (onset\_voltage + peak\_voltage) / 2 \\
+    *** rising phase *** \\
+    half\_index = $\min j$ WITH V[j] > half\_voltage AND ahp$_i \le j \le$ pi$_{i+1}$ \\
+    $t_0 =$ T[half\_index - 1] \\
+    $v_0 =$ V[half\_index - 1] \\
+    $v_1 =$ V[half\_index] \\
+    $\Delta t =$ T[half\_index] - T[half\_index - 1] \\
+    $t_1 = t_0 + \frac{\textrm{half\_voltage} - v_0}{v_1 - v_0} \Delta t$ \\
+    *** falling phase (buggy) *** \\
+    half\_index = $\min j$ WITH V[j] < half\_voltage AND pi$_{i+1} \le j \le $pi$_{i+1}$ \\
+    IF half\_index = pi$_{i+1}$ THEN \+ \\
+      FAIL "Falling phase of last spike is missing." \- \\
+    ENDIF \\
+    $t_0 =$ T[half\_index - 1] \\
+    $v_0 =$ V[half\_index - 1] \\
+    $v_1 =$ V[half\_index] \\
+    $\Delta t =$ T[half\_index] - T[half\_index - 1] \\
+    $t_2 = t_0 + \frac{\textrm{half\_voltage} - v_0}{v_1 - v_0} \Delta t$ \\
+    APPEND $t_2 - t_1$ TO spike\_width2 \- \\
+  ENDFOR
+  }
+  The peak onset is defined as the maximum of the second derivative.
+  For the calculation of the full width at half maximum the height of the peak is taken relative to the voltage at peak onset.
+  As one peak often contains only a little number of data points, the time vector is linearly interpolated in the rising and the falling flank.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP width}
+  {LibV1}
+  {AP\_width}
+  {ms}
+  {peak indices\\&min AHP indices}
+  {V\\&T\\&stim start}
+  {Threshold}
+  {Width of each peak at the value of \myid{Threshold}}
+  {
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  pi$_0, \ldots, $pi$_{m-1} =$ peak\_indices \\
+  start\_index = minimal $i$ WITH T[i] $\ge$ stim\_start \\
+  ahp$'_0, \ldots, $ahp$'_{m-1} =$ start\_index, ahp$_0, \ldots, $ahp$_{n-1}$ \\
+  FOR $j = 0, \dots, m - 2$ DO \+ \\
+    onset\_index = minimal $i$ WITH V[i] $\ge$ Threshold AND ahp$'_j \le i <$ ahp$'_{j+1}$ \\
+    offset\_index = minimal $i$ WITH V[i] $\le$ Threshold AND pi$_j \le i <$ ahp$'_{j+1}$ \\
+    APPEND T[offset\_index] - T[onset\_index] TO AP\_width \- \\
+  ENDFOR
+  }
+  The peak onset (offset) is determined as the upwards (downwards) crossing of the \myid{V} and the value of \myid{Threshold}.
+  AP width yields the time difference between peak onset and peak offset.
+  
+\end{efeature}
+
+\begin{efeature}
+  {spike half width}
+  {LibV1}
+  {spike\_half\_width}
+  {ms}
+  {min AHP indices\\&peak indices}
+  {V\\&T\\&stim start}
+  {none}
+  {The FWHM of each peak}
+  {
+  start\_index = minimal $i$ WITH T[i] $\ge$ stim\_start \\
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  pi$_0, \ldots, $pi$_{m-1} =$ peak\_indices \\
+  ahp$'_0, \ldots, $ahp$'_{m-1} =$ start\_index, ahp$_0, \ldots, $ahp$_{n-1}$ \\
+  FOR $i = 1, \dots, m - 1$ DO \+ \\
+    half\_voltage = (pi$_{i-1}$ + ahp$'_i$) / 2 \\ 
+    rise\_index = $\min j$ WITH V[j] > half\_voltage AND ahp$'_{i-1} \le j \le$ pi$_{i-1}$ \\
+    $\delta v =$ half\_voltage - V[rise\_index] \\
+    $\Delta v =$ V[rise\_index] - V[rise\_index - 1] \\
+    $\Delta t =$ T[rise\_index] - T[rise\_index - 1] \\
+    $\delta t_1 = \Delta t \frac{\delta v}{\Delta v}$ \\
+    fall\_index = $\min j$ WITH V[j] < half\_voltage AND pi$_{i-1} \le j \le$ ahp$'_i$  \\
+    $\delta v =$ half\_voltage - V[fall\_index] \\
+    $\Delta v =$ V[fall\_index] - V[fall\_index - 1] \\
+    $\Delta t =$ T[fall\_index] - T[fall\_index - 1] \\
+    $\delta t_2 = \Delta t \frac{\delta v}{\Delta v}$ \\
+    APPEND T[fall\_index] + $\delta t_1$ - T[rise\_index] + $\delta t_2$ TO spike\_half\_width \- \\
+  ENDFOR
+  }
+  The height of the peak is defined relative to \myid{V} at the subsequent \myid{min AHP index}.
+  As one peak often contains only a little number of data points, the time vector is linearly interpolated in the rising and the falling flank.
+  
+\end{efeature}
+
+\begin{efeature}
+  {burst mean frequency}
+  {LibV1}
+  {burst\_mean\_freq}
+  {Hz}
+  {burst ISI indices\\&peak time}
+  {none}
+  {none}
+  {The mean frequency during a burst for each burst}
+  {
+  isi$_0, \ldots, $isi$_{n-1} =$ burst\_ISI\_indices \\
+  isi$'_0, \ldots, $isi$'_{m-1} =$ (0, isi$_0, \ldots, $isi$_{n-1}$) \\
+  FOR $i = 0, \dots, m - 2$ DO \+ \\
+    IF isi$'_{i+1} -$ isi$'_{i}$ = 1 THEN \+ \\
+      $\nu$ = 0 \- \\
+    ELSE \+ \\
+      $\Delta t =$ peak\_time[isi$'_{i+1}$ - 1] - peak\_time[isi$'_i$] \\
+      $\nu$ = 1000 (isi$'_{i+1}$ - isi$'_i$ + 1) / $\Delta t$ \- \\
+    ENDIF \\
+    APPEND $\nu$ TO burst\_mean\_frequency' \- \\
+  ENDFOR \\
+  $\Delta t =$ peak\_time[last] - peak\_time[isi$'_i$] \\
+  $\nu$ = 1000 (length of peak\_time - isi$'_i$) / $\Delta t$ \\
+  APPEND $\nu$ TO burst\_mean\_frequency' \\
+  burst\_mean\_frequency = $\{\nu|\nu$ IN burst\_mean\_frequency AND $\nu \neq 0\}$
+  }
+  Iterate over the \myid{burst ISI indices} and yield the number of peaks divided by the length of the burst.
+  
+\end{efeature}
+
+\begin{efeature}
+  {interburst voltage}
+  {LibV1}
+  {interburst\_voltage}
+  {mV}
+  {peak indices\\&burst ISI indices}
+  {V\\&T}
+  {none}
+  {The voltage average in between two bursts}
+  {
+  isi$_0, \ldots, $isi$_{n-1} =$ burst\_ISI\_indices \\
+  IF $n$ < 2 THEN \+ \\
+    RETURN \- \\
+  ENDIF \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    start\_index = peak\_indices[isi$_i$ - 1] \\
+    t\_start = T[start\_index] + 5 \\
+    end\_index = peak\_indices[isi$_i$] \\
+    t\_end = T[end\_index] - 5 \\
+    start\_index = -1 + minimal $j$ WITH $j \ge$ start\_index AND T[j] > t\_start \\
+    end\_index = 1 + maximal $j$ WITH $j$ < end\_index AND T[j] < t\_end \\
+    APPEND mean V[$j$] WITH start\_index < $j$ < end\_index TO interburst\_voltage \- \\
+  ENDFOR
+  }
+  Iterating over the \myid{burst ISI indices} determine the last peak before the burst.
+  Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
+  
+\end{efeature}
+
+\begin{efeature}
+  {voltage base}
+  {LibV1}
+  {voltage\_base}
+  {mV}
+  {none}
+  {V\\&T\\&stim start}
+  {none}
+  {The membrane resting potential}
+  {
+  start\_time = stim\_start $\cdot$ 0.25 \\
+  end\_time = stim\_start $\cdot$ 0.75 \\
+  t$_0, \ldots, $t$_{n-1} =$ T \\ 
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+     IF t$_i \ge$ start\_time THEN \+ \\
+      sum = sum + V[i] \\
+      size = size + 1 \- \\
+    ENDIF \\
+    IF t$_i$ > end\_time THEN \+ \\
+      EXIT FOR \- \\
+    ENDIF \- \\
+  ENDFOR \\
+  APPEND sum / size TO voltage\_base \\
+  }
+  Yield the average voltage during the time interval $\frac{1}{4}$ times \myid{stim start} and $\frac{3}{4}$ times \myid{stim start} well before the stimulus.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP height}
+  {LibV1}
+  {AP\_height}
+  {mV}
+  {peak voltage}
+  {none}
+  {none}
+  {The voltages at the maxima of the peaks}
+  {
+  p$_0, \ldots, $p$_{n-1} =$ peak\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[p$_i$] TO AP\_height \- \\
+  ENDFOR
+  }
+  Identical to peak voltage.
+  \mybox{remarks:}{
+  This feature exists for reasons of compatibility.
+  I recommend the usage of \myid{peak voltage} instead.
+  \myid{AP height} should rather yield the height of the peak relative to the membrane resting potential.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {AP amplitude}
+  {LibV1}
+  {AP\_Amplitude}
+  {mV}
+  {AP begin indices\\&peak voltage}
+  {V}
+  {none}
+  {The relative height of the action potential}
+  {
+  pv$_0, \ldots, $pv$_{n-1} =$ peak\_voltage \\
+  b$_0, \ldots, $b$_{n-1} =$ AP\_begin\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND pv$_i$ - b$_i$ TO AP\_amplitude \- \\
+  ENDFOR
+  }
+  Yield the difference of \myid{peak voltage} and \myid{V} at \myid{AP begin indices} for each peak.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AHP depth abs}
+  {LibV1}
+  {AHP\_depth\_abs}
+  {mV}
+  {min AHP values}
+  {none}
+  {none}
+  {Voltage values at the after-hyperpolarization}
+  {
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[ahp$_i$] TO AHP\_depth\_abs \- \\
+  ENDFOR
+  }
+  Identical to \myid{min AHP values}
+  \mybox{remarks:}{
+  This feature exists for reasons of compatibility.
+  I recommend the usage of \myid{min AHP values} instead.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {AHP depth abs slow}
+  {LibV1}
+  {AHP\_depth\_abs\_slow}
+  {mV}
+  {peak indices}
+  {V\\&T}
+  {none}
+  {Voltage values at the ``slow'' after-hyperpolarization}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  IF n < 3 THEN \+ \\
+    FAIL "At least 3 spikes needed for AHP\_depth\_abs\_slow and AHP\_slow\_time." \- \\
+  ENDIF \\
+  (pi$'_0$, \ldots, pi$'_{m-1}$) = (pi$_1$, \ldots, pi$'_{n-2}$) \\
+  FOR $i = 0, \dots, m - 1$ DO \+ \\
+    start\_time = T[pi$'_i$] + 5 \\
+    start\_index = minimal $j$ WITH T[j] $\ge$ start\_time AND p$'_i \le j$ < p$'_{i+1}$ \\
+    min\_voltage = $\min_j$ V[j] WITH start\_index $\le j <$ p$'_{i+1}$ \\
+    APPEND min\_voltage TO AHP\_depth\_abs\_slow \- \\
+  ENDFOR
+  }
+  Starting at the second peak iterating over \myid{peak indices} find the minimum of \myid{V} between each pair of peaks.
+  For each pair of peaks start the search 5 ms after the first peak.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AHP slow time}
+  {LibV1}
+  {AHP\_slow\_time}
+  {none}
+  {AHP depth abs slow}
+  {V\\&T}
+  {none}
+  {Relative timing of the ``slow'' after-hyperpolarization}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  IF n < 3 THEN \+ \\
+    FAIL "At least 3 spikes needed for AHP\_depth\_abs\_slow and AHP\_slow\_time." \- \\
+  ENDIF \\
+  (pi$'_0$, \ldots, pi$'_{m-1}$) = (pi$_1$, \ldots, pi$'_{n-2}$) \\
+  FOR $i = 0, \dots, m - 1$ DO \+ \\
+    start\_time = T[pi$'_i$] + 5 \\
+    start\_index = minimal $j$ WITH T[j] $\ge$ start\_time AND p$'_i \le j$ < p$'_{i+1}$ \\
+    min\_index = $\arg\min_j$ V[j] WITH start\_index $\le j <$ p$'_{i+1}$ \\
+    APPEND (T[min\_index] - T[pi$'_i$]) / (T[pi$'_{i+1}$] - T[pi$'_i$]) TO AHP\_slow\_time \- \\
+  ENDFOR
+  }
+  Starting at the second peak iterating over \myid{peak indices} find the minimum of \myid{V} between each pair of peaks.
+  For each pair of peaks start the search 5 ms after the first peak.
+  Yield the time at the minimum divided by the length of the interspike interval.
+  
+\end{efeature}
+
+\begin{efeature}
+  {time constant}
+  {LibV1}
+  {time\_constant}
+  {ms}
+  {none}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {The membrane time constant}
+  {
+  min\_derivative = 0.005 \\
+  decay\_length = 10 \\
+  min\_time = 70 \\
+  start\_index = 10 + minimal $i$ WITH T[i] $\ge$ stim\_start \\
+  middle\_index = minimal $i$ WITH T[i] $\ge$ (stim\_start + stim\_end) / 2 \\
+  dvdt = $\frac{\Delta \mathrm{V}_i}{\Delta \mathrm{T}_i}$ WITH start\_index $\le i <$ middle\_index \\
+  *** find the decay *** \\
+  decay\_index = 0 \\
+  WHILE THERE IS x IN (dvdt[decay\_index], \ldots, dvdt[decay\_index + 5]) DO \+ \\
+    decay\_index = decay\_index + 1 \- \\
+  ENDWHILE \\
+  IF decay\_index + 5 = length of dvdt - 1 THEN \+ \\
+    FAIL "Could not find the decay." \- \\
+  ENDIF \\
+  *** find the flat *** \\
+  $i$ = decay\_index
+  WHILE T[$i$] < T[middle\_index] + min\_time DO \+ \\
+    IF dvdt[$i$] > - min\_derivative THEN \+ \\
+      $j =$ minimal $j$ WITH T[$j$] - T[$i$] > min\_time \\
+      mean = mean of (dvdt[$i$], \ldots, dvdt[$j$]) \\
+      IF mean > - min\_derivative THEN \+ \\
+        EXIT WHILE \- \\
+      ENDIF \- \\
+    ENDIF \\
+    $i = i + 1$ \- \\
+  ENDWHILE \\
+  flat\_index = $i$ \\
+  IF flat\_index - decay\_index < decay\_length THEN \+ \\
+    FAIL "Trace fall time too short." \- \\
+  ENDIF \\
+  (v$_0$, \ldots, v$_{n-1}$) = (v[decay\_index], \ldots, v[flat\_index]) \\
+  (t$_0$, \ldots, t$_{n-1}$) = (t[decay\_index], \ldots, t[flat\_index]) \\
+  $x = 0.38$ \\
+  golden section search: \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    logv$_i = \log(v_i - v_{n-1} + x)$ \- \\
+  ENDFOR \\
+  slope, residuals = fit\_straight\_line(t, logv) \\
+  repeat golden section search to minimize residuals \\
+  APPEND -1 / slope TO time\_constant \\
+  }
+  The extraction of the time constant requires a voltage trace of a cell in a hyperpolarized state.
+  Starting at \myid{stim start} find the beginning of the exponential decay where the first derivative of \myid{V(t)} is smaller than -0.005 $\frac{\mathrm{V}}{\mathrm{s}}$ in 5 subseequent points.
+  The flat subsequent to the exponential decay is defined as the point where the first derivative of the voltage trace is bigger than $-0.005$ and the mean of the follwowing 70 points as well.
+  If the voltage trace between the beginning of the decay and the flat includes more than 9 points, fit an exponential decay.
+  Yield the time constant of that decay.
+  
+\end{efeature}
+
+\begin{efeature}
+  {voltage deflection}
+  {LibV1}
+  {voltage\_deflection}
+  {mV}
+  {none}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {The relative steady state voltage in a hyperpolarized state}
+  {
+  base = mean of V[i] WITH 0 $\le$ T[i] < stim\_start \\
+  end\_index = minimal $i$ WITH t$_i \ge$ stim\_end \\
+  ss = mean of V[i] WITH end\_index - 10 < i < end\_index - 5 \\
+  APPEND ss - base TO voltage\_deflection
+  }
+  Calculate the base voltage as the mean of \myid{V} before \myid{stim start}.
+  Calculate the steady state voltage as the mean of 5 values of \myid{V} 10 points before \myid{stim end}.
+  Yield the difference of steady state voltage and base voltage.
+  
+\end{efeature}
+
+\begin{efeature}
+  {ohmic input resistance}
+  {LibV1}
+  {ohmic\_input\_resistance}
+  {M$\Omega$}
+  {voltage deflection}
+  {stimulus current}
+  {none}
+  {The ohmic input resistance $R_\mathrm{in}$ of the cell}
+  {
+  APPEND voltage\_deflection / stimulus\_current TO ohmic\_input\_resistance
+  }
+  Yield \myid{voltage deflection} divided by \myid{stimulus current}.
+  \mybox{remarks:}{
+  The regular feature E29 determins $R_\mathrm{in}$ far more accurately.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {maximum voltage}
+  {LibV1}
+  {maximum\_voltage}
+  {mV}
+  {none}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {The maximum voltage during a stimulus}
+  {
+  max = maximal V[i] WITH i: stim\_start $\le$ T[i] < stim\_end \\
+  APPEND max TO maximum\_voltage
+  }
+  Find the maximum of \myid{V} between \myid{stim start} and \myid{stim end}.
+\end{efeature}
+
+\begin{efeature}
+  {steady state voltage}
+  {LibV1}
+  {steady\_state\_voltage}
+  {mV}
+  {none}
+  {V\\&T\\&stim end}
+  {none}
+  {Average voltage after the stimulus}
+  {
+  mean = mean V[i] WITH i: stim\_end < T[i] \\
+  APPEND mean TO steady\_state\_voltage
+  }
+  Yield the average of \myid{V} after \myid{stim end}.
+\end{efeature}
+
+\begin{efeature}
+  {ISI CV}
+  {LibV1}
+  {ISI\_CV}
+  {none}
+  {ISI values}
+  {none}
+  {none}
+  {The coefficient of variation of the ISIs}
+  {
+  $\mu$ = mean of ISI\_values \\
+  $\sigma$ = standard deviation of ISI\_values \\
+  APPEND $\frac{\sigma}{\mu}$ TO ISI\_CV
+  }
+  Yield the coefficient of variation:
+  \begin{align*}
+    c_v =& \frac{\sigma}{\mu} \\
+  \end{align*}
+  with
+  \begin{align*}
+    \textrm{standard deviation:  } \sigma =& \sqrt{\frac{1}{N-1} \sum_{i=1}^N \left(\isi_i - \mu \right)^2}, \\
+    \textrm{mean:  } \mu =& \frac{1}{N} \sum_{i=1}^N \isi_i.
+  \end{align*}
+  
+\end{efeature}
+
+\begin{efeature}
+  {Spikecount}
+  {LibV1}
+  {Spikecount}
+  {none}
+  {peak indices\\&trace check}
+  {none}
+  {none}
+  {The number of peaks during stimulus}
+  {
+  APPEND length of peak\_indices TO Spikecount
+  }
+  Yield the length of \myid{peak indices}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AHP depth}
+  {LibV1}
+  {AHP\_depth}
+  {mV}
+  {voltage base\\&min AHP values}
+  {none}
+  {none}
+  {Relative voltage values at the after-hyperpolarization}
+  {
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_values \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND ahp$_i$ - voltage\_base TO AHP\_depth \- \\
+  ENDFOR
+  }
+  Iterate over \myid{min AHP values} and yield the difference of the value and \myid{voltage base}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP begin indices}
+  {LibV2}
+  {AP\_begin\_indices}
+  {(index)}
+  {min AHP indices\\&interpolate}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {Voltage trace indices at the onset of each action potential}
+  {
+  min\_derivative = 12.0 \\
+  start\_index = minimal $i$ WITH T[i] $\ge$ stim\_start \\
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  min$_0,$, \ldots, min$_{m-1}$ = (start\_index, ahp$_0$, \ldots, ahp$_{n-1}$) \\
+  IF T[min$_{m-1}$] < stim\_end THEN \+ \\
+    end\_index = minimal $i$ WITH t$_i \ge$ stim\_end \\
+    APPEND end\_index TO min \- \\
+  ENDIF \\
+  dvdt = $\Delta$ V \\
+  FOR $i$ = 0 TO length of min - 2 DO \+ \\
+    IF $x \ge$ min\_derivative FOR ALL $x$ IN (dvdt[min$_i$], \ldots, dvdt[min$_i$ + 5]) THEN \+ \\
+      APPEND min$_i$ TO AP\_begin\_indices \- \\
+    ENDIF \- \\
+  ENDFOR
+  }
+  Iterate over \myid{min AHP indices}.
+  If there is no AHP for the last peak, add the index at \myid{stim end} to the indices.
+  Yield the action potential onsets where the first derivative of the voltage trace is higher than $12 \frac{\mathrm{V}}{\mathrm{s}}$, for at least 5 points.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP rise indices}
+  {LibV2}
+  {AP\_rise\_indices}
+  {(index)}
+  {peak indices\\&AP begin indices}
+  {V}
+  {none}
+  {Voltage trace index at the rising flank of each action potential.}
+  {
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    half\_voltage = (begin$_i$ + pi$_i$) / 2 \\
+    rise\_index = $\arg\min_j$ |V[j] - half\_voltage| WITH begin$_i \le j <$ pi$_i$ \\
+    APPEND rise\_index TO AP\_rise\_indices \- \\
+  ENDFOR
+  }
+  Yield the indices of the voltage trace after each \myid{AP begin index} where \myid{V} reaches half the maximum of the amplitude of the action potential.
+  The amplitude of the action potential is taken relative to \myid{V} at \myid{AP begin indices}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP end indices}
+  {LibV2}
+  {AP\_end\_indices}
+  {(index)}
+  {peak indices}
+  {V\\&T}
+  {none}
+  {Voltage trace indices at the offset of each action potential}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ (peak\_indices, length of V - 1) \\
+  min\_derivative = -12.0 \\
+  dvdt = $\Delta$ V \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    end\_index = minimal $j$ WITH pi$_i + 1 \le j <$ pi$_{i+1}$ AND dvdt[$j$] > min\_derivative \- \\
+  ENDFOR
+  }
+  Iterate over \myid{peak indices} and find after each index where the first derivative of the voltage trace exceeds $-12 \frac{\mathrm{V}}{\mathrm{s}}$.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP fall indices}
+  {LibV2}
+  {AP\_fall\_indices}
+  {(index)}
+  {peak indices\\&AP begin indices\\&AP end indices}
+  {V}
+  {none}
+  {Voltage trace index at the falling flank of each action potential}
+  {
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  end$_0, \ldots, $end$_{n-1} =$ AP\_end\_indices \\
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    half\_voltage = (begin$_i$ + pi$_i$) / 2 \\
+    fall\_index = $\arg\min_j$ |V[j] - half\_voltage| WITH pi$_i \le j <$ end$_i$ \\
+    APPEND fall\_index TO AP\_fall\_indices \- \\
+  ENDFOR
+  }
+  Yield the indices of the voltage trace after each \myid{peak index} where \myid{V} falls down to half the maximum of the amplitude of the action potential.
+  The amplitude of the action potential is taken relative to \myid{V} at \myid{AP begin indices}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP duration}
+  {LibV2}
+  {AP\_duration}
+  {ms}
+  {AP begin indices\\&AP end indices}
+  {T}
+  {none}
+  {Duration of an action potential from onset to offset}
+  {
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  end$_0, \ldots, $end$_{n-1} =$ AP\_end\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND T[end$_i$] - T[begin$_i$] TO AP\_duration \- \\
+  ENDFOR
+  }
+  Iterate over \myid{AP begin indices} and return the difference of the time at the \myid{AP end index} and the \myid{AP begin index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP duration half width}
+  {LibV2}
+  {AP\_duration\_half\_width}
+  {ms}
+  {AP rise indices\\&AP fall indices}
+  {T}
+  {none}
+  {FWHM of each action potential}
+  {
+  rise$_0, \ldots, $rise$_{n-1} =$ AP\_rise\_indices \\
+  fall$_0, \ldots, $fall$_{n-1} =$ AP\_fall\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND T[fall$_i$] - T[rise$_i$] TO AP\_duration\_half\_width \- \\
+  ENDFOR
+  }
+  Iterate over \myid{AP rise indices} and return the difference of the time at the \myid{AP fall index} and the \myid{AP rise index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP rise time}
+  {LibV2}
+  {AP\_rise\_time}
+  {ms}
+  {AP begin indices\\&peak indices}
+  {T}
+  {none}
+  {Time from action potential onset to the maximum}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND T[pi$_i$] - T[begin$_i$] TO AP\_rise\_time \- \\
+  ENDFOR
+  }
+  Iterate over \myid{AP begin indices} and return the difference of the time at the \myid{peak index} and the \myid{AP begin index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP fall time}
+  {LibV2}
+  {AP\_fall\_time}
+  {ms}
+  {peak indices\\&AP end indices}
+  {T}
+  {none}
+  {Time from action potential maximum to the offset}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  end$_0, \ldots, $end$_{n-1} =$ AP\_end\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND T[end$_i$] - T[pi$_i$] TO AP\_fall\_time \- \\
+  ENDFOR
+  }
+  Iterate over \myid{peak indices} and return the difference of the time at the \myid{end index} and the \myid{peak index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP rise rate}
+  {LibV2}
+  {AP\_rise\_rate}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {AP begin indices\\&peak indices}
+  {V\\&T}
+  {none}
+  {Voltage change rate during the rising phase of the action potential}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND (V[pi$_i$] - V[begin$_i$]) / (T[pi$_i$] - T[begin$_i$]) TO AP\_rise\_rate \- \\
+  ENDFOR
+  }
+  Iterate over \myid{AP begin indices} and return the ratio of the voltage difference and the time difference at the \myid{peak index} and the \myid{AP begin index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP fall rate}
+  {LibV2}
+  {AP\_fall\_rate}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {peak indices\\&AP end indices}
+  {V\\&T}
+  {none}
+  {Voltage change rate during the falling phase of the action potential.}
+  {
+  pi$_0, \ldots, $pi$_{n-1} =$ peak\_indices \\
+  end$_0, \ldots, $end$_{n-1} =$ AP\_end\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND (V[end$_i$] - V[pi$_i$]) / (T[end$_i$] - T[pi$_i$]) TO AP\_fall\_rate \- \\
+  ENDFOR
+  }
+  Iterate over \myid{peak indices} and return the ratio of the voltage difference and the time difference at the \myid{AP end index} and the \myid{peak index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {fast AHP}
+  {LibV2}
+  {fast\_AHP}
+  {mV}
+  {AP begin indices\\&min AHP indices}
+  {V}
+  {none}
+  {Voltage value of the action potential onset relative to the subsequent AHP}
+  {
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[begin$_i$] - V[ahp$_i$] TO fast\_AHP \- \\
+  ENDFOR
+  }
+  Iterate over \myid{AP begin indices} and yield the difference of \myid{V} at the \myid{AP begin index} and the \myid{min AHP index}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP amplitude change}
+  {LibV2}
+  {AP\_amplitude\_change}
+  {none}
+  {peak voltage}
+  {none}
+  {none}
+  {Difference of the amplitudes of the second and the first action potential divided by the amplitude of the first action potential}
+  {
+  amp$_0, \ldots, $amp$_{n-1} =$ AP\_amplitude\_change \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (amp$_{i+1}$ - amp$_0$) / amp$_0$ TO AP\_amplitude\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP duration change}
+  {LibV2}
+  {AP\_duration\_change}
+  {none}
+  {AP duration}
+  {none}
+  {none}
+  {Difference of the durations of the second and the first action potential divided by the duration of the first action potential}
+  {
+  dur$_0, \ldots, $dur$_{n-1} =$ AP\_duration \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (dur$_{i+1}$ - dur$_0$) / dur$_0$ TO AP\_duration\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP rise rate change}
+  {LibV2}
+  {AP\_rise\_rate\_change}
+  {none}
+  {AP rise rate}
+  {none}
+  {none}
+  {Difference of the rise rates of the second and the first action potential divided by the rise rate of the first action potential}
+  {
+  rr$_0, \ldots, $rr$_{n-1} =$ AP\_rise\_rate \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (rr$_{i+1}$ - rr$_0$) / rr$_0$ TO AP\_rise\_rate\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP fall rate change}
+  {LibV2}
+  {AP\_fall\_rate\_change}
+  {none}
+  {AP fall rate}
+  {none}
+  {none}
+  {Difference of the fall rates of the second and the first action potential divided by the fall rate of the first action potential}
+  {
+  fr$_0, \ldots, $fr$_{n-1} =$ AP\_fall\_rate \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (fr$_{i+1}$ - fr$_0$) / fr$_0$ TO AP\_fall\_rate\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {fast AHP change}
+  {LibV2}
+  {fast\_AHP\_change}
+  {none}
+  {fast AHP}
+  {none}
+  {none}
+  {Difference of the \myid{fast AHP} of the second and the first action potential divided by the \myid{fast AHP} of the first action potential}
+  {
+  fahp$_0, \ldots, $fahp$_{n-1} =$ fast\_AHP \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (fahp$_{i+1}$ - fahp$_0$) / fahp$_0$ TO fast\_AHP\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP duration half width change}
+  {LibV2}
+  {AP\_duration\_half\_width\_change}
+  {none}
+  {AP duration half width}
+  {none}
+  {none}
+  {Difference of the FWHM of the second and the first action potential divided by the FWHM of the first action potential}
+  {
+  dhw$_0, \ldots, $dhw$_{n-1} =$ AP\_duration\_half\_width \\
+  FOR $i = 0, \dots, n - 2$ DO \+ \\
+    APPEND (dhw$_{i+1}$ - dhw$_0$) / dhw$_0$ TO AP\_duration\_half\_width\_change \- \\
+  ENDFOR
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {steady state hyper}
+  {LibV2}
+  {steady\_state\_hyper}
+  {mV}
+  {none}
+  {V\\&T\\&stim end}
+  {none}
+  {Steady state voltage during hyperpolarization}
+  {
+  end\_index = minimal $i$ WITH t$_i \ge$ stim\_end \\
+  mean = mean of V[$i$] WITH end\_index - 35 $\le i <$ end\_index - 5 \\
+  APPEND mean TO steady\_state\_hyper
+  }
+  Find the voltage trace index at \myid{stim end}.
+  Yield the average of \myid{V} between that index minus 35 and that index minus 5.
+  
+\end{efeature}
+
+\begin{efeature}
+  {amp drop first second}
+  {LibV2}
+  {amp\_drop\_first\_second}
+  {double}
+  {peak voltage}
+  {none}
+  {none}
+  {Difference of the amplitude of the first and the second peak}
+  {
+  IF length of peak\_voltage < 2 THEN \+ \\
+    FAIL "At least 2 spikes needed for the calculation of amp\_drop\_first\_second." \- \\
+  ENDIF \\
+  APPEND peak\_voltage[0] - peak\_voltage[1] TO amp\_drop\_first\_second
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {amp drop first last}
+  {LibV2}
+  {amp\_drop\_first\_last}
+  {double}
+  {peak voltage}
+  {none}
+  {none}
+  {Difference of the amplitude of the first and the last peak}
+  {
+  IF length of peak\_voltage < 2 THEN \+ \\
+    FAIL "At least 2 spikes needed for the calculation of amp\_drop\_first\_last." \- \\
+  ENDIF \\
+  APPEND peak\_voltage[0] - peak\_voltage[last] TO amp\_drop\_first\_last
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {amp drop second last}
+  {LibV2}
+  {amp\_drop\_second\_last}
+  {double}
+  {peak voltage}
+  {none}
+  {none}
+  {Difference of the amplitude of the second and the last peak}
+  {
+  IF length of peak\_voltage < 3 THEN \+ \\
+    FAIL "At least 3 spikes needed for the calculation of amp\_drop\_second\_last." \- \\
+  ENDIF \\
+  APPEND peak\_voltage[1] - peak\_voltage[last] TO amp\_drop\_second\_last
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {max amp difference}
+  {LibV2}
+  {max\_amp\_difference}
+  {double}
+  {peak voltage}
+  {none}
+  {none}
+  {Maximum difference of the height of two subsequent peaks}
+  {
+  IF length of peak\_voltage < 2 THEN \+ \\
+    FAIL "At least 2 spikes needed for the calculation of max\_amp\_difference." \- \\
+  ENDIF \\
+  APPEND $\max \Delta$peak\_voltage TO max\_amp\_difference
+  }
+  
+\end{efeature}
+\section{Regular features}
+
+% efeature
+% args:
+%   feature name
+%   namespace
+%   identifier
+%   type
+%   required features
+%   required trace data
+%   required parameters
+%   semantics
+%   detailed description / specification
+
+\begin{efeature}
+  {back-propagating AP attenuation}
+  {LibV2}
+  {BPAPatt2}
+  {none}
+  {peak voltage;location\_soma\\&voltage base;location*}
+  {V;location\_dend620}
+  {none}
+  {Ratio of relative heights of somatic peak and dendritic peak}
+  {
+  bpapatt = (peak\_voltage[0];location\_soma - voltage\_base;location\_soma) / ($\max_i$ V[$i$];location\_dend - voltage\_base;location\_dend) \\
+  APPEND bpapatt TO BPAPatt2
+  }
+  Inject a short square pulse at soma that invokes exactly one action potential.
+  The relative height of the action potential at soma is the difference of \myid{peak voltage;location\_soma} and \myid{voltage base;location\_soma}.
+  The recording at the dendrite takes place at the thickest apical dendrite with a distance of 620 $\mu m$ from soma.
+  The relative height is the difference of the maximum of \myid{V;location\_dend620} and \myid{voltage base;location\_dend620}.
+  Yield the relative height at soma divided by the relative height at the dendritic location.
+  
+  \mybox{remarks:}{
+  There exist a \emph{hoc} implementation under the same name, where instead of a ratio the actual relative height of the peak at the dendrite is returned.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {back-propagating AP attenuation (2nd)}
+  {LibV2}
+  {BPAPatt3}
+  {none}
+  {peak voltage;location\_soma\\&voltage base;location*}
+  {V;location\_dend800}
+  {none}
+  {Ratio of relative heights of somatic peak and dendritic peak}
+  {
+  bpapatt = (peak\_voltage[0];location\_soma - voltage\_base;location\_soma) / ($\max_i$ V[$i$];location\_dend - voltage\_base;location\_dend) \\
+  APPEND bpapatt TO BPAPatt3
+  }
+  Inject a short square pulse at soma that invokes exactly one action potential.
+  The relative height of the action potential at soma is the difference of \myid{peak voltage;location\_soma} and \myid{voltage base;location\_soma}.
+  The recording at the dendrite takes place at the thickest apical dendrite with a distance of 800 $\mu m$ from soma.
+  The relative height is the difference of the maximum of \myid{V;location\_dend800} and \myid{voltage base;location\_dend800}.
+  Yield the relative height at soma divided by the relative height at the dendritic location.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E2}
+  {LibV2}
+  {E2}
+  {mV}
+  {amp\_drop\_first\_second;APDrop*}
+  {none}
+  {none}
+  {Difference of the amplitude of the first and the second peak}
+  {
+  APPEND mean of amp\_drop\_first\_second;APDrop* TO E2
+  }
+  Take the mean of \myid{peak voltage} over all repetitions of the stimulus protocol \myid{APDrop} for the first and the second peak.
+  Yield the difference.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E3}
+  {LibV2}
+  {E3}
+  {mV}
+  {amp\_drop\_first\_last;APDrop*}
+  {none}
+  {none}
+  {Difference of the amplitude of the first and the last peak}
+  {
+  APPEND mean of amp\_drop\_first\_last;APDrop* TO E3
+  }
+  Take the mean of \myid{peak voltage} over all repetitions of the stimulus protocol \myid{APDrop} for the first and the last peak.
+  Yield the difference.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E4}
+  {LibV4}
+  {E4}
+  {mV}
+  {amp\_drop\_second\_last;APDrop*}
+  {none}
+  {none}
+  {Difference of the amplitude of the second and the last peak}
+  {
+  APPEND mean of amp\_drop\_second\_last;APDrop* TO E4
+  }
+  Take the mean of \myid{peak voltage} over all repetitions of the stimulus protocol \myid{APDrop} for the second and the last peak.
+  Yield the difference.
+
+\end{efeature}
+
+\begin{efeature}
+  {E5}
+  {LibV2}
+  {E5}
+  {mV}
+  {max\_amp\_difference;APDrop*}
+  {none}
+  {none}
+  {Maximum difference of the height of two subsequent peaks}
+  {
+  APPEND mean of max\_amp\_difference;APDrop* TO E5
+  }
+  Take the mean of \myid{peak voltage} over all repetitions of the stimulus protocol \myid{APDrop} for each peak.
+  Yield the biggest difference between two peaks.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E6 (AP amplitude)}
+  {LibV2}
+  {E6}
+  {mV}
+  {AP amplitude;APWaveForm*}
+  {none}
+  {none}
+  {Relative height of the first action potential}
+  {
+  APPEND mean of AP\_amplitude;APWaveForm* at index 0 TO E6
+  }
+  Take the mean of the first \myid{AP amplitude} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E7 (AP duration)}
+  {LibV2}
+  {E7}
+  {ms}
+  {AP duration;APWaveForm*}
+  {none}
+  {none}
+  {Duration of the first action potential}
+  {
+  APPEND mean of AP\_duration;APWaveForm* at index 0 TO E7
+  }
+  Take the mean of the first \myid{AP duration} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E8 (AP duration half width)}
+  {LibV2}
+  {E8}
+  {ms}
+  {AP duration half width;APWaveForm*}
+  {none}
+  {none}
+  {FWHM of the first action potential}
+  {
+  APPEND mean of AP\_duration\_half\_width;APWaveForm* at index 0 TO E8
+  }
+  Take the mean of the first \myid{AP duration half width} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E9 (AP rise time)}
+  {LibV2}
+  {E9}
+  {ms}
+  {AP rise time;APWaveForm*}
+  {none}
+  {none}
+  {Time from onset of the first action potential to the maximum}
+  {
+  APPEND mean of AP\_rise\_time;APWaveForm* at index 0 TO E9
+  }
+  Take the mean of the first \myid{AP rise time} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E10 (AP fall time)}
+  {LibV2}
+  {E10}
+  {ms}
+  {AP fall time;APWaveForm*}
+  {none}
+  {none}
+  {Time from maximum of the first action potential to offset}
+  {
+  APPEND mean of AP\_fall\_time;APWaveForm* at index 0 TO E10
+  }
+  Take the mean of the first \myid{AP fall time} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E11 (AP rise rate)}
+  {LibV2}
+  {E11}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {AP rise rate;APWaveForm*}
+  {none}
+  {none}
+  {Voltage change rate during the rising phase of the first action potential}
+  {
+  APPEND mean of AP\_rise\_rate;APWaveForm* at index 0 TO E11
+  }
+  Take the mean of the first \myid{AP rise rate} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E12 (AP fall rate)}
+  {LibV2}
+  {E12}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {AP fall rate}
+  {none}
+  {none}
+  {Voltage change rate during the falling phase of the first action potential}
+  {
+  APPEND mean of AP\_fall\_rate;APWaveForm* at index 0 TO E12
+  }
+  Take the mean of the first \myid{AP fall rate} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E13 (fast AHP)}
+  {LibV2}
+  {E13}
+  {mV}
+  {fast AHP;APWaveForm*}
+  {none}
+  {none}
+  {Voltage value of the onset of the first action potential relative to the subsequent AHP}
+  {
+  APPEND mean of fast\_AHP;APWaveForm* at index 0 TO E13
+  }
+  Take the mean of the first \myid{fast AHP} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E14 (AP amplitude)}
+  {LibV2}
+  {E14}
+  {mV}
+  {AP Amplitude;APWaveForm*}
+  {none}
+  {none}
+  {Relative height of the second action potential}
+  {
+  APPEND mean of AP\_amplitude;APWaveForm* at index 1 TO E14
+  }
+  Take the mean of the second \myid{AP amplitude} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E15 (AP duration)}
+  {LibV2}
+  {E15}
+  {ms}
+  {AP duration;APWaveForm*}
+  {none}
+  {none}
+  {Duration of the second action potential}
+  {
+  APPEND mean of AP\_duration;APWaveForm* at index 1 TO E15
+  }
+  Take the mean of the second \myid{AP duration} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E16 (AP duration half width)}
+  {LibV2}
+  {E16}
+  {ms}
+  {AP duration half width;APWaveForm*}
+  {none}
+  {none}
+  {FWHM of the second action potential}
+  {
+  APPEND mean of AP\_duration\_half\_width;APWaveForm* at index 1 TO E16
+  }
+  Take the mean of the second \myid{AP duration half width} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E17 (AP rise time)}
+  {LibV2}
+  {E17}
+  {ms}
+  {AP rise time;APWaveForm*}
+  {none}
+  {none}
+  {Time from onset of the second action potential to the maximum}
+  {
+  APPEND mean of AP\_rise\_time;APWaveForm* at index 1 TO E17
+  }
+  Take the mean of the second \myid{AP rise time} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E18 (AP fall time)}
+  {LibV2}
+  {E18}
+  {ms}
+  {AP fall time;APWaveForm*}
+  {none}
+  {none}
+  {Time from maximum of the second action potential to offset}
+  {
+  APPEND mean of AP\_fall\_time;APWaveForm* at index 1 TO E18
+  }
+  Take the mean of the second \myid{AP fall time} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E19 (AP rise rate)}
+  {LibV2}
+  {E19}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {AP rise rate;APWaveForm*}
+  {none}
+  {none}
+  {Voltage change rate during the rising phase of the second action potential}
+  {
+  APPEND mean of AP\_rise\_rate;APWaveForm* at index 1 TO E19
+  }
+  Take the mean of the second \myid{AP rise rate} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E20 (AP fall rate)}
+  {LibV2}
+  {E20}
+  {$\frac{\mathrm{V}}{\mathrm{s}}$}
+  {AP fall rate}
+  {none}
+  {none}
+  {Voltage change rate during the falling phase of the second action potential}
+  {
+  APPEND mean of AP\_fall\_rate;APWaveForm* at index 1 TO E20
+  }
+  Take the mean of the second \myid{AP fall rate} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E21 (fast AHP)}
+  {LibV2}
+  {E21}
+  {mV}
+  {fast AHP;APWaveForm*}
+  {none}
+  {none}
+  {Voltage value of the onset of the second action potential relative to the subsequent AHP}
+  {
+  APPEND mean of fast\_AHP;APWaveForm* at index 1 TO E21
+  }
+  Take the mean of the second \myid{fast AHP} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E22 (AP amplitude change)}
+  {LibV2}
+  {E22}
+  {none}
+  {AP amplitude change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the amplitudes of the second and the first action potential divided by the amplitude of the first action potential}
+  {
+  APPEND mean of AP\_amplitude\_change;APWaveForm* at index 0 TO E22
+  }
+  Take the mean of \myid{AP amplitude change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E23 (AP duration change)}
+  {LibV2}
+  {E23}
+  {none}
+  {AP duration change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the durations of the second and the first action potential divided by the duration of the first action potential}
+  {
+  APPEND mean of AP\_duration\_change;APWaveForm* at index 0 TO E23
+  }
+  Take the mean of \myid{AP duration change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E24 (AP duration half width change)}
+  {LibV2}
+  {E24}
+  {none}
+  {AP duration half width change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the FWHM of the second and the first action potential divided by the FWHM of the first action potential}
+  {
+  APPEND mean of AP\_duration\_half\_width\_change;APWaveForm* at index 0 TO E24
+  }
+  Take the mean of \myid{AP duration half width change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E25 (AP rise rate change)}
+  {LibV2}
+  {E25}
+  {none}
+  {AP rise rate change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the rise rates of the second and the first action potential divided by the rise rate of the first action potential}
+  {
+  APPEND mean of AP\_rise\_rate\_change;APWaveForm* at index 0 TO E25
+  }
+  Take the mean of \myid{AP rise rate change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E26 (AP fall rate change)}
+  {LibV2}
+  {E26}
+  {none}
+  {AP fall rate change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the fall rates of the second and the first action potential divided by the fall rate of the first action potential}
+  {
+  APPEND mean of AP\_fall\_rate\_change;APWaveForm* at index 0 TO E26
+  }
+  Take the mean of \myid{AP fall rate change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E27 (fast AHP change)}
+  {LibV2}
+  {E27}
+  {none}
+  {fast AHP change;APWaveForm*}
+  {none}
+  {none}
+  {Difference of the \myid{fast AHP} of the second and the first action potential divided by the \myid{fast AHP} of the first action potential}
+  {
+  APPEND mean of fast\_AHP\_change;APWaveForm* at index 0 TO E27
+  }
+  Take the mean of \myid{fast AHP change} over all repetitions and iterations of the stimulus protocol \myid{APWaveForm}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E29}
+  {LibV2}
+  {E29}
+  {M$\Omega$}
+  {steady state hyper;IV*}
+  {stimulus current}
+  {none}
+  {Ohmic input resistance}
+  {
+  FOR suffix IN IV* DO \+ \\
+    APPEND stimulus\_current;suffix TO x \\
+    APPEND steady\_state\_hyper;suffix TO y \- \\
+  ENDFOR \\
+  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
+  APPEND slope TO E29
+  }
+  Get the points (\myid{stimulus current}, \myid{steady state hyper}) for all repetitions and iterations of the stimulus protocol \myid{IV} and fit a straight line.
+  Yield the slope.
+  
+\end{efeature}
+
+\begin{efeature}
+  {E29: coefficient of determination}
+  {LibV2}
+  {E29\_cod}
+  {none}
+  {E29}
+  {none}
+  {none}
+  {The coefficient of determination (often: R$^2$) of the straight line fit according to E29}
+  {
+  FOR suffix IN IV* DO \+ \\
+    APPEND stimulus\_current;suffix TO x \\
+    APPEND steady\_state\_hyper;suffix TO y \- \\
+  ENDFOR \\
+  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
+  APPEND $R^2$ TO E29\_cod
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {E39}
+  {LibV2}
+  {E39}
+  {$\frac{\mathrm{Hz}}{\mathrm{nA}}$}
+  {mean frequency;IDthreshold*}
+  {stimulus current;IDthreshold*}
+  {none}
+  {The slope of a linear fit of the curve \myid{mean frequency} vs. \myid{stimulus current}}
+  {
+  FOR suffix IN IDthreshold* DO \+ \\
+    APPEND stimulus\_current;suffix TO x \\
+    APPEND mean\_frequency;suffix TO y \- \\
+  ENDFOR \\
+  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
+  APPEND slope TO E39
+  }
+  Get the points (\myid{stimulus current}, \myid{mean frequency}) for all repetitions and iterations of the stimulus protocol \myid{IDthreshold} and fit a straight line.
+
+  \mybox{remarks:}{
+  A straight line generally is not an appropriate fit to the described curve.
+  }
+\end{efeature}
+
+\begin{efeature}
+  {E39: coefficient of determination}
+  {LibV2}
+  {E39\_cod}
+  {none}
+  {E39}
+  {none}
+  {none}
+  {The coefficient of determination (often: R$^2$) of the straight line fit according to E39}
+  {
+  FOR suffix IN IDthreshold* DO \+ \\
+    APPEND stimulus\_current;suffix TO x \\
+    APPEND steady\_state\_hyper;suffix TO y \- \\
+  ENDFOR \\
+  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
+  APPEND $R^2$ TO E39\_cod
+  }
+  
+\end{efeature}
+
+\begin{efeature}
+  {E40 (time to first spike)}
+  {LibV2}
+  {E40}
+  {ms}
+  {time to first spike;IDrest*}
+  {none}
+  {none}
+  {Average time from the begin of the stimulus to the maximum of the first peak}
+  {
+  APPEND mean of time\_to\_first\_spike;IDrest* at index 0 TO E40
+  }
+  Take the mean of \myid{time to first spike} over all repetitions and iterations of the stimulus protocol \myid{IDrest}
+  
+\end{efeature}
+
+\begin{efeature}
+  {time constant mean}
+  {LibV2}
+  {time\_constant\_mean}
+  {ms}
+  {time constant;IV*}
+  {none}
+  {none}
+  {Membrane time constant}
+  {
+  APPEND mean of time\_consant;IV* at index 0 TO time\_constant\_mean
+  }
+  Take the mean of \myid{time constant} over all repetitions and iterations of the stimulus protocol \myid{IV}
+  
+\end{efeature}
+
+\begin{efeature}
+  {time constant standard deviation}
+  {LibV2}
+  {time\_constant\_std}
+  {ms}
+  {time constant mean\\&time constant;IV*}
+  {none}
+  {none}
+  {Standard deviation of the membrane time constant}
+  {
+  APPEND standard deviation of time\_constant;IV* at index 0 TO time\_constant\_std
+  }
+  Calculate the standard deviations of all values of \myid{time constant} obtained on different repetitions and iterations of the stimulus protocol \myid{IV}.
+  
+\end{efeature}
+
+\section{LibV5}
+
+\begin{efeature}
+  {AP begin voltage}
+  {LibV5}
+  {AP\_begin\_voltage}
+  {mV}
+  {AP\_begin\_indices}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {Voltage values at the onset of each action potential}
+  {
+  begin$_0, \ldots, $begin$_{n-1} =$ AP\_begin\_indices \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND V[begin$_{i}$] TO AP\_begin\_voltage \- \\
+  ENDFOR
+  }
+  Return the voltage levels at \myid{AP\_begin\_indices}.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AHP time from peak}
+  {LibV5}
+  {AHP\_time\_from\_peak}
+  {ms}
+  {min\_AHP\_indices\\&peak\_indices}
+  {V\\&T\\&stim start\\&stim end}
+  {none}
+  {Time between AP peaks and AHP depths}
+  {
+  peak$_0, \ldots, $peak$_{m-1} =$ peak\_indices \\
+  ahp$_0, \ldots, $ahp$_{n-1} =$ min\_AHP\_indices \\
+  IF $m$ > $n$ THEN \+ \\
+    FAIL \- \\
+  ENDIF \\
+  FOR $i = 0, \dots, m - 1$ DO \+ \\
+    APPEND T[ahp$_i$] $-$ T[peak$_i$] TO AHP\_time\_from\_peak \- \\
+  ENDFOR
+  }
+  Obtain the \myid{min\_AHP\_indices} and \myid{peak\_indices}, and calculate
+  the time between these indices in the T array.
+  
+\end{efeature}
+
+\begin{efeature}
+  {AP amplitude from voltagebase}
+  {LibV1}
+  {AP\_amplitude\_from\_voltagebase}
+  {mV}
+  {voltage base\\&peak voltage}
+  {V}
+  {none}
+  {The height of the action potential measured from voltage base}
+  {
+  pv$_0, \ldots, $pv$_{n-1} =$ peak\_voltage \\
+  FOR $i = 0, \dots, n - 1$ DO \+ \\
+    APPEND pv$_i$ - voltage\_base TO AP\_amplitude\_from\_voltagebase \- \\
+  ENDFOR
+  }
+  Yield the difference of \myid{peak voltage} and \myid{voltage base} for each peak.
+  
+\end{efeature}
