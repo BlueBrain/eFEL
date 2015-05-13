@@ -1,11 +1,17 @@
 all: install	
 install:
 	pip install . --upgrade
-doc: install
-	# sphinx-apidoc -f -o docs/source efel
+doc_efeatures:
+	rm -rf docs/build_efeatures && \
+	mkdir docs/build_efeatures && \
+	cd docs/source/tex && \
+	ls -al ../../build_efeatures && \
+	pdflatex -output-directory=../../build_efeatures efeature-documentation.tex
+doc: install doc_efeatures
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \
+	cp ../../build_efeatures/efeature-documentation.pdf .
 	touch .nojekyll && \
 	git init . && \
 	git add . && \
