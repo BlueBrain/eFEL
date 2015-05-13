@@ -59,7 +59,7 @@ This translates into the following file (let's call it 'deap_efel_eval1.py')::
     def evaluate(individual, target_voltage1=-80, target_voltage2=-60):
         """                                                                          
         Evaluate a neuron model with parameters e_pas and g_pas, extracts            
-        features from resulting traces and returns a tuple with                      
+        eFeatures from resulting traces and returns a tuple with                      
         abs(voltage_base-target_voltage1) and                                        
         abs(steady_state_voltage-target_voltage2)                                    
         """     

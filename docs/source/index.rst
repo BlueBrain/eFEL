@@ -6,11 +6,11 @@
 Electrophys Feature Extraction Library
 ======================================
 The Electrophys Feature Extract Library (eFEL) allows neuroscientists to 
-automatically extract features from time series data recorded from neurons 
+automatically extract eFeatures from time series data recorded from neurons 
 (both in vitro and in silico). Examples are the action potential width and 
 amplitude in voltage traces recorded during whole-cell patch clamp experiments. 
-The user of the library provides a set of traces and selects the features to be 
-calculated. The library will then extract the requested features and return the 
+The user of the library provides a set of traces and selects the eFeatures to be 
+calculated. The library will then extract the requested eFeatures and return the 
 values to the user.
 
 The core of the library is written in C++, and a Python wrapper is included. 
@@ -26,6 +26,7 @@ The source code of the eFEL is located on github:
 
    installation
    examples
+   eFeatures
    api
 
 Indices and tables

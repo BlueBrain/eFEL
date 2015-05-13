@@ -5,11 +5,11 @@ First you need to import the module::
     
     import efel
                                                                                  
-To get a list with all the available feature names::
+To get a list with all the available eFeature names::
 
     efel.getFeatureNames()
 
-The python function to extract features is getFeatureValues(...).
+The python function to extract eFeatures is getFeatureValues(...).
 Below is a short example on how to use this function.
 
 The code and example trace are available 
@@ -63,7 +63,7 @@ The code and example trace are available
         # The return value is a list of trace_results, every trace_results           
         # corresponds to one trace in the 'traces' list above (in same order)        
         for trace_results in traces_results:                                         
-            # trace_result is a dictionary, with as keys the requested features      
+            # trace_result is a dictionary, with as keys the requested eFeatures      
             for feature_name, feature_values in trace_results.items():              
                 print "Feature %s has the following values: %s" % \                  
                     (feature_name, ', '.join([str(x) for x in feature_values]))      
