@@ -45,11 +45,28 @@ cppcore_sources = ['cppcore.cpp',
                    'efel.cpp',
                    'cfeature.cpp',
                    'mapoperations.cpp']
+cppcore_headers = ['Utils.h',
+                   'LibV1.h',
+                   'LibV2.h',
+                   'LibV3.h',
+                   'LibV4.h',
+                   'LibV5.h',
+                   'FillFptrTable.h',
+                   'DependencyTree.h',
+                   'efel.h',
+                   'cfeature.h',
+                   'Global.h',
+                   'mapoperations.h']
 cppcore_sources = [
     os.path.join(
         cppcore_dir,
         filename) for filename in cppcore_sources]
+cppcore_headers = [
+    os.path.join(
+        'cppcore',
+        filename) for filename in cppcore_headers]
 
+print cppcore_headers
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
                     include_dirs=['efel/cppcore/'])
@@ -58,7 +75,6 @@ setup(
     version=VERSION,
     install_requires=['numpy>=1.6'],
     packages=['efel'],
-    include_package_data=True,
     author="Werner Van Geit",
     author_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extraction Library",
@@ -81,5 +97,5 @@ setup(
         '': [
             'DependencyV5.txt',
             'VERSION.txt',
-            'GITHASH.txt']},
+            'GITHASH.txt'] + cppcore_headers},
     ext_modules=[cppcore])
