@@ -44,7 +44,7 @@ int LinearInterpolation(double Stepdx, const vector<double>& X,
 
 int getCentralDifferenceDerivative(double dx, const vector<double>& v,
                                    vector<double>& dv) {
-  int n = v.size();
+  unsigned n = v.size();
   dv.clear();
   // because formula is ((vec[i+1]+vec[i-1])/2)/dx hence it should iterate
   // through 1 to length-1

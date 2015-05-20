@@ -846,7 +846,7 @@ int LibV1::__adaptation_index(double spikeSkipf, int maxnSpike,
     }
   }
   // Remove n spikes given by spike_skipf or max_spike_skip
-  int spikeToRemove = (int)((SpikeTime.size() * spikeSkipf) + 0.5);
+  unsigned spikeToRemove = (unsigned)((SpikeTime.size() * spikeSkipf) + 0.5);
   // spike To remove is minimum of spike_skipf or max_spike_skip
   if (maxnSpike < spikeToRemove) spikeToRemove = maxnSpike;
 
