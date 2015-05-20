@@ -20,6 +20,9 @@ doc_upload: doc
 	rm -rf .git
 test: install
 	cd efel/tests; nosetests -s -v -x
+pypi: test
+	python setup.py sdist bdist
+	twine upload dist/*
 clean:
 	rm -rf build
 	rm -rf docs/build

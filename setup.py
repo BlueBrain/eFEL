@@ -84,7 +84,7 @@ setup(
     author="Werner Van Geit",
     author_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extraction Library",
-    license="BBP-internal-confidential",
+    license="LGPLv3",
     keywords=(
         'feature',
         'extraction',
@@ -94,12 +94,14 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
-        'License :: Proprietary',
+        'License :: OSI Approved :: GNU Lesser General Public '
+        'License v3 (LGPLv3)',
         'Operating System :: POSIX',
         'Topic :: Scientific/Engineering',
         'Topic :: Utilities'],
     package_data={
-        '': ['DependencyV5.txt',
-             'VERSION.txt',
-             'GITHASH.txt']},
+        '': [
+            'DependencyV5.txt',
+            'VERSION.txt',
+            'GITHASH.txt']},
     ext_modules=[cppcore])
