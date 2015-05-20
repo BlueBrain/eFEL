@@ -74,7 +74,7 @@ setup(
     version=VERSION,
     install_requires=['numpy>=1.6'],
     packages=['efel'],
-    author="BlueBrain Project",
+    author="BlueBrain Project, EPFL",
     author_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extract Library (eFEL)",
     long_description="The Electrophys Feature Extract Library (eFEL) allows "
@@ -105,5 +105,6 @@ setup(
         '': [
             'DependencyV5.txt',
             'VERSION.txt',
+            'README.md',
             'GITHASH.txt'] + cppcore_headers},
     ext_modules=[cppcore])
