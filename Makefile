@@ -21,6 +21,7 @@ doc_upload: doc
 test: install
 	cd efel/tests; nosetests -s -v -x
 pypi: test
+	rm -rf dist
 	python setup.py sdist bdist
 	twine upload dist/*
 clean:

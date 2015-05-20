@@ -32,28 +32,6 @@ execfile("efel/version.py")
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
-
-def parse_reqs(reqs_file):
-    ''' parse the requirements '''
-    # pylint: disable=E1123
-    install_reqs = pip.req.parse_requirements(
-        reqs_file,
-        session=False)
-    # pylint: enable=E1123
-    return [str(ir.req) for ir in install_reqs]
-
-REQS = parse_reqs(os.path.join(BASEDIR, "requirements.txt"))
-
-EXTRA_REQS_PREFIX = 'requirements_'
-EXTRA_REQS = {}
-for file_name in os.listdir(BASEDIR):
-    if not file_name.startswith(EXTRA_REQS_PREFIX):
-        continue
-    base_name = os.path.basename(file_name)
-    (extra, _) = os.path.splitext(base_name)
-    extra = extra[len(EXTRA_REQS_PREFIX):]
-    EXTRA_REQS[extra] = parse_reqs(file_name)
-
 cppcore_dir = os.path.join('efel', 'cppcore')
 cppcore_sources = ['cppcore.cpp',
                    'Utils.cpp',
@@ -78,7 +56,7 @@ cppcore = Extension('efel.cppcore',
 setup(
     name="efel",
     version=VERSION,
-    install_requires=REQS,
+    install_requires=['numpy>=1.6'],
     packages=['efel'],
     include_package_data=True,
     author="Werner Van Geit",
