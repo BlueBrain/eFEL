@@ -34,13 +34,14 @@ Installation
 The easiest way to install eFEL is to use [pip](https://pip.pypa.io)
 
 ```bash
-pip install git+git://github.com/BlueBrain/eFEL
+pip install efel
 ```
+
 In case you don't have administrator access this command might fail with a 
 permission error. In that case you could install eFEL in your home directory
 
 ```bash
-pip install --user git+git://github.com/BlueBrain/eFEL
+pip install efel --user
 ```
 
 Or you could use a [python virtual environment](https://virtualenv.pypa.io)
@@ -48,6 +49,12 @@ Or you could use a [python virtual environment](https://virtualenv.pypa.io)
 ```bash
 virtualenv pythonenv
 . ./pythonenv/bin/activate
+pip install efel
+```
+
+If you want to install straight from the github repository you can use
+
+```bash
 pip install git+git://github.com/BlueBrain/eFEL
 ```
 
