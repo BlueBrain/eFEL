@@ -25,7 +25,6 @@ try:
 except ImportError:
     from distutils.core import setup, Extension  # pylint: disable=E0611,F0401
 
-import pip.req
 import os
 
 execfile("efel/version.py")
@@ -75,21 +74,30 @@ setup(
     version=VERSION,
     install_requires=['numpy>=1.6'],
     packages=['efel'],
-    author="Werner Van Geit",
+    author="BlueBrain Project",
     author_email="werner.vangeit@epfl.ch",
-    description="Electrophys Feature Extraction Library",
+    description="Electrophys Feature Extract Library (eFEL)",
+    long_description="The Electrophys Feature Extract Library (eFEL) allows "
+    "neuroscientists to automatically extract features from time series data "
+    "recorded from neurons (both in vitro and in silico). "
+    "Examples are the action potential width and amplitude in "
+    "voltage traces recorded during whole-cell patch clamp experiments. "
+    "The user of the library provides a set of traces and selects the "
+    "features to be calculated. The library will then extract the requested "
+    "features and return the values to the user.",
     license="LGPLv3",
     keywords=(
         'feature',
         'extraction',
         'electrophysiology',
         'BlueBrainProject'),
-    url="http://bluebrain.epfl.ch",
+    url='https://github.com/BlueBrain/eFEL',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'License :: OSI Approved :: GNU Lesser General Public '
         'License v3 (LGPLv3)',
+        'Programming Language :: Python :: 2.7',
         'Operating System :: POSIX',
         'Topic :: Scientific/Engineering',
         'Topic :: Utilities'],
