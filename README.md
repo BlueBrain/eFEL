@@ -3,6 +3,8 @@
 Introduction
 ============
 
+[![Join the chat at https://gitter.im/BlueBrain/eFEL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BlueBrain/eFEL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The Electrophys Feature Extract Library (eFEL) allows neuroscientists
 to automatically extract features from time series data recorded from neurons 
 (both in vitro and in silico). 
