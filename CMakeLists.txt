@@ -51,4 +51,4 @@ elseif (LBGQ)
         "-qpic -qnohot -qstrict -qnostaticlink -O3 -qarch=qp -q64")
 endif (BGQ)
 
-add_subdirectory("efel/cppcore")
+add_subdirectory("efel")
