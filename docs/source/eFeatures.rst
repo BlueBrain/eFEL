@@ -8,7 +8,7 @@ Not every eFeature has a description in this document yet,
 the complete set will be available shortly.
 
 LibV5 : steady_state_voltage_stimend
-----------------------------
+------------------------------------
 The average voltage during the last 90% of the stimulus duration.
 
 - **Required features**: t, V, stim_start, stim_end
