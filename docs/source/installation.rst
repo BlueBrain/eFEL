@@ -24,4 +24,28 @@ Or you could use a `python virtual environment <https://virtualenv.pypa.io>`_::
 
     virtualenv pythonenv                                                             
     . ./pythonenv/bin/activate                                                       
-    pip install git+git://github.com/BlueBrain/eFEL              
+    pip install git+git://github.com/BlueBrain/eFEL
+
+Installing the C++ standalone library
+-------------------------------------
+
+If your system doesn't have it, install `CMake <http://www.cmake.org/>`_.
+
+Make a new build directory::
+
+    mkdir build_cmake
+
+Configure the build, replace YOURINSTALLDIR with the directory in which you want
+to install the efel library (e.g. /usr/local)::
+
+    cd build_cmake
+    cmake .. -DCMAKE_INSTALL_PREFIX=YOURINSTALLDIR
+
+Run the compilation and installation::
+
+    make install
+
+This will have installed a static and shared library as::
+    
+    YOURINSTALLDIR/lib/libefel.a
+    YOURINSTALLDIR/lib/libefel.so

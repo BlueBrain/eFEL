@@ -1,3 +1,4 @@
-build
-dist
-efel.egg-info
+/build
+/dist
+/efel.egg-info
+/build_cmake

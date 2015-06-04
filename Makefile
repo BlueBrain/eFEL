@@ -25,7 +25,13 @@ pypi: test
 	python setup.py sdist bdist
 	twine upload dist/*
 clean:
+	rm -rf build_cmake
 	rm -rf build
 	rm -rf docs/build
+cpp:
+	mkdir -p build_cmake && \
+	cd build_cmake && \
+	cmake .. && \
+	make -j
 push: clean install test doc doc_upload
 	git push
