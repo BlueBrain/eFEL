@@ -10,8 +10,8 @@ the complete set will be available shortly.
 Requested features
 ==================
 
-LibV5 : steady_state_voltage_stimend
-------------------------------------
+**LibV5 : steady_state_voltage_stimend**
+
 The average voltage during the last 90% of the stimulus duration.
 
 - **Required features**: t, V, stim_start, stim_end
