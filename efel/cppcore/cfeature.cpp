@@ -362,7 +362,7 @@ int cFeature::calc_features(const string& name) {
       fptrlookup.find(name));
   if (lookup_it == fptrlookup.end()) {
     fprintf(stderr,
-            "\nFeature [ %s] dependency file entry or pointer table entry is "
+            "\nFeature [ %s ] dependency file entry or pointer table entry is "
             "missing. Exiting\n",
             name.c_str());
     fflush(stderr);
