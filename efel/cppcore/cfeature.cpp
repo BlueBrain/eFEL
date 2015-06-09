@@ -225,6 +225,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP_amplitude_from_voltagebase"] = "double";
   featuretypes["min_voltage_between_spikes"] = "double";
   featuretypes["voltage"] = "double";
+  featuretypes["steady_state_voltage_stimend"] = "double";
 
   // end of feature types
 }
@@ -459,6 +460,8 @@ int cFeature::getFeatureDouble(string strName, vector<double>& vec) {
     }
     return -1;
   }
+  printf("%s\n", strName.c_str());
+  fflush(stdout);
   vec = getmapDoubleData(strName);
 
   if (logging) {
