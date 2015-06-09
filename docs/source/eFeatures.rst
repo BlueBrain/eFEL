@@ -7,8 +7,8 @@ A pdf document describing the eFeatures is available
 Not every eFeature has a description in this document yet, 
 the complete set will be available shortly.
 
-Requested eFeatures
-==================
+Recently added eFeatures
+========================
 
 **LibV5 : steady_state_voltage_stimend**
 
@@ -23,4 +23,5 @@ The average voltage during the last 90% of the stimulus duration.
     end_time = stim_end[0]
     steady_state_voltage_stimend = [numpy.mean(voltage[numpy.where((t <= end_time) & (t >= begin_time))])]
 
-
+Requested eFeatures
+===================

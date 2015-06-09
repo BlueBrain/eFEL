@@ -2192,3 +2192,52 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
   }                                                                              
 }
 
+
+// *** The average voltage during the last 90% of the stimulus duration. ***                                                  
+int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,                   
+                                mapStr2doubleVec& DoubleFeatureData,             
+                                mapStr2Str& StringData) {                        
+  int retVal;                                                                    
+  int nSize;                                                                     
+  vector<double> t, v, stimEnd, stimStart, ssv;
+  
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,                       
+                            string("steady_state_voltage_stimend"), nSize);              
+  if (retVal) {                                                                  
+    return nSize;                                                                
+  }                                                                        
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);    
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", 
+                      stimStart);   
+  if (retVal < 0) return -1;
+
+  double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
+  unsigned start_index = distance(
+          t.begin(), find_if(t.begin(), t.end(),
+                             bind2nd(greater_equal<double>(), start_time)));
+  
+  unsigned mean_size = 0;
+  double mean = 0.0;
+  for (unsigned i = start_index; t[i] <= stimEnd[0]; i++) {
+    mean += v[i];                                                                
+    mean_size++;                                                                 
+  }
+   
+  // Check for division by zero 
+  if (mean_size == 0) {
+    return -1;
+  } else {
+    mean /= mean_size;                                                             
+    ssv.push_back(mean);                                                           
+  
+    setDoubleVec(DoubleFeatureData, StringData, 
+                 "steady_state_voltage_stimend", ssv);  
+  
+    return 1;
+  }                                                                                
+}
