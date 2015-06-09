@@ -131,6 +131,7 @@
     "spike_width2",
     "steady_state_hyper",
     "steady_state_voltage",
+    "steady_state_voltage_stimend",
     "time_constant",
     "time_to_first_spike",
     "time_to_last_spike",

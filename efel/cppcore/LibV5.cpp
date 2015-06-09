@@ -2205,30 +2205,25 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
                             string("steady_state_voltage_stimend"), nSize);              
   if (retVal) {                                                                  
     return nSize;                                                                
-  } else {                                                                       
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
-    if (retVal < 0) return -1;                                                   
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
-    if (retVal < 0) return -1;                                                   
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);   
-    if (retVal < 0) return -1;                                                   
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", 
-                          stimStart);   
-    if (retVal < 0) return -1;
-    return retVal;                                                               
-  }                
-  return 0;  
-  double start_time = stimEnd[0] - 0.9 * (stimEnd[0] - stimStart[0]);
+  }                                                                        
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);    
+  if (retVal < 0) return -1;                                                   
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", 
+                      stimStart);   
+  if (retVal < 0) return -1;
+
+  double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
   unsigned start_index = distance(
           t.begin(), find_if(t.begin(), t.end(),
                              bind2nd(greater_equal<double>(), start_time)));
-  unsigned stop_index = distance(
-          t.begin(), find_if(t.begin()+start_index, t.end(),
-                             bind2nd(less_equal<double>(), stimEnd[0])));
-
+  
   unsigned mean_size = 0;
   double mean = 0.0;
-  for (unsigned i = start_index; t[i] < stop_index; i++) {
+  for (unsigned i = start_index; t[i] <= stimEnd[0]; i++) {
     mean += v[i];                                                                
     mean_size++;                                                                 
   }

@@ -460,8 +460,6 @@ int cFeature::getFeatureDouble(string strName, vector<double>& vec) {
     }
     return -1;
   }
-  printf("%s\n", strName.c_str());
-  fflush(stdout);
   vec = getmapDoubleData(strName);
 
   if (logging) {
