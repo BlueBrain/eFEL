@@ -122,6 +122,56 @@ def getFeatureNames():
     return feature_names
 
 
+def getDistance(trace, featureName, mean, std):
+    """Calculate distance value for a list of traces.
+
+    Parameters
+    ==========
+    trace : trace dicts
+            Trace dict that represents one trace. The dict should have the
+            following keys: 'T', 'V', 'stim_start', 'stim_end'
+    featureName : string
+                  Name of the the features for which to calculate the distance
+    mean : float
+           Mean to calculate the distance from
+    std : float
+          Std to scale the distance with
+
+    Returns
+    =======
+    distance : float
+               The absolute number of standard deviation the feature is away
+               from the mean. In case of anomalous results a value of '250'
+               standard deviations is returned. This can happen if: a feature
+               generates an error, there are spikes outside of the stimulus
+               interval, the feature returns a NaN, etc.
+    """
+
+    _initialise()
+
+    # Next set time, voltage and the stimulus start and end
+    for item in trace.keys():
+        cppcore.setFeatureDouble(item, [x for x in trace[item]])
+
+    return efel.cppcore.getDistance(featureName, mean, std)
+
+
+def _initialise():
+    """Set cppcore initial values"""
+    cppcore.Initialize(_settings.dependencyfile_path, "log")
+
+    # First set some settings that are used by the feature extraction
+    cppcore.setFeatureDouble('spike_skipf', [0.1])
+    cppcore.setFeatureInt('max_spike_skip', [2])
+    cppcore.setFeatureDouble('Threshold',
+                             [_settings.threshold])
+    cppcore.setFeatureDouble('DerivativeThreshold',
+                             [_settings.derivative_threshold])
+    cppcore.setFeatureDouble('interp_step', [0.1])
+    cppcore.setFeatureDouble('burst_factor', [1.5])
+    cppcore.setFeatureDouble("initial_perc", [0.1])
+
+
 def getFeatureValues(traces, featureNames):
     """Calculate feature values for a list of traces.
 
@@ -172,18 +222,7 @@ def getFeatureValues(traces, featureNames):
         else:
             raise Exception('stim_start or stim_end missing from trace')
 
-        cppcore.Initialize(_settings.dependencyfile_path, "log")
-
-        # First set some settings that are used by the feature extraction
-        cppcore.setFeatureDouble('spike_skipf', [0.1])
-        cppcore.setFeatureInt('max_spike_skip', [2])
-        cppcore.setFeatureDouble('Threshold',
-                                 [_settings.threshold])
-        cppcore.setFeatureDouble('DerivativeThreshold',
-                                 [_settings.derivative_threshold])
-        cppcore.setFeatureDouble('interp_step', [0.1])
-        cppcore.setFeatureDouble('burst_factor', [1.5])
-        cppcore.setFeatureDouble("initial_perc", [0.1])
+        _initialise()
 
         # Next set time, voltage and the stimulus start and end
         for item in trace.keys():
@@ -223,7 +262,7 @@ def getFeatureValues(traces, featureNames):
 
 
 def getMeanFeatureValues(traces, featureNames):
-    """Convenience function that returns the mean values from getFeatureValues().
+    """Convenience function that returns the mean values from getFeatureValues()
 
     Instead of return a list of values for every feature as getFeatureValues()
     does, this function returns per trace one value for every feature, namely

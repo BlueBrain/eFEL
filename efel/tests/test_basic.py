@@ -152,8 +152,8 @@ def test_mean_frequency1():
     nt.assert_almost_equal(feature_values[0]['mean_frequency'], 15.2858453)
 
 
-def test_ap_amplitude_from_voltagebase1():
-    """basic: Test AP_amplitude_from_voltagebase 1"""
+def test_getDistance1():
+    """basic: Test getDistance 1"""
 
     import efel
     import numpy
@@ -173,20 +173,13 @@ def test_ap_amplitude_from_voltagebase1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['AP_amplitude_from_voltagebase',
-                'peak_voltage', 'voltage_base']
-
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            features)
-
-    voltage_base = feature_values[0]['voltage_base'][0]
-    for peak_voltage, ap_amplitude_from_voltagebase in zip(
-            feature_values[0]['peak_voltage'],
-            feature_values[0]['AP_amplitude_from_voltagebase']):
-        nt.assert_almost_equal(peak_voltage - voltage_base,
-                               ap_amplitude_from_voltagebase)
+    nt.assert_almost_equal(
+        3.09045815935,
+        efel.getDistance(
+            trace,
+            'AP_amplitude',
+            50,
+            10))
 
 
 def test_APlast_amp():
