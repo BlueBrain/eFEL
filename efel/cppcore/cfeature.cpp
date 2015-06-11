@@ -225,6 +225,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP_amplitude_from_voltagebase"] = "double";
   featuretypes["min_voltage_between_spikes"] = "double";
   featuretypes["voltage"] = "double";
+  featuretypes["steady_state_voltage_stimend"] = "double";
 
   // end of feature types
 }

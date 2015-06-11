@@ -275,3 +275,43 @@ def test_getFeatureNames():
     with open('featurenames.json', 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
     nt.assert_equal(efel.getFeatureNames(), expected_featurenames)
+
+
+def test_steady_state_voltage_stimend():
+    """basic: steady_state_voltage_stimend 1"""
+
+    import efel
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['steady_state_voltage_stimend']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)[0]
+
+    stim_duration = stim_end - stim_start
+    begin_time = stim_end - 0.1 * stim_duration
+    end_time = stim_end
+    steady_state_voltage_stimend = [
+        numpy.mean(voltage[numpy.where(
+            (time <= end_time) & (time >= begin_time)
+        )])]
+
+    nt.assert_almost_equal(steady_state_voltage_stimend,
+                           feature_values['steady_state_voltage_stimend'])

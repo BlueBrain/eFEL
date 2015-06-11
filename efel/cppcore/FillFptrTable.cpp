@@ -240,8 +240,9 @@ int FillFptrTable() {
                             &LibV5::AP_amplitude_from_voltagebase;
   FptrTableV5["min_voltage_between_spikes"] = 
                             &LibV5::min_voltage_between_spikes;
-  FptrTableV5["voltage"] = 
-                            &LibV5::voltage;
+  FptrTableV5["voltage"] = &LibV5::voltage;
+  FptrTableV5["steady_state_voltage_stimend"] = 
+                            &LibV5::steady_state_voltage_stimend;
   
   //****************** end of FptrTableV5 *****************************
 
