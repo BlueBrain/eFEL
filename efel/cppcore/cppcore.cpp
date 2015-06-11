@@ -183,6 +183,19 @@ static PyObject* getFeatureNames(PyObject * self, PyObject * args) {
   return Py_BuildValue("");
 }
 
+static PyObject* getDistance(PyObject * self, PyObject * args) {
+  char * feature_name;  
+  double mean, std, distance;
+  
+  if (!PyArg_ParseTuple(args, "sdd", &feature_name, &mean, &std)) {
+          return NULL;
+  }
+ 
+  distance = pFeature->getDistance(feature_name, mean, std);
+
+  return Py_BuildValue("d", distance);
+}
+
 static PyObject* featuretype(PyObject * self, PyObject * args) {
   char * feature_name;
   string feature_type;
@@ -218,7 +231,9 @@ static PyMethodDef CppCoreMethods[] = {
                                "Get CppCore error string"},                               
             {"getFeatureNames",  getFeatureNames, METH_VARARGS,                      
                                "Get the names of all the available features"},                               
-                    {NULL, NULL, 0, NULL}        /* Sentinel */                              
+            {"getDistance",  getDistance, METH_VARARGS,                      
+                    "Get the distance between a feature and experimental data"},                               
+            {NULL, NULL, 0, NULL}        /* Sentinel */                              
 };                                                                               
                                                                                  
 PyMODINIT_FUNC initcppcore(void) {                                           

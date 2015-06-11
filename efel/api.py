@@ -1,9 +1,9 @@
 """eFEL Python API functions.
 
-This module provides the user-facing Python API of the eFEL. 
+This module provides the user-facing Python API of the eFEL.
 The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
-All functions in this module can be called as efel.functionname, it is 
+All functions in this module can be called as efel.functionname, it is
 not necessary to include 'api' as in efel.api.functionname.
 """
 
@@ -39,17 +39,17 @@ _settings = efel.Settings()
 
 def setDependencyFileLocation(location):
     """Set the location of the Dependency file
-    
+
     The eFEL uses 'Dependency' files to let the user define which versions
     of certain features are used to calculate.
-    The installation directory of the eFEL contains a default 
-    'DependencyV5.txt' file. Unless the user wants to change this file, 
+    The installation directory of the eFEL contains a default
+    'DependencyV5.txt' file. Unless the user wants to change this file,
     it is not necessary to call this function.
 
     Parameters
     ==========
     location : string
-               path to the location of a Dependency file    
+               path to the location of a Dependency file
     """
 
     global dependencyFileLocation
@@ -62,10 +62,10 @@ def setDependencyFileLocation(location):
 
 def getDependencyFileLocation():
     """Get the location of the Dependency file
-    
+
     The eFEL uses 'Dependency' files to let the user define which versions
     of certain features are used to calculate.
-    The installation directory of the eFEL contains a default 
+    The installation directory of the eFEL contains a default
     'DependencyV5.txt' file.
 
     Returns
@@ -79,7 +79,7 @@ def getDependencyFileLocation():
 
 def setThreshold(newThreshold):
     """Set the spike detection threshold in the eFEL
-    
+
     Parameters
     ==========
     threshold : float
@@ -91,7 +91,7 @@ def setThreshold(newThreshold):
 
 def setDerivativeThreshold(newDerivativeThreshold):
     """Set the threshold for the derivate for detecting the spike onset
-    
+
     Some feature us a threshold on dV/dt to calculate the beginning of an
     action potential. This function allows you to set this threshold.
 
@@ -106,7 +106,7 @@ def setDerivativeThreshold(newDerivativeThreshold):
 
 def getFeatureNames():
     """Return a list with the name of all the available features
-    
+
     Returns
     =======
     feature_names : list of strings
@@ -127,10 +127,10 @@ def getFeatureValues(traces, featureNames):
 
     This function is the core of the eFEL API. A list of traces (in the form
     of dictionaries) is passed as argument, together with a list of feature
-    names. 
+    names.
 
     The return value consists of a list of dictionaries, one for each input
-    trace. The keys in the dictionaries are the names of the calculated 
+    trace. The keys in the dictionaries are the names of the calculated
     features, the corresponding values are lists with the feature values.
     Beware that every feature returns an array of values. E.g. AP_amplitude
     will return a list with the amplitude of every action potential.
@@ -150,7 +150,7 @@ def getFeatureValues(traces, featureNames):
                      the same order). The dict contains the keys of
                      'feature_names', every key contains a numpy array with
                      the feature values returned by the C++ efel code.
-                     The value is None if an error occured during the 
+                     The value is None if an error occured during the
                      calculation of the feature.
     """
     featureDicts = []
@@ -226,7 +226,7 @@ def getMeanFeatureValues(traces, featureNames):
     """Convenience function that returns the mean values from getFeatureValues().
 
     Instead of return a list of values for every feature as getFeatureValues()
-    does, this function returns per trace one value for every feature, namely 
+    does, this function returns per trace one value for every feature, namely
     the mean value.
 
     Parameters
@@ -244,7 +244,7 @@ def getMeanFeatureValues(traces, featureNames):
                      the same order). The dict contains the keys of
                      'feature_names', every key contains the mean of the array
                      that is returned by getFeatureValues()
-                     The value is None if an error occured during the 
+                     The value is None if an error occured during the
                      calculation of the feature, or if the feature value array
                      was empty.
     """
