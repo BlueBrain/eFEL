@@ -182,6 +182,11 @@ int LibV2::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
   for (unsigned i = 0; i < apri.size(); i++) {
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak;
+    if (pi[i] < apbi[i]) {
+        // For some reason the peak and begin indices are out of sync
+        // Peak should always be later than begin index  
+        return -1;
+    }
     vpeak.resize(pi[i] - apbi[i]);
     transform(v.begin() + apbi[i], v.begin() + pi[i], vpeak.begin(),
               bind2nd(minus<double>(), halfheight));
