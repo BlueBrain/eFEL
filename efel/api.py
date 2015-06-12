@@ -37,6 +37,19 @@ import efel.cppcore as cppcore
 _settings = efel.Settings()
 
 
+def reset():
+    """Resets the efel to its initial state
+
+    The user can set certain values in the efel, like the spike threshold.
+    These values are persisten. This function will reset these value to their
+    original state.
+    """
+
+    global _settings
+    _settings = efel.Settings()
+    _initialise()
+
+
 def setDependencyFileLocation(location):
     """Set the location of the Dependency file
 

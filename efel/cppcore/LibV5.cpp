@@ -612,8 +612,11 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
-    int width = 5;
+    int width = 3;
     bool skip = false;
+
+    // Detect where the derivate crosses derivativethreshold, and make sure
+    // this happens in a window of 'width' sampling point
     do {
       begin = distance(
           dvdt.begin(),

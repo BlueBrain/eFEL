@@ -30,14 +30,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import nose.tools as nt
 
-# pylint: disable=W0611, W0612, F0401
+# pylint: disable=W0611, W0612, F0401, R0914
+
+_multiprocess_can_split_ = True
 
 
 def test_import():
     """basic: Test importing of eFEL"""
 
     # pylint: disable=W0611
-    import efel
+    import efel  # NOQA
     # pylint: enable=W0611
 
 
@@ -45,6 +47,7 @@ def test_version():
     """basic: Test if version number exists"""
 
     import efel
+    efel.reset()
 
     nt.assert_true(efel.version is not None)
 
@@ -53,6 +56,8 @@ def test_empty_trace():
     """basic: Testing results for empty trace"""
 
     import efel
+    efel.reset()
+
     import numpy
 
     max_time = 3000.0
@@ -80,7 +85,7 @@ def test_empty_trace():
         'inv_fifth_ISI',
         'inv_last_ISI']
 
-    efel.getFeatureValues([trace], features)
+    # efel.getFeatureValues([trace], features)
 
     for feature, value in \
             efel.getFeatureValues([trace], features)[0].iteritems():
@@ -88,10 +93,68 @@ def test_empty_trace():
         nt.assert_equal(value[0], 0.0)
 
 
+def test_consecutive_traces():
+    """basic: Test if features from two different traces give other results"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 31.2
+    stim_end = 431.2
+
+    data1 = numpy.loadtxt(
+        'testdata/basic/zero_ISI_log_slope_skip95824004.abf.csv')
+
+    time1 = data1[:, 0]
+    voltage1 = data1[:, 1]
+
+    trace1 = {}
+
+    trace1['T'] = time1
+    trace1['V'] = voltage1
+    trace1['stim_start'] = [stim_start]
+    trace1['stim_end'] = [stim_end]
+
+    feature_name = 'peak_time'
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values1 = \
+            efel.getFeatureValues(
+                [trace1],
+                [feature_name])
+    data2 = numpy.loadtxt(
+        'testdata/basic/AP_begin_indices_95810005.abf.csv')
+
+    voltage2 = data2
+    time2 = numpy.arange(len(voltage2)) * 0.1
+
+    trace2 = {}
+
+    trace2['T'] = time2
+    trace2['V'] = voltage2
+    trace2['stim_start'] = [stim_start]
+    trace2['stim_end'] = [stim_end]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values2 = \
+            efel.getFeatureValues(
+                [trace2],
+                [feature_name])
+
+    nt.assert_not_equal(
+        len(feature_values1[0][feature_name]),
+        len(feature_values2[0][feature_name]))
+
+
 def test_ISI_log_slope_skip():
     """basic: Test ISI_log_slope_skip"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 31.2
@@ -122,10 +185,61 @@ def test_ISI_log_slope_skip():
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
 
 
+def test_AP_begin_indices1():
+    """basic: Test AP_begin_indices 1"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 31.2
+    stim_end = 431.2
+
+    voltage = numpy.loadtxt(
+        'testdata/basic/AP_begin_indices_95810005.abf.csv')
+
+    time = numpy.arange(len(voltage)) * 0.1
+
+    trace = {}
+
+    trace['V'] = voltage
+    trace['T'] = time
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'AP_begin_indices',
+        'AP_amplitude',
+        'peak_time',
+        'AP_duration_half_width']
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                features)
+    # Make sure the amount of peak_times, AP_begin_indices and AP_amplitude is
+    # the same in this trace
+    # There was originally an issue in this case due to the 'width' value
+    # in AP_begin_indices, which caused a segmentation fault
+    nt.assert_equal(
+        len(feature_values[0]['AP_begin_indices']),
+        len(feature_values[0]['AP_amplitude']))
+    nt.assert_equal(
+        len(feature_values[0]['AP_begin_indices']),
+        len(feature_values[0]['peak_time']))
+    nt.assert_equal(
+        len(feature_values[0]['AP_begin_indices']),
+        len(feature_values[0]['AP_duration_half_width']))
+
+
 def test_mean_frequency1():
     """basic: Test mean_frequency 1"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 500.0
@@ -152,10 +266,49 @@ def test_mean_frequency1():
     nt.assert_almost_equal(feature_values[0]['mean_frequency'], 15.2858453)
 
 
+def test_ap_amplitude_from_voltagebase1():
+    """basic: Test AP_amplitude_from_voltagebase 1"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_amplitude_from_voltagebase',
+                'peak_voltage', 'voltage_base']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    voltage_base = feature_values[0]['voltage_base'][0]
+    for peak_voltage, ap_amplitude_from_voltagebase in zip(
+            feature_values[0]['peak_voltage'],
+            feature_values[0]['AP_amplitude_from_voltagebase']):
+        nt.assert_almost_equal(peak_voltage - voltage_base,
+                               ap_amplitude_from_voltagebase)
+
+
 def test_getDistance1():
     """basic: Test getDistance 1"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 500.0
@@ -186,6 +339,7 @@ def test_APlast_amp():
     """basic: Test APlast_amp"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 500.0
@@ -219,6 +373,7 @@ def test_min_voltage_between_spikes1():
     """basic: Test min_voltage_between_spikes 1"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 500.0
@@ -264,6 +419,7 @@ def test_getFeatureNames():
     """basic: Testing getting all feature names"""
 
     import efel
+    efel.reset()
     import json
     with open('featurenames.json', 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
@@ -274,6 +430,7 @@ def test_steady_state_voltage_stimend():
     """basic: steady_state_voltage_stimend 1"""
 
     import efel
+    efel.reset()
     import numpy
 
     stim_start = 500.0
