@@ -22,6 +22,8 @@ The average voltage during the last 90% of the stimulus duration.
     begin_time = stim_end[0] - 0.1 * stim_duration
     end_time = stim_end[0]
     steady_state_voltage_stimend = [numpy.mean(voltage[numpy.where((t <= end_time) & (t >= begin_time))])]
+    
+.. image:: https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRPwKrE9kLHTCnbQVuVX5jzgS57XmH_7hhtMf5Rqx6qh8Tu8BUu
 
 Requested eFeatures
 ===================
