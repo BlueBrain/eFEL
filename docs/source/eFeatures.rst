@@ -22,6 +22,8 @@ Requested eFeatures
 - max_duringstim_from_voltage_base
 - min_duringstim
 - min_duringstim_from_voltage_base
+- diff_min_duringstim
+- diff_max_duringstim
 
 
 eFeatures (to be continued)
@@ -267,3 +269,24 @@ The minimum voltage during stimulus
 - **Pseudocode**: ::
 
     max_duringstim_from_voltage_base = max_duringstim - voltage_base
+    
+**LibV5 : diff_max_duringstim**
+Difference between maximum and steady state during stimulation
+
+- **Required features**: LibV5: max_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    diff_max_duringstim: max_duringstim - steady_state_voltage_stimend
+    
+**LibV5 : diff_min_duringstim**
+Difference between minimum and steady state during stimulation
+
+- **Required features**: LibV5: min_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    diff_min_duringstim: min_duringstim - steady_state_voltage_stimend
+    
+    
+
