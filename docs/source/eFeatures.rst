@@ -1,3 +1,5 @@
+.. role:: red
+
 eFeature descriptions
 =====================
 
@@ -12,6 +14,8 @@ eFeatures (to be continued)
 
 Spike event features
 --------------
+
+.. image:: figures/inv_ISI.png
 
 **LibV5 : inv_time_to_first_spike**
 
@@ -72,29 +76,87 @@ Spike event features
         inv_last_ISI = 0
 
 
-    **LibV5 : time_to_last_spike**
+**LibV5 : time_to_last_spike**
 
-    time from stimulus start to last spike
+time from stimulus start to last spike
 
-    - **Required features**: peak_time (ms), stimstart (ms)
-    - **Units**: ms
-    - **Pseudocode**: ::
+- **Required features**: peak_time (ms), stimstart (ms)
+- **Units**: ms
+- **Pseudocode**: ::
 
-        if len(peak_time) > 0:
-            time_to_last_spike = peak_time[-1] - stimstart
-        else:
-            time_to_last_spike = 0
-
-
-.. image:: figures/inv_ISI.png
+    if len(peak_time) > 0:
+        time_to_last_spike = peak_time[-1] - stimstart
+    else:
+        time_to_last_spike = 0
 
 
 Spike shape features
 --------------
 
+.. image:: figures/AP_Amplitude.png
+
+**LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp**
+
+The relative height of the action potential from spike onset
+
+- **Required features**: LibV5:AP_begin_indices, LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_Amplitude = voltage[AP_begin_indices] - peak_voltage
+    AP1_amp = AP_Amplitude[0]
+    AP2_amp = AP_Amplitude[1]
+    APlast_amp = AP_Amplitude[-1]
 
 .. image:: figures/AHP.png
-.. image:: figures/AP_Amplitude.png
+
+**LibV1 : AHP_depth**
+
+Relative voltage values at the first after-hyperpolarization
+
+- **Required features**: LibV1:voltage_base (mV), LibV5:min_AHP_values (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    min_AHP_values = first_min_element(voltage, peak_indices)
+    AHP_depth = min_AHP_values[:] - voltage_base
+
+**LibV5 : AHP_time_from_peak**
+
+Time between AP peaks and first AHP depths
+
+- **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    min_AHP_indices = first_min_element(voltage, peak_indices)
+    AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
+
+**LibV1 : :red:`AHP_depth_last`**
+
+Relative voltage values at the last after-hyperpolarization
+
+- **Required features**: LibV1:voltage_base (mV), LibV5:last_AHP_values (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    last_AHP_values = last_min_element(voltage, peak_indices)
+    AHP_depth = last_AHP_values[:] - voltage_base
+
+**LibV5 : AHP_time_from_peak_last**
+
+Time between AP peaks and last AHP depths
+
+- **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    last_AHP_indices = last_min_element(voltage, peak_indices)
+    AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
+
+
+
+
 .. image:: figures/AP_duration_half_width.png
 .. image:: figures/voltage_features.png
 
