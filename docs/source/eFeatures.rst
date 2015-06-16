@@ -1,5 +1,6 @@
 .. role:: red
 
+=====================
 eFeature descriptions
 =====================
 
@@ -10,10 +11,10 @@ Not every eFeature has a description in this document yet,
 the complete set will be available shortly.
 
 Implemented eFeatures (to be continued)
-========================
+=======================================
 
 Spike event features
---------------
+--------------------
 
 .. image:: figures/inv_ISI.png
 
@@ -91,7 +92,7 @@ time from stimulus start to last spike
 
 
 Spike shape features
---------------
+--------------------
 
 .. image:: figures/AP_Amplitude.png
 
@@ -150,7 +151,7 @@ Width of spike at half spike amplitude
 
 
 Voltage features
---------------
+----------------
 
 .. image:: figures/voltage_features.png
 
