@@ -187,12 +187,23 @@ The average voltage during the last 90% of the stimulus duration.
 - **Units**: mV
 - **Pseudocode**: ::
 
-    stim_duration = stim_end[0] - stim_start[0]
-    begin_time = stim_end[0] - 0.1 * stim_duration
-    end_time = stim_end[0]
-    steady_state_voltage_stimend = [numpy.mean(voltage[numpy.where((t <= end_time) & (t >= begin_time))])]
+    stim_duration = stim_end - stim_start
+    begin_time = stim_end - 0.1 * stim_duration
+    end_time = stim_end
+    steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t <= end_time) & (t >= begin_time))])
     
-    
+
+**LibV1 : steady_state_voltage**
+
+The average voltage after the stimulus
+
+- **Required features**: t, V, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    steady_state_voltage = numpy.mean(voltage[numpy.where((t <= max(t)) & (t > stim_end))])
+
+
 Requested eFeatures
 ===================
 
