@@ -369,6 +369,71 @@ def test_APlast_amp():
     nt.assert_equal(APlast_amp, AP_amplitude[-1])
 
 
+def test_spikecount1():
+    """basic: Test Spikecount 1"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['peak_indices', 'Spikecount']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    peak_indices = feature_values[0]['peak_indices']
+    spikecount = feature_values[0]['Spikecount'][0]
+    nt.assert_equal(len(peak_indices), spikecount)
+
+
+def test_spikecount2():
+    """basic: Test Spikecount 2: test empty trace"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = numpy.arange(0, 1000.0, 0.1)
+    voltage = numpy.ones(len(time)) * -80.0
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['Spikecount']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    spikecount = feature_values[0]['Spikecount'][0]
+    nt.assert_equal(spikecount, 0)
+
+
 def test_min_voltage_between_spikes1():
     """basic: Test min_voltage_between_spikes 1"""
 

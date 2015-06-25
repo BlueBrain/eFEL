@@ -128,16 +128,23 @@ int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
                       mapStr2Str& StringData) {
   int retval;
   int nsize;
+  unsigned spikecount_value;
   retval =
       CheckInIntmap(IntFeatureData, StringData, string("Spikecount"), nsize);
   if (retval) {
-    return nsize;
+      return nsize;
   }
   vector<int> peakindices;
   retval = getIntVec(IntFeatureData, StringData, string("peak_indices"),
                      peakindices);
-  if (retval <= 0) return -1;
-  vector<int> spikecount(1, peakindices.size());
+  if (retval < 0) {
+      return -1;
+  } else if (retval == 0) {
+      spikecount_value = 0;
+  } else {
+      spikecount_value = peakindices.size();
+  }
+  vector<int> spikecount(1, spikecount_value);
   if (retval >= 0) {
     setIntVec(IntFeatureData, StringData, "Spikecount", spikecount);
   }
