@@ -94,7 +94,7 @@ time from stimulus start to last spike
 
 number of spikes in the trace                                                    
 
-- **Required features**: LibV1::peak_indices                                     
+- **Required features**: LibV1:peak_indices                                     
 - **Units**: constant                                                            
 - **Pseudocode**: ::
 
@@ -104,7 +104,7 @@ number of spikes in the trace
 
 number of spikes at the beginning of the stimulus
 
-- **Required features**: LibV1::peak_time
+- **Required features**: LibV1:peak_time
 - **Required parameters**: initial_perc
 - **Units**: constant
 - **Pseudocode**: ::
@@ -160,7 +160,7 @@ Time between AP peaks and first AHP depths
 .. image:: figures/AP_duration_half_width.png
 
 
-**LibV2: AP_duration_half_width**
+**LibV2 : AP_duration_half_width**
 
 Width of spike at half spike amplitude
 
