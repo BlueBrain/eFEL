@@ -90,6 +90,29 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
+**LibV1 : Spikecount**                                                           
+
+number of spikes in the trace                                                    
+
+- **Required features**: LibV1::peak_indices                                     
+- **Units**: constant                                                            
+- **Pseudocode**: ::
+
+    Spikecount = len(peak_indices)
+
+**LibV5 : number_initial_spikes**
+
+number of spikes at the beginning of the stimulus
+
+- **Required features**: LibV1::peak_time
+- **Required parameters**: initial_perc
+- **Units**: constant
+- **Pseudocode**: ::
+
+    initial_length = (stimend - stimstart) * initial_perc
+    number_initial_spikes = len(numpy.where( \
+        (peak_time >= stimstart) & \
+        (peak_time <= stimstart + initial_length)))
 
 Spike shape features
 --------------------
