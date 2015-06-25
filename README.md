@@ -22,7 +22,7 @@ directly with the eFEL.
 Requirements
 ============
 
-* [Python 2.7+](https://www.python.org/download/releases/2.7/) (not compatible yet with Python 3)
+* [Python 2.6+](https://www.python.org/download/releases/2.7/) (not compatible yet with Python 3)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
 * The instruction below are written assuming you have access to a command shell

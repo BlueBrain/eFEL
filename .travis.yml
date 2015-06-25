@@ -1,11 +1,12 @@
 language: python
 python:
-- '2.7'
+  - '2.6'
+  - '2.7'
 script: make test
 notifications:
   webhooks:
     urls:
-    - https://webhooks.gitter.im/e/8ae38b9a790ed3e31c7a
+      - https://webhooks.gitter.im/e/8ae38b9a790ed3e31c7a
     on_success: change
     on_failure: change
     on_start: false
