@@ -2350,23 +2350,15 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                         decay_end_after_stim);   
   if (retVal <= 0) return -1;
 
-  if decay_start_after_stim[0] >= decay_end_after_stim[0] {
+  if (decay_start_after_stim[0] >= decay_end_after_stim[0]) {
       GErrorStr += 
           "Error decay_start_after_stim small larger than decay_end_after_stim";
       return -1;
   }
 
-  double start_time = stimEnd[0] + decay_start_after_stim[0];
-  double end_time = stimEnd[0] + decay_end_after_stim[0];
-  unsigned start_index = distance(
-          t.begin(), find_if(t.begin(), t.end(),
-                             bind2nd(greater_equal<double>(), start_time)));
-  
+  dtcas.push_back(1);
 
-  dtcas.push_back(1);                                                           
-
-  setDoubleVec(DoubleFeatureData, StringData, 
-             "decay_time_constant_after_stim", dtcas);  
+  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", dtcas);
 
   return 1;
 }

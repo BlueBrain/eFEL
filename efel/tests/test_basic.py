@@ -605,3 +605,34 @@ def test_steady_state_voltage_stimend():
 
     nt.assert_almost_equal(steady_state_voltage_stimend,
                            feature_values['steady_state_voltage_stimend'])
+
+
+def test_decay_time_constant_after_stim():
+    """basic: decay_time_constant_after_stim 1"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {
+        'T': time,
+        'V': voltage,
+        'stim_start': [stim_start],
+        'stim_end': [stim_end],
+        'decay_start_after_stim': [stim_end],
+        'decay_end_after_stim': [numpy.max(time)]
+    }
+
+    features = ['decay_time_constant_after_stim']
+
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+    nt.assert_equal(1, feature_values['decay_time_constant_after_stim'])

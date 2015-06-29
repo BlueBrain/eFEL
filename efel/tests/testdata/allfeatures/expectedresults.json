@@ -30547,5 +30547,8 @@
     ],
     "inv_first_ISI": [
         4.9188391539585474
+    ],
+    "decay_time_constant_after_stim": [
+        1.0
     ]
 }
