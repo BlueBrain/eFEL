@@ -16,8 +16,8 @@ the values to the user.
 
 The core of the library is written in C++, and a Python wrapper is included.
 At the moment we provide a way to automatically compile and install the library
-as a Python module. Soon instructions will be added on how to link C++ code 
-directly with the eFEL.
+as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
+library can be found [here](http://bluebrain.github.io/eFEL/installation.html#installing-the-c-standalone-library).
 
 Requirements
 ============
