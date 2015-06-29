@@ -2195,7 +2195,6 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
   }                                                                              
 }
 
-
 // *** The average voltage during the last 90% of the stimulus duration. ***                                                  
 int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,                   
                                 mapStr2doubleVec& DoubleFeatureData,             
@@ -2316,3 +2315,58 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   return -1;                                                                     
 }                                                                                
 
+// *** Decay time constant measured during decay after the stimulus***                                                  
+int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,                   
+                                mapStr2doubleVec& DoubleFeatureData,             
+                                mapStr2Str& StringData) {                        
+  int retVal;
+  int nSize;
+  vector<double> t, v, stimEnd, stimStart, dtcas, decay_start_after_stim,
+      decay_end_after_stim;
+
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,                       
+                            string("decay_time_constant_after_stim"), nSize);              
+  if (retVal) {                                                                  
+    return nSize;                                                                
+  }                                                                        
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
+  if (retVal < 0) return -1;
+  
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
+  if (retVal < 0) return -1;                                                   
+  
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);    
+  if (retVal < 0) return -1;                                                   
+  
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", 
+                      stimStart);   
+  if (retVal < 0) return -1;
+  
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "decay_start_after_stim", 
+                        decay_start_after_stim);   
+  if (retVal <= 0) return -1;
+
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "decay_end_after_stim", 
+                        decay_end_after_stim);   
+  if (retVal <= 0) return -1;
+
+  if decay_start_after_stim[0] >= decay_end_after_stim[0] {
+      GErrorStr += 
+          "Error decay_start_after_stim small larger than decay_end_after_stim";
+      return -1;
+  }
+
+  double start_time = stimEnd[0] + decay_start_after_stim[0];
+  double end_time = stimEnd[0] + decay_end_after_stim[0];
+  unsigned start_index = distance(
+          t.begin(), find_if(t.begin(), t.end(),
+                             bind2nd(greater_equal<double>(), start_time)));
+  
+
+  dtcas.push_back(1);                                                           
+
+  setDoubleVec(DoubleFeatureData, StringData, 
+             "decay_time_constant_after_stim", dtcas);  
+
+  return 1;
+}
