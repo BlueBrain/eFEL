@@ -243,6 +243,8 @@ int FillFptrTable() {
   FptrTableV5["voltage"] = &LibV5::voltage;
   FptrTableV5["steady_state_voltage_stimend"] = 
                             &LibV5::steady_state_voltage_stimend;
+  FptrTableV5["decay_time_constant_after_stim"] = 
+                            &LibV5::decay_time_constant_after_stim;
   
   //****************** end of FptrTableV5 *****************************
 

@@ -143,3 +143,4 @@ LibV5:AP_amplitude_from_voltagebase #LibV1:voltage_base #LibV1:peak_voltage
 LibV5:min_voltage_between_spikes #LibV1:peak_indices
 LibV5:voltage
 LibV5:steady_state_voltage_stimend
+LibV5:decay_time_constant_after_stim
