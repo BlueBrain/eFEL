@@ -2223,10 +2223,13 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   unsigned start_index = distance(
           t.begin(), find_if(t.begin(), t.end(),
                              bind2nd(greater_equal<double>(), start_time)));
-  
+  unsigned stop_index = distance(
+          t.begin(), find_if(t.begin(), t.end(),
+                             bind2nd(greater_equal<double>(), stimEnd[0])));
+
   unsigned mean_size = 0;
   double mean = 0.0;
-  for (unsigned i = start_index; t[i] <= stimEnd[0]; i++) {
+  for (unsigned i = start_index; i < stop_index; i++) {
     mean += v[i];                                                                
     mean_size++;                                                                 
   }
