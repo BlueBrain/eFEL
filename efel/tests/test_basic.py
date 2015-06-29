@@ -565,7 +565,7 @@ def test_steady_state_voltage_stimend():
     end_time = stim_end
     steady_state_voltage_stimend = [
         numpy.mean(voltage[numpy.where(
-            (time <= end_time) & (time >= begin_time)
+            (time < end_time) & (time >= begin_time)
         )])]
 
     nt.assert_almost_equal(steady_state_voltage_stimend,
