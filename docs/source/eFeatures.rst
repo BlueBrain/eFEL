@@ -181,7 +181,7 @@ Voltage features
 
 **LibV5 : steady_state_voltage_stimend**
 
-The average voltage during the last 90% of the stimulus duration.
+The average voltage during the last 10% of the stimulus duration.
 
 - **Required features**: t, V, stim_start, stim_end
 - **Units**: mV
@@ -202,6 +202,20 @@ The average voltage after the stimulus
 - **Pseudocode**: ::
 
     steady_state_voltage = numpy.mean(voltage[numpy.where((t <= max(t)) & (t > stim_end))])
+
+
+**LibV5 : voltage_base**
+
+The average voltage during the last 10% of time before the stimulus.
+
+- **Required features**: t, V, stim_start, stim_end 
+- **Required parameters**: voltage_base_start_perc (default = 0.9)
+                           voltage_base_end_perc (default = 1.0)
+- **Units**: mV
+- **Pseudocode**: ::
+    voltage_base = numpy.mean(voltage[numpy.where(                                  
+        (t >= voltage_base_start_perc * stim_start) & 
+        (t <= voltage_base_end_perc * stim_start))])       
 
 
 Requested eFeatures

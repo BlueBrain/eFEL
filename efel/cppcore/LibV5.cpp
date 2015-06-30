@@ -2247,3 +2247,72 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
     return 1;
   }                                                                                
 }
+
+int LibV5::voltage_base(mapStr2intVec& IntFeatureData,                     
+                              mapStr2doubleVec& DoubleFeatureData,               
+                              mapStr2Str& StringData) {                          
+  int retVal, nSize;                                                             
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,                       
+                            string("voltage_base"), nSize);                      
+  if (retVal)                                                                    
+    return nSize;                                                                
+  else {                                                                         
+    vector<double> v, t, stimStart, vRest, vb_start_perc_vec, vb_end_perc_vec;                                       
+    double startTime, endTime, vb_start_perc, vb_end_perc;                                                   
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
+    if (retVal < 0) return -1;                                                   
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
+    if (retVal < 0) return -1;                                                   
+    retVal =                                                                     
+        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);    
+    if (retVal < 0) return -1;
+    retVal =                                                                     
+        getDoubleVec(DoubleFeatureData, StringData, "voltage_base_start_perc", 
+                vb_start_perc_vec);
+    if (retVal == 1) { 
+        vb_start_perc = vb_start_perc_vec[0];
+    } else {
+        vb_start_perc = 0.9;
+    }
+    retVal =                                                                     
+        getDoubleVec(DoubleFeatureData, StringData, "voltage_base_end_perc", 
+                vb_end_perc_vec);   
+    if (retVal == 1) { 
+        vb_end_perc = vb_end_perc_vec[0];
+    } else {
+        vb_end_perc = 1.0;
+    }
+    
+    startTime = stimStart[0] * vb_start_perc;
+    endTime = stimStart[0] * vb_end_perc;
+    
+    if (startTime >= endTime) {
+        GErrorStr = GErrorStr + "\nvoltage_base: startTime >= endTime\n";    
+        return -1;
+    }
+
+    int nCount = 0;                                                              
+    double vSum = 0;                                                             
+    // calculte the mean of voltage between startTime and endTime                
+    for (unsigned i = 0; i < t.size(); i++) {
+      if (t[i] > endTime) break;
+        
+      if (t[i] >= startTime) {                                                   
+        vSum = vSum + v[i];                                                      
+        nCount++;                                                                
+      }                                                                          
+    }
+
+    if (nCount == 0) {
+        GErrorStr = GErrorStr + \
+                    "\nvoltage_base: no data points between startTime and endTime\n";    
+        return -1;
+    }    
+
+    vRest.push_back(vSum / nCount);                                              
+    setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);          
+    return 1;                                                                    
+  }                                                                              
+  return -1;                                                                     
+}                                                                                
+

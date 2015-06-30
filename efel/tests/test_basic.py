@@ -304,6 +304,41 @@ def test_ap_amplitude_from_voltagebase1():
                                ap_amplitude_from_voltagebase)
 
 
+def test_voltagebase1():
+    """basic: Test voltagebase 1"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['voltage_base']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    voltage_base = numpy.mean(voltage[numpy.where(
+        (time >= 0.9 * stim_start) & (time <= stim_start))])
+
+    nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0])
+
+
 def test_getDistance1():
     """basic: Test getDistance 1"""
 

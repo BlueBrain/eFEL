@@ -238,5 +238,8 @@ int voltage(mapStr2intVec& intfeaturedata,
 int steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,           
                                  mapStr2doubleVec& DoubleFeatureData,             
                                  mapStr2Str& StringData);
+int voltage_base(mapStr2intVec& IntFeatureData,           
+                 mapStr2doubleVec& DoubleFeatureData,             
+                 mapStr2Str& StringData);
 }
 #endif
