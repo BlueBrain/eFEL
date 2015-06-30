@@ -256,9 +256,9 @@ Note that a successful calculation of a feature can also result in an empty vect
       $c = c + 1$ \- \\
     ENDIF \- \\
   ENDFOR \\
-  APPEND $1000 \cdot c / ($stim\_end $-$ stim\_start$)$ TO mean\_frequency
+  APPEND $1000 \cdot c / ($time\_to\_last\_spike $-$ stim\_start$)$ TO mean\_frequency
   }
-  Yield the number of peaks divided by the length of the stimulus time interval.
+  Yield the number of peaks divided by the time to the last spike.
   \mybox{remarks:}{
   The resulting value might be unexpected for bursting or irregular spiking cells.
   Regard \myid{ISI CV} and \myid{adaptation index} to assure that the cell is firing uniformly during the stimulus.
