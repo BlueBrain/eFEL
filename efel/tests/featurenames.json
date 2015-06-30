@@ -99,6 +99,7 @@
     "burst_mean_freq",
     "burst_number",
     "check_AISInitiation",
+    "decay_time_constant_after_stim",
     "depolarized_base",
     "doublet_ISI",
     "fast_AHP",
