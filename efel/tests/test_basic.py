@@ -572,6 +572,30 @@ def test_steady_state_voltage_stimend():
                            feature_values['steady_state_voltage_stimend'])
 
 
+def decay_time_constant_after_stim(times, voltages, ta, tb, tion, tioff):
+    '''numpy implementation'''
+    import numpy
+
+    def get_index(ts, t):
+        return next(i for i in range(len(ts)) if ts[i] >= t)
+
+    start = get_index(times, ta)
+    end = get_index(times, tb)
+
+    ion = get_index(times, tion)
+    ioff = get_index(times, tioff)
+
+    t0 = times[start:end] - times[ioff]
+    u0 = abs(voltages[start:end] - voltages[ion])
+
+    # fit
+    u = numpy.log(u0)
+    b, a = numpy.polyfit(t0, u, 1)
+
+    tau = -1./b
+    return abs(tau)
+
+
 def test_decay_time_constant_after_stim():
     """basic: decay_time_constant_after_stim 1"""
 
@@ -584,20 +608,27 @@ def test_decay_time_constant_after_stim():
 
     data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
-    time = data[:, 0]
-    voltage = data[:, 1]
+    times = data[:, 0]
+    voltages = data[:, 1]
 
     trace = {
-        'T': time,
-        'V': voltage,
+        'T': times,
+        'V': voltages,
         'stim_start': [stim_start],
         'stim_end': [stim_end],
         'decay_start_after_stim': [stim_end],
-        'decay_end_after_stim': [numpy.max(time)]
+        'decay_end_after_stim': [numpy.max(times)]
     }
 
     features = ['decay_time_constant_after_stim']
 
     feature_values = efel.getFeatureValues([trace], features)[0]
 
-    nt.assert_equal(1, feature_values['decay_time_constant_after_stim'])
+    expected = decay_time_constant_after_stim(trace['T'],
+                                              trace['V'],
+                                              trace['decay_start_after_stim'][0],
+                                              trace['decay_end_after_stim'][0],
+                                              trace['stim_start'][0],
+                                              trace['stim_end'][0])
+
+    nt.assert_almost_equal(expected, feature_values['decay_time_constant_after_stim'][0])
