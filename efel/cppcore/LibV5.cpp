@@ -2275,7 +2275,8 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   }
 
   vector<double> result;
-  slope_straight_line_fit(decayTimes, decayValues, result); // result[0] is the slope
+  // result[0] is the slope
+  slope_straight_line_fit(decayTimes, decayValues, result); 
 
   const double tau = -1.0 / result[0];
   return abs(tau);
@@ -2288,6 +2289,9 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                 mapStr2Str& StringData) {                        
   int retVal;
   int nSize;
+
+  double decay_start_after_stim, decay_end_after_stim;
+
   retVal = CheckInDoublemap(DoubleFeatureData, StringData,
                             string("decay_time_constant_after_stim"), nSize);              
   if (retVal) {                                                                  
@@ -2312,26 +2316,37 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
   if (retVal != 1) return -1;
   const double stimStart = vect[0];
   
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "decay_start_after_stim", vect);
-  if (retVal != 1) return -1;
-  const double decay_start_after_stim = vect[0];
+  retVal = getDoubleVec(DoubleFeatureData, StringData, 
+                            "decay_start_after_stim", vect);
+  if (retVal == 1) {
+      decay_start_after_stim = vect[0];
+  } else {
+      decay_start_after_stim = 1.0;
+  }
 
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
-  if (retVal != 1) return -1;
-  const double decay_end_after_stim = vect[0];
+  retVal = getDoubleVec(DoubleFeatureData, StringData, 
+                            "decay_end_after_stim", vect);
+  if (retVal == 1) {
+      decay_end_after_stim = vect[0];
+  } else {
+      decay_end_after_stim = 10.0;
+  }
 
   if (decay_start_after_stim >= decay_end_after_stim) {
-    GErrorStr += "Error decay_start_after_stim small larger than decay_end_after_stim";
+    GErrorStr += \
+         "Error decay_start_after_stim small larger than decay_end_after_stim";
     return -1;
   }
 
   const double val = __decay_time_constant_after_stim(times, voltages,
-                                                     decay_start_after_stim, decay_end_after_stim,
-                                                     stimStart, stimEnd);
+                                                      decay_start_after_stim, 
+                                                      decay_end_after_stim,
+                                                      stimStart, stimEnd);
 
   vector<double> dtcas;
   dtcas.push_back(val);
-  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", dtcas);
+  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", 
+               dtcas);
 
   return 1;
 }
