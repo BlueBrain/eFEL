@@ -2330,8 +2330,11 @@ double __decay_time_constant_after_stim(const vector<double>& times,
                                         const double stimEnd)
 {
   const size_t stimStartIdx = get_index(times, stimStart);
-  const size_t decayStartIdx = get_index(times, decay_start_after_stim);
-  const size_t decayEndIdx = get_index(times, decay_end_after_stim);
+  const size_t decayStartIdx = get_index(times, 
+                                         stimEnd + decay_start_after_stim);
+  
+  const size_t decayEndIdx = get_index(times, 
+                                       stimEnd + decay_end_after_stim);
 
   const double reference = voltage[stimStartIdx];
 
@@ -2339,15 +2342,15 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   vector<double> decayTimes(decayEndIdx - decayStartIdx);
 
   for(size_t i = 0; i != decayValues.size(); ++i) {
-    const double u0 = abs(voltage[i + decayStartIdx] - reference);
-    decayValues[i] = log(u0);
+    const double u0 = abs(voltage[decayStartIdx + i] - reference);
 
-    decayTimes[i] = times[i + decayStartIdx];
+    decayValues[i] = log(u0);
+    decayTimes[i] = times[decayStartIdx + i];
   }
 
   vector<double> result;
   // result[0] is the slope
-  slope_straight_line_fit(decayTimes, decayValues, result); 
+  slope_straight_line_fit(decayTimes, decayValues, result);
 
   const double tau = -1.0 / result[0];
   return abs(tau);

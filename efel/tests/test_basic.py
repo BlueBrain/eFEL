@@ -607,7 +607,8 @@ def test_steady_state_voltage_stimend():
                            feature_values['steady_state_voltage_stimend'])
 
 
-def decay_time_constant_after_stim(times, voltages, ta, tb, tion, tioff):
+def decay_time_constant_after_stim(time, voltage, interval_start,
+                                   interval_end, stim_start, stim_end):
     '''numpy implementation'''
     import numpy
 
@@ -615,20 +616,19 @@ def decay_time_constant_after_stim(times, voltages, ta, tb, tion, tioff):
         """get_index"""
         return next(i for i in range(len(ts)) if ts[i] >= t)
 
-    start = get_index(times, ta)
-    end = get_index(times, tb)
-
-    ion = get_index(times, tion)
-    ioff = get_index(times, tioff)
-
-    t0 = times[start:end] - times[ioff]
-    u0 = abs(voltages[start:end] - voltages[ion])
+    interval_indices = numpy.where(
+        (time >= interval_start) & (time < interval_end))
+    stim_start_index = get_index(time, stim_start)
+    interval_time = time[interval_indices] - stim_end
+    interval_voltage = abs(
+        voltage[interval_indices] -
+        voltage[stim_start_index])
 
     # fit
-    u = numpy.log(u0)
-    b, a = numpy.polyfit(t0, u, 1)
+    log_interval_voltage = numpy.log(interval_voltage)
+    slope, _ = numpy.polyfit(interval_time, log_interval_voltage, 1)
 
-    tau = -1. / b
+    tau = -1. / slope
     return abs(tau)
 
 
@@ -661,8 +661,8 @@ def test_decay_time_constant_after_stim1():
     expected = decay_time_constant_after_stim(
         trace['T'],
         trace['V'],
-        1.0,
-        10.0,
+        stim_end + 1.0,
+        stim_end + 10.0,
         trace['stim_start'][0],
         trace['stim_end'][0])
 
@@ -691,14 +691,13 @@ def test_decay_time_constant_after_stim2():
         'V': voltage,
         'stim_start': [stim_start],
         'stim_end': [stim_end],
-        'decay_start_after_stim': [stim_end + 1.0],
-        'decay_end_after_stim': [stim_end + 10.0]
+        'decay_start_after_stim': [1.0],
+        'decay_end_after_stim': [10.0]
     }
 
     features = ['decay_time_constant_after_stim']
 
     feature_values = efel.getFeatureValues([trace], features)[0]
-
 
     nt.assert_almost_equal(
         20.0,
