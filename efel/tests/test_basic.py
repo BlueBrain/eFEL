@@ -612,6 +612,7 @@ def decay_time_constant_after_stim(times, voltages, ta, tb, tion, tioff):
     import numpy
 
     def get_index(ts, t):
+        """get_index"""
         return next(i for i in range(len(ts)) if ts[i] >= t)
 
     start = get_index(times, ta)
@@ -627,11 +628,11 @@ def decay_time_constant_after_stim(times, voltages, ta, tb, tion, tioff):
     u = numpy.log(u0)
     b, a = numpy.polyfit(t0, u, 1)
 
-    tau = -1./b
+    tau = -1. / b
     return abs(tau)
 
 
-def test_decay_time_constant_after_stim():
+def test_decay_time_constant_after_stim1():
     """basic: decay_time_constant_after_stim 1"""
 
     import efel
@@ -643,27 +644,62 @@ def test_decay_time_constant_after_stim():
 
     data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
 
-    times = data[:, 0]
-    voltages = data[:, 1]
+    time = data[:, 0]
+    voltage = data[:, 1]
 
     trace = {
-        'T': times,
-        'V': voltages,
+        'T': time,
+        'V': voltage,
         'stim_start': [stim_start],
         'stim_end': [stim_end],
-        'decay_start_after_stim': [stim_end],
-        'decay_end_after_stim': [numpy.max(times)]
     }
 
     features = ['decay_time_constant_after_stim']
 
     feature_values = efel.getFeatureValues([trace], features)[0]
 
-    expected = decay_time_constant_after_stim(trace['T'],
-                                              trace['V'],
-                                              trace['decay_start_after_stim'][0],
-                                              trace['decay_end_after_stim'][0],
-                                              trace['stim_start'][0],
-                                              trace['stim_end'][0])
+    expected = decay_time_constant_after_stim(
+        trace['T'],
+        trace['V'],
+        1.0,
+        10.0,
+        trace['stim_start'][0],
+        trace['stim_end'][0])
 
-    nt.assert_almost_equal(expected, feature_values['decay_time_constant_after_stim'][0])
+    nt.assert_almost_equal(
+        expected,
+        feature_values['decay_time_constant_after_stim'][0])
+
+
+def test_decay_time_constant_after_stim2():
+    """basic: decay_time_constant_after_stim 2"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 100.0
+    stim_end = 1000.0
+
+    data = numpy.loadtxt('testdata/basic/tau20.0.csv')
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {
+        'T': time,
+        'V': voltage,
+        'stim_start': [stim_start],
+        'stim_end': [stim_end],
+        'decay_start_after_stim': [stim_end + 1.0],
+        'decay_end_after_stim': [stim_end + 10.0]
+    }
+
+    features = ['decay_time_constant_after_stim']
+
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+
+    nt.assert_almost_equal(
+        20.0,
+        feature_values['decay_time_constant_after_stim'][0], places=1)
