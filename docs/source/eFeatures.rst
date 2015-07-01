@@ -213,6 +213,7 @@ The average voltage during the last 10% of time before the stimulus.
                   voltage_base_end_perc (default = 1.0)
 - **Units**: mV
 - **Pseudocode**: ::
+
     voltage_base = numpy.mean(voltage[numpy.where(                                  
         (t >= voltage_base_start_perc * stim_start) & 
         (t <= voltage_base_end_perc * stim_start))])       
@@ -226,6 +227,7 @@ The decay time constant of the voltage right after the stimulus
                   decay_end_after_stim (default = 10.0 ms)
 - **Units**: ms
 - **Pseudocode**: ::
+  
     time_interval = t[numpy.where(t => decay_start_after_stim &                  
                        t < decay_end_after_stim)] - t[numpy.where(t == stim_end)]                                             
     voltage_interval = abs(voltages[numpy.where(t => decay_start_after_stim & 
