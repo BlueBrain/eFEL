@@ -209,13 +209,33 @@ The average voltage after the stimulus
 The average voltage during the last 10% of time before the stimulus.
 
 - **Required features**: t, V, stim_start, stim_end 
-- **Required parameters**: voltage_base_start_perc (default = 0.9)
-                           voltage_base_end_perc (default = 1.0)
+- **Parameters**: voltage_base_start_perc (default = 0.9)
+                  voltage_base_end_perc (default = 1.0)
 - **Units**: mV
 - **Pseudocode**: ::
     voltage_base = numpy.mean(voltage[numpy.where(                                  
         (t >= voltage_base_start_perc * stim_start) & 
         (t <= voltage_base_end_perc * stim_start))])       
+
+**LibV5 : decay_time_constant_after_stim**
+
+The decay time constant of the voltage right after the stimulus
+
+- **Required features**: t, V, stim_start, stim_end
+- **Parameters**: decay_start_after_stim (default = 1.0 ms)
+                  decay_end_after_stim (default = 10.0 ms)
+- **Units**: ms
+- **Pseudocode**: ::
+    time_interval = t[numpy.where(t => decay_start_after_stim &                  
+                       t < decay_end_after_stim)] - t[numpy.where(t == stim_end)]                                             
+    voltage_interval = abs(voltages[numpy.where(t => decay_start_after_stim & 
+                                    t < decay_end_after_stim)] 
+                           - voltages[numpy.where(t == decay_start_after_stim)])
+                                                                                    
+    log_voltage_interval = numpy.log(voltage_interval)                                                               
+    slope, _ = numpy.polyfit(time_interval, log_voltage_interval, 1)                                                  
+                                                                                    
+    decay_time_constant_after_stim = -1. / slope                                    
 
 
 Requested eFeatures

@@ -134,6 +134,7 @@ def get_allfeature_values():
 
     return feature_values
 
+
 def test_allfeatures():
     """allfeatures: Regression testing all features on a trace"""
 

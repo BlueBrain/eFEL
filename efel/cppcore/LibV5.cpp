@@ -2195,7 +2195,6 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
   }                                                                              
 }
 
-
 // *** The average voltage during the last 90% of the stimulus duration. ***                                                  
 int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,                   
                                 mapStr2doubleVec& DoubleFeatureData,             
@@ -2314,5 +2313,111 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     return 1;                                                                    
   }                                                                              
   return -1;                                                                     
-}                                                                                
+}
 
+size_t get_index(const vector<double>& times, double t)
+{
+    return distance(
+      times.begin(), find_if(times.begin(), times.end(),
+                         bind2nd(greater_equal<double>(), t)));
+}
+
+double __decay_time_constant_after_stim(const vector<double>& times,
+                                        const vector<double>& voltage,
+                                        const double decay_start_after_stim,
+                                        const double decay_end_after_stim,
+                                        const double stimStart,
+                                        const double stimEnd)
+{
+  const size_t stimStartIdx = get_index(times, stimStart);
+  const size_t decayStartIdx = get_index(times, decay_start_after_stim);
+  const size_t decayEndIdx = get_index(times, decay_end_after_stim);
+
+  const double reference = voltage[stimStartIdx];
+
+  vector<double> decayValues(decayEndIdx - decayStartIdx);
+  vector<double> decayTimes(decayEndIdx - decayStartIdx);
+
+  for(size_t i = 0; i != decayValues.size(); ++i) {
+    const double u0 = abs(voltage[i + decayStartIdx] - reference);
+    decayValues[i] = log(u0);
+
+    decayTimes[i] = times[i + decayStartIdx];
+  }
+
+  vector<double> result;
+  // result[0] is the slope
+  slope_straight_line_fit(decayTimes, decayValues, result); 
+
+  const double tau = -1.0 / result[0];
+  return abs(tau);
+}
+
+
+// *** Decay time constant measured during decay after the stimulus***                                                  
+int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,                   
+                                mapStr2doubleVec& DoubleFeatureData,             
+                                mapStr2Str& StringData) {                        
+  int retVal;
+  int nSize;
+
+  double decay_start_after_stim, decay_end_after_stim;
+
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            string("decay_time_constant_after_stim"), nSize);              
+  if (retVal) {                                                                  
+    return nSize;                                                                
+  }                                                                        
+
+  vector<double> voltages;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), voltages);
+  if (retVal < 0) return -1;
+  
+  vector<double> times;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), times);
+  if (retVal < 0) return -1;                                                   
+
+  vector<double> vect;
+
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", vect);
+  if (retVal != 1) return -1;
+  const double stimEnd = vect[0];
+
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", vect);
+  if (retVal != 1) return -1;
+  const double stimStart = vect[0];
+  
+  retVal = getDoubleVec(DoubleFeatureData, StringData, 
+                            "decay_start_after_stim", vect);
+  if (retVal == 1) {
+      decay_start_after_stim = vect[0];
+  } else {
+      decay_start_after_stim = 1.0;
+  }
+
+  retVal = getDoubleVec(DoubleFeatureData, StringData, 
+                            "decay_end_after_stim", vect);
+  if (retVal == 1) {
+      decay_end_after_stim = vect[0];
+  } else {
+      decay_end_after_stim = 10.0;
+  }
+
+  if (decay_start_after_stim >= decay_end_after_stim) {
+    GErrorStr += \
+         "Error decay_start_after_stim small larger than decay_end_after_stim";
+    return -1;
+  }
+
+  const double val = __decay_time_constant_after_stim(times, voltages,
+                                                      decay_start_after_stim, 
+                                                      decay_end_after_stim,
+                                                      stimStart, stimEnd);
+
+  vector<double> dtcas;
+  dtcas.push_back(val);
+  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", 
+               dtcas);
+
+  return 1;
+}
