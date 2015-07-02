@@ -38,12 +38,14 @@ int LibV5::__ISI_log_slope(const vector<double>& isiValues,
 
   if (skip) {
     // Remove n spikes given by spike_skipf or max_spike_skip
-    unsigned isisToRemove = (unsigned)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
+    int isisToRemove = (int)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
     // spike To remove is minimum of spike_skipf or max_spike_skip
-    if (maxnSpike - 1 < isisToRemove) isisToRemove = maxnSpike - 1;
+    if (0 <= isisToRemove && maxnSpike - 1 < isisToRemove){
+      isisToRemove = maxnSpike - 1;
+    }
 
     // Remove spikeToRemove spike from SpikeTime list
-    for (unsigned i = 0; i < isisToRemove; i++) {
+    for (size_t i = 0; i < static_cast<size_t>(isisToRemove); i++) {
       skippedISIValues.pop_front();
     }
   }
