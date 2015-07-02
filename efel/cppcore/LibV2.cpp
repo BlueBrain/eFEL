@@ -1640,16 +1640,20 @@ int LibV2::__steady_state_hyper(const vector<double>& v,
       distance(t.begin(), find_if(t.begin(), t.end(),
                                   bind2nd(greater_equal<double>(), stimend))) -
       5;
-  if (i_end < 0) return -1;
-  int i_begin = i_end - 30;
-  if (i_begin < 0) return -1;
-  double sum = 0.;
-  for (unsigned i = i_begin; i < i_end; i++) {
-    sum += v[i];
-  }
-  if ((i_end - i_begin) == 0) {
+
+  const int offset = 30;
+  if (i_end < 0 || i_end < offset){
     return -1;
   }
+
+  size_t i_begin = static_cast<size_t>(i_end - offset);
+
+  double sum = 0.;
+
+  for (size_t i = i_begin; i < static_cast<size_t>(i_end); i++) {
+    sum += v[i];
+  }
+
   double mean = sum / (i_end - i_begin);
   steady_state_hyper.push_back(mean);
   return 1;
