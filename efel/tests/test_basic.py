@@ -52,6 +52,27 @@ def test_version():
     nt.assert_true(efel.version is not None)
 
 
+# @nt.raises(TypeError)
+def test_nonexisting_feature():
+    """basic: Test nonexisting feature"""
+
+    import efel
+    efel.reset()
+
+    import numpy
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
+    nt.assert_raises(
+        TypeError,
+        efel.getFeatureValues,
+        [trace],
+        ['nonexisting_feature'])
+
+
 def test_empty_trace():
     """basic: Testing results for empty trace"""
 
