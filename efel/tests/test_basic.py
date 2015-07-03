@@ -127,8 +127,8 @@ def test_consecutive_traces():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data = joinp(testdata_dir, 'basic/zero_ISI_log_slope_skip95824004.abf.csv')
-    data1 = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/zero_ISI_log_slope_skip95824004.abf.csv')
+    data1 = numpy.loadtxt(test_data_path)
 
     time1 = data1[:, 0]
     voltage1 = data1[:, 1]
@@ -150,8 +150,8 @@ def test_consecutive_traces():
                 [trace1],
                 [feature_name])
 
-    test_data = joinp(testdata_dir, 'basic/AP_begin_indices_95810005.abf.csv')
-    data2 = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/AP_begin_indices_95810005.abf.csv')
+    data2 = numpy.loadtxt(test_data_path)
 
     voltage2 = data2
     time2 = numpy.arange(len(voltage2)) * 0.1
@@ -185,8 +185,8 @@ def test_ISI_log_slope_skip():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data = joinp(testdata_dir, 'basic/zero_ISI_log_slope_skip95824004.abf.csv')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/zero_ISI_log_slope_skip95824004.abf.csv')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -220,8 +220,8 @@ def test_AP_begin_indices1():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data = joinp(testdata_dir, 'basic/AP_begin_indices_95810005.abf.csv')
-    voltage = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/AP_begin_indices_95810005.abf.csv')
+    voltage = numpy.loadtxt(test_data_path)
 
 
     time = numpy.arange(len(voltage)) * 0.1
@@ -271,8 +271,8 @@ def test_mean_frequency1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -303,8 +303,8 @@ def test_ap_amplitude_from_voltagebase1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -342,8 +342,8 @@ def test_voltagebase1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -378,8 +378,8 @@ def test_getDistance1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -410,8 +410,8 @@ def test_APlast_amp():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -445,8 +445,8 @@ def test_spikecount1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -511,8 +511,8 @@ def test_min_voltage_between_spikes1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -555,8 +555,8 @@ def test_getFeatureNames():
     efel.reset()
     import json
 
-    test_data = joinp(testdata_dir, '../featurenames.json')
-    with open(test_data, 'r') as featurenames_json:
+    test_data_path = joinp(testdata_dir, '../featurenames.json')
+    with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
     nt.assert_equal(efel.getFeatureNames(), expected_featurenames)
 
@@ -571,8 +571,8 @@ def test_steady_state_voltage1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -612,8 +612,8 @@ def test_steady_state_voltage_stimend():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -679,8 +679,8 @@ def test_decay_time_constant_after_stim1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -719,8 +719,8 @@ def test_decay_time_constant_after_stim2():
     stim_start = 100.0
     stim_end = 1000.0
 
-    test_data = joinp(testdata_dir, 'basic/tau20.0.csv')
-    data = numpy.loadtxt(test_data)
+    test_data_path = joinp(testdata_dir, 'basic/tau20.0.csv')
+    data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]

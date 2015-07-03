@@ -139,9 +139,8 @@ def test_allfeatures():
     feature_values = get_allfeature_values()
 
     import json
-    test_data = os.path.join(testdata_dir, 'expectedresults.json')
-    with open(test_data, 'r') \
-            as expected_json:
+    test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
+    with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
 
     all_equal = True

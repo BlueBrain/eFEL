@@ -56,8 +56,8 @@ class TestCppcore(object):
         efel.cppcore.getFeatureNames(feature_names)
 
         import json
-        test_data = os.path.join(testdata_dir, '../featurenames.json')
-        with open(test_data, 'r') as featurenames_json:
+        test_data_path = os.path.join(testdata_dir, '../featurenames.json')
+        with open(test_data_path, 'r') as featurenames_json:
             expected_featurenames = json.load(featurenames_json)
         nt.assert_equal(feature_names, expected_featurenames)
 
@@ -69,8 +69,8 @@ class TestCppcore(object):
         stim_start = 500.0
         stim_end = 900.0
 
-        test_data = os.path.join(testdata_dir, 'basic/mean_frequency_1.txt')
-        data = numpy.loadtxt(test_data)
+        test_data_path = os.path.join(testdata_dir, 'basic/mean_frequency_1.txt')
+        data = numpy.loadtxt(test_data_path)
 
         time = data[:, 0]
         voltage = data[:, 1]
