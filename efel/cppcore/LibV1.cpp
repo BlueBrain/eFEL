@@ -21,7 +21,6 @@
 #include <iterator>
 #include <math.h>
 #include <string>
-#include <assert.h>
 
 int LibV1::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
@@ -294,6 +293,10 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
         lastAPTime = peakVTime[i];
         nCount++;
       }
+    }
+    if (lastAPTime == stimStart[0]) { 
+      GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
+      return -1;
     }
     firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
@@ -1102,7 +1105,10 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
     dv2.clear();
 
     for (int j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
-      assert(j >= 0);
+      if (j < 0) { 
+        GErrorStr = GErrorStr + "\nInvalid index\n";
+        return -1;
+      }
       v.push_back(V[j]);
     }
 

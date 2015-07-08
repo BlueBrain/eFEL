@@ -287,6 +287,11 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
         nCount++;
       }
     }
+    if (lastAPTime == stimStart[0]) { 
+      GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
+      return -1;
+    }
+    firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
     return firing_rate.size();
