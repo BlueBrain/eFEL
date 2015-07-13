@@ -267,19 +267,6 @@ Time between AP peaks and last AHP depths
     AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
     
 
-**LibV5 : voltage_base**
-
-The average voltage during the last 90% before the stimulus onset.
-
-- **Required features**: t, V, stim_start, stim_end
-- **Units**: mV
-- **Pseudocode**: ::
-
-    begin_time = 0.9 * stim_start[0]
-    end_time = stim_start[0]
-    voltage_base = [numpy.mean(voltage[numpy.where((t <= end_time) & (t >= begin_time))])]
-    
-
 **LibV5 : steady_state_voltage_stimend_from_voltage_base**
 
 The average voltage during the last 90% of the stimulus duration realtive to voltage_base
