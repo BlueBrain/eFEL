@@ -18,6 +18,12 @@ doc_upload: doc
 	git commit -m "Updating docs" && \
 	git push "git@github.com:BlueBrain/eFEL.git" master:gh-pages --force && \
 	rm -rf .git
+update_version:
+	cd efel && \
+	python -c 'import version; version._get_version_number()' && \
+	git add GITHASH.txt && \
+	git add VERSION.txt && \
+	git commit -m 'Updated version number'
 test: install
 	cd efel/tests; nosetests -s -v -x
 pypi: test
@@ -33,5 +39,5 @@ cpp:
 	cd build_cmake && \
 	cmake .. && \
 	make -j
-push: clean install test doc doc_upload
+push: clean update_version install test doc doc_upload
 	git push
