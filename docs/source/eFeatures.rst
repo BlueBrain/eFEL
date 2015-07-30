@@ -105,7 +105,7 @@ number of spikes in the trace
 number of spikes at the beginning of the stimulus
 
 - **Required features**: LibV1:peak_time
-- **Required parameters**: initial_perc
+- **Required parameters**: initial_perc (default=0.1)
 - **Units**: constant
 - **Pseudocode**: ::
 
