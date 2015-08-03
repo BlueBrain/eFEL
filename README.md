@@ -1,10 +1,5 @@
 [![Build Status](https://travis-ci.org/BlueBrain/eFEL.svg?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
 
-
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22430.svg)](http://dx.doi.org/10.5281/zenodo.22430)
-
-
-
 Introduction
 ============
 
@@ -158,7 +153,11 @@ The full documentation can be found [here](http://bluebrain.github.io/eFEL)
 
 How to cite
 ===========
-Every main version has a DOI. To cite the latest version (2.5):
+Every main version has a DOI:
+
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22430.svg)](http://dx.doi.org/10.5281/zenodo.22430)
+
+To cite the latest version (2.5):
 ```xml
 @misc{werner_van_geit_2015_22430,
   author       = {Werner Van Geit and
