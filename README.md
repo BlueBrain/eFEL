@@ -1,11 +1,16 @@
 [![Build Status](https://travis-ci.org/BlueBrain/eFEL.svg?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
 
+
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22430.svg)](http://dx.doi.org/10.5281/zenodo.22430)
+
+
+
 Introduction
 ============
 
 [![Join the chat at https://gitter.im/BlueBrain/eFEL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BlueBrain/eFEL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-The Electrophys Feature Extract Library (eFEL) allows neuroscientists
+The Electrophys Feature Extraction Library (eFEL) allows neuroscientists
 to automatically extract features from time series data recorded from neurons 
 (both in vitro and in silico). 
 Examples are the action potential width and amplitude in voltage traces recorded
@@ -150,3 +155,21 @@ Results are in mV.
 Full documentation
 ==================
 The full documentation can be found [here](http://bluebrain.github.io/eFEL)
+
+How to cite
+===========
+Every main version has a DOI. To cite the latest version (2.5):
+```xml
+@misc{werner_van_geit_2015_22430,
+  author       = {Werner Van Geit and
+                  Ruben Moor and
+                  Rajnish Ranjan and
+                  Luis Riquelme and
+                  Christian Rössert},
+  title        = {Electrophys Feature Extraction Library (eFEL) 2.5},
+  month        = aug,
+  year         = 2015,
+  doi          = {10.5281/zenodo.22430},
+  url          = {http://dx.doi.org/10.5281/zenodo.22430}
+}
+```
