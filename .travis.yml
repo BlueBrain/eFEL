@@ -10,6 +10,7 @@ notifications:
     on_success: change
     on_failure: change
     on_start: false
+cache: pip
 deploy:
   provider: pypi
   user: wvangeit
