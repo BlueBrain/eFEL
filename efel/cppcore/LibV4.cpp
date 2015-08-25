@@ -81,7 +81,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
       0) {
     return -1;
   }
-  if (getDoubleParam(DoubleFeatureData, "threshold", threshold) <= 0) {
+  if (getDoubleParam(DoubleFeatureData, "Threshold", threshold) <= 0) {
     return -1;
   }
   int retval =
