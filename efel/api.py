@@ -35,6 +35,8 @@ import efel
 import efel.cppcore as cppcore
 
 _settings = efel.Settings()
+_int_settings = {}
+_double_settings = {}
 
 
 def reset():
@@ -47,6 +49,16 @@ def reset():
 
     global _settings
     _settings = efel.Settings()
+
+    setDoubleSetting('spike_skipf', 0.1)
+    setIntSetting('max_spike_skip', 2)
+    setDoubleSetting('Threshold', _settings.threshold)
+    setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
+    setDoubleSetting('interp_step', 0.1)
+    setDoubleSetting('burst_factor', 1.5)
+    setDoubleSetting("initial_perc", 0.1)
+    setDoubleSetting("min_spike_height", 20.0)
+
     _initialise()
 
 
@@ -100,6 +112,7 @@ def setThreshold(newThreshold):
                 as the traces, e.g. mV).
     """
     _settings.threshold = newThreshold
+    setDoubleSetting('Threshold', _settings.threshold)
 
 
 def setDerivativeThreshold(newDerivativeThreshold):
@@ -115,6 +128,7 @@ def setDerivativeThreshold(newDerivativeThreshold):
                 as the traces, e.g. mV/ms).
     """
     _settings.derivate_threshold = newDerivativeThreshold
+    setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
 
 
 def getFeatureNames():
@@ -174,15 +188,24 @@ def _initialise():
     cppcore.Initialize(_settings.dependencyfile_path, "log")
 
     # First set some settings that are used by the feature extraction
-    cppcore.setFeatureDouble('spike_skipf', [0.1])
-    cppcore.setFeatureInt('max_spike_skip', [2])
-    cppcore.setFeatureDouble('Threshold',
-                             [_settings.threshold])
-    cppcore.setFeatureDouble('DerivativeThreshold',
-                             [_settings.derivative_threshold])
-    cppcore.setFeatureDouble('interp_step', [0.1])
-    cppcore.setFeatureDouble('burst_factor', [1.5])
-    cppcore.setFeatureDouble("initial_perc", [0.1])
+
+    for setting_name, int_setting in _int_settings.items():
+        cppcore.setFeatureInt(setting_name, [int_setting])
+
+    for setting_name, double_setting in _double_settings.items():
+        cppcore.setFeatureDouble(setting_name, [double_setting])
+
+
+def setIntSetting(setting_name, new_value):
+    """Set a certain integer setting to a new value"""
+
+    _int_settings[setting_name] = new_value
+
+
+def setDoubleSetting(setting_name, new_value):
+    """Set a certain double setting to a new value"""
+
+    _double_settings[setting_name] = new_value
 
 
 def getFeatureValues(traces, featureNames):
@@ -313,3 +336,5 @@ def getMeanFeatureValues(traces, featureNames):
                 featureDict[key] = numpy.mean(values)
 
     return featureDicts
+
+reset()
