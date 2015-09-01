@@ -27,7 +27,7 @@ except ImportError:
 
 import os
 
-execfile("efel/version.py")
+exec(compile(open("efel/version.py").read(), "efel/version.py", 'exec'))
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -65,7 +65,7 @@ cppcore_headers = [
         'cppcore',
         filename) for filename in cppcore_headers]
 
-print cppcore_headers
+print(cppcore_headers)
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
                     include_dirs=['efel/cppcore/'])

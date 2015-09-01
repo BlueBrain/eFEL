@@ -40,7 +40,7 @@ def _get_version_number():
             with open(version_fullpath, 'r') as version_file:
                 version_number = version_file.readline()
         else:
-            print "WARNING: No valid version number found for efel"
+            print("WARNING: No valid version number found for efel")
             return None
     else:
         major_version, rev_index, githash = git_version_return

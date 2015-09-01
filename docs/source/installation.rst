@@ -3,7 +3,8 @@ Installation
             
 Requirements
 ------------
-* `Python 2.6+ <https://www.python.org/download/releases/2.7/>`_ (not compatible yet with Python 3)
+* `Python 2.6+ <https://www.python.org/download/releases/2.7/>`_ or 
+  `Python 3.4+ <https://www.python.org/download/releases/3.4.3/>`_ 
 * `Pip <https://pip.pypa.io>`_ (installed by default in newer versions of Python)  
 * `Numpy <http://www.numpy.org>`_ (will be installed automatically by pip)         
 * The instruction below are written assuming you have access to a command shell on Linux / UNIX / MacOSX / Cygwin                                                
