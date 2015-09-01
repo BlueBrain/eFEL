@@ -38,6 +38,10 @@
 #include <efel.h>
 #include <Python.h>
 
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+#endif
+
 using namespace std;
 
 extern cFeature* pFeature;
@@ -62,7 +66,7 @@ static vector<int> PyList_to_vectorint(PyObject *input) {
       
     list_size = PyList_Size(input);
     for (index = 0; index < list_size; index++) {
-        result_vector.push_back(PyInt_AsLong(PyList_GetItem(input, index)));
+        result_vector.push_back(PyLong_AsLong(PyList_GetItem(input, index)));
     } 
     return result_vector;
 }
@@ -235,7 +239,41 @@ static PyMethodDef CppCoreMethods[] = {
                     "Get the distance between a feature and experimental data"},                               
             {NULL, NULL, 0, NULL}        /* Sentinel */                              
 };                                                                               
-                                                                                 
-PyMODINIT_FUNC initcppcore(void) {                                           
+
+#if PY_MAJOR_VERSION >= 3
+    struct module_state {
+            PyObject *error;
+    };
+
+    #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+    static int cppcore_traverse(PyObject *m, visitproc visit, void *arg) {
+        Py_VISIT(GETSTATE(m)->error);
+        return 0;
+    }
+
+    static int cppcore_clear(PyObject *m) {
+        Py_CLEAR(GETSTATE(m)->error);
+        return 0;
+    }
+
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "cppcore",
+        NULL,
+        sizeof(struct module_state),
+        CppCoreMethods,
+        NULL,
+        cppcore_traverse,
+        cppcore_clear,
+        NULL
+    };
+
+    extern "C" PyObject * PyInit_cppcore(void) {
+        PyObject *module = PyModule_Create(&moduledef);
+        return module;
+    }
+#else
+    PyMODINIT_FUNC initcppcore(void) {
         (void) Py_InitModule("cppcore", CppCoreMethods);                     
-}           
+    }
+#endif

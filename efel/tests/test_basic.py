@@ -113,7 +113,7 @@ def test_empty_trace():
     # efel.getFeatureValues([trace], features)
 
     for feature, value in \
-            efel.getFeatureValues([trace], features)[0].iteritems():
+            efel.getFeatureValues([trace], features)[0].items():
 
         nt.assert_equal(value[0], 0.0)
 
@@ -302,7 +302,7 @@ def test_mean_frequency1():
         efel.getFeatureValues(
             [trace],
             features)
-    nt.assert_almost_equal(feature_values[0]['mean_frequency'], 15.2858453)
+    nt.assert_almost_equal(feature_values[0]['mean_frequency'][0], 15.2858453)
 
 
 def test_ap_amplitude_from_voltagebase1():
@@ -586,7 +586,7 @@ def test_min_voltage_between_spikes1():
     fel_voltage = feature_values[0]['voltage']
 
     for index, min_voltage_between_spikes_value in zip(
-            range(len(peak_indices[:-1])),
+            list(range(len(peak_indices[:-1]))),
             min_voltage_between_spikes):
         nt.assert_almost_equal(
             numpy.min(
@@ -642,13 +642,12 @@ def test_steady_state_voltage1():
 
     begin_time = stim_end
     end_time = max(time)
-    steady_state_voltage = [
-        numpy.mean(voltage[numpy.where(
-            (time <= end_time) & (time > begin_time)
-        )])]
+    steady_state_voltage = numpy.mean(voltage[numpy.where(
+        (time <= end_time) & (time > begin_time)
+    )])
 
     nt.assert_almost_equal(steady_state_voltage,
-                           feature_values['steady_state_voltage'])
+                           feature_values['steady_state_voltage'][0])
 
 
 def test_steady_state_voltage_stimend():
@@ -684,13 +683,12 @@ def test_steady_state_voltage_stimend():
     stim_duration = stim_end - stim_start
     begin_time = stim_end - 0.1 * stim_duration
     end_time = stim_end
-    steady_state_voltage_stimend = [
-        numpy.mean(voltage[numpy.where(
-            (time < end_time) & (time >= begin_time)
-        )])]
+    steady_state_voltage_stimend = numpy.mean(voltage[numpy.where(
+        (time < end_time) & (time >= begin_time)
+    )])
 
     nt.assert_almost_equal(steady_state_voltage_stimend,
-                           feature_values['steady_state_voltage_stimend'])
+                           feature_values['steady_state_voltage_stimend'][0])
 
 
 def decay_time_constant_after_stim(time, voltage, interval_start,

@@ -177,7 +177,7 @@ def getDistance(trace, featureName, mean, std):
     _initialise()
 
     # Next set time, voltage and the stimulus start and end
-    for item in trace.keys():
+    for item in list(trace.keys()):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     return efel.cppcore.getDistance(featureName, mean, std)
@@ -189,10 +189,10 @@ def _initialise():
 
     # First set some settings that are used by the feature extraction
 
-    for setting_name, int_setting in _int_settings.items():
+    for setting_name, int_setting in list(_int_settings.items()):
         cppcore.setFeatureInt(setting_name, [int_setting])
 
-    for setting_name, double_setting in _double_settings.items():
+    for setting_name, double_setting in list(_double_settings.items()):
         cppcore.setFeatureDouble(setting_name, [double_setting])
 
 
@@ -261,7 +261,7 @@ def getFeatureValues(traces, featureNames):
         _initialise()
 
         # Next set time, voltage and the stimulus start and end
-        for item in trace.keys():
+        for item in list(trace.keys()):
             cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
         for featureName in featureNames:
@@ -329,7 +329,7 @@ def getMeanFeatureValues(traces, featureNames):
 
     featureDicts = getFeatureValues(traces, featureNames)
     for featureDict in featureDicts:
-        for (key, values) in featureDict.items():
+        for (key, values) in list(featureDict.items()):
             if values is None or len(values) == 0:
                 featureDict[key] = None
             else:

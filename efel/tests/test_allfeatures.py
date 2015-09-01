@@ -112,19 +112,19 @@ def get_allfeature_values():
         warnings.simplefilter("ignore")
         efel.setThreshold(-30)
         feature_values = dict(
-            feature_values.items() +
-            efel.getFeatureValues(
+            list(feature_values.items()) +
+            list(efel.getFeatureValues(
                 [trace],
-                bpap_featurenames)[0].items())
+                bpap_featurenames)[0].items()))
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         efel.setThreshold(-55)
         feature_values = dict(
-            feature_values.items() +
-            efel.getFeatureValues(
+            list(feature_values.items()) +
+            list(efel.getFeatureValues(
                 [trace],
-                bac_featurenames)[0].items())
+                bac_featurenames)[0].items()))
 
     for feature_name in feature_values:
         if feature_values[feature_name] is not None:
@@ -146,12 +146,12 @@ def test_allfeatures():
 
     all_equal = True
     nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
-    for feature_name, feature_value in feature_values.items()[:1]:
+    for feature_name, feature_value in list(feature_values.items())[:1]:
         # feature_value = feature_values[feature_name]
         expected_value = expected_results[feature_name]
         if feature_value != expected_value:
-            print "Difference in feature %s: value=%s expected=%s" % \
-                (feature_name, feature_value, expected_value)
+            print("Difference in feature %s: value=%s expected=%s" % \
+                (feature_name, feature_value, expected_value))
             all_equal = False
 
     nt.assert_true(all_equal)

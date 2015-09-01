@@ -34,7 +34,7 @@ import efel
 import json
 
 if __name__ == '__main__':
-    print "Updating featurenames.json ...",
+    print("Updating featurenames.json ...", end=' ')
     efel.cppcore.Initialize(efel.getDependencyFileLocation(), "log")
 
     with open('featurenames.json', 'w') as featurenames_json:
@@ -47,4 +47,4 @@ if __name__ == '__main__':
             separators=(
                 ',',
                 ': '))
-    print "done"
+    print("done")
