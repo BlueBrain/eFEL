@@ -170,8 +170,9 @@ int LibV3::ISI_values(mapStr2intVec& IntFeatureData,
                   "\n Three spikes required for calculation of ISI_values.\n";
       return -1;
     }
-    for (int i = 2; i < pvTime.size(); i++)
+    for (size_t i = 2; i < pvTime.size(); i++){
       VecISI.push_back(pvTime[i] - pvTime[i - 1]);
+    }
     setDoubleVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
     return VecISI.size();
   }
@@ -263,7 +264,7 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
     return nSize;
   else {
     vector<double> stimStart, stimEnd, peakVTime, firing_rate;
-    double lastAPTime;
+    double lastAPTime = 0.;
     int retVal;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("peak_time"),
                           peakVTime);
@@ -286,6 +287,11 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
         nCount++;
       }
     }
+    if (lastAPTime == stimStart[0]) { 
+      GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
+      return -1;
+    }
+    firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
     return firing_rate.size();
@@ -542,7 +548,6 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
   else {
     vector<double> v, t, stimStart, vRest;
     double startTime, endTime;
-    int i;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
@@ -558,12 +563,14 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
     int nCount = 0;
     double vSum = 0;
     // calculte the mean of voltage between startTime and endTime
-    for (i = 0; i < t.size(); i++) {
+    for (size_t i = 0; i < t.size(); i++) {
       if (t[i] >= startTime) {
         vSum = vSum + v[i];
         nCount++;
       }
-      if (t[i] > endTime) break;
+      if (t[i] > endTime){
+        break;
+      }
     }
     vRest.push_back(vSum / nCount);
     setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);

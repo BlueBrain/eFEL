@@ -271,7 +271,7 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
     return nSize;
   else {
     vector<double> stimStart, stimEnd, peakVTime, firing_rate;
-    double lastAPTime;
+    double lastAPTime = 0.;
     int retVal;
     retVal = getDoubleVec(DoubleFeatureData, StringData, string("peak_time"),
                           peakVTime);
@@ -293,6 +293,10 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
         lastAPTime = peakVTime[i];
         nCount++;
       }
+    }
+    if (lastAPTime == stimStart[0]) { 
+      GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
+      return -1;
     }
     firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
     setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
@@ -853,12 +857,14 @@ int LibV1::__adaptation_index(double spikeSkipf, int maxnSpike,
     }
   }
   // Remove n spikes given by spike_skipf or max_spike_skip
-  unsigned spikeToRemove = (unsigned)((SpikeTime.size() * spikeSkipf) + 0.5);
+  int spikeToRemove = (int)((SpikeTime.size() * spikeSkipf) + 0.5);
   // spike To remove is minimum of spike_skipf or max_spike_skip
-  if (maxnSpike < spikeToRemove) spikeToRemove = maxnSpike;
+  if (maxnSpike < spikeToRemove) {
+    spikeToRemove = maxnSpike;
+  }
 
   // Remove spikeToRemove spike from SpikeTime list
-  for (unsigned i = 0; i < spikeToRemove; i++) {
+  for (int i = 0; i < spikeToRemove; ++i) {
     SpikeTime.pop_front();
   }
 
@@ -1092,37 +1098,48 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
   vector<double> v, dv1, dv2;
   double dx = t[1] - t[0];
   double VoltThreshold, VoltMax, HalfV, T0, V0, V1, fraction, TStart, TEnd;
-  int j, index;
-  for (unsigned i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
+  size_t index;
+  for (size_t i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
     v.clear();
     dv1.clear();
     dv2.clear();
-    for (unsigned j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
+
+    for (int j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
+      if (j < 0) { 
+        GErrorStr = GErrorStr + "\nInvalid index\n";
+        return -1;
+      }
       v.push_back(V[j]);
     }
+
     index = v.size();  // tbr
     getCentralDifferenceDerivative(dx, v, dv1);
     getCentralDifferenceDerivative(dx, dv1, dv2);
     double dMax = dv2[0];
+
     index = 0;
-    for (j = 1; j < dv2.size(); j++) {
+    for (size_t j = 1; j < dv2.size(); ++j) {
       if (dMax <= dv2[j]) {
         dMax = dv2[j];
         index = j;
       }
     }
+
     // Take voltage at point where double derivative is maximum
-    index = minAHPIndex[i] + index;
+    index += minAHPIndex[i];
     VoltThreshold = V[index];
     VoltMax = V[PeakIndex[i + 1]];
     HalfV = (VoltMax + VoltThreshold) / 2;
 
     // Find voltage where it crosses HalfV in the rising phase of action
     // potential
-    for (j = 0; j < v.size(); j++) {
-      if (v[j] > HalfV) break;  // point is found where  v is crossing HalfV
+    for (size_t j = 0; j < v.size(); ++j) {
+      if (v[j] > HalfV) {   // point is found where  v is crossing HalfV
+        index = minAHPIndex[i] + j;
+        break;
+      }
     }
-    index = minAHPIndex[i] + j;
+
     // index is the index where v crossed HalfV now use linear interpolation to
     // find actual time at HalfV
     T0 = t[index - 1];
@@ -1133,20 +1150,27 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
 
     // Find voltage where it crosses HalfV in the falling phase of the action
     // potential
-    for (j = PeakIndex[i + 1]; j < V.size(); j++) {
-      if (V[j] < HalfV) break;
+    for (size_t j = PeakIndex[i + 1]; j < V.size(); j++) {
+      if (V[j] < HalfV){
+        index = j;
+        break;
+      }
     }
-    if (j == V.size()) {
+
+    if (index == V.size()) {
       GErrorStr = GErrorStr + "\nFalling phase of last spike is missing.\n";
       return -1;
     }
-    T0 = t[j - 1];
-    V0 = V[j - 1];
-    V1 = V[j];
+
+    T0 = t[index - 1];
+    V0 = V[index - 1];
+    V1 = V[index];
     fraction = (HalfV - V0) / (V1 - V0);
     TEnd = T0 + (fraction * dx);
+
     spike_width2.push_back(TEnd - TStart);
   }
+
   return spike_width2.size();
 }
 
@@ -1288,10 +1312,10 @@ int LibV1::__time_constant(const vector<double>& v, const vector<double>& t,
   // value of the derivative near the minimum
   double min_derivative = 5e-3;
   // minimal required length of the decay (indices)
-  int min_length = 10;
+  size_t min_length = 10;
   // minimal required time length in ms
   int t_length = 70;
-  int stimstartindex;
+  size_t stimstartindex;
   for (stimstartindex = 0; t[stimstartindex] < stimStart; stimstartindex++)
     ;
   stimstartindex += 10;
@@ -1302,8 +1326,8 @@ int LibV1::__time_constant(const vector<double>& v, const vector<double>& t,
       t.begin(),
       find_if(t.begin() + stimstartindex, t.end(),
               bind2nd(greater_equal<double>(), (stimStart + stimEnd) / 2.)));
-  if (stimstartindex < 0 || stimstartindex >= v.size() || stimmiddleindex < 0 ||
-      stimmiddleindex >= v.size()) {
+  if (stimstartindex >= v.size() || 
+      stimmiddleindex < 0 || static_cast<size_t>(stimmiddleindex) >= v.size()) {
     return -1;
   }
   vector<double> part_v(&v[stimstartindex], &v[stimmiddleindex]);
@@ -1487,11 +1511,12 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
 int LibV1::__voltage_deflection(const vector<double>& v,
                                 const vector<double>& t, double stimStart,
                                 double stimEnd, vector<double>& vd) {
-  int wind = 5;
-  int stimendindex = 0;
+  const unsigned int window_size = 5;
+
+  size_t stimendindex = 0;
   double base = 0.;
   int base_size = 0;
-  for (unsigned i = 0; i < t.size(); i++) {
+  for (size_t i = 0; i < t.size(); i++) {
     if (t[i] < stimStart) {
       base += v[i];
       base_size++;
@@ -1504,15 +1529,17 @@ int LibV1::__voltage_deflection(const vector<double>& v,
   if (base_size == 0) return -1;
   base /= base_size;
   double wind_mean = 0.;
-  if (stimendindex - 2 * wind >= 0 && v.size() > 0 &&
-      stimendindex - wind < v.size()) {
-    for (int i = stimendindex - 2 * wind; i < stimendindex - wind; i++) {
-      wind_mean += v[i];
-    }
-  } else {
+  if (! (stimendindex >= 2 * window_size && 
+         v.size() > 0 &&
+         stimendindex > window_size &&
+         stimendindex - window_size < v.size())) {
     return -1;
   }
-  wind_mean /= wind;
+  for (size_t i = stimendindex - 2 * window_size;
+       i < stimendindex - window_size; i++) {
+    wind_mean += v[i];
+  }
+  wind_mean /= window_size;
   vd.push_back(wind_mean - base);
   return 1;
 }
@@ -1750,13 +1777,13 @@ int LibV1::threshold_current(mapStr2intVec& IntFeatureData,
 // end of threshold_current
 
 int LibV1::printVectorI(char* strName, vector<int> vec) {
-  int nSize = 0;
+  size_t nSize = 0;
   vector<int>::iterator pos1, pos2;
   nSize = vec.size();
-  printf("\nName = [%s] size = [%d] values = [", strName, nSize);
+  printf("\nName = [%s] size = [%zu] values = [", strName, nSize);
   if (nSize > 0) {
     if (nSize < 100.0) {
-      for (unsigned i = 0; i < nSize; i++) {
+      for (size_t i = 0; i < nSize; i++) {
         printf("%d  ", vec[i]);
       }
     }
@@ -1767,14 +1794,14 @@ int LibV1::printVectorI(char* strName, vector<int> vec) {
   printf("]\n");
   return 0;
 }
+
 int LibV1::printVectorD(char* strName, vector<double> vec) {
-  int nSize = 0;
+  size_t nSize = vec.size();
   vector<double>::iterator pos1, pos2;
-  nSize = vec.size();
-  printf("\nName = [%s] size = [%d] values = [", strName, nSize);
+  printf("\nName = [%s] size = [%zu] values = [", strName, nSize);
   if (nSize > 0) {
     if (nSize < 100.0) {
-      for (unsigned i = 0; i < nSize; i++) {
+      for (size_t i = 0; i < nSize; i++) {
         printf("%f  ", vec[i]);
       }
     }
