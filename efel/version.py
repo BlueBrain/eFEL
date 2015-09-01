@@ -53,4 +53,5 @@ def _get_version_number():
     return version_number
 
 version = _get_version_number()
+__version__ = version
 VERSION = version
