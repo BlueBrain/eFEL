@@ -34,7 +34,8 @@ import os
 # pylint: disable=R0914
 
 testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'testdata/allfeatures')
+                            'testdata',
+                            'allfeatures')
 
 
 def get_allfeature_values():
