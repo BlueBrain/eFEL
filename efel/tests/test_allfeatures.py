@@ -29,8 +29,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import nose.tools as nt
+import os
 
 # pylint: disable=R0914
+
+testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'testdata',
+                            'allfeatures')
 
 
 def get_allfeature_values():
@@ -39,14 +44,8 @@ def get_allfeature_values():
     import efel
     efel.reset()
     import numpy
-    import os
 
     all_featurenames = efel.getFeatureNames()
-
-    testdata_dir = os.path.join(
-        os.path.dirname(
-            os.path.abspath(__file__)),
-        'testdata/allfeatures')
 
     soma_data = numpy.loadtxt(os.path.join(testdata_dir, 'testdata.txt'))
     soma_time = soma_data[:, 0]
@@ -141,8 +140,8 @@ def test_allfeatures():
     feature_values = get_allfeature_values()
 
     import json
-    with open('testdata/allfeatures/expectedresults.json', 'r') \
-            as expected_json:
+    test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
+    with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
 
     all_equal = True
