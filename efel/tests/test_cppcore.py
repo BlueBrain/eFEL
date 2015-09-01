@@ -29,7 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
+import os
 import nose.tools as nt
+
+
+testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'testdata/')
 
 
 def test_import():
@@ -51,7 +56,8 @@ class TestCppcore(object):
         efel.cppcore.getFeatureNames(feature_names)
 
         import json
-        with open('featurenames.json', 'r') as featurenames_json:
+        test_data_path = os.path.join(testdata_dir, '../featurenames.json')
+        with open(test_data_path, 'r') as featurenames_json:
             expected_featurenames = json.load(featurenames_json)
         nt.assert_equal(feature_names, expected_featurenames)
 
@@ -63,7 +69,8 @@ class TestCppcore(object):
         stim_start = 500.0
         stim_end = 900.0
 
-        data = numpy.loadtxt('testdata/basic/mean_frequency_1.txt')
+        test_data_path = os.path.join(testdata_dir, 'basic/mean_frequency_1.txt')
+        data = numpy.loadtxt(test_data_path)
 
         time = data[:, 0]
         voltage = data[:, 1]
