@@ -28,6 +28,7 @@ The source code of the eFEL is located on github:
    examples
    eFeatures
    api
+   developers
 
 Indices and tables
 ==================
