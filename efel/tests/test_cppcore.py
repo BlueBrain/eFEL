@@ -98,7 +98,3 @@ class TestCppcore(object):
                 'AP_amplitude',
                 50.0,
                 10.0))
-
-
-if __name__ == '__main__':
-    test_getFeatureNames()

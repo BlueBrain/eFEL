@@ -492,7 +492,7 @@ def test_spikecount_libv4peakindices():
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt(joinp('testdata', 'basic', 'mean_frequency_1.txt'))
+    data = numpy.loadtxt(joinp(testdata_dir, 'basic', 'mean_frequency_1.txt'))
 
     time = data[:, 0]
     voltage = data[:, 1]
@@ -506,7 +506,9 @@ def test_spikecount_libv4peakindices():
 
     features = ['peak_indices', 'Spikecount']
 
-    efel.setDependencyFileLocation('DependencyV5_LibV4peakindices.txt')
+    test_peak = joinp(os.path.dirname(os.path.abspath(__file__)),
+                      'DependencyV5_LibV4peakindices.txt')
+    efel.setDependencyFileLocation(test_peak)
 
     feature_values = \
         efel.getFeatureValues(
