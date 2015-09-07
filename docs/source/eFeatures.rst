@@ -172,6 +172,20 @@ Width of spike at half spike amplitude
     AP_fall_indices = index_after_peak((v(peak_indices) - v(AP_begin_indices)) / 2)
     AP_duration_half_width = t(AP_fall_indices) - t(AP_rise_indices)
 
+**LibV1 : AP_width**
+
+Width of spike at threshold
+
+- **Required features**: LibV1: peak_indices, LibV5: min_AHP_indices, threshold
+- **Units**: ms
+- **Pseudocode**: ::
+
+    min_AHP_indices.append(stim_start_index)
+    for i in range(len(min_AHP_indices)-1):
+        onset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] > threshold)[0]]
+        offset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] < threshold && t > onset_time)[0]]
+        AP_width[i] = t(offset_time[i]) - t(onset_time[i])
+
 
 Voltage features
 ----------------
