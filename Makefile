@@ -25,7 +25,8 @@ update_version:
 	git add VERSION.txt && \
 	git commit -m 'Updated version number'
 test: install
-	cd efel/tests; nosetests -s -v -x
+	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
+		--cover-package efel
 pypi: test
 	rm -rf dist
 	python setup.py sdist bdist
