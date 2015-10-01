@@ -220,8 +220,15 @@ def test_stimstart_stimend():
         Exception,
         efel.getFeatureValues, [trace], features)
 
-    trace['stim_start'] = stim_end
-    trace['stim_end'] = stim_start
+    trace['stim_start'] = [stim_end]
+    trace['stim_end'] = [stim_start]
+
+    nt.assert_raises(
+        Exception,
+        efel.getFeatureValues, [trace], features)
+
+    trace['stim_start'] = [stim_start, stim_end]
+    trace['stim_end'] = [stim_end]
 
     nt.assert_raises(
         Exception,
