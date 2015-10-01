@@ -118,7 +118,7 @@ def setThreshold(newThreshold):
 def setDerivativeThreshold(newDerivativeThreshold):
     """Set the threshold for the derivate for detecting the spike onset
 
-    Some feature us a threshold on dV/dt to calculate the beginning of an
+    Some featurea use a threshold on dV/dt to calculate the beginning of an
     action potential. This function allows you to set this threshold.
 
     Parameters
@@ -127,7 +127,7 @@ def setDerivativeThreshold(newDerivativeThreshold):
                 The new derivative threshold value (in the same units
                 as the traces, e.g. mV/ms).
     """
-    _settings.derivate_threshold = newDerivativeThreshold
+    _settings.derivative_threshold = newDerivativeThreshold
     setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
 
 

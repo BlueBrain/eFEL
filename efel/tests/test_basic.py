@@ -191,6 +191,77 @@ def test_consecutive_traces():
         len(feature_values2[0][feature_name]))
 
 
+def test_setDerivativeThreshold():
+    """basic: Test setDerivativeThreshold"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = stim_start
+    trace['stim_end'] = stim_end
+
+    features = ['AP_begin_voltage']
+
+    nt.assert_raises(
+        Exception,
+        efel.getFeatureValues, [trace], features)
+
+
+def test_stimstart_stimend_list():
+    """basic: Test exception when stimstart or stimend is not a list"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_begin_voltage']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+    AP_begin_voltage_orig = feature_values[0]['AP_begin_voltage'][1]
+
+    efel.setDerivativeThreshold(5)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+    AP_begin_voltage = feature_values[0]['AP_begin_voltage'][1]
+    nt.assert_almost_equal(AP_begin_voltage, -51.6400489995987)
+    nt.assert_not_equal(AP_begin_voltage, AP_begin_voltage_orig)
+
+
 def test_ISI_log_slope_skip():
     """basic: Test ISI_log_slope_skip"""
 
