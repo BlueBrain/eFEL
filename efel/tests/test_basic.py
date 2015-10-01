@@ -56,7 +56,16 @@ def test_version():
     nt.assert_true(efel.version is not None)
 
 
-# @nt.raises(TypeError)
+def test_setDependencyFileLocation_wrongpath():
+    """basic: Test if setDependencyFileLocation fails when path doesn't exist"""
+
+    import efel
+    efel.reset()
+    nt.assert_raises(
+        Exception,
+        efel.setDependencyFileLocation, "thisfiledoesntexist")
+
+
 def test_nonexisting_feature():
     """basic: Test nonexisting feature"""
 
@@ -790,3 +799,37 @@ def test_decay_time_constant_after_stim2():
     nt.assert_almost_equal(
         20.0,
         feature_values['decay_time_constant_after_stim'][0], places=1)
+
+
+def test_getmeanfeaturevalues():
+    """basic: Test getMeanFeatureValues"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    data = numpy.loadtxt(test_data_path)
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            ['AP_amplitude'])
+
+    mean_feature_values = efel.getMeanFeatureValues([trace], ['AP_amplitude'])
+
+    nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
+                    mean_feature_values[0]['AP_amplitude'])
