@@ -10,7 +10,7 @@ As a developer you will need some extra requirements
 
 * To get the latest source code: `Git <https://git-scm.com/>`_
 * To run the tests: `Nose <https://nose.readthedocs.org/en/latest/>`_
-* To build the documentation: `Sphinx <http://sphinx-doc.org/>`_, and pdf2latex 
+* To build the documentation: `Sphinx <http://sphinx-doc.org/>`_, and pdflatex 
   (e.g. from `Mactex <https://tug.org/mactex/>`_)
 
 Forking and cloning the git repository
@@ -123,6 +123,13 @@ The documentation can be built by::
 It can be viewed by opening::
 
     docs/build/html/index.html
+
+To build the documentation, pdflatex has to be present on the system. On a Mac
+this can be installed using `Mactex <https://tug.org/mactex/>`_. On Ubuntu one
+can use::
+
+    sudo apt-get install texlive-latex-base texlive-latex-extra xzdec                                                       
+    tlmgr install helvetic    
 
 Pull request
 -------------
