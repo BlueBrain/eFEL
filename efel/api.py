@@ -245,6 +245,13 @@ def getFeatureValues(traces, featureNames):
         featureDict = {}
 
         if 'stim_start' in trace and 'stim_end' in trace:
+            try:
+                len(trace['stim_start'])
+                len(trace['stim_end'])
+            except:
+                raise Exception('Unable to determine length of stim_start or '
+                                'stim_end, are you sure these are lists ?')
+
             if len(trace['stim_start']) == 1 and len(trace['stim_end']) == 1:
                 if trace['stim_end'][0] <= trace['stim_start'][0]:
                     raise Exception(
@@ -252,8 +259,9 @@ def getFeatureValues(traces, featureNames):
                         'stim_start:\nstim_start=%f stim_end=%f' %
                         (trace['stim_start'][0], trace['stim_end'][0]))
             else:
-                raise Exception('stim_start and stim_end in the trace '
-                                'dictionary need to be lists of 1 element')
+                raise Exception(
+                    'stim_start and stim_end in the trace '
+                    'dictionary need to be lists of exactly 1 element')
 
         else:
             raise Exception('stim_start or stim_end missing from trace')

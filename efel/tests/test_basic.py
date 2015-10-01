@@ -191,8 +191,8 @@ def test_consecutive_traces():
         len(feature_values2[0][feature_name]))
 
 
-def test_setDerivativeThreshold():
-    """basic: Test setDerivativeThreshold"""
+def test_stimstart_stimend():
+    """basic: Test exception when stimstart or stimend are wrong"""
 
     import efel
     efel.reset()
@@ -220,9 +220,22 @@ def test_setDerivativeThreshold():
         Exception,
         efel.getFeatureValues, [trace], features)
 
+    trace['stim_start'] = stim_end
+    trace['stim_end'] = stim_start
 
-def test_stimstart_stimend_list():
-    """basic: Test exception when stimstart or stimend is not a list"""
+    nt.assert_raises(
+        Exception,
+        efel.getFeatureValues, [trace], features)
+
+    del trace['stim_start']
+
+    nt.assert_raises(
+        Exception,
+        efel.getFeatureValues, [trace], features)
+
+
+def test_setDerivativeThreshold():
+    """basic: Test setDerivativeThreshold"""
 
     import efel
     efel.reset()
@@ -895,12 +908,17 @@ def test_getmeanfeaturevalues():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            ['AP_amplitude'])
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                ['AP_amplitude', 'BPAPHeightLoc1'])
 
-    mean_feature_values = efel.getMeanFeatureValues([trace], ['AP_amplitude'])
+        mean_feature_values = efel.getMeanFeatureValues(
+            [trace], [
+                'AP_amplitude', 'BPAPHeightLoc1'])
 
     nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
                     mean_feature_values[0]['AP_amplitude'])
