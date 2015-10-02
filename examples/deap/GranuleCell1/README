@@ -1,5 +1,6 @@
 How to run:
 
 - Install Neuron (with python support)
+- Install DEAP from the BlueBrain github repo: pip install git+git://github.com/BlueBrain/deap/
 - Compile the mod files using 'nrnivmodl mechanisms'
 - Open notebook using 'jupyter notebook GranuleCellDeap1.ipynb'
