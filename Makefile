@@ -25,6 +25,7 @@ update_version:
 	git add VERSION.txt && \
 	git commit -m 'Updated version number'
 test: install
+	pip install nose coverage
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 		--cover-package efel
 pypi: test
