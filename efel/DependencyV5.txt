@@ -15,7 +15,7 @@ LibV1:burst_mean_freq	    #LibV1:burst_ISI_indices    #LibV1:peak_time
 LibV1:burst_number	    #LibV1:burst_mean_freq
 LibV1:interburst_voltage	#LibV1:burst_ISI_indices
 LibV1:AP_height             #LibV1:peak_voltage
-LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage
+LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage #LibV1:peak_time
 LibV1:AHP_depth_abs_slow	#LibV1:peak_indices
 LibV1:AHP_slow_time         #LibV1:AHP_depth_abs_slow
 LibV1:time_constant

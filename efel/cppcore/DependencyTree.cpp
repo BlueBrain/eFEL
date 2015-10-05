@@ -120,7 +120,7 @@ int cTree::setFeaturePointers(
       // Find the feature function pointer map for the library
       mapLibItr = mapFptrLib.find(strLib);
       if (mapLibItr == mapFptrLib.end()) {
-        ErrorStr = ErrorStr + string("\nLibrary [") + strLib + "] is missing";
+        ErrorStr = ErrorStr + string("\nLibrary [") + strLib + "] is missing\n";
         return (-1);
       }
 

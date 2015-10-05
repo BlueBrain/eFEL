@@ -456,6 +456,7 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
     return nSize;
   } else {
     vector<double> peakvoltage;
+    vector<double> peaktime;
     vector<int> apbeginindices;
     vector<double> v;
     retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
@@ -463,12 +464,35 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
       GErrorStr += "AP_amplitude: Can't find voltage vector V";  
       return -1;
     }
+
+    vector<double> stimstart;                                                      
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart); 
+    if (retVal != 1) {
+        GErrorStr += "AP_amplitude: Error getting stim_start";  
+        return -1;                                                     
+    }
+    
+    vector<double> stimend;                                                        
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimend);
+    if (retVal != 1) {
+        GErrorStr += "AP_amplitude: Error getting stim_end";  
+        return -1;                                                     
+    }
+    
     retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage",
                           peakvoltage);
     if (retVal <= 0) {
       GErrorStr += "AP_amplitude: Error calculating peak_voltage";
       return -1;
     }
+    
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_time",
+                          peaktime);
+    if (retVal <= 0) {
+      GErrorStr += "AP_amplitude: Error calculating peak_time";
+      return -1;
+    }
+
     retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices",
                        apbeginindices);
     if (retVal <= 0) {
@@ -476,16 +500,29 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
       return -1;
     }
 
-    if (peakvoltage.size() > apbeginindices.size()) {
+    if (peakvoltage.size() != peaktime.size()) {
       GErrorStr += 
-          "AP_amplitude: More peak_voltage entries than AP_begin_indices entries";
+          "AP_amplitude: Not the same amount of peak_time and peak_voltage entries";
+      return -1;
+    }
+
+    vector<double> peakvoltage_duringstim;
+    for (unsigned i = 0; i < peaktime.size(); i++) {
+      if (peaktime[i] >= stimstart[0] && peaktime[i] <= stimend[0]) {
+         peakvoltage_duringstim.push_back(peakvoltage[i]); 
+      }
+    }
+
+    if (peakvoltage_duringstim.size() > apbeginindices.size()) {
+      GErrorStr += 
+          "AP_amplitude: More peak_voltage entries during the stimulus than AP_begin_indices entries";
       return -1;
     }
 
     vector<double> apamplitude;
-    apamplitude.resize(peakvoltage.size());
+    apamplitude.resize(peakvoltage_duringstim.size());
     for (unsigned i = 0; i < apamplitude.size(); i++) {
-      apamplitude[i] = peakvoltage[i] - v[apbeginindices[i]];
+      apamplitude[i] = peakvoltage_duringstim[i] - v[apbeginindices[i]];
     }
     setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
     return apamplitude.size();

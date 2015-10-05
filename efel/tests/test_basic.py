@@ -405,6 +405,44 @@ def test_mean_frequency1():
     nt.assert_almost_equal(feature_values[0]['mean_frequency'][0], 15.2858453)
 
 
+def test_ap_amplitude_outside_stim():
+    """basic: Test AP amplitude with spike outside stim"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 700.0
+    stim_end = 2700.0
+
+    test_data_path = joinp(testdata_dir, 'basic', 'spike_outside_stim.txt')
+    data = numpy.loadtxt(test_data_path)
+
+    time = data[:, 0]
+    voltage = data[:, 1]
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_amplitude', 'peak_time']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    # Make sure AP_amplitude doesn't pick up the two spikes outside of
+    # the stimulus
+    # (which are present in peak_time)
+    nt.assert_equal(
+        len(feature_values[0]['AP_amplitude']) + 2,
+        len(feature_values[0]['peak_time']))
+
+
 def test_ap_amplitude_from_voltagebase1():
     """basic: Test AP_amplitude_from_voltagebase 1"""
 

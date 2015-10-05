@@ -89,7 +89,7 @@ int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
   strFeature += params;
   mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(strFeature));
   if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing";
+    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing\n";
     return -1;
   }
   v = mapstr2IntItr->second;
@@ -104,7 +104,7 @@ int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
   mapStr2doubleVec::iterator mapstr2DoubleItr(
       DoubleFeatureData.find(strFeature));
   if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing";
+    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing\n";
     return -1;
   }
   v = mapstr2DoubleItr->second;
