@@ -8,6 +8,7 @@ doc_efeatures:
 	ls -al ../../build_efeatures && \
 	pdflatex -output-directory=../../build_efeatures efeature-documentation.tex
 doc: install doc_efeatures
+	pip install sphinx
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \
@@ -42,4 +43,4 @@ cpp:
 	cmake .. && \
 	make -j
 push: clean update_version install test doc doc_upload
-	git push
+	git push --tags
