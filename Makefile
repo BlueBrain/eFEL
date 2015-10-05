@@ -43,4 +43,5 @@ cpp:
 	cmake .. && \
 	make -j
 push: clean update_version install test doc doc_upload
+	git push
 	git push --tags
