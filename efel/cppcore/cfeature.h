@@ -36,7 +36,6 @@ class cFeature {
   map<string, vector<double> > mapDoubleData;
   map<string, string> mapStrData;
   map<string, string> featuretypes;
-  string GErrorStr;
   FILE* fin;
   void fillfeaturetypes();
 
