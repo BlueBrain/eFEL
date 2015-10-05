@@ -460,23 +460,25 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
     vector<double> v;
     retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
     if (retVal <= 0) {
+      GErrorStr += "AP_amplitude: Can't find voltage vector V";  
       return -1;
     }
     retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage",
                           peakvoltage);
     if (retVal <= 0) {
-      GErrorStr += "Error calculating peak_voltage for AP_amplitude";
+      GErrorStr += "AP_amplitude: Error calculating peak_voltage";
       return -1;
     }
     retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices",
                        apbeginindices);
     if (retVal <= 0) {
-      GErrorStr += "Error calculating AP_begin_indicies for AP_amplitude";
+      GErrorStr += "AP_amplitude: Error calculating AP_begin_indicies";
       return -1;
     }
 
     if (peakvoltage.size() > apbeginindices.size()) {
-      GErrorStr += "More peakvoltage entries than AP begin entries";
+      GErrorStr += 
+          "AP_amplitude: More peak_voltage entries than AP_begin_indices entries";
       return -1;
     }
 
@@ -488,7 +490,6 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
     setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
     return apamplitude.size();
   }
-  return -1;
 }
 
 // AHP_depth_abs
