@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/BlueBrain/eFEL.svg?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
 [![codecov.io](http://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master)](http://codecov.io/github/BlueBrain/eFEL?branch=master)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/BlueBrain/efel/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 [![Join the chat at https://gitter.im/BlueBrain/eFEL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BlueBrain/eFEL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Introduction
