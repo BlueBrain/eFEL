@@ -26,8 +26,9 @@ except ImportError:
     from distutils.core import setup, Extension  # pylint: disable=E0611,F0401
 
 import os
+import versioneer
 
-exec(compile(open("efel/version.py").read(), "efel/version.py", 'exec'))
+# exec(compile(open("efel/version.py").read(), "efel/version.py", 'exec'))
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -71,7 +72,8 @@ cppcore = Extension('efel.cppcore',
                     include_dirs=['efel/cppcore/'])
 setup(
     name="efel",
-    version=VERSION,
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     install_requires=['numpy>=1.6'],
     packages=['efel'],
     author="BlueBrain Project, EPFL",

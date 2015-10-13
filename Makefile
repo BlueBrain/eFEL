@@ -42,6 +42,6 @@ cpp:
 	cd build_cmake && \
 	cmake .. && \
 	make -j
-push: clean update_version install test doc doc_upload
+push: clean install test doc doc_upload
 	git push
 	git push --tags

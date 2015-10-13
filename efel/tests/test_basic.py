@@ -53,7 +53,7 @@ def test_version():
     import efel
     efel.reset()
 
-    nt.assert_true(efel.version is not None)
+    nt.assert_true(efel.__version__ is not None)
 
 
 def test_setDependencyFileLocation_wrongpath():
