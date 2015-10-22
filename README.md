@@ -152,6 +152,7 @@ Full documentation
 ==================
 The full documentation can be found [here](http://bluebrain.github.io/eFEL)
 
+<!---
 How to cite
 ===========
 Every main version has a DOI:
@@ -173,3 +174,4 @@ To cite the latest version (2.6):
   url          = {http://dx.doi.org/10.5281/zenodo.30074}
 }
 ```
+-->
