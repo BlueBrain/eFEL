@@ -284,12 +284,9 @@ def getFeatureValues(traces, featureNames):
                 exitCode = cppcore.getFeatureInt(
                     featureName,
                     cppcoreFeatureValues)
-            elif featureType == "":
-                raise TypeError("Feature %s has no type "
-                                "(does it exist ?): %s" %
-                                (featureName, featureType))
             else:
-                raise TypeError("Feature %s has an unknown type: %s" %
+                raise TypeError("Feature %s has unknown type"
+                                "(does it exist ?): %s" %
                                 (featureName, featureType))
             if exitCode < 0:
                 import warnings
