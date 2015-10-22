@@ -276,12 +276,9 @@ def getFeatureValues(traces, featureNames):
             featureType = cppcore.featuretype(featureName)
             if featureType == "double":
                 cppcoreFeatureValues = list()
-                try:
-                    exitCode = cppcore.getFeatureDouble(
-                        featureName,
-                        cppcoreFeatureValues)
-                except:
-                    exitCode = -1
+                exitCode = cppcore.getFeatureDouble(
+                    featureName,
+                    cppcoreFeatureValues)
             elif featureType == "int":
                 cppcoreFeatureValues = list()
                 exitCode = cppcore.getFeatureInt(

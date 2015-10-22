@@ -61,6 +61,15 @@ class TestCppcore(object):
             expected_featurenames = json.load(featurenames_json)
         nt.assert_equal(feature_names, expected_featurenames)
 
+    def test_getFeatureDouble_failure(self):
+        """cppcore: Testing failure exit code in getFeatureDouble"""
+        import efel.cppcore
+        feature_values = list()
+        return_value = efel.cppcore.getFeatureDouble(
+            "AP_amplitude",
+            feature_values)
+        nt.assert_equal(return_value, -1)
+
     def test_getDistance(self):
         """cppcore: Testing getDistance()"""
         import efel.cppcore
@@ -69,7 +78,9 @@ class TestCppcore(object):
         stim_start = 500.0
         stim_end = 900.0
 
-        test_data_path = os.path.join(testdata_dir, 'basic/mean_frequency_1.txt')
+        test_data_path = os.path.join(
+            testdata_dir,
+            'basic/mean_frequency_1.txt')
         data = numpy.loadtxt(test_data_path)
 
         time = data[:, 0]

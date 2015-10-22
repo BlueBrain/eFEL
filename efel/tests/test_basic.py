@@ -1,4 +1,7 @@
+# pylint: disable=W0611, W0612, F0401, R0914, C0302
+
 """General tests of eFEL"""
+
 
 """
 Copyright (c) 2015, Blue Brain Project/EPFL
@@ -32,7 +35,6 @@ import os
 from os.path import join as joinp
 import nose.tools as nt
 
-# pylint: disable=W0611, W0612, F0401, R0914
 
 _multiprocess_can_split_ = True
 
@@ -84,6 +86,52 @@ def test_nonexisting_feature():
         efel.getFeatureValues,
         [trace],
         ['nonexisting_feature'])
+
+
+def test_failing_double_feature():
+    """basic: Test failing double feature"""
+
+    import efel
+    efel.reset()
+
+    import numpy
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_value = efel.getFeatureValues(
+            [trace],
+            ['AP_amplitude'])[0]['AP_amplitude']
+
+    nt.assert_equal(feature_value, None)
+
+
+def test_failing_int_feature():
+    """basic: Test failing int feature"""
+
+    import efel
+    efel.reset()
+
+    import numpy
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_value = efel.getFeatureValues(
+            [trace],
+            ['burst_number'])[0]['burst_number']
+
+    nt.assert_equal(feature_value, None)
 
 
 def test_empty_trace():

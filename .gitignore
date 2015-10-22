@@ -3,4 +3,5 @@
 /efel.egg-info
 /build_cmake
 /build.sh.lviz
-
+*.pyc
+/build.sh
