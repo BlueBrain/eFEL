@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include "LibV5.h"
 #include <algorithm>
@@ -40,7 +40,7 @@ int LibV5::__ISI_log_slope(const vector<double>& isiValues,
     // Remove n spikes given by spike_skipf or max_spike_skip
     int isisToRemove = (int)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
     // spike To remove is minimum of spike_skipf or max_spike_skip
-    if (0 <= isisToRemove && maxnSpike - 1 < isisToRemove){
+    if (0 <= isisToRemove && maxnSpike - 1 < isisToRemove) {
       isisToRemove = maxnSpike - 1;
     }
 
@@ -164,7 +164,7 @@ int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retVal, nSize;
-  
+
   retVal = CheckInDoublemap(DoubleFeatureData, StringData, "time_to_last_spike",
                             nSize);
   if (retVal)
@@ -179,16 +179,16 @@ int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
       GErrorStr += "\n Error in peak_time calculation in time_to_last_spike.\n";
       return -1;
     } else if (retVal == 0) {
-       last_spike.push_back(0.0);
-       setDoubleVec(DoubleFeatureData, StringData, "time_to_last_spike",
-                    last_spike);
+      last_spike.push_back(0.0);
+      setDoubleVec(DoubleFeatureData, StringData, "time_to_last_spike",
+                   last_spike);
     } else {
-        retVal =
-            getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-        if (retVal <= 0) return -1;
-        last_spike.push_back(peaktime[peaktime.size() - 1] - stimstart[0]);
-        setDoubleVec(DoubleFeatureData, StringData, "time_to_last_spike",
-                     last_spike);
+      retVal =
+          getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+      if (retVal <= 0) return -1;
+      last_spike.push_back(peaktime[peaktime.size() - 1] - stimstart[0]);
+      setDoubleVec(DoubleFeatureData, StringData, "time_to_last_spike",
+                   last_spike);
     }
     return 1;
   }
@@ -824,26 +824,24 @@ int LibV5::AP1_amp(mapStr2intVec& IntFeatureData,
 
 // Amplitude of the first spike
 int LibV5::APlast_amp(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData,
-                   mapStr2Str& StringData) {
+                      mapStr2doubleVec& DoubleFeatureData,
+                      mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, string("APlast_amp"), 
-                       nSize);
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData, string("APlast_amp"),
+                            nSize);
   if (retVal) {
     return nSize;
   } else {
     vector<double> AP_amplitudes, APlast_amp;
     int AP_amplitude_size;
 
-    AP_amplitude_size = getDoubleVec(DoubleFeatureData, StringData, 
-                                     string("AP_amplitude"),
-                                     AP_amplitudes);
+    AP_amplitude_size = getDoubleVec(DoubleFeatureData, StringData,
+                                     string("AP_amplitude"), AP_amplitudes);
     if (AP_amplitude_size < 1) {
       setDoubleVec(DoubleFeatureData, StringData, "APlast_amp", APlast_amp);
       return 0;
     } else {
-      APlast_amp.push_back(AP_amplitudes[AP_amplitude_size-1]);
+      APlast_amp.push_back(AP_amplitudes[AP_amplitude_size - 1]);
     }
 
     setDoubleVec(DoubleFeatureData, StringData, "APlast_amp", APlast_amp);
@@ -851,7 +849,6 @@ int LibV5::APlast_amp(mapStr2intVec& IntFeatureData,
   }
   return -1;
 }
-
 
 // Peak voltage of the first spike
 int LibV5::AP1_peak(mapStr2intVec& IntFeatureData,
@@ -1718,8 +1715,8 @@ int LibV5::BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
 
 // *** BPAPAmplitudeLoc1 ***
 int LibV5::BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
+                             mapStr2doubleVec& DoubleFeatureData,
+                             mapStr2Str& StringData) {
   int retval;
   int nsize;
   retval = CheckInDoublemap(DoubleFeatureData, StringData,
@@ -1734,32 +1731,31 @@ int LibV5::BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
 
   // voltage base
   vector<double> ap_begin_voltage_dend;
-  retval =
-      getDoubleParam(DoubleFeatureData, "AP_begin_voltage;location_dend1", 
-                     ap_begin_voltage_dend);
+  retval = getDoubleParam(DoubleFeatureData, "AP_begin_voltage;location_dend1",
+                          ap_begin_voltage_dend);
   if (retval <= 0) return -1;
 
-  if (peakvoltage.size() > ap_begin_voltage_dend.size()) {                            
-      GErrorStr += "More peakvoltage entries than AP begin voltages";             
-      return -1;                                                                 
-  }      
-  
+  if (peakvoltage.size() > ap_begin_voltage_dend.size()) {
+    GErrorStr += "More peakvoltage entries than AP begin voltages";
+    return -1;
+  }
+
   vector<double> bpapamplitude;
 
   for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 
-  setDoubleVec(DoubleFeatureData, StringData, "BPAPAmplitudeLoc1", 
+  setDoubleVec(DoubleFeatureData, StringData, "BPAPAmplitudeLoc1",
                bpapamplitude);
-  return  bpapamplitude.size();
+  return bpapamplitude.size();
 }
 // end of BPAPAmplitudeLoc1
 
 // *** BPAPAmplitudeLoc2 ***
 int LibV5::BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
+                             mapStr2doubleVec& DoubleFeatureData,
+                             mapStr2Str& StringData) {
   int retval;
   int nsize;
   retval = CheckInDoublemap(DoubleFeatureData, StringData,
@@ -1774,25 +1770,24 @@ int LibV5::BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
 
   // voltage base
   vector<double> ap_begin_voltage_dend;
-  retval =
-      getDoubleParam(DoubleFeatureData, "AP_begin_voltage;location_dend2", 
-                     ap_begin_voltage_dend);
+  retval = getDoubleParam(DoubleFeatureData, "AP_begin_voltage;location_dend2",
+                          ap_begin_voltage_dend);
   if (retval <= 0) return -1;
 
-  if (peakvoltage.size() > ap_begin_voltage_dend.size()) {                            
-      GErrorStr += "More peakvoltage entries than AP begin voltages";             
-      return -1;                                                                 
-  }      
-  
+  if (peakvoltage.size() > ap_begin_voltage_dend.size()) {
+    GErrorStr += "More peakvoltage entries than AP begin voltages";
+    return -1;
+  }
+
   vector<double> bpapamplitude;
 
   for (unsigned i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 
-  setDoubleVec(DoubleFeatureData, StringData, "BPAPAmplitudeLoc2", 
+  setDoubleVec(DoubleFeatureData, StringData, "BPAPAmplitudeLoc2",
                bpapamplitude);
-  return  bpapamplitude.size();
+  return bpapamplitude.size();
 }
 // end of BPAPAmplitudeLoc2
 
@@ -1986,7 +1981,8 @@ int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
     range_min_index = apbegin_index - int(range);
     range_max_index = apbegin_index + int(range);
     if (range_min_index < 0 or range_max_index < 0) return -1;
-    if (range_min_index > (int)t.size() or range_max_index > (int)t.size()) return -1;
+    if (range_min_index > (int)t.size() or range_max_index > (int)t.size())
+      return -1;
     if (v[range_max_index] - v[range_min_index] == 0) return -1;
     ap_phaseslope = (dvdt[range_max_index] - dvdt[range_min_index]) /
                     (v[range_max_index] - v[range_min_index]);
@@ -2079,249 +2075,234 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-// spike amplitude: peak_voltage - voltage_base                           
-int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,                           
-                        mapStr2doubleVec& DoubleFeatureData,                     
-                        mapStr2Str& StringData) {                                
-  int retVal, nSize;                                                             
-  retVal =                                                                       
-      CheckInDoublemap(DoubleFeatureData, StringData, 
-                        "AP_amplitude_from_voltagebase", nSize);    
-  if (retVal > 0) {                                                              
-    return nSize;                                                                
-  } else {                                                                       
-    vector<double> peakvoltage;                                                  
+// spike amplitude: peak_voltage - voltage_base
+int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
+                                         mapStr2doubleVec& DoubleFeatureData,
+                                         mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "AP_amplitude_from_voltagebase", nSize);
+  if (retVal > 0) {
+    return nSize;
+  } else {
+    vector<double> peakvoltage;
     vector<double> voltage_base_vec;
-    double voltage_base;    
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "voltage_base", 
-                          voltage_base_vec);                
+    double voltage_base;
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "voltage_base",
+                          voltage_base_vec);
     if (retVal <= 0) {
-      GErrorStr += 
-          "Error calculating voltage_base for AP_amplitude_from_voltagebase";              
-      return -1;                                                                 
+      GErrorStr +=
+          "Error calculating voltage_base for AP_amplitude_from_voltagebase";
+      return -1;
     } else {
-        voltage_base = voltage_base_vec[0];
-    }    
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage",         
-                          peakvoltage);                                          
-    if (retVal <= 0) {                                                           
-      GErrorStr += 
-          "Error calculating peak_voltage for AP_amplitude_from_voltage_base";            
-      return -1;                                                                 
-    }                                                                            
-                                                                                 
-    vector<double> apamplitude;                                                  
-    apamplitude.resize(peakvoltage.size());                                      
-    for (unsigned i = 0; i < apamplitude.size(); i++) {                               
-      apamplitude[i] = peakvoltage[i] - voltage_base;                    
-    }                                                                            
-    setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase", 
-                 apamplitude);    
-    return apamplitude.size();                                                   
-  }                                                                              
-  return -1;                                                                     
+      voltage_base = voltage_base_vec[0];
+    }
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage",
+                          peakvoltage);
+    if (retVal <= 0) {
+      GErrorStr +=
+          "Error calculating peak_voltage for AP_amplitude_from_voltage_base";
+      return -1;
+    }
+
+    vector<double> apamplitude;
+    apamplitude.resize(peakvoltage.size());
+    for (unsigned i = 0; i < apamplitude.size(); i++) {
+      apamplitude[i] = peakvoltage[i] - voltage_base;
+    }
+    setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase",
+                 apamplitude);
+    return apamplitude.size();
+  }
+  return -1;
 }
 
-// min_voltage_between_spikes: minimal voltage between consecutive spikes                           
-int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,                           
-                        mapStr2doubleVec& DoubleFeatureData,                     
-                        mapStr2Str& StringData) {                                
-  int retVal, nSize;                                                             
-  retVal =                                                                       
-      CheckInDoublemap(DoubleFeatureData, StringData, 
-                        "min_voltage_between_spikes", nSize);    
-  if (retVal > 0) {                                                              
-    return nSize;                                                                
-  } else {                                                                     
-    vector<int> peak_indices;                                                  
-    vector<double> v;                    
-    vector<double> min_voltage_between_spikes;  
+// min_voltage_between_spikes: minimal voltage between consecutive spikes
+int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "min_voltage_between_spikes", nSize);
+  if (retVal > 0) {
+    return nSize;
+  } else {
+    vector<int> peak_indices;
+    vector<double> v;
+    vector<double> min_voltage_between_spikes;
 
-    retVal = getIntVec(IntFeatureData, StringData, 
-                          "peak_indices", 
-                          peak_indices);                
+    retVal =
+        getIntVec(IntFeatureData, StringData, "peak_indices", peak_indices);
     if (retVal < 0) {
-      GErrorStr += 
-          "Error calculating peak_indices for min_voltage_between_spikes";              
-      return -1;                                                                 
+      GErrorStr +=
+          "Error calculating peak_indices for min_voltage_between_spikes";
+      return -1;
     } else if (retVal < 2) {
-        setDoubleVec(DoubleFeatureData, StringData, 
-                     "min_voltage_between_spikes", 
-                     min_voltage_between_spikes);    
-        return 0;
+      setDoubleVec(DoubleFeatureData, StringData, "min_voltage_between_spikes",
+                   min_voltage_between_spikes);
+      return 0;
     }
-      
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "V",         
-                          v);                                          
-    if (retVal <= 0) {                                                           
-      GErrorStr += 
-          "Error getting V for min_voltage_between_spikes";            
-      return -1;                                                                 
-    }                                                                            
-    
+
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
+    if (retVal <= 0) {
+      GErrorStr += "Error getting V for min_voltage_between_spikes";
+      return -1;
+    }
+
     for (unsigned i = 0; i < peak_indices.size() - 1; i++) {
       min_voltage_between_spikes.push_back(
-          *min_element(
-              v.begin() + peak_indices[i], v.begin() + peak_indices[i+1]));         
-    }                                                                            
-    setDoubleVec(DoubleFeatureData, StringData, "min_voltage_between_spikes", 
-                 min_voltage_between_spikes);    
-    return min_voltage_between_spikes.size();                                                   
-  }                                                                              
+          *min_element(v.begin() + peak_indices[i],
+                       v.begin() + peak_indices[i + 1]));
+    }
+    setDoubleVec(DoubleFeatureData, StringData, "min_voltage_between_spikes",
+                 min_voltage_between_spikes);
+    return min_voltage_between_spikes.size();
+  }
 }
 
 // return (possibly interpolate) voltage trace
-int LibV5::voltage(mapStr2intVec& IntFeatureData,                           
-                        mapStr2doubleVec& DoubleFeatureData,                     
-                        mapStr2Str& StringData) {                                
-  int retVal, nSize;                                                             
-  retVal =                                                                       
-      CheckInDoublemap(DoubleFeatureData, StringData, 
-                        "voltage", nSize);    
-  if (retVal > 0) {                                                              
-    return nSize;                                                                
-  } else {                                                                     
-    vector<double> v;                    
- 
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "V",         
-                          v);                                          
-    if (retVal < 0) {                                                           
-      GErrorStr += 
-          "Error getting V for voltage";            
-      return -1;                                                                 
-    }                                                                            
-    
-    setDoubleVec(DoubleFeatureData, StringData, "voltage", 
-                 v);    
-    return v.size();                                                   
-  }                                                                              
+int LibV5::voltage(mapStr2intVec& IntFeatureData,
+                   mapStr2doubleVec& DoubleFeatureData,
+                   mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "voltage", nSize);
+  if (retVal > 0) {
+    return nSize;
+  } else {
+    vector<double> v;
+
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
+    if (retVal < 0) {
+      GErrorStr += "Error getting V for voltage";
+      return -1;
+    }
+
+    setDoubleVec(DoubleFeatureData, StringData, "voltage", v);
+    return v.size();
+  }
 }
 
-// *** The average voltage during the last 90% of the stimulus duration. ***                                                  
-int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,                   
-                                mapStr2doubleVec& DoubleFeatureData,             
-                                mapStr2Str& StringData) {                        
-  int retVal;                                                                    
-  int nSize;                                                                     
+// *** The average voltage during the last 90% of the stimulus duration. ***
+int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
+                                        mapStr2doubleVec& DoubleFeatureData,
+                                        mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
   vector<double> t, v, stimEnd, stimStart, ssv;
-  
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,                       
-                            string("steady_state_voltage_stimend"), nSize);              
-  if (retVal) {                                                                  
-    return nSize;                                                                
-  }                                                                        
-  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
-  if (retVal < 0) return -1;                                                   
-  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
-  if (retVal < 0) return -1;                                                   
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);    
-  if (retVal < 0) return -1;                                                   
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", 
-                      stimStart);   
+
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            string("steady_state_voltage_stimend"), nSize);
+  if (retVal) {
+    return nSize;
+  }
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
+  if (retVal < 0) return -1;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
+  if (retVal < 0) return -1;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
+  if (retVal < 0) return -1;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);
   if (retVal < 0) return -1;
 
   double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
   unsigned start_index = distance(
-          t.begin(), find_if(t.begin(), t.end(),
-                             bind2nd(greater_equal<double>(), start_time)));
+      t.begin(), find_if(t.begin(), t.end(),
+                         bind2nd(greater_equal<double>(), start_time)));
   unsigned stop_index = distance(
-          t.begin(), find_if(t.begin(), t.end(),
-                             bind2nd(greater_equal<double>(), stimEnd[0])));
+      t.begin(), find_if(t.begin(), t.end(),
+                         bind2nd(greater_equal<double>(), stimEnd[0])));
 
   unsigned mean_size = 0;
   double mean = 0.0;
   for (unsigned i = start_index; i < stop_index; i++) {
-    mean += v[i];                                                                
-    mean_size++;                                                                 
+    mean += v[i];
+    mean_size++;
   }
-   
-  // Check for division by zero 
+
+  // Check for division by zero
   if (mean_size == 0) {
     return -1;
   } else {
-    mean /= mean_size;                                                             
-    ssv.push_back(mean);                                                           
-  
-    setDoubleVec(DoubleFeatureData, StringData, 
-                 "steady_state_voltage_stimend", ssv);  
-  
+    mean /= mean_size;
+    ssv.push_back(mean);
+
+    setDoubleVec(DoubleFeatureData, StringData, "steady_state_voltage_stimend",
+                 ssv);
+
     return 1;
-  }                                                                                
+  }
 }
 
-int LibV5::voltage_base(mapStr2intVec& IntFeatureData,                     
-                              mapStr2doubleVec& DoubleFeatureData,               
-                              mapStr2Str& StringData) {                          
-  int retVal, nSize;                                                             
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,                       
-                            string("voltage_base"), nSize);                      
-  if (retVal)                                                                    
-    return nSize;                                                                
-  else {                                                                         
-    vector<double> v, t, stimStart, vRest, vb_start_perc_vec, vb_end_perc_vec;                                       
-    double startTime, endTime, vb_start_perc, vb_end_perc;                                                   
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);        
-    if (retVal < 0) return -1;                                                   
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);        
-    if (retVal < 0) return -1;                                                   
-    retVal =                                                                     
-        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);    
+int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            string("voltage_base"), nSize);
+  if (retVal)
+    return nSize;
+  else {
+    vector<double> v, t, stimStart, vRest, vb_start_perc_vec, vb_end_perc_vec;
+    double startTime, endTime, vb_start_perc, vb_end_perc;
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
     if (retVal < 0) return -1;
-    retVal =                                                                     
-        getDoubleVec(DoubleFeatureData, StringData, "voltage_base_start_perc", 
-                vb_start_perc_vec);
-    if (retVal == 1) { 
-        vb_start_perc = vb_start_perc_vec[0];
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
+    if (retVal < 0) return -1;
+    retVal =
+        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);
+    if (retVal < 0) return -1;
+    retVal = getDoubleVec(DoubleFeatureData, StringData,
+                          "voltage_base_start_perc", vb_start_perc_vec);
+    if (retVal == 1) {
+      vb_start_perc = vb_start_perc_vec[0];
     } else {
-        vb_start_perc = 0.9;
+      vb_start_perc = 0.9;
     }
-    retVal =                                                                     
-        getDoubleVec(DoubleFeatureData, StringData, "voltage_base_end_perc", 
-                vb_end_perc_vec);   
-    if (retVal == 1) { 
-        vb_end_perc = vb_end_perc_vec[0];
+    retVal = getDoubleVec(DoubleFeatureData, StringData,
+                          "voltage_base_end_perc", vb_end_perc_vec);
+    if (retVal == 1) {
+      vb_end_perc = vb_end_perc_vec[0];
     } else {
-        vb_end_perc = 1.0;
-    }
-    
-    startTime = stimStart[0] * vb_start_perc;
-    endTime = stimStart[0] * vb_end_perc;
-    
-    if (startTime >= endTime) {
-        GErrorStr = GErrorStr + "\nvoltage_base: startTime >= endTime\n";    
-        return -1;
+      vb_end_perc = 1.0;
     }
 
-    int nCount = 0;                                                              
-    double vSum = 0;                                                             
-    // calculte the mean of voltage between startTime and endTime                
+    startTime = stimStart[0] * vb_start_perc;
+    endTime = stimStart[0] * vb_end_perc;
+
+    if (startTime >= endTime) {
+      GErrorStr = GErrorStr + "\nvoltage_base: startTime >= endTime\n";
+      return -1;
+    }
+
+    int nCount = 0;
+    double vSum = 0;
+    // calculte the mean of voltage between startTime and endTime
     for (unsigned i = 0; i < t.size(); i++) {
       if (t[i] > endTime) break;
-        
-      if (t[i] >= startTime) {                                                   
-        vSum = vSum + v[i];                                                      
-        nCount++;                                                                
-      }                                                                          
+
+      if (t[i] >= startTime) {
+        vSum = vSum + v[i];
+        nCount++;
+      }
     }
 
     if (nCount == 0) {
-        GErrorStr = GErrorStr + \
-                    "\nvoltage_base: no data points between startTime and endTime\n";    
-        return -1;
-    }    
+      GErrorStr =
+          GErrorStr +
+          "\nvoltage_base: no data points between startTime and endTime\n";
+      return -1;
+    }
 
-    vRest.push_back(vSum / nCount);                                              
-    setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);          
-    return 1;                                                                    
-  }                                                                              
-  return -1;                                                                     
+    vRest.push_back(vSum / nCount);
+    setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);
+    return 1;
+  }
+  return -1;
 }
 
-size_t get_index(const vector<double>& times, double t)
-{
-    return distance(
-      times.begin(), find_if(times.begin(), times.end(),
-                         bind2nd(greater_equal<double>(), t)));
+size_t get_index(const vector<double>& times, double t) {
+  return distance(times.begin(), find_if(times.begin(), times.end(),
+                                         bind2nd(greater_equal<double>(), t)));
 }
 
 double __decay_time_constant_after_stim(const vector<double>& times,
@@ -2329,21 +2310,19 @@ double __decay_time_constant_after_stim(const vector<double>& times,
                                         const double decay_start_after_stim,
                                         const double decay_end_after_stim,
                                         const double stimStart,
-                                        const double stimEnd)
-{
+                                        const double stimEnd) {
   const size_t stimStartIdx = get_index(times, stimStart);
-  const size_t decayStartIdx = get_index(times, 
-                                         stimEnd + decay_start_after_stim);
-  
-  const size_t decayEndIdx = get_index(times, 
-                                       stimEnd + decay_end_after_stim);
+  const size_t decayStartIdx =
+      get_index(times, stimEnd + decay_start_after_stim);
+
+  const size_t decayEndIdx = get_index(times, stimEnd + decay_end_after_stim);
 
   const double reference = voltage[stimStartIdx];
 
   vector<double> decayValues(decayEndIdx - decayStartIdx);
   vector<double> decayTimes(decayEndIdx - decayStartIdx);
 
-  for(size_t i = 0; i != decayValues.size(); ++i) {
+  for (size_t i = 0; i != decayValues.size(); ++i) {
     const double u0 = abs(voltage[decayStartIdx + i] - reference);
 
     decayValues[i] = log(u0);
@@ -2358,29 +2337,28 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   return abs(tau);
 }
 
-
-// *** Decay time constant measured during decay after the stimulus***                                                  
-int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,                   
-                                mapStr2doubleVec& DoubleFeatureData,             
-                                mapStr2Str& StringData) {                        
+// *** Decay time constant measured during decay after the stimulus***
+int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
+                                          mapStr2doubleVec& DoubleFeatureData,
+                                          mapStr2Str& StringData) {
   int retVal;
   int nSize;
 
   double decay_start_after_stim, decay_end_after_stim;
 
   retVal = CheckInDoublemap(DoubleFeatureData, StringData,
-                            string("decay_time_constant_after_stim"), nSize);              
-  if (retVal) {                                                                  
-    return nSize;                                                                
-  }                                                                        
+                            string("decay_time_constant_after_stim"), nSize);
+  if (retVal) {
+    return nSize;
+  }
 
   vector<double> voltages;
   retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), voltages);
   if (retVal < 0) return -1;
-  
+
   vector<double> times;
   retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), times);
-  if (retVal < 0) return -1;                                                   
+  if (retVal < 0) return -1;
 
   vector<double> vect;
 
@@ -2391,37 +2369,36 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", vect);
   if (retVal != 1) return -1;
   const double stimStart = vect[0];
-  
-  retVal = getDoubleVec(DoubleFeatureData, StringData, 
-                            "decay_start_after_stim", vect);
+
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "decay_start_after_stim",
+                        vect);
   if (retVal == 1) {
-      decay_start_after_stim = vect[0];
+    decay_start_after_stim = vect[0];
   } else {
-      decay_start_after_stim = 1.0;
+    decay_start_after_stim = 1.0;
   }
 
-  retVal = getDoubleVec(DoubleFeatureData, StringData, 
-                            "decay_end_after_stim", vect);
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
   if (retVal == 1) {
-      decay_end_after_stim = vect[0];
+    decay_end_after_stim = vect[0];
   } else {
-      decay_end_after_stim = 10.0;
+    decay_end_after_stim = 10.0;
   }
 
   if (decay_start_after_stim >= decay_end_after_stim) {
-    GErrorStr += \
-         "Error decay_start_after_stim small larger than decay_end_after_stim";
+    GErrorStr +=
+        "Error decay_start_after_stim small larger than decay_end_after_stim";
     return -1;
   }
 
-  const double val = __decay_time_constant_after_stim(times, voltages,
-                                                      decay_start_after_stim, 
-                                                      decay_end_after_stim,
-                                                      stimStart, stimEnd);
+  const double val = __decay_time_constant_after_stim(
+      times, voltages, decay_start_after_stim, decay_end_after_stim, stimStart,
+      stimEnd);
 
   vector<double> dtcas;
   dtcas.push_back(val);
-  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", 
+  setDoubleVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim",
                dtcas);
 
   return 1;

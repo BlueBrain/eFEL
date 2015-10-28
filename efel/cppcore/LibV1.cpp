@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include "LibV1.h"
 #include <algorithm>
@@ -132,17 +132,17 @@ int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
   retval =
       CheckInIntmap(IntFeatureData, StringData, string("Spikecount"), nsize);
   if (retval) {
-      return nsize;
+    return nsize;
   }
   vector<int> peakindices;
   retval = getIntVec(IntFeatureData, StringData, string("peak_indices"),
                      peakindices);
   if (retval < 0) {
-      return -1;
+    return -1;
   } else if (retval == 0) {
-      spikecount_value = 0;
+    spikecount_value = 0;
   } else {
-      spikecount_value = peakindices.size();
+    spikecount_value = peakindices.size();
   }
   vector<int> spikecount(1, spikecount_value);
   if (retval >= 0) {
@@ -294,7 +294,7 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
         nCount++;
       }
     }
-    if (lastAPTime == stimStart[0]) { 
+    if (lastAPTime == stimStart[0]) {
       GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
       return -1;
     }
@@ -461,33 +461,33 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
     vector<double> v;
     retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
     if (retVal <= 0) {
-      GErrorStr += "AP_amplitude: Can't find voltage vector V";  
+      GErrorStr += "AP_amplitude: Can't find voltage vector V";
       return -1;
     }
 
-    vector<double> stimstart;                                                      
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart); 
+    vector<double> stimstart;
+    retVal =
+        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart);
     if (retVal != 1) {
-        GErrorStr += "AP_amplitude: Error getting stim_start";  
-        return -1;                                                     
+      GErrorStr += "AP_amplitude: Error getting stim_start";
+      return -1;
     }
-    
-    vector<double> stimend;                                                        
+
+    vector<double> stimend;
     retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimend);
     if (retVal != 1) {
-        GErrorStr += "AP_amplitude: Error getting stim_end";  
-        return -1;                                                     
+      GErrorStr += "AP_amplitude: Error getting stim_end";
+      return -1;
     }
-    
+
     retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage",
                           peakvoltage);
     if (retVal <= 0) {
       GErrorStr += "AP_amplitude: Error calculating peak_voltage";
       return -1;
     }
-    
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_time",
-                          peaktime);
+
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_time", peaktime);
     if (retVal <= 0) {
       GErrorStr += "AP_amplitude: Error calculating peak_time";
       return -1;
@@ -501,21 +501,23 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
     }
 
     if (peakvoltage.size() != peaktime.size()) {
-      GErrorStr += 
-          "AP_amplitude: Not the same amount of peak_time and peak_voltage entries";
+      GErrorStr +=
+          "AP_amplitude: Not the same amount of peak_time and peak_voltage "
+          "entries";
       return -1;
     }
 
     vector<double> peakvoltage_duringstim;
     for (unsigned i = 0; i < peaktime.size(); i++) {
       if (peaktime[i] >= stimstart[0] && peaktime[i] <= stimend[0]) {
-         peakvoltage_duringstim.push_back(peakvoltage[i]); 
+        peakvoltage_duringstim.push_back(peakvoltage[i]);
       }
     }
 
     if (peakvoltage_duringstim.size() > apbeginindices.size()) {
-      GErrorStr += 
-          "AP_amplitude: More peak_voltage entries during the stimulus than AP_begin_indices entries";
+      GErrorStr +=
+          "AP_amplitude: More peak_voltage entries during the stimulus than "
+          "AP_begin_indices entries";
       return -1;
     }
 
@@ -1143,7 +1145,7 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
     dv2.clear();
 
     for (int j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
-      if (j < 0) { 
+      if (j < 0) {
         GErrorStr = GErrorStr + "\nInvalid index\n";
         return -1;
       }
@@ -1172,7 +1174,7 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
     // Find voltage where it crosses HalfV in the rising phase of action
     // potential
     for (size_t j = 0; j < v.size(); ++j) {
-      if (v[j] > HalfV) {   // point is found where  v is crossing HalfV
+      if (v[j] > HalfV) {  // point is found where  v is crossing HalfV
         index = minAHPIndex[i] + j;
         break;
       }
@@ -1189,7 +1191,7 @@ int LibV1::__spike_width2(vector<double>& t, vector<double>& V,
     // Find voltage where it crosses HalfV in the falling phase of the action
     // potential
     for (size_t j = PeakIndex[i + 1]; j < V.size(); j++) {
-      if (V[j] < HalfV){
+      if (V[j] < HalfV) {
         index = j;
         break;
       }
@@ -1364,8 +1366,8 @@ int LibV1::__time_constant(const vector<double>& v, const vector<double>& t,
       t.begin(),
       find_if(t.begin() + stimstartindex, t.end(),
               bind2nd(greater_equal<double>(), (stimStart + stimEnd) / 2.)));
-  if (stimstartindex >= v.size() || 
-      stimmiddleindex < 0 || static_cast<size_t>(stimmiddleindex) >= v.size()) {
+  if (stimstartindex >= v.size() || stimmiddleindex < 0 ||
+      static_cast<size_t>(stimmiddleindex) >= v.size()) {
     return -1;
   }
   vector<double> part_v(&v[stimstartindex], &v[stimmiddleindex]);
@@ -1567,10 +1569,8 @@ int LibV1::__voltage_deflection(const vector<double>& v,
   if (base_size == 0) return -1;
   base /= base_size;
   double wind_mean = 0.;
-  if (! (stimendindex >= 2 * window_size && 
-         v.size() > 0 &&
-         stimendindex > window_size &&
-         stimendindex - window_size < v.size())) {
+  if (!(stimendindex >= 2 * window_size && v.size() > 0 &&
+        stimendindex > window_size && stimendindex - window_size < v.size())) {
     return -1;
   }
   for (size_t i = stimendindex - 2 * window_size;

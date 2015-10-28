@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 #include "FillFptrTable.h"
 
 int FillFptrTable() {
@@ -236,17 +236,17 @@ int FillFptrTable() {
 
   FptrTableV5["all_ISI_values"] = &LibV5::all_ISI_values;
 
-  FptrTableV5["AP_amplitude_from_voltagebase"] = 
-                            &LibV5::AP_amplitude_from_voltagebase;
-  FptrTableV5["min_voltage_between_spikes"] = 
-                            &LibV5::min_voltage_between_spikes;
+  FptrTableV5["AP_amplitude_from_voltagebase"] =
+      &LibV5::AP_amplitude_from_voltagebase;
+  FptrTableV5["min_voltage_between_spikes"] =
+      &LibV5::min_voltage_between_spikes;
   FptrTableV5["voltage"] = &LibV5::voltage;
-  FptrTableV5["steady_state_voltage_stimend"] = 
-                            &LibV5::steady_state_voltage_stimend;
+  FptrTableV5["steady_state_voltage_stimend"] =
+      &LibV5::steady_state_voltage_stimend;
   FptrTableV5["voltage_base"] = &LibV5::voltage_base;
-  FptrTableV5["decay_time_constant_after_stim"] = 
-                            &LibV5::decay_time_constant_after_stim;
-  
+  FptrTableV5["decay_time_constant_after_stim"] =
+      &LibV5::decay_time_constant_after_stim;
+
   //****************** end of FptrTableV5 *****************************
 
   return 1;

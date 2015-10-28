@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include "LibV3.h"
 
@@ -170,7 +170,7 @@ int LibV3::ISI_values(mapStr2intVec& IntFeatureData,
                   "\n Three spikes required for calculation of ISI_values.\n";
       return -1;
     }
-    for (size_t i = 2; i < pvTime.size(); i++){
+    for (size_t i = 2; i < pvTime.size(); i++) {
       VecISI.push_back(pvTime[i] - pvTime[i - 1]);
     }
     setDoubleVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
@@ -287,7 +287,7 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
         nCount++;
       }
     }
-    if (lastAPTime == stimStart[0]) { 
+    if (lastAPTime == stimStart[0]) {
       GErrorStr = GErrorStr + "\nPrevent divide by zero.\n";
       return -1;
     }
@@ -568,7 +568,7 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
         vSum = vSum + v[i];
         nCount++;
       }
-      if (t[i] > endTime){
+      if (t[i] > endTime) {
         break;
       }
     }

@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include "DependencyTree.h"
 #include <fstream>
@@ -56,20 +56,19 @@ int cTree::deblank(string &str) {
   return 1;
 }
 
-
 /**
  *
  * setFeaturePointers
  *
  * mapFptrLib :
  * FptrTable :
- * FptrLookup | vector of pairs:  
+ * FptrLookup | vector of pairs:
  *                  first | string: feature name
  *                  second | vector of pairs:
  *                      first: fptr
  *                      second: string
- *      
- * 
+ *
+ *
  */
 int cTree::setFeaturePointers(
     map<string, map<string, fptr> *> &mapFptrLib, map<string, fptr> *FptrTable,
@@ -137,7 +136,7 @@ int cTree::setFeaturePointers(
       // features
       vecfptr.push_back(pair<fptr, string>(mapFeatureItr->second, wildcards));
       (FptrTable)
-          ->insert(pair<string, fptr>(strFeature, mapFeatureItr->second)); 
+          ->insert(pair<string, fptr>(strFeature, mapFeatureItr->second));
     }
     // Add the vecfptr from above to a map with as key the base featurei
     FptrLookup->insert(
@@ -147,9 +146,8 @@ int cTree::setFeaturePointers(
   return 1;
 }
 
-
 /**
- * 
+ *
  * Fill lstFeature (vecFeature) with all the features in the first column
  * of the dependency file
  *

@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include <iostream>
 #include "cfeature.h"
@@ -269,7 +269,8 @@ vector<int>& cFeature::getmapIntData(string strName) {
   map<string, vector<int> >::iterator mapstr2IntItr;
   mapstr2IntItr = mapIntData.find(strName);
   if (mapstr2IntItr == mapIntData.end()) {
-    GErrorStr = GErrorStr + string("Feature [") + strName + "] data is missing\n";
+    GErrorStr =
+        GErrorStr + string("Feature [") + strName + "] data is missing\n";
   }
   return mapstr2IntItr->second;
 }
@@ -277,7 +278,8 @@ vector<double>& cFeature::getmapDoubleData(string strName) {
   map<string, vector<double> >::iterator mapstr2DoubleItr;
   mapstr2DoubleItr = mapDoubleData.find(strName);
   if (mapstr2DoubleItr == mapDoubleData.end()) {
-    GErrorStr = GErrorStr + string("Feature [") + strName + "] data is missing\n";
+    GErrorStr =
+        GErrorStr + string("Feature [") + strName + "] data is missing\n";
   }
   return (mapstr2DoubleItr->second);
 }
@@ -414,17 +416,15 @@ int cFeature::calc_features(const string& name) {
         setFeatureString("params", params[i]);
         if ((*pfptrstring->first)(mapIntData, mapDoubleData, mapStrData) < 0) {
           last_failed = true;
-        }
-        else {
+        } else {
           last_failed = false;
         }
       }
     }
   }
   if (last_failed) {
-      return -1;
-  }
-  else {
+    return -1;
+  } else {
     // success
     return 0;
   }

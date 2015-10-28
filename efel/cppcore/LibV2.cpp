@@ -1,20 +1,20 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
- *                                                                               
- * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
- *                                                                               
- * This library is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU Lesser General Public License version 3.0 as published   
- * by the Free Software Foundation.                                              
- *                                                                               
- * This library is distributed in the hope that it will be useful, but WITHOUT   
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more 
- * details.                                                                      
- *                                                                               
- * You should have received a copy of the GNU Lesser General Public License      
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */      
+/* Copyright (c) 2015, EPFL/Blue Brain Project
+ *
+ * This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 #include "LibV2.h"
 #include <cstdlib>
@@ -183,9 +183,9 @@ int LibV2::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak;
     if (pi[i] < apbi[i]) {
-        // For some reason the peak and begin indices are out of sync
-        // Peak should always be later than begin index  
-        return -1;
+      // For some reason the peak and begin indices are out of sync
+      // Peak should always be later than begin index
+      return -1;
     }
     vpeak.resize(pi[i] - apbi[i]);
     transform(v.begin() + apbi[i], v.begin() + pi[i], vpeak.begin(),
@@ -1642,7 +1642,7 @@ int LibV2::__steady_state_hyper(const vector<double>& v,
       5;
 
   const int offset = 30;
-  if (i_end < 0 || i_end < offset){
+  if (i_end < 0 || i_end < offset) {
     return -1;
   }
 
@@ -1687,7 +1687,6 @@ int LibV2::steady_state_hyper(mapStr2intVec& IntFeatureData,
   return retval;
 }
 
-
 // *** E40 ***
 int LibV2::E40(mapStr2intVec& IntFeatureData,
                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
@@ -1707,7 +1706,6 @@ int LibV2::E40(mapStr2intVec& IntFeatureData,
   return retval;
 }
 // end of E40
-
 
 //
 // end of feature definition
