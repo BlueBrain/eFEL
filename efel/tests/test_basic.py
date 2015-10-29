@@ -249,7 +249,7 @@ def test_multiprocessing_traces():
             [feature_name], parallel_map=pool.map_async, return_list=False)
         nt.assert_true(isinstance(
             feature_values_async,
-            multiprocessing.pool.AsyncResult))
+            multiprocessing.pool.MapResult))
 
 
 def test_consecutive_traces():
