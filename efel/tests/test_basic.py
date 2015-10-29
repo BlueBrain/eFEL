@@ -175,6 +175,83 @@ def test_empty_trace():
         nt.assert_equal(value[0], 0.0)
 
 
+def test_multiprocessing_traces():
+    """basic: Test multiprocessing map"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 31.2
+    stim_end = 431.2
+
+    test_data_path = joinp(
+        testdata_dir,
+        'basic',
+        'zero_ISI_log_slope_skip95824004.abf.csv')
+    data1 = numpy.loadtxt(test_data_path)
+
+    time1 = data1[:, 0]
+    voltage1 = data1[:, 1]
+
+    trace1 = {}
+
+    trace1['T'] = time1
+    trace1['V'] = voltage1
+    trace1['stim_start'] = [stim_start]
+    trace1['stim_end'] = [stim_end]
+
+    feature_name = 'peak_time'
+
+    test_data_path = joinp(
+        testdata_dir,
+        'basic',
+        'AP_begin_indices_95810005.abf.csv')
+    data2 = numpy.loadtxt(test_data_path)
+
+    voltage2 = data2
+    time2 = numpy.arange(len(voltage2)) * 0.1
+
+    trace2 = {}
+
+    trace2['T'] = time2
+    trace2['V'] = voltage2
+    trace2['stim_start'] = [stim_start]
+    trace2['stim_end'] = [stim_end]
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values_serial = efel.getFeatureValues(
+            [trace1, trace2],
+            [feature_name])
+
+    import multiprocessing
+    pool = multiprocessing.Pool()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values_parallel = efel.getFeatureValues(
+            [trace1, trace2],
+            [feature_name], parallel_map=pool.map)
+
+    nt.assert_equal(
+        list(feature_values_serial[0]['peak_time']),
+        list(feature_values_parallel[0]['peak_time']))
+    nt.assert_equal(
+        list(feature_values_serial[1]['peak_time']),
+        list(feature_values_parallel[1]['peak_time']))
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values_async = efel.getFeatureValues(
+            [trace1, trace2],
+            [feature_name], parallel_map=pool.map_async, return_list=False)
+        nt.assert_true(isinstance(
+            feature_values_async,
+            multiprocessing.pool.MapResult))
+
+
 def test_consecutive_traces():
     """basic: Test if features from two different traces give other results"""
 
