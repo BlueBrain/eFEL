@@ -242,6 +242,15 @@ def test_multiprocessing_traces():
         list(feature_values_serial[1]['peak_time']),
         list(feature_values_parallel[1]['peak_time']))
 
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values_async = efel.getFeatureValues(
+            [trace1, trace2],
+            [feature_name], parallel_map=pool.map_async, return_list=False)
+        nt.assert_is_instance(
+            feature_values_async,
+            multiprocessing.pool.AsyncResult)
+
 
 def test_consecutive_traces():
     """basic: Test if features from two different traces give other results"""

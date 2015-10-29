@@ -208,7 +208,7 @@ def setDoubleSetting(setting_name, new_value):
     _double_settings[setting_name] = new_value
 
 
-def getFeatureValues(traces, featureNames, parallel_map=None):
+def getFeatureValues(traces, featureNames, parallel_map=None, return_list=True):
     """Calculate feature values for a list of traces.
 
     This function is the core of the eFEL API. A list of traces (in the form
@@ -229,6 +229,15 @@ def getFeatureValues(traces, featureNames, parallel_map=None):
     feature_names : list of string
                   List with the names of the features to be calculated on all
                   the traces.
+    parallel_map : map function
+                   Map function to parallelise over the traces. Default is the
+                   serial map() function
+    return_list: boolean
+                 By default the function returns a list of dicts. This
+                 optional argument can disable this, so that the result of the
+                 parallel_map() is returned. Can be useful for performance
+                 reasons when an iterator is preferred.
+
     Returns
     =======
     feature_values : list of dicts
@@ -244,7 +253,12 @@ def getFeatureValues(traces, featureNames, parallel_map=None):
         parallel_map = map
 
     traces_featurenames = ((trace, featureNames) for trace in traces)
-    return map(_get_feature_values_serial, traces_featurenames)
+    map_result = parallel_map(_get_feature_values_serial, traces_featurenames)
+
+    if return_list:
+        return list(map_result)
+    else:
+        return map_result
 
 
 def _get_feature_values_serial(trace_featurenames):

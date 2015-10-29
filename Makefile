@@ -1,6 +1,8 @@
 all: install	
 install:
 	pip install . --upgrade
+install3:
+	pip3 install . --upgrade
 doc_efeatures:
 	rm -rf docs/build_efeatures && \
 	mkdir docs/build_efeatures && \
@@ -28,6 +30,10 @@ update_version:
 test: install
 	pip install nose coverage
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
+		--cover-package efel
+test3: install3
+	pip3 install nose coverage
+	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
 		--cover-package efel
 pypi: test
 	rm -rf dist
