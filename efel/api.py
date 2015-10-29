@@ -208,7 +208,7 @@ def setDoubleSetting(setting_name, new_value):
     _double_settings[setting_name] = new_value
 
 
-def getFeatureValues(traces, featureNames):
+def getFeatureValues(traces, featureNames, parallel_map=None):
     """Calculate feature values for a list of traces.
 
     This function is the core of the eFEL API. A list of traces (in the form
@@ -239,67 +239,76 @@ def getFeatureValues(traces, featureNames):
                      The value is None if an error occured during the
                      calculation of the feature.
     """
-    featureDicts = []
 
-    for trace in traces:
-        featureDict = {}
+    if parallel_map is None:
+        parallel_map = map
 
-        if 'stim_start' in trace and 'stim_end' in trace:
-            try:
-                len(trace['stim_start'])
-                len(trace['stim_end'])
-            except:
-                raise Exception('Unable to determine length of stim_start or '
-                                'stim_end, are you sure these are lists ?')
+    traces_featurenames = ((trace, featureNames) for trace in traces)
+    return map(_get_feature_values_serial, traces_featurenames)
 
-            if len(trace['stim_start']) == 1 and len(trace['stim_end']) == 1:
-                if trace['stim_end'][0] <= trace['stim_start'][0]:
-                    raise Exception(
-                        'stim_end needs to be larger than '
-                        'stim_start:\nstim_start=%f stim_end=%f' %
-                        (trace['stim_start'][0], trace['stim_end'][0]))
-            else:
+
+def _get_feature_values_serial(trace_featurenames):
+    """Single thread of getFeatureValues"""
+
+    trace, featureNames = trace_featurenames
+
+    featureDict = {}
+
+    if 'stim_start' in trace and 'stim_end' in trace:
+        try:
+            len(trace['stim_start'])
+            len(trace['stim_end'])
+        except:
+            raise Exception('Unable to determine length of stim_start or '
+                            'stim_end, are you sure these are lists ?')
+
+        if len(trace['stim_start']) == 1 and len(trace['stim_end']) == 1:
+            if trace['stim_end'][0] <= trace['stim_start'][0]:
                 raise Exception(
-                    'stim_start and stim_end in the trace '
-                    'dictionary need to be lists of exactly 1 element')
-
+                    'stim_end needs to be larger than '
+                    'stim_start:\nstim_start=%f stim_end=%f' %
+                    (trace['stim_start'][0], trace['stim_end'][0]))
         else:
-            raise Exception('stim_start or stim_end missing from trace')
+            raise Exception(
+                'stim_start and stim_end in the trace '
+                'dictionary need to be lists of exactly 1 element')
 
-        _initialise()
+    else:
+        raise Exception('stim_start or stim_end missing from trace')
 
-        # Next set time, voltage and the stimulus start and end
-        for item in list(trace.keys()):
-            cppcore.setFeatureDouble(item, [x for x in trace[item]])
+    _initialise()
 
-        for featureName in featureNames:
-            featureType = cppcore.featuretype(featureName)
-            if featureType == "double":
-                cppcoreFeatureValues = list()
-                exitCode = cppcore.getFeatureDouble(
-                    featureName,
-                    cppcoreFeatureValues)
-            elif featureType == "int":
-                cppcoreFeatureValues = list()
-                exitCode = cppcore.getFeatureInt(
-                    featureName,
-                    cppcoreFeatureValues)
-            else:
-                raise TypeError("Feature %s has unknown type"
-                                "(does it exist ?): %s" %
-                                (featureName, featureType))
-            if exitCode < 0:
-                import warnings
-                warnings.warn(
-                    "Error while calculating feature %s: %s" %
-                    (featureName, cppcore.getgError()),
-                    RuntimeWarning)
-                featureDict[featureName] = None
-            else:
-                featureDict[featureName] = numpy.array(cppcoreFeatureValues)
+    # Next set time, voltage and the stimulus start and end
+    for item in list(trace.keys()):
+        cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
-        featureDicts.append(featureDict)
-    return featureDicts
+    for featureName in featureNames:
+        featureType = cppcore.featuretype(featureName)
+        if featureType == "double":
+            cppcoreFeatureValues = list()
+            exitCode = cppcore.getFeatureDouble(
+                featureName,
+                cppcoreFeatureValues)
+        elif featureType == "int":
+            cppcoreFeatureValues = list()
+            exitCode = cppcore.getFeatureInt(
+                featureName,
+                cppcoreFeatureValues)
+        else:
+            raise TypeError("Feature %s has unknown type"
+                            "(does it exist ?): %s" %
+                            (featureName, featureType))
+        if exitCode < 0:
+            import warnings
+            warnings.warn(
+                "Error while calculating feature %s: %s" %
+                (featureName, cppcore.getgError()),
+                RuntimeWarning)
+            featureDict[featureName] = None
+        else:
+            featureDict[featureName] = numpy.array(cppcoreFeatureValues)
+
+    return featureDict
 
 
 def getMeanFeatureValues(traces, featureNames):
