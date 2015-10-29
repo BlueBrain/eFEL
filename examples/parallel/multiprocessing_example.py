@@ -49,7 +49,7 @@ def main():
     pool = multiprocessing.Pool()
     traces_results = efel.getFeatureValues(
         traces, [
-            'AP_amplitude', 'voltage_base'], pool.map)
+            'AP_amplitude', 'voltage_base'], parallel_map=pool.map)
 
     # The return value is a list of trace_results, every trace_results
     # corresponds to one trace in the 'traces' list above (in same order)
