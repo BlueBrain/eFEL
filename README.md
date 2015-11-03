@@ -50,6 +50,8 @@ Or you could use a [python virtual environment](https://virtualenv.pypa.io)
 ```bash
 virtualenv pythonenv
 . ./pythonenv/bin/activate
+# If you use csh or tcsh, you should use:
+# source bin/activate.csh
 pip install efel
 ```
 
