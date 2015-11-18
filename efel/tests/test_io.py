@@ -31,18 +31,15 @@ def test_import_without_urlparse():
 
     import sys
     del sys.modules['efel.io']
-    try:
-        import builtins
-    except ImportError:
-        import __builtin__ as builtins
-    realimport = builtins.__import__
+    import __builtin__
+    realimport = __builtin__.__import__
 
     def myimport(name, *args):  # global_s, local, fromlist, level):
         """Override import"""
         if name == 'urlparse':
             raise ImportError
         return realimport(name, *args)  # global_s, local, fromlist, level)
-    builtins.__import__ = myimport
+    __builtin__.__import__ = myimport
     import importlib
 
     try:
@@ -56,7 +53,7 @@ def test_import_without_urlparse():
     else:
         import efel.io  # NOQA
 
-    builtins.__import__ = realimport
+    __builtin__.__import__ = realimport
 
 
 def test_load_fragment_column_txt1():
