@@ -32,13 +32,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import os
-from os.path import join as joinp
 import nose.tools as nt
 
 
 _multiprocess_can_split_ = True
 
-testdata_dir = joinp(os.path.dirname(os.path.abspath(__file__)), 'testdata')
+testdata_dir = os.path.join(
+    os.path.dirname(
+        os.path.abspath(__file__)),
+    'testdata')
+
+
+meanfrequency1_url = 'file://%s' % os.path.join(testdata_dir,
+                                                'basic',
+                                                'mean_frequency_1.txt')
 
 
 def test_import():
@@ -185,7 +192,7 @@ def test_multiprocessing_traces():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'zero_ISI_log_slope_skip95824004.abf.csv')
@@ -203,7 +210,7 @@ def test_multiprocessing_traces():
 
     feature_name = 'peak_time'
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'AP_begin_indices_95810005.abf.csv')
@@ -262,7 +269,7 @@ def test_consecutive_traces():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'zero_ISI_log_slope_skip95824004.abf.csv')
@@ -288,7 +295,7 @@ def test_consecutive_traces():
                 [trace1],
                 [feature_name])
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'AP_begin_indices_95810005.abf.csv')
@@ -321,16 +328,12 @@ def test_stimstart_stimend():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -371,16 +374,12 @@ def test_setDerivativeThreshold():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -417,7 +416,7 @@ def test_ISI_log_slope_skip():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'zero_ISI_log_slope_skip95824004.abf.csv')
@@ -455,7 +454,7 @@ def test_AP_begin_indices1():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = joinp(
+    test_data_path = os.path.join(
         testdata_dir,
         'basic',
         'AP_begin_indices_95810005.abf.csv')
@@ -503,16 +502,12 @@ def test_mean_frequency1():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -540,7 +535,10 @@ def test_ap_amplitude_outside_stim():
     stim_start = 700.0
     stim_end = 2700.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'spike_outside_stim.txt')
+    test_data_path = os.path.join(
+        testdata_dir,
+        'basic',
+        'spike_outside_stim.txt')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
@@ -573,16 +571,12 @@ def test_ap_amplitude_from_voltagebase1():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -610,18 +604,16 @@ def test_ap_amplitude_from_voltagebase1():
 def test_voltagebase1():
     """basic: Test voltagebase 1"""
 
+    import numpy
+
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -648,16 +640,12 @@ def test_getDistance1():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -680,16 +668,12 @@ def test_APlast_amp():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -715,16 +699,12 @@ def test_spikecount1():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -750,15 +730,12 @@ def test_spikecount_libv4peakindices():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    data = numpy.loadtxt(joinp(testdata_dir, 'basic', 'mean_frequency_1.txt'))
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -769,8 +746,8 @@ def test_spikecount_libv4peakindices():
 
     features = ['peak_indices', 'Spikecount']
 
-    test_peak = joinp(os.path.dirname(os.path.abspath(__file__)),
-                      'DependencyV5_LibV4peakindices.txt')
+    test_peak = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             'DependencyV5_LibV4peakindices.txt')
     efel.setDependencyFileLocation(test_peak)
 
     feature_values = \
@@ -820,16 +797,14 @@ def test_min_voltage_between_spikes1():
 
     import efel
     efel.reset()
+
     import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -869,7 +844,7 @@ def test_getFeatureNames():
     efel.reset()
     import json
 
-    test_data_path = joinp(testdata_dir, '..', 'featurenames.json')
+    test_data_path = os.path.join(testdata_dir, '..', 'featurenames.json')
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
     nt.assert_equal(efel.getFeatureNames(), expected_featurenames)
@@ -885,11 +860,14 @@ def test_steady_state_voltage1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    test_data_path = os.path.join(testdata_dir, 'basic', 'mean_frequency_1.txt')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -925,11 +903,8 @@ def test_steady_state_voltage_stimend():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 
@@ -991,11 +966,14 @@ def test_decay_time_constant_after_stim1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    test_data_path = os.path.join(testdata_dir, 'basic', 'mean_frequency_1.txt')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
     voltage = data[:, 1]
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {
         'T': time,
@@ -1031,7 +1009,7 @@ def test_decay_time_constant_after_stim2():
     stim_start = 100.0
     stim_end = 1000.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'tau20.0.csv')
+    test_data_path = os.path.join(testdata_dir, 'basic', 'tau20.0.csv')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
@@ -1060,16 +1038,14 @@ def test_getmeanfeaturevalues():
 
     import efel
     efel.reset()
+
     import numpy
 
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = joinp(testdata_dir, 'basic', 'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
     trace = {}
 

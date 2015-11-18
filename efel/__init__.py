@@ -21,6 +21,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 from efel.settings import Settings
 from efel.api import *
+import efel.io
 
 from ._version import get_versions
 __version__ = get_versions()['version']
