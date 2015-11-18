@@ -1,7 +1,15 @@
 """IO handler for eFEL"""
 
 import os
-import urlparse as up
+
+# Python 2 has urlparse module, Python 3 has urllib.parse
+try:
+    import urlparse as up
+except ImportError:
+    # pylint:disable=E0611, F0401
+    import urllib.parse as up
+    # pylint:enable=E0611,F0401
+
 import mimetypes
 
 

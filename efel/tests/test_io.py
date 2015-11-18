@@ -1,5 +1,7 @@
 """Test eFEL io module"""
 
+# pylint: disable=F0401
+
 import os
 import nose.tools as nt
 
@@ -20,6 +22,41 @@ def test_import():
     # pylint: disable=W0611
     import efel.io  # NOQA
     # pylint: enable=W0611
+
+
+def test_import_without_urlparse():
+    """io: Testing import without urlparse"""
+
+    # The only purpose of this test is to get the code coverage to 100% :-)
+
+    import sys
+    del sys.modules['efel.io']
+    try:
+        import builtins
+    except ImportError:
+        import __builtin__ as builtins
+    realimport = builtins.__import__
+
+    def myimport(name, *args):  # global_s, local, fromlist, level):
+        """Override import"""
+        if name == 'urlparse':
+            raise ImportError
+        return realimport(name, *args)  # global_s, local, fromlist, level)
+    builtins.__import__ = myimport
+    import importlib
+
+    try:
+        import urllib.parse  # NOQA
+        urllibparse_import_fails = False
+    except ImportError:
+        urllibparse_import_fails = True
+
+    if urllibparse_import_fails:
+        nt.assert_raises(ImportError, importlib.import_module, 'efel.io')
+    else:
+        import efel.io  # NOQA
+
+    builtins.__import__ = realimport
 
 
 def test_load_fragment_column_txt1():
