@@ -31,7 +31,13 @@ def test_import_without_urlparse():
 
     import sys
     del sys.modules['efel.io']
-    import __builtin__
+
+    python_version = sys.version_info.major
+
+    if python_version < 3:
+        import __builtin__
+    else:
+        import builtins as __builtin__
     realimport = __builtin__.__import__
 
     def myimport(name, *args):  # global_s, local, fromlist, level):
