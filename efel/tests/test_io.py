@@ -46,7 +46,6 @@ def test_import_without_urlparse():
             raise ImportError
         return realimport(name, *args)  # global_s, local, fromlist, level)
     __builtin__.__import__ = myimport
-    import importlib
 
     try:
         import urllib.parse  # NOQA
@@ -55,7 +54,7 @@ def test_import_without_urlparse():
         urllibparse_import_fails = True
 
     if urllibparse_import_fails:
-        nt.assert_raises(ImportError, importlib.import_module, 'efel.io')
+        nt.assert_raises(ImportError, __builtin__.__import__, 'efel.io')
     else:
         import efel.io  # NOQA
 
