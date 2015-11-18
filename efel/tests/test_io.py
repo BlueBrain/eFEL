@@ -32,7 +32,7 @@ def test_import_without_urlparse():
     import sys
     del sys.modules['efel.io']
 
-    python_version = sys.version_info.major
+    python_version = sys.version_info[0]
 
     if python_version < 3:
         import __builtin__
