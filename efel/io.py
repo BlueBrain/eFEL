@@ -32,7 +32,7 @@ def load_fragment(fragment_url, mime_type=None):
         if mime_type is None:
             raise TypeError(
                 'load_fragment: impossible to guess MIME type from url, '
-                'please specify the type manually as argument')
+                'please specify the type manually as argument: %s' % path)
 
     if scheme == 'file':
         file_handle = open(os.path.join(server_loc, path), 'r')
