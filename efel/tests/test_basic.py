@@ -108,14 +108,48 @@ def test_failing_double_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
+    feature_value = efel.getFeatureValues(
+        [trace],
+        ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
+
+    nt.assert_equal(feature_value, None)
+
+
+def test_raise_warnings():
+    """basic: Test raise_warnings"""
+
+    import efel
+    efel.reset()
+
+    import numpy
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
     import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+
+    with warnings.catch_warnings(record=True) as warning:
+        warnings.simplefilter("always")
         feature_value = efel.getFeatureValues(
             [trace],
             ['AP_amplitude'])[0]['AP_amplitude']
 
-    nt.assert_equal(feature_value, None)
+        nt.assert_equal(feature_value, None)
+        nt.assert_equal(len(warning), 1)
+        nt.assert_true(
+            "Error while calculating feature AP_amplitude" in
+            str(warning[0].message))
+
+    with warnings.catch_warnings(record=True) as warning:
+        warnings.simplefilter("always")
+        feature_value = efel.getFeatureValues(
+            [trace],
+            ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
+
+        nt.assert_equal(feature_value, None)
+        nt.assert_equal(len(warning), 0)
 
 
 def test_failing_int_feature():
@@ -131,12 +165,9 @@ def test_failing_int_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_value = efel.getFeatureValues(
-            [trace],
-            ['burst_number'])[0]['burst_number']
+    feature_value = efel.getFeatureValues(
+        [trace],
+        ['burst_number'], raise_warnings=False)[0]['burst_number']
 
     nt.assert_equal(feature_value, None)
 
@@ -226,21 +257,16 @@ def test_multiprocessing_traces():
     trace2['stim_start'] = [stim_start]
     trace2['stim_end'] = [stim_end]
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values_serial = efel.getFeatureValues(
-            [trace1, trace2],
-            [feature_name])
+    feature_values_serial = efel.getFeatureValues(
+        [trace1, trace2],
+        [feature_name], raise_warnings=False)
 
     import multiprocessing
     pool = multiprocessing.Pool()
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values_parallel = efel.getFeatureValues(
-            [trace1, trace2],
-            [feature_name], parallel_map=pool.map)
+    feature_values_parallel = efel.getFeatureValues(
+        [trace1, trace2],
+        [feature_name], parallel_map=pool.map, raise_warnings=False)
 
     nt.assert_equal(
         list(feature_values_serial[0]['peak_time']),
@@ -249,14 +275,12 @@ def test_multiprocessing_traces():
         list(feature_values_serial[1]['peak_time']),
         list(feature_values_parallel[1]['peak_time']))
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values_async = efel.getFeatureValues(
-            [trace1, trace2],
-            [feature_name], parallel_map=pool.map_async, return_list=False)
-        nt.assert_true(isinstance(
-            feature_values_async,
-            multiprocessing.pool.MapResult))
+    feature_values_async = efel.getFeatureValues(
+        [trace1, trace2], [feature_name], parallel_map=pool.map_async,
+        return_list=False, raise_warnings=False)
+    nt.assert_true(isinstance(
+        feature_values_async,
+        multiprocessing.pool.MapResult))
 
 
 def test_consecutive_traces():
@@ -287,13 +311,10 @@ def test_consecutive_traces():
 
     feature_name = 'peak_time'
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values1 = \
-            efel.getFeatureValues(
-                [trace1],
-                [feature_name])
+    feature_values1 = \
+        efel.getFeatureValues(
+            [trace1],
+            [feature_name], raise_warnings=False)
 
     test_data_path = os.path.join(
         testdata_dir,
@@ -311,12 +332,10 @@ def test_consecutive_traces():
     trace2['stim_start'] = [stim_start]
     trace2['stim_end'] = [stim_end]
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values2 = \
-            efel.getFeatureValues(
-                [trace2],
-                [feature_name])
+    feature_values2 = \
+        efel.getFeatureValues(
+            [trace2],
+            [feature_name], raise_warnings=False)
 
     nt.assert_not_equal(
         len(feature_values1[0][feature_name]),
@@ -434,13 +453,10 @@ def test_ISI_log_slope_skip():
 
     features = ['ISI_log_slope_skip']
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values = \
-            efel.getFeatureValues(
-                [trace],
-                features)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
 
 
@@ -475,13 +491,11 @@ def test_AP_begin_indices1():
         'peak_time',
         'AP_duration_half_width']
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values = \
-            efel.getFeatureValues(
-                [trace],
-                features)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
     # Make sure the amount of peak_times, AP_begin_indices and AP_amplitude is
     # the same in this trace
     # There was originally an issue in this case due to the 'width' value
@@ -556,7 +570,8 @@ def test_ap_amplitude_outside_stim():
     feature_values = \
         efel.getFeatureValues(
             [trace],
-            features)
+            features,
+            raise_warnings=False)
 
     # Make sure AP_amplitude doesn't pick up the two spikes outside of
     # the stimulus
@@ -1054,17 +1069,14 @@ def test_getmeanfeaturevalues():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values = \
-            efel.getFeatureValues(
-                [trace],
-                ['AP_amplitude', 'BPAPHeightLoc1'])
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            ['AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
 
-        mean_feature_values = efel.getMeanFeatureValues(
-            [trace], [
-                'AP_amplitude', 'BPAPHeightLoc1'])
+    mean_feature_values = efel.getMeanFeatureValues(
+        [trace], [
+            'AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
 
     nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
                     mean_feature_values[0]['AP_amplitude'])
