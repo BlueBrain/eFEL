@@ -210,7 +210,12 @@ def setDoubleSetting(setting_name, new_value):
     _double_settings[setting_name] = new_value
 
 
-def getFeatureValues(traces, featureNames, parallel_map=None, return_list=True):
+def getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=None,
+        return_list=True,
+        raise_warnings=True):
     """Calculate feature values for a list of traces.
 
     This function is the core of the eFEL API. A list of traces (in the form
@@ -239,6 +244,8 @@ def getFeatureValues(traces, featureNames, parallel_map=None, return_list=True):
                  optional argument can disable this, so that the result of the
                  parallel_map() is returned. Can be useful for performance
                  reasons when an iterator is preferred.
+    raise_warnings: boolean
+                    Raise warning when efel c++ returns an error
 
     Returns
     =======
@@ -254,7 +261,9 @@ def getFeatureValues(traces, featureNames, parallel_map=None, return_list=True):
     if parallel_map is None:
         parallel_map = map
 
-    traces_featurenames = ((trace, featureNames) for trace in traces)
+    traces_featurenames = (
+        (trace, featureNames, raise_warnings)
+        for trace in traces)
     map_result = parallel_map(_get_feature_values_serial, traces_featurenames)
 
     if return_list:
@@ -266,7 +275,7 @@ def getFeatureValues(traces, featureNames, parallel_map=None, return_list=True):
 def _get_feature_values_serial(trace_featurenames):
     """Single thread of getFeatureValues"""
 
-    trace, featureNames = trace_featurenames
+    trace, featureNames, raise_warnings = trace_featurenames
 
     featureDict = {}
 
@@ -315,11 +324,12 @@ def _get_feature_values_serial(trace_featurenames):
                             "(does it exist ?): %s" %
                             (featureName, featureType))
         if exitCode < 0:
-            import warnings
-            warnings.warn(
-                "Error while calculating feature %s: %s" %
-                (featureName, cppcore.getgError()),
-                RuntimeWarning)
+            if raise_warnings:
+                import warnings
+                warnings.warn(
+                    "Error while calculating feature %s: %s" %
+                    (featureName, cppcore.getgError()),
+                    RuntimeWarning)
             featureDict[featureName] = None
         else:
             featureDict[featureName] = numpy.array(cppcoreFeatureValues)
@@ -327,7 +337,7 @@ def _get_feature_values_serial(trace_featurenames):
     return featureDict
 
 
-def getMeanFeatureValues(traces, featureNames):
+def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
     """Convenience function that returns the mean values from getFeatureValues()
 
     Instead of return a list of values for every feature as getFeatureValues()
@@ -342,6 +352,9 @@ def getMeanFeatureValues(traces, featureNames):
     feature_names : list of string
                     List with the names of the features to be calculated on all
                     the traces.
+    raise_warnings: boolean
+                    Raise warning when efel c++ returns an error
+
     Returns
     =======
     feature_values : list of dicts
@@ -354,7 +367,10 @@ def getMeanFeatureValues(traces, featureNames):
                      was empty.
     """
 
-    featureDicts = getFeatureValues(traces, featureNames)
+    featureDicts = getFeatureValues(
+        traces,
+        featureNames,
+        raise_warnings=raise_warnings)
     for featureDict in featureDicts:
         for (key, values) in list(featureDict.items()):
             if values is None or len(values) == 0:
