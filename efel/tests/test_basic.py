@@ -43,9 +43,14 @@ testdata_dir = os.path.join(
     'testdata')
 
 
-meanfrequency1_url = 'file://%s' % os.path.join(testdata_dir,
+meanfrequency1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                                 'basic',
                                                 'mean_frequency_1.txt')
+
+zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                             'basic',
+                                             'zero_ISI_log_slope_skip'
+                                             '95824004.abf.csv')
 
 
 def test_import():
@@ -142,7 +147,7 @@ def test_failing_int_feature():
 
 
 def test_empty_trace():
-    """basic: Testing results for empty trace"""
+    """basic: Test results for empty trace"""
 
     import efel
     efel.reset()
@@ -192,14 +197,8 @@ def test_multiprocessing_traces():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'zero_ISI_log_slope_skip95824004.abf.csv')
-    data1 = numpy.loadtxt(test_data_path)
-
-    time1 = data1[:, 0]
-    voltage1 = data1[:, 1]
+    time1 = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
+    voltage1 = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
 
     trace1 = {}
 
@@ -269,14 +268,8 @@ def test_consecutive_traces():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'zero_ISI_log_slope_skip95824004.abf.csv')
-    data1 = numpy.loadtxt(test_data_path)
-
-    time1 = data1[:, 0]
-    voltage1 = data1[:, 1]
+    time1 = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
+    voltage1 = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
 
     trace1 = {}
 
@@ -406,25 +399,17 @@ def test_setDerivativeThreshold():
     nt.assert_not_equal(AP_begin_voltage, AP_begin_voltage_orig)
 
 
-def test_ISI_log_slope_skip():
-    """basic: Test ISI_log_slope_skip"""
+def test_zero_ISI_log_slope_skip():
+    """basic: Test zero ISI_log_slope_skip"""
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'zero_ISI_log_slope_skip95824004.abf.csv')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
-
+    time = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
     trace = {}
 
     trace['T'] = time
@@ -442,6 +427,38 @@ def test_ISI_log_slope_skip():
                 [trace],
                 features)
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
+
+'''
+def test_ISI_log_slope():
+    """basic:
+        Test ISI_log_slope"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['ISI_log_slope']
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                features)
+    nt.assert_equal(feature_values[0]['ISI_log_slope'], None)
+'''
 
 
 def test_AP_begin_indices1():
@@ -838,7 +855,7 @@ def test_min_voltage_between_spikes1():
 
 
 def test_getFeatureNames():
-    """basic: Testing getting all feature names"""
+    """basic: Test getting all feature names"""
 
     import efel
     efel.reset()
