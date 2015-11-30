@@ -114,6 +114,34 @@ number of spikes at the beginning of the stimulus
         (peak_time >= stimstart) & \
         (peak_time <= stimstart + initial_length)))
 
+**LibV5 : ISI_semilog_slope**
+
+The slope of a linear fit to a semilog plot of the ISI values
+
+- **Required features**: t, V, stim_start, stim_end, ISI_values
+- **Units**: ms
+- **Pseudocode**: ::
+  
+    x = range(1, len(ISI_values)+1)
+    log_ISI_values = numpy.log(ISI_values)
+    slope, _ = numpy.polyfit(x, log_ISI_values, 1)
+    
+    ISI_semilog_slope = slope
+
+**LibV5 : ISI_log_slope**
+
+The slope of a linear fit to a loglog plot of the ISI values
+
+- **Required features**: t, V, stim_start, stim_end, ISI_values
+- **Units**: ms
+- **Pseudocode**: ::
+  
+    log_x = numpy.log(range(1, len(ISI_values)+1))
+    log_ISI_values = numpy.log(ISI_values)
+    slope, _ = numpy.polyfit(log_x, log_ISI_values, 1)
+    
+    ISI_log_slope = slope
+    
 Spike shape features
 --------------------
 

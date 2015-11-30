@@ -2,6 +2,8 @@
 
 """Test all features on an example trace"""
 
+from __future__ import print_function
+
 """
 Copyright (c) 2015, Blue Brain Project/EPFL
 
@@ -52,4 +54,3 @@ if __name__ == '__main__':
                 ',',
                 ': '))
     print('done')
-

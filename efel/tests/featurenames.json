@@ -87,6 +87,7 @@
     "ISI_CV",
     "ISI_log_slope",
     "ISI_log_slope_skip",
+    "ISI_semilog_slope",
     "ISI_values",
     "Spikecount",
     "adaptation_index",

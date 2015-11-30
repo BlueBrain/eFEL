@@ -167,6 +167,7 @@ void cFeature::fillfeaturetypes() {
 
   // LibV5
   featuretypes["ISI_log_slope"] = "double";
+  featuretypes["ISI_semilog_slope"] = "double";
   featuretypes["ISI_log_slope_skip"] = "double";
   featuretypes["time_to_second_spike"] = "double";
   featuretypes["time_to_last_spike"] = "double";

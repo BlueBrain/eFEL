@@ -35,11 +35,13 @@ typedef map<string, string> mapStr2Str;
 namespace LibV5 {
 int ISI_log_slope(mapStr2intVec& IntFeatureData,
                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int ISI_semilog_slope(mapStr2intVec& IntFeatureData,
+                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
 int __ISI_log_slope(const vector<double>& isiValues, vector<double>& slope,
-                    bool skip, double spikeSkipf, int maxnSpike);
+                    bool skip, double spikeSkipf, int maxnSpike, bool semilog);
 
 int time_to_second_spike(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
