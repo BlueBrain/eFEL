@@ -2,6 +2,8 @@
 
 """Update the featurenames json file that contains the expected names"""
 
+from __future__ import print_function
+
 """
 Copyright (c) 2015, Blue Brain Project/EPFL
 

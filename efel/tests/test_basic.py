@@ -444,11 +444,11 @@ def test_zero_ISI_log_slope_skip():
             features, raise_warnings=False)
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
 
-'''
-def test_ISI_log_slope():
-    """basic:
-        Test ISI_log_slope"""
 
+def test_ISI_log_slope():
+    """basic: Test ISI_log_slope"""
+
+    import numpy
     import efel
     efel.reset()
 
@@ -464,17 +464,57 @@ def test_ISI_log_slope():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['ISI_log_slope']
+    features = ['ISI_values', 'ISI_log_slope']
 
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values = \
-            efel.getFeatureValues(
-                [trace],
-                features)
-    nt.assert_equal(feature_values[0]['ISI_log_slope'], None)
-'''
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values = feature_values[0]['ISI_values']
+    x_values = numpy.arange(0, len(isi_values)) + 1.0
+
+    # fit
+    log_x_values = numpy.log(x_values)
+    log_isi_values = numpy.log(isi_values)
+    slope, _ = numpy.polyfit(log_x_values, log_isi_values, 1)
+
+    nt.assert_almost_equal(feature_values[0]['ISI_log_slope'], slope)
+
+
+def test_ISI_semilog_slope():
+    """basic: Test ISI_semilog_slope"""
+
+    import numpy
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['ISI_values', 'ISI_semilog_slope']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values = feature_values[0]['ISI_values']
+    x_values = numpy.arange(0, len(isi_values)) + 1.0
+
+    # fit
+    x_values = x_values
+    log_isi_values = numpy.log(isi_values)
+    slope, _ = numpy.polyfit(x_values, log_isi_values, 1)
+
+    nt.assert_almost_equal(feature_values[0]['ISI_semilog_slope'], slope)
 
 
 def test_AP_begin_indices1():

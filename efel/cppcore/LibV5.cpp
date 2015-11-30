@@ -26,10 +26,11 @@
 // slope of loglog of ISI curve
 int LibV5::__ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
-                           int maxnSpike) {
+                           int maxnSpike, bool semilog) {
   deque<double> skippedISIValues;
 
   vector<double> log_isivalues;
+  vector<double> x;
   vector<double> log_x;
 
   for (unsigned i = 0; i < isiValues.size(); i++) {
@@ -52,11 +53,16 @@ int LibV5::__ISI_log_slope(const vector<double>& isiValues,
 
   for (unsigned i = 0; i < skippedISIValues.size(); i++) {
     log_isivalues.push_back(log(skippedISIValues[i]));
+    x.push_back((double)i + 1);
     log_x.push_back(log((double)i + 1));
   }
 
   vector<double> result;
-  slope_straight_line_fit(log_x, log_isivalues, result);
+  if (semilog) {
+    slope_straight_line_fit(x, log_isivalues, result);
+  } else {
+    slope_straight_line_fit(log_x, log_isivalues, result);
+  }
   // result[0] is the slope
 
   if (!(result[0] >= 0) && !(result[0] <= 0)) return -1;
@@ -79,9 +85,33 @@ int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
       0) {
     return -1;
   }
-  int retval = __ISI_log_slope(isivalues, slope, false, 0, 0);
+  bool semilog = false;
+  int retval = __ISI_log_slope(isivalues, slope, false, 0, 0, semilog);
   if (retval >= 0) {
     setDoubleVec(DoubleFeatureData, StringData, "ISI_log_slope", slope);
+    return slope.size();
+  } else {
+    return retval;
+  }
+}
+
+int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
+                         mapStr2doubleVec& DoubleFeatureData,
+                         mapStr2Str& StringData) {
+  int size;
+  if (CheckInDoublemap(DoubleFeatureData, StringData, "ISI_semilog_slope", size)) {
+    return size;
+  }
+  vector<double> isivalues;
+  vector<double> slope;
+  if (getDoubleVec(DoubleFeatureData, StringData, "ISI_values", isivalues) <=
+      0) {
+    return -1;
+  }
+  bool semilog = true;
+  int retval = __ISI_log_slope(isivalues, slope, false, 0, 0, semilog);
+  if (retval >= 0) {
+    setDoubleVec(DoubleFeatureData, StringData, "ISI_semilog_slope", slope);
     return slope.size();
   } else {
     return retval;
@@ -119,8 +149,9 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
     if (retVal < 0) return -1;
   };
 
+  bool semilog = false;
   retVal = __ISI_log_slope(isivalues, slope, false, 0,
-                           0);  // true,spikeSkipf[0],maxnSpike[0]);
+                           0, semilog);  // true,spikeSkipf[0],maxnSpike[0]);
   if (retVal >= 0) {
     setDoubleVec(DoubleFeatureData, StringData, "ISI_log_slope_skip", slope);
     return slope.size();
