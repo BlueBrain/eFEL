@@ -478,7 +478,7 @@ def test_ISI_log_slope():
     log_isi_values = numpy.log(isi_values)
     slope, _ = numpy.polyfit(log_x_values, log_isi_values, 1)
 
-    nt.assert_almost_equal(feature_values[0]['ISI_log_slope'], slope)
+    nt.assert_almost_equal(feature_values[0]['ISI_log_slope'][0], slope)
 
 
 def test_ISI_semilog_slope():
@@ -514,7 +514,7 @@ def test_ISI_semilog_slope():
     log_isi_values = numpy.log(isi_values)
     slope, _ = numpy.polyfit(x_values, log_isi_values, 1)
 
-    nt.assert_almost_equal(feature_values[0]['ISI_semilog_slope'], slope)
+    nt.assert_almost_equal(feature_values[0]['ISI_semilog_slope'][0], slope)
 
 
 def test_AP_begin_indices1():
