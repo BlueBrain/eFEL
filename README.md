@@ -25,6 +25,7 @@ Requirements
 * [Python 2.6+](https://www.python.org/download/releases/2.7/) or 
 [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
+* C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
 * The instruction below are written assuming you have access to a command shell
 on Linux / UNIX / MacOSX / Cygwin
