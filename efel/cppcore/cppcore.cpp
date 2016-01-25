@@ -34,6 +34,7 @@
  * =============================================================================
  */
 
+#include <cstddef>
 #include <cfeature.h>
 #include <efel.h>
 #include <Python.h>
@@ -69,13 +70,13 @@ static vector<int> PyList_to_vectorint(PyObject* input) {
   return result_vector;
 }
 
-void PyList_from_vectorint(vector<int> input, PyObject* output) {
-  int vector_size;
-  int index;
+static void PyList_from_vectorint(vector<int> input, PyObject* output) {
+  size_t vector_size = input.size();
 
-  vector_size = input.size();
-  for (index = 0; index < vector_size; index++) {
-    PyList_Append(output, Py_BuildValue("i", input[index]));
+  for (size_t index = 0; index < vector_size; index++) {
+    PyObject *obj = Py_BuildValue("i", input[index]);
+    PyList_Append(output, obj);
+    Py_DECREF(obj);
   }
 }
 
@@ -91,23 +92,23 @@ static vector<double> PyList_to_vectordouble(PyObject* input) {
   return result_vector;
 }
 
-void PyList_from_vectordouble(vector<double> input, PyObject* output) {
-  int vector_size;
-  int index;
+static void PyList_from_vectordouble(vector<double> input, PyObject* output) {
+  size_t vector_size = input.size();
 
-  vector_size = input.size();
-  for (index = 0; index < vector_size; index++) {
-    PyList_Append(output, Py_BuildValue("f", input[index]));
+  for (size_t index = 0; index < vector_size; index++) {
+    PyObject *obj = Py_BuildValue("f", input[index]);
+    PyList_Append(output, obj);
+    Py_DECREF(obj);
   }
 }
 
-void PyList_from_vectorstring(vector<string> input, PyObject* output) {
-  int vector_size;
-  int index;
+static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
+  size_t vector_size = input.size();
 
-  vector_size = input.size();
-  for (index = 0; index < vector_size; index++) {
-    PyList_Append(output, Py_BuildValue("s", input[index].c_str()));
+  for (size_t index = 0; index < vector_size; index++) {
+    PyObject *obj = Py_BuildValue("s", input[index].c_str());
+    PyList_Append(output, obj);
+    Py_DECREF(obj);
   }
 }
 
