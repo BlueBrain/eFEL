@@ -248,24 +248,6 @@ cFeature::~cFeature() {
   }
 }
 
-void cFeature::appendtolog(const vector<double>& v) {
-  for (unsigned i = 0; i < v.size() && i < 10; i++) {
-    logfile << " " << v[i];
-  }
-  if (v.size() > 10) {
-    logfile << " ...";
-  }
-}
-
-void cFeature::appendtolog(const vector<int>& v) {
-  for (unsigned i = 0; i < v.size() && i < 10; i++) {
-    logfile << " " << v[i];
-  }
-  if (v.size() > 10) {
-    logfile << " ...";
-  }
-}
-
 vector<int>& cFeature::getmapIntData(string strName) {
   map<string, vector<int> >::iterator mapstr2IntItr;
   mapstr2IntItr = mapIntData.find(strName);
@@ -282,7 +264,7 @@ vector<double>& cFeature::getmapDoubleData(string strName) {
     GErrorStr =
         GErrorStr + string("Feature [") + strName + "] data is missing\n";
   }
-  return (mapstr2DoubleItr->second);
+  return mapstr2DoubleItr->second;
 }
 
 /*
@@ -575,32 +557,6 @@ int cFeature::printFeature(const char* strFileName) {
     fclose(fp);
   }
   return 1;
-}
-
-double cFeature::calc_error_bio(const vector<int>& v, double bio_mean,
-                                double bio_sd) {
-  if (v.size() != 0) {
-    double error = 0.;
-    for (unsigned i = 0; i < v.size(); i++) {
-      error += fabs((double)v[i] - bio_mean);
-    }
-    return error / bio_sd / v.size();
-  } else {
-    return 250.;
-  }
-}
-
-double cFeature::calc_error_bio(const vector<double>& v, double bio_mean,
-                                double bio_sd) {
-  if (v.size() != 0) {
-    double error = 0.;
-    for (unsigned i = 0; i < v.size(); i++) {
-      error += fabs(v[i] - bio_mean);
-    }
-    return error / bio_sd / v.size();
-  } else {
-    return 250.;
-  }
 }
 
 double cFeature::getDistance(string strName, double mean, double std) {
