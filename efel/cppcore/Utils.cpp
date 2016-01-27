@@ -114,8 +114,3 @@ void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
   }
   slope[2] = 1. - residuals / sstot;
 }
-
-string getVersion() {
-  string VersionString = "May, 2015";
-  return VersionString;
-}

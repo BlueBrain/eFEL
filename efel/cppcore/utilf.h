@@ -6,10 +6,7 @@
 #ifndef UTILF_H
 #define UTILF_H
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
-#include "options.h"
 
 #ifndef PI
 #define PI 3.14159265359
@@ -24,9 +21,6 @@
 typedef double real;
 typedef real *real1D;
 typedef real **real2D;
-
-typedef int *int1D;
-typedef int **int2D;
 
 #define realreadSI doublereadSI
 

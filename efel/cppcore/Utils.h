@@ -34,7 +34,7 @@ int getCentralDifferenceDerivative(double dx, const vector<double>& v,
 void getfivepointstencilderivative(const vector<double>& v, vector<double>& dv);
 void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
                              vector<double>& slope);
-string getVersion();
+
 template <class ForwardIterator>
 ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
   ForwardIterator lowest = first;
