@@ -22,17 +22,9 @@
 #include "mapoperations.h"
 #include "Utils.h"
 
-#include <map>
-#include <string>
 #include <vector>
 
-using std::map;
-using std::string;
 using std::vector;
-
-typedef map<string, vector<int> > mapStr2intVec;
-typedef map<string, vector<double> > mapStr2doubleVec;
-typedef map<string, string> mapStr2Str;
 
 namespace LibV4 {
 int peak_indices(mapStr2intVec& IntFeatureData,
