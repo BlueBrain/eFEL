@@ -731,7 +731,7 @@ int LibV5::__irregularity_index(vector<double>& isiValues,
   if (isiValues.size() == 0) return -1;
 
   for (unsigned i = 1; i < isiValues.size(); i++) {
-    ISISub = abs(isiValues[i] - isiValues[i - 1]);
+    ISISub = std::abs(isiValues[i] - isiValues[i - 1]);
     iRI = iRI + (ISISub);
   }
   iRI = iRI / isiValues.size();
@@ -2360,7 +2360,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   vector<double> decayTimes(decayEndIdx - decayStartIdx);
 
   for (size_t i = 0; i != decayValues.size(); ++i) {
-    const double u0 = abs(voltage[decayStartIdx + i] - reference);
+    const double u0 = std::abs(voltage[decayStartIdx + i] - reference);
 
     decayValues[i] = log(u0);
     decayTimes[i] = times[decayStartIdx + i];
@@ -2371,7 +2371,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   slope_straight_line_fit(decayTimes, decayValues, result);
 
   const double tau = -1.0 / result[0];
-  return abs(tau);
+  return std::abs(tau);
 }
 
 // *** Decay time constant measured during decay after the stimulus***
