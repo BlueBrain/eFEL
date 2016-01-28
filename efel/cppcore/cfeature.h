@@ -44,9 +44,8 @@ class cFeature {
   vector<int>& getmapIntData(string strName);
   vector<double>& getmapDoubleData(string strName);
   fstream logfile;
-  void appendtolog(const vector<double>& v);
-  void appendtolog(const vector<int>& v);
   bool logging;
+
   cFeature(const string& depFile, const string& outdir);
   ~cFeature();
   int getmapfptrVec(string strName, vector<fptr>& vFptr);
@@ -60,15 +59,38 @@ class cFeature {
   void getTraces(const string& wildcard, vector<string>& traces);
   int printFeature(const char* strFileName);
   int printMapMember(FILE* fp);
-  // calculation of GA errors
-  double calc_error_bio(const vector<int>& v, double bio_mean, double bio_sd);
-  double calc_error_bio(const vector<double>& v, double bio_mean,
-                        double bio_sd);
+
   string featuretype(string featurename);
   string getGError();
   void get_feature_names(vector<string>& feature_names);
   int setVersion(string strDepFile);
   double getDistance(string strName, double mean, double std);
+
+  // calculation of GA errors
+  template<typename T>
+  double calc_error_bio(const vector<T>& v, double bio_mean, double bio_sd)
+  {
+    if (v.size() != 0) {
+      double error = 0.;
+      for (size_t i = 0; i < v.size(); i++) {
+        error += fabs(v[i] - bio_mean);
+      }
+      return error / bio_sd / v.size();
+    } else {
+      return 250.;
+    }
+  }
+
+  template<typename T>
+  void appendtolog(const vector<T>& v, size_t max = 10)
+  {
+    for (size_t i = 0; i < v.size() && i < max; i++) {
+      logfile << " " << v[i];
+    }
+    if (v.size() > max) {
+      logfile << " ...";
+    }
+  }
 };
 
 #endif
