@@ -18,13 +18,18 @@
 
 #ifndef __DEPENDENCYTREE_H
 #define __DEPENDENCYTREE_H
-#include <iostream>
-#include <stdio.h>
-using namespace std;
+
+#include <list>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
-#include <list>
+
+using std::list;
+using std::map;
+using std::pair;
+using std::string;
+using std::vector;
 
 typedef int (*fptr)(map<string, vector<int> > &, map<string, vector<double> > &,
                     map<string, string> &);
@@ -38,7 +43,7 @@ class cTree {
   string ErrorStr;
   list<string> FinalList;
   list<string> ChildList;
-  cTree() { printf("\n This is constructor of cTree"); }
+  cTree();
   cTree(const char *strFileName);
   int printTree();
   int getDependencyList(string str);

@@ -19,13 +19,14 @@
 
 #ifndef MAPOPERATIONS_H
 #define MAPOPERATIONS_H
+
 #include <map>
 #include <string>
 #include <vector>
-#include <math.h>
-#include <algorithm>
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 typedef map<string, vector<int> > mapStr2intVec;
 typedef map<string, vector<double> > mapStr2doubleVec;

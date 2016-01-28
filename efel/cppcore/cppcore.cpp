@@ -43,7 +43,6 @@
 #define IS_PY3K
 #endif
 
-using namespace std;
 
 extern cFeature* pFeature;
 

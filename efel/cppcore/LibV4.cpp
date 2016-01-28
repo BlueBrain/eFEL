@@ -38,10 +38,10 @@ int LibV4::__peak_indices(const vector<double>& v, double min_spike_height,
     minimum_indices.push_back(minimum_index);
     falling_index =
         distance(dv.begin(), find_if(dv.begin() + minimum_index, dv.end(),
-                                     bind2nd(less<double>(), 0.)));
+                                     std::bind2nd(std::less<double>(), 0.)));
     minimum_index =
         distance(dv.begin(), find_if(dv.begin() + falling_index, dv.end(),
-                                     bind2nd(greater_equal<double>(), 0.)));
+                                     std::bind2nd(std::greater_equal<double>(), 0.)));
   } while (dv.begin() + minimum_index != dv.end());
   minimum_indices.push_back(dv.size() - 1);
 

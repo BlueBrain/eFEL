@@ -17,9 +17,19 @@
  */
 
 #include "LibV2.h"
+
+#include <algorithm>
 #include <cstdlib>
+#include <functional>
 #include <iostream>
 #include <math.h>
+
+using std::bind2nd;
+using std::find_if;
+using std::greater_equal;
+using std::min_element;
+using std::max_element;
+using std::transform;
 
 // AP parameters
 //
@@ -37,7 +47,7 @@ int LibV2::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   vector<double> dt;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
-  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
 
   // restrict to time interval where stimulus is applied
   vector<int> minima;
@@ -79,7 +89,7 @@ int LibV2::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
       }
       newbegin = begin + 1;
     } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
-                     bind2nd(less<double>(), derivativethreshold)) !=
+                     bind2nd(std::less<double>(), derivativethreshold)) !=
              dvdt.begin() + begin + width);
     if (skip) {
       continue;
@@ -189,8 +199,8 @@ int LibV2::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
     }
     vpeak.resize(pi[i] - apbi[i]);
     transform(v.begin() + apbi[i], v.begin() + pi[i], vpeak.begin(),
-              bind2nd(minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), ptr_fun(::fabs));
+              bind2nd(std::minus<double>(), halfheight));
+    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), std::ptr_fun(::fabs));
     apri[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               apbi[i];
   }
@@ -235,8 +245,8 @@ int LibV2::__AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
-              bind2nd(minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), ptr_fun(::fabs));
+              bind2nd(std::minus<double>(), halfheight));
+    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), std::ptr_fun(::fabs));
     apfi[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               pi[i];
   }

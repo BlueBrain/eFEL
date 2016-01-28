@@ -18,20 +18,22 @@
 
 #ifndef __LIBV4
 #define __LIBV4
-#include <iterator>
-#include <algorithm>
-#include <map>
-#include <string>
-#include <vector>
-#include <list>
+
 #include "mapoperations.h"
 #include "Utils.h"
 
-using namespace std;
+#include <map>
+#include <string>
+#include <vector>
+
+using std::map;
+using std::string;
+using std::vector;
 
 typedef map<string, vector<int> > mapStr2intVec;
 typedef map<string, vector<double> > mapStr2doubleVec;
 typedef map<string, string> mapStr2Str;
+
 namespace LibV4 {
 int peak_indices(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);

@@ -17,17 +17,23 @@
  */
 
 #include "LibV5.h"
+
 #include <algorithm>
+#include <cstdio>
 #include <iterator>
+#include <functional>
 #include <math.h>
 #include <cmath>
 #include <deque>
+
+using std::bind2nd;
+using std::greater_equal;
 
 // slope of loglog of ISI curve
 int LibV5::__ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
                            int maxnSpike, bool semilog) {
-  deque<double> skippedISIValues;
+  std::deque<double> skippedISIValues;
 
   vector<double> log_isivalues;
   vector<double> x;
@@ -544,7 +550,7 @@ int LibV5::__spike_width1(const vector<double>& t, const vector<double>& v,
     int fall_index =
         distance(v.begin(), find_if(v.begin() + peak_indices[i - 1],
                                     v.begin() + min_ahp_indices_plus[i],
-                                    bind2nd(less_equal<double>(), v_half)));
+                                    bind2nd(std::less_equal<double>(), v_half)));
     v_dev = v_half - v[fall_index];
     delta_v = v[fall_index] - v[fall_index - 1];
     delta_t = t[fall_index] - t[fall_index - 1];
@@ -613,7 +619,7 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
   vector<double> dt;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
-  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
 
   /*for (unsigned i = 0; i < dvdt.size(); i++) {
       printf("%d %f %f\n", i, dvdt[i]);
@@ -664,7 +670,7 @@ int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
       }
       newbegin = begin + 1;
     } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
-                     bind2nd(less<double>(), derivativethreshold)) !=
+                     bind2nd(std::less<double>(), derivativethreshold)) !=
              dvdt.begin() + begin + width);
     if (skip) {
       continue;
@@ -1258,7 +1264,7 @@ int LibV5::__AP_begin_width(const vector<double>& t, const vector<double>& v,
     int fall_index =
         distance(v.begin(), find_if(v.begin() + rise_index + 1,
                                     v.begin() + min_ahp_indices[i],
-                                    bind2nd(less_equal<double>(), v_start)));
+                                    bind2nd(std::less_equal<double>(), v_start)));
     // v_dev = v_start - v[fall_index];
     // delta_v = v[fall_index] - v[fall_index - 1];
     // delta_t = t[fall_index] - t[fall_index - 1];
@@ -2005,7 +2011,7 @@ int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
   double ap_phaseslope;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
-  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
 
   for (unsigned i = 0; i < apbi.size(); i++) {
     apbegin_index = apbi[i];
