@@ -16,9 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <iostream>
 #include "cfeature.h"
 #include "Global.h"
+
+#include <cstdlib>
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 cFeature::cFeature(const string& strDepFile, const string& outdir) {
   FillFptrTable();
   mapFptrLib["LibV1"] = &FptrTableV1;
@@ -32,7 +38,7 @@ cFeature::cFeature(const string& strDepFile, const string& outdir) {
     logging = true;
     string filename = outdir + "/fllog.txt";
     if (logging) {
-      logfile.open(filename.c_str(), fstream::out | fstream::app);
+      logfile.open(filename.c_str(), std::fstream::out | std::fstream::app);
     }
   }
   cTree DepTree(strDepFile.c_str());

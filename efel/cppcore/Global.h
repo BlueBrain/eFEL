@@ -23,7 +23,10 @@
 #include <string>
 #include <vector>
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
+
 typedef int (*fptr)(map<string, vector<int> > &, map<string, vector<double> > &,
                     map<string, string> &);
 
@@ -34,6 +37,7 @@ map<string, fptr> FptrTableV4;
 map<string, fptr> FptrTableV5;
 map<string, fptr> FptrTable;
 map<string, map<string, fptr> *> mapFptrLib;
+
 string GErrorStr;
 
 #endif

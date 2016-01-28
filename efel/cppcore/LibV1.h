@@ -18,20 +18,22 @@
 
 #ifndef __LIBV1
 #define __LIBV1
-#include <iterator>
-#include <algorithm>
-#include <map>
-#include <string>
-#include <vector>
-#include <list>
+
 #include "mapoperations.h"
 #include "Utils.h"
 
-using namespace std;
+#include <map>
+#include <string>
+#include <vector>
+
+using std::map;
+using std::string;
+using std::vector;
 
 typedef map<string, vector<int> > mapStr2intVec;
 typedef map<string, vector<double> > mapStr2doubleVec;
 typedef map<string, string> mapStr2Str;
+
 namespace LibV1 {
 int printVectorI(char* strName, vector<int> vec);
 int printVectorD(char* strName, vector<double> vec);

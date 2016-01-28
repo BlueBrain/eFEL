@@ -18,13 +18,10 @@
 
 #ifndef __UTILS
 #define __UTILS
-#include <iostream>
-using namespace std;
+
 #include <vector>
-#include <iterator>
-#include <stdio.h>
-#include <algorithm>
-#include <string>
+
+using std::vector;
 
 int LinearInterpolation(double dt, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,

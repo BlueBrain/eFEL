@@ -18,21 +18,22 @@
 
 #ifndef __LIBV2
 #define __LIBV2
-#include <iterator>
-#include <vector>
-#include <algorithm>
-#include <functional>
-#include <math.h>
-#include <map>
-#include <string>
-#include <fstream>
 
 #include "Utils.h"
 #include "mapoperations.h"
-using namespace std;
+
+#include <map>
+#include <string>
+#include <vector>
+
+using std::map;
+using std::string;
+using std::vector;
+
 typedef map<string, vector<int> > mapStr2intVec;
 typedef map<string, vector<double> > mapStr2doubleVec;
 typedef map<string, string> mapStr2Str;
+
 namespace LibV2 {
 // AP parameters of eCode Specification 1.04
 // partly reimplemented Shaul's matlab code ap_points.m

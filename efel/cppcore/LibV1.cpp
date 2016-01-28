@@ -17,10 +17,26 @@
  */
 
 #include "LibV1.h"
+
 #include <algorithm>
+#include <cstdio>
+#include <iostream>
 #include <iterator>
+#include <list>
 #include <math.h>
 #include <string>
+
+
+using std::bind2nd;
+using std::cout;
+using std::find_if;
+using std::greater;
+using std::greater_equal;
+using std::less_equal;
+using std::list;
+using std::min_element;
+using std::max_element;
+
 
 int LibV1::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
@@ -1381,7 +1397,7 @@ int LibV1::__time_constant(const vector<double>& v, const vector<double>& t,
   // getCentralDifferenceDerivative(1.,part_t,dt);
   getfivepointstencilderivative(part_v, dv);
   getfivepointstencilderivative(part_t, dt);
-  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), divides<double>());
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
   // find start of the decay
   int i_start = 0;
   while (find_if(dvdt.begin() + i_start, dvdt.begin() + i_start + 5,

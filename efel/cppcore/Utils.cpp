@@ -16,8 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <iostream>
 #include "Utils.h"
+#include <algorithm>
+#include <cstdio>
+#include <iostream>
+#include <iostream>
+#include <iterator>
+
 int LinearInterpolation(double Stepdx, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,
                         vector<double>& InterpY) {

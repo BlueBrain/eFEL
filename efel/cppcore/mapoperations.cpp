@@ -17,6 +17,7 @@
  */
 
 #include "mapoperations.h"
+#include <math.h>
 
 extern string GErrorStr;
 

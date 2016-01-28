@@ -25,11 +25,13 @@
 #include <string>
 #include <vector>
 #include <math.h>
-//#include "Global.h"
+
 #include "FillFptrTable.h"
 #include "DependencyTree.h"
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 class cFeature {
   map<string, vector<int> > mapIntData;
@@ -43,7 +45,7 @@ class cFeature {
   map<string, vector<pair<fptr, string> > > fptrlookup;
   vector<int>& getmapIntData(string strName);
   vector<double>& getmapDoubleData(string strName);
-  fstream logfile;
+  std::fstream logfile;
   bool logging;
 
   cFeature(const string& depFile, const string& outdir);

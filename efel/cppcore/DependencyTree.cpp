@@ -17,10 +17,17 @@
  */
 
 #include "DependencyTree.h"
+
+#include <cstdio>
 #include <fstream>
+
+cTree::cTree() {
+  printf("\n This is constructor of cTree"); 
+}
+
 cTree::cTree(const char *strFileName) {
   char strLine[3000];
-  ifstream infile(strFileName);
+  std::ifstream infile(strFileName);
   if (infile.is_open()) {
     infile.getline(strLine, 3000, '\n');
     strDependencyFile.push_back(strLine);
