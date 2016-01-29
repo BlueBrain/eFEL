@@ -1,5 +1,6 @@
-#!/usr/bin/env python
 """ eFEL setup """
+
+# pylint: disable=C0325
 
 """
 Copyright (c) 2015, EPFL/Blue Brain Project
@@ -27,8 +28,6 @@ except ImportError:
 
 import os
 import versioneer
-
-# exec(compile(open("efel/version.py").read(), "efel/version.py", 'exec'))
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -77,7 +76,8 @@ setup(
     install_requires=['numpy>=1.6'],
     packages=['efel'],
     author="BlueBrain Project, EPFL",
-    author_email="werner.vangeit@epfl.ch",
+    maintainer="Werner Van Geit",
+    maintainer_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extract Library (eFEL)",
     long_description="The Electrophys Feature Extract Library (eFEL) allows "
     "neuroscientists to automatically extract features from time series data "
