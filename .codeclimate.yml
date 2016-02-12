@@ -16,3 +16,4 @@ exclude_paths:
 - versioneer.py
 - efel/_version.py
 - docs/source/conf.py
+- efel/tests
