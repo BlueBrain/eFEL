@@ -1,5 +1,8 @@
 languages:
   Python: true
+engines:
+  pep8:
+    enabled: true
 exclude_paths:
 - versioneer.py
 - efel/_version.py
