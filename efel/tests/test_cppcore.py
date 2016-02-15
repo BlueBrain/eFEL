@@ -100,6 +100,16 @@ class TestCppcore(object):
             feature_values)
         nt.assert_equal(return_value, -1)
 
+    @nt.raises(TypeError)
+    def test_getFeatureDouble_wrong_type(self):
+        import efel.cppcore
+        efel.cppcore.getFeatureDouble("AP_fall_indices", list())
+
+    @nt.raises(TypeError)
+    def test_getFeatureInt_wrong_type(self):
+        import efel.cppcore
+        efel.cppcore.getFeatureInt("AP_amplitude", list())
+
     def test_getDistance(self):
         """cppcore: Testing getDistance()"""
         import efel.cppcore

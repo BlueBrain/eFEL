@@ -112,7 +112,8 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
   }
 }
 
-static PyObject* getfeature(PyObject* self, PyObject* args) {
+static PyObject* 
+_getfeature(PyObject* self, PyObject* args, const string &type) {
   char* feature_name;
   PyObject* py_values;
 
@@ -122,6 +123,11 @@ static PyObject* getfeature(PyObject* self, PyObject* args) {
   }
 
   string feature_type = pFeature->featuretype(string(feature_name));
+
+  if (!type.empty() && feature_type != type){
+    PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+    return NULL;
+  }
 
   if (feature_type == "int") {
     vector<int> values;
@@ -137,6 +143,11 @@ static PyObject* getfeature(PyObject* self, PyObject* args) {
   }
 
   return Py_BuildValue("i", return_value);
+}
+
+static PyObject* getfeature(PyObject* self, PyObject* args) {
+  const string empty("");
+  return _getfeature(self, args, empty);
 }
 
 static PyObject* setfeatureint(PyObject* self, PyObject* args) {
@@ -155,18 +166,8 @@ static PyObject* setfeatureint(PyObject* self, PyObject* args) {
 }
 
 static PyObject* getfeatureint(PyObject* self, PyObject* args) {
-  char* feature_name;
-  PyObject* py_values;
-  vector<int> values;
-  int return_value;
-  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
-    return NULL;
-  }
-
-  return_value = pFeature->getFeatureInt(string(feature_name), values);
-  PyList_from_vectorint(values, py_values);
-
-  return Py_BuildValue("i", return_value);
+  const string type("int");
+  return _getfeature(self, args, type);
 }
 
 static PyObject* setfeaturedouble(PyObject* self, PyObject* args) {
@@ -185,18 +186,8 @@ static PyObject* setfeaturedouble(PyObject* self, PyObject* args) {
 }
 
 static PyObject* getfeaturedouble(PyObject* self, PyObject* args) {
-  char* feature_name;
-  PyObject* py_values;
-  vector<double> values;
-  int return_value;
-  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
-    return NULL;
-  }
-
-  return_value = pFeature->getFeatureDouble(string(feature_name), values);
-  PyList_from_vectordouble(values, py_values);
-
-  return Py_BuildValue("i", return_value);
+  const string type ("double");
+  return _getfeature(self, args, type);
 }
 
 static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
