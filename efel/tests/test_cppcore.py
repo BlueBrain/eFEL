@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import nose.tools as nt
 
+import numpy as np
 
 testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'testdata/')
@@ -48,6 +49,35 @@ class TestCppcore(object):
         """Setup"""
         import efel
         efel.cppcore.Initialize(efel.getDependencyFileLocation(), "log")
+
+    def setup_data(self):
+        import efel
+        stim_start = 500.0
+        stim_end = 900.0
+
+        test_data_path = os.path.join(
+            testdata_dir,
+            'basic/mean_frequency_1.txt')
+        data = np.loadtxt(test_data_path)
+
+        time = data[:, 0]
+        voltage = data[:, 1]
+
+        efel.cppcore.setFeatureDouble('T', [x for x in time])
+        efel.cppcore.setFeatureDouble('V', [x for x in voltage])
+        efel.cppcore.setFeatureDouble('stim_start', [stim_start])
+        efel.cppcore.setFeatureDouble('stim_end', [stim_end])
+
+        efel.cppcore.setFeatureDouble('spike_skipf', [0.1])
+        efel.cppcore.setFeatureInt('max_spike_skip', [2])
+        efel.cppcore.setFeatureDouble('Threshold',
+                                      [-20.0])
+        efel.cppcore.setFeatureDouble('DerivativeThreshold',
+                                      [10.0])
+        efel.cppcore.setFeatureDouble('interp_step', [0.1])
+        efel.cppcore.setFeatureDouble('burst_factor', [1.5])
+        efel.cppcore.setFeatureDouble("initial_perc", [0.1])
+
 
     def test_getFeatureNames(self):
         """cppcore: Testing getting all feature names"""
@@ -73,39 +103,44 @@ class TestCppcore(object):
     def test_getDistance(self):
         """cppcore: Testing getDistance()"""
         import efel.cppcore
-        import numpy
 
-        stim_start = 500.0
-        stim_end = 900.0
-
-        test_data_path = os.path.join(
-            testdata_dir,
-            'basic/mean_frequency_1.txt')
-        data = numpy.loadtxt(test_data_path)
-
-        time = data[:, 0]
-        voltage = data[:, 1]
-
-        efel.cppcore.setFeatureDouble('T', [x for x in time])
-        efel.cppcore.setFeatureDouble('V', [x for x in voltage])
-        efel.cppcore.setFeatureDouble('stim_start', [stim_start])
-        efel.cppcore.setFeatureDouble('stim_end', [stim_end])
-
-        efel.cppcore.setFeatureDouble('spike_skipf', [0.1])
-        efel.cppcore.setFeatureInt('max_spike_skip', [2])
-        efel.cppcore.setFeatureDouble('Threshold',
-                                      [-20.0])
-        efel.cppcore.setFeatureDouble('DerivativeThreshold',
-                                      [10.0])
-        efel.cppcore.setFeatureDouble('interp_step', [0.1])
-        efel.cppcore.setFeatureDouble('burst_factor', [1.5])
-        efel.cppcore.setFeatureDouble("initial_perc", [0.1])
-        feature_values = list()
-        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
-
+        self.setup_data()
         nt.assert_almost_equal(
             3.09045815935,
             efel.cppcore.getDistance(
                 'AP_amplitude',
                 50.0,
                 10.0))
+
+    def test_getFeature(self):
+        import efel.cppcore
+        self.setup_data()
+
+        #get double feature
+        feature_values = list()
+        efel.cppcore.getFeature('AP_amplitude', feature_values)
+        nt.ok_(isinstance(feature_values[0], float))
+        nt.eq_(5, len(feature_values))
+        nt.ok_(np.allclose([80.45724099440199, 80.46320199354948, 80.73300299176428,
+                            80.9965359926715, 81.87292599493423],
+                           feature_values))
+
+        #get int feature
+        feature_values = list()
+        efel.cppcore.getFeature('AP_fall_indices', feature_values)
+        nt.ok_(isinstance(feature_values[0], int))
+        nt.eq_(5, len(feature_values))
+        nt.eq_([5665, 6066, 6537, 7170, 8275], feature_values)
+
+    def test_getFeature_failure(self):
+        """cppcore: Testing failure exit code in getFeature"""
+        import efel.cppcore
+        feature_values = list()
+        return_value = efel.cppcore.getFeature("AP_amplitude", feature_values)
+        nt.assert_equal(return_value, -1)
+
+    @nt.raises(TypeError)
+    def test_getFeature_non_existant(self):
+        """cppcore: Testing failure exit code in getFeature"""
+        import efel.cppcore
+        efel.cppcore.getFeature("does_not_exist", list())

@@ -5,9 +5,8 @@ The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
 All functions in this module can be called as efel.functionname, it is
 not necessary to include 'api' as in efel.api.functionname.
-"""
 
-"""
+
 Copyright (c) 2015, EPFL/Blue Brain Project
 
  This file is part of eFEL <https://github.com/BlueBrain/eFEL>
@@ -308,21 +307,9 @@ def _get_feature_values_serial(trace_featurenames):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     for featureName in featureNames:
-        featureType = cppcore.featuretype(featureName)
-        if featureType == "double":
-            cppcoreFeatureValues = list()
-            exitCode = cppcore.getFeatureDouble(
-                featureName,
-                cppcoreFeatureValues)
-        elif featureType == "int":
-            cppcoreFeatureValues = list()
-            exitCode = cppcore.getFeatureInt(
-                featureName,
-                cppcoreFeatureValues)
-        else:
-            raise TypeError("Feature %s has unknown type"
-                            "(does it exist ?): %s" %
-                            (featureName, featureType))
+        cppcoreFeatureValues = list()
+        exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
+
         if exitCode < 0:
             if raise_warnings:
                 import warnings
