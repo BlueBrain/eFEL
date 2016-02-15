@@ -36,6 +36,7 @@ test3: install3
 	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
 		--cover-package efel
 pypi: test
+	pip install twine --upgrade
 	rm -rf dist
 	python setup.py sdist bdist
 	twine upload dist/*
