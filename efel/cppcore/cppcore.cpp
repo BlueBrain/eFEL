@@ -40,12 +40,27 @@
 #include <cfeature.h>
 #include <efel.h>
 
+#include <map>
+
 #if PY_MAJOR_VERSION >= 3
 #define IS_PY3K
 #endif
 
 
 extern cFeature* pFeature;
+
+// Map of name -> feature
+typedef std::map<string, PyObject *> PyName2feature;
+static PyName2feature PyFeaturesMap;
+
+static PyObject*
+_getPyFunctionByName(string feature_name){
+  PyName2feature::iterator py_feature = PyFeaturesMap.find(feature_name);
+  if(py_feature != PyFeaturesMap.end()){
+    return py_feature->second;
+  }
+  return NULL;
+}
 
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
 
@@ -112,7 +127,13 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
   }
 }
 
-static PyObject* 
+static PyObject*
+_call_python(string feature_name, PyObject *py_function, PyObject* output){
+  PyObject* result = PyObject_CallFunctionObjArgs(py_function, output, NULL);
+  return result;
+}
+
+static PyObject*
 _getfeature(PyObject* self, PyObject* args, const string &type) {
   char* feature_name;
   PyObject* py_values;
@@ -122,24 +143,29 @@ _getfeature(PyObject* self, PyObject* args, const string &type) {
     return NULL;
   }
 
-  string feature_type = pFeature->featuretype(string(feature_name));
-
-  if (!type.empty() && feature_type != type){
-    PyErr_SetString(PyExc_TypeError, "Feature type does not match");
-    return NULL;
-  }
-
-  if (feature_type == "int") {
-    vector<int> values;
-    return_value = pFeature->getFeatureInt(string(feature_name), values);
-    PyList_from_vectorint(values, py_values);
-  } else if (feature_type == "double") {
-    vector<double> values;
-    return_value = pFeature->getFeatureDouble(string(feature_name), values);
-    PyList_from_vectordouble(values, py_values);
+  PyObject* py_feature = _getPyFunctionByName(feature_name);
+  if (py_feature){
+    return _call_python(feature_name, py_feature, py_values);
   } else {
-    PyErr_SetString(PyExc_TypeError, "Unknown feature name");
-    return NULL;
+    string feature_type = pFeature->featuretype(string(feature_name));
+
+    if (!type.empty() && feature_type != type){
+      PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+      return NULL;
+    }
+
+    if (feature_type == "int") {
+      vector<int> values;
+      return_value = pFeature->getFeatureInt(string(feature_name), values);
+      PyList_from_vectorint(values, py_values);
+    } else if (feature_type == "double") {
+      vector<double> values;
+      return_value = pFeature->getFeatureDouble(string(feature_name), values);
+      PyList_from_vectordouble(values, py_values);
+    } else {
+      PyErr_SetString(PyExc_TypeError, "Unknown feature name");
+      return NULL;
+    }
   }
 
   return Py_BuildValue("i", return_value);
@@ -233,6 +259,34 @@ static PyObject* getgerrorstr(PyObject* self, PyObject* args) {
   return Py_BuildValue("s", pFeature->getGError().c_str());
 }
 
+static PyObject*
+registerFeature(PyObject* self, PyObject* args) {
+  char *name = NULL;
+  PyObject *function = NULL;
+  PyObject *result = NULL;
+
+  if (!PyArg_ParseTuple(args, "sO", &name, &function)) {
+    return NULL;
+  }
+  string feature_name = string(name);
+
+  if (!PyCallable_Check(function)) {
+    PyErr_SetString(PyExc_TypeError, "parameter must be callable");
+    return NULL;
+  }
+
+  PyObject* py_feature = _getPyFunctionByName(feature_name);
+  if (py_feature){
+    Py_DECREF(py_feature);
+  }
+
+  Py_INCREF(function);
+  PyFeaturesMap[feature_name] = function;
+
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
 static PyMethodDef CppCoreMethods[] = {
     {"Initialize", CppCoreInitialize, METH_VARARGS,
       "Initialise CppCore."},
@@ -258,6 +312,10 @@ static PyMethodDef CppCoreMethods[] = {
 
     {"getDistance", getDistance, METH_VARARGS,
       "Get the distance between a feature and experimental data"},
+
+    {"registerFeature", registerFeature, METH_VARARGS,
+      "Add a python function as an efeature"},
+
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
