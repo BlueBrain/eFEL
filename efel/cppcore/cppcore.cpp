@@ -34,10 +34,11 @@
  * =============================================================================
  */
 
+#include <Python.h>
+
 #include <cstddef>
 #include <cfeature.h>
 #include <efel.h>
-#include <Python.h>
 
 #if PY_MAJOR_VERSION >= 3
 #define IS_PY3K
@@ -109,6 +110,33 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
     PyList_Append(output, obj);
     Py_DECREF(obj);
   }
+}
+
+static PyObject* getfeature(PyObject* self, PyObject* args) {
+  char* feature_name;
+  PyObject* py_values;
+
+  int return_value;
+  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
+    return NULL;
+  }
+
+  string feature_type = pFeature->featuretype(string(feature_name));
+
+  if (feature_type == "int") {
+    vector<int> values;
+    return_value = pFeature->getFeatureInt(string(feature_name), values);
+    PyList_from_vectorint(values, py_values);
+  } else if (feature_type == "double") {
+    vector<double> values;
+    return_value = pFeature->getFeatureDouble(string(feature_name), values);
+    PyList_from_vectordouble(values, py_values);
+  } else {
+    PyErr_SetString(PyExc_TypeError, "Unknown feature name");
+    return NULL;
+  }
+
+  return Py_BuildValue("i", return_value);
 }
 
 static PyObject* setfeatureint(PyObject* self, PyObject* args) {
@@ -215,19 +243,30 @@ static PyObject* getgerrorstr(PyObject* self, PyObject* args) {
 }
 
 static PyMethodDef CppCoreMethods[] = {
-    {"Initialize", CppCoreInitialize, METH_VARARGS, "Initialise CppCore."},
-    {"setFeatureInt", setfeatureint, METH_VARARGS, "Set a integer feature."},
-    {"getFeatureInt", getfeatureint, METH_VARARGS, "Set a integer feature."},
-    {"setFeatureDouble", setfeaturedouble,
-     METH_VARARGS,       "Set a double feature."},
-    {"getFeatureDouble", getfeaturedouble,
-     METH_VARARGS,       "Get a double feature."},
-    {"featuretype", featuretype, METH_VARARGS, "Get the type of a feature"},
-    {"getgError", getgerrorstr, METH_VARARGS, "Get CppCore error string"},
-    {"getFeatureNames", getFeatureNames,
-     METH_VARARGS,      "Get the names of all the available features"},
-    {"getDistance", getDistance,
-     METH_VARARGS,  "Get the distance between a feature and experimental data"},
+    {"Initialize", CppCoreInitialize, METH_VARARGS,
+      "Initialise CppCore."},
+
+    {"getFeature", getfeature, METH_VARARGS,
+      "Get a values associated with a feature. Takes a list() to be filled."},
+    {"getFeatureInt", getfeatureint, METH_VARARGS,
+      "Get a integer feature."},
+    {"getFeatureDouble", getfeaturedouble, METH_VARARGS,
+      "Get a double feature."},
+
+    {"setFeatureInt", setfeatureint, METH_VARARGS,
+      "Set a integer feature."},
+    {"setFeatureDouble", setfeaturedouble, METH_VARARGS,
+      "Set a double feature."},
+
+    {"featuretype", featuretype, METH_VARARGS,
+      "Get the type of a feature"},
+    {"getgError", getgerrorstr, METH_VARARGS,
+      "Get CppCore error string"},
+    {"getFeatureNames", getFeatureNames, METH_VARARGS,
+      "Get the names of all the available features"},
+
+    {"getDistance", getDistance, METH_VARARGS,
+      "Get the distance between a feature and experimental data"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
