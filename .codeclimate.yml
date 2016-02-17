@@ -1,17 +1,14 @@
-languages:
-  Python: true
 engines:
   pep8:
     enabled: true
-  radon:
-    enabled: true
-  duplication:
-    enabled: true
-    config:
-      languages:
-      - python
-  fixme:
-    enabled: true
+    checks:
+        E501:
+            enabled: false
+        E402:
+            enabled: false
+ratings:
+    paths:
+        - "**.py"
 exclude_paths:
 - versioneer.py
 - efel/_version.py
