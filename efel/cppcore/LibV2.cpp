@@ -35,7 +35,7 @@ using std::transform;
 //
 // *** AP begin indices ***
 //
-int LibV2::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
                               const vector<int>& ahpi, vector<int>& apbi) {
   // derivative at peak start according to eCode specification 10mV/ms
@@ -134,7 +134,7 @@ int LibV2::AP_begin_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP end indices ***
 //
-int LibV2::__AP_end_indices(const vector<double>& t, const vector<double>& v,
+static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
                             const vector<int>& pi, vector<int>& apei) {
   // derivative at peak end according to eCode specification -10mV/ms
   // according to Shaul -12mV/ms
@@ -186,7 +186,7 @@ int LibV2::AP_end_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP rise indices ***
 //
-int LibV2::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
+static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& pi, vector<int>& apri) {
   apri.resize(std::min(apbi.size(), pi.size()));
   for (unsigned i = 0; i < apri.size(); i++) {
@@ -237,7 +237,7 @@ int LibV2::AP_rise_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP fall indices ***
 //
-int LibV2::__AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
+static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& apei, const vector<int>& pi,
                              vector<int>& apfi) {
   apfi.resize(std::min(apbi.size(), pi.size()));
@@ -287,7 +287,7 @@ int LibV2::AP_fall_indices(mapStr2intVec& IntFeatureData,
 
 // eFeatures
 // *** AP_duration according to E7 and E15 ***
-int LibV2::__AP_duration(const vector<double>& t,
+static int __AP_duration(const vector<double>& t,
                          const vector<int>& apbeginindices,
                          const vector<int>& endindices,
                          vector<double>& apduration) {
@@ -330,7 +330,7 @@ int LibV2::AP_duration(mapStr2intVec& IntFeatureData,
 // end of AP_duration
 
 // *** AP_duration_half_width according to E8 and E16 ***
-int LibV2::__AP_duration_half_width(const vector<double>& t,
+static int __AP_duration_half_width(const vector<double>& t,
                                     const vector<int>& apriseindices,
                                     const vector<int>& apfallindices,
                                     vector<double>& apdurationhalfwidth) {
@@ -373,7 +373,7 @@ int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
 // end of AP_duration_half_width
 
 // *** AP_rise_time according to E9 and E17 ***
-int LibV2::__AP_rise_time(const vector<double>& t,
+static int __AP_rise_time(const vector<double>& t,
                           const vector<int>& apbeginindices,
                           const vector<int>& peakindices,
                           vector<double>& aprisetime) {
@@ -414,7 +414,7 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
 // end of AP_rise_time
 
 // *** AP_fall_time according to E10 and E18 ***
-int LibV2::__AP_fall_time(const vector<double>& t,
+static int __AP_fall_time(const vector<double>& t,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfalltime) {
@@ -455,7 +455,7 @@ int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
 // end of AP_fall_time
 
 // *** AP_rise_rate according to E11 and E19 ***
-int LibV2::__AP_rise_rate(const vector<double>& t, const vector<double>& v,
+static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& apbeginindices,
                           const vector<int>& peakindices,
                           vector<double>& apriserate) {
@@ -500,7 +500,7 @@ int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
 // end of AP_rise_rate
 
 // *** AP_fall_rate according to E12 and E20 ***
-int LibV2::__AP_fall_rate(const vector<double>& t, const vector<double>& v,
+static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfallrate) {
@@ -545,7 +545,7 @@ int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
 // end of AP_fall_rate
 
 // *** fast_AHP according to E13 and E21 ***
-int LibV2::__fast_AHP(const vector<double>& v,
+static int __fast_AHP(const vector<double>& v,
                       const vector<int>& apbeginindices,
                       const vector<int>& minahpindices,
                       vector<double>& fastahp) {
@@ -589,7 +589,7 @@ int LibV2::fast_AHP(mapStr2intVec& IntFeatureData,
 // end of fast_AHP
 
 // *** AP_amplitude_change according to E22 ***
-int LibV2::__AP_amplitude_change(const vector<double>& apamplitude,
+static int __AP_amplitude_change(const vector<double>& apamplitude,
                                  vector<double>& apamplitudechange) {
   if (apamplitude.size() < 1) {
     return -1;
@@ -626,7 +626,7 @@ int LibV2::AP_amplitude_change(mapStr2intVec& IntFeatureData,
 // end of AP_amplitude_change
 
 // *** AP_duration_change according to E23 ***
-int LibV2::__AP_duration_change(const vector<double>& apduration,
+static int __AP_duration_change(const vector<double>& apduration,
                                 vector<double>& apdurationchange) {
   if (apduration.size() < 1) {
     return -1;
@@ -662,7 +662,7 @@ int LibV2::AP_duration_change(mapStr2intVec& IntFeatureData,
 // end of AP_duration_change
 
 // *** AP_duration_half_width_change according to E24 ***
-int LibV2::__AP_duration_half_width_change(
+static int __AP_duration_half_width_change(
     const vector<double>& apdurationhalfwidth,
     vector<double>& apdurationhalfwidthchange) {
   if (apdurationhalfwidth.size() < 1) {
@@ -702,7 +702,7 @@ int LibV2::AP_duration_half_width_change(mapStr2intVec& IntFeatureData,
 // end of AP_duration_half_width_change
 
 // *** AP_rise_rate_change according to E25 ***
-int LibV2::__AP_rise_rate_change(const vector<double>& apriserate,
+static int __AP_rise_rate_change(const vector<double>& apriserate,
                                  vector<double>& apriseratechange) {
   if (apriserate.size() < 1) {
     return -1;
@@ -738,7 +738,7 @@ int LibV2::AP_rise_rate_change(mapStr2intVec& IntFeatureData,
 // end of AP_rise_rate_change
 
 // *** AP_fall_rate_change according to E26 ***
-int LibV2::__AP_fall_rate_change(const vector<double>& apfallrate,
+static int __AP_fall_rate_change(const vector<double>& apfallrate,
                                  vector<double>& apfallratechange) {
   if (apfallrate.size() < 1) {
     return -1;
@@ -774,7 +774,7 @@ int LibV2::AP_fall_rate_change(mapStr2intVec& IntFeatureData,
 // end of AP_fall_rate_change
 
 // *** fast_AHP_change according to E27 ***
-int LibV2::__fast_AHP_change(const vector<double>& fastahp,
+static int __fast_AHP_change(const vector<double>& fastahp,
                              vector<double>& fastahpchange) {
   if (fastahp.size() < 1) {
     return -1;
@@ -996,7 +996,7 @@ int LibV2::E39_cod(mapStr2intVec& IntFeatureData,
 // end of E39_cod
 
 // *** amp_drop_first_second ***
-int LibV2::__amp_drop_first_second(const vector<double>& peakvoltage,
+static int __amp_drop_first_second(const vector<double>& peakvoltage,
                                    vector<double>& ampdropfirstsecond) {
   ampdropfirstsecond.push_back(peakvoltage[0] - peakvoltage[1]);
   return ampdropfirstsecond.size();
@@ -1050,7 +1050,7 @@ int LibV2::E2(mapStr2intVec& IntFeatureData,
 // end of E2
 
 // *** amp_drop_first_last ***
-int LibV2::__amp_drop_first_last(const vector<double>& peakvoltage,
+static int __amp_drop_first_last(const vector<double>& peakvoltage,
                                  vector<double>& ampdropfirstlast) {
   ampdropfirstlast.push_back(peakvoltage[0] - peakvoltage.back());
   return ampdropfirstlast.size();
@@ -1104,7 +1104,7 @@ int LibV2::E3(mapStr2intVec& IntFeatureData,
 // end of E3
 
 // *** amp_drop_second_last ***
-int LibV2::__amp_drop_second_last(const vector<double>& peakvoltage,
+static int __amp_drop_second_last(const vector<double>& peakvoltage,
                                   vector<double>& ampdropsecondlast) {
   ampdropsecondlast.push_back(peakvoltage[1] - peakvoltage.back());
   return ampdropsecondlast.size();
@@ -1158,7 +1158,7 @@ int LibV2::E4(mapStr2intVec& IntFeatureData,
 // end of E4
 
 // *** max_amp_difference ***
-int LibV2::__max_amp_difference(const vector<double>& peakvoltage,
+static int __max_amp_difference(const vector<double>& peakvoltage,
                                 vector<double>& maxampdifference) {
   vector<double> diff_peak_voltage;
   if (peakvoltage.size() < 1) {
@@ -1643,7 +1643,7 @@ int LibV2::E27(mapStr2intVec& IntFeatureData,
 // steady state of the voltage response during hyperpolarizing stimulus,
 // elementary feature for E29
 // *** steady_state_hyper
-int LibV2::__steady_state_hyper(const vector<double>& v,
+static int __steady_state_hyper(const vector<double>& v,
                                 const vector<double>& t, double stimend,
                                 vector<double>& steady_state_hyper) {
   int i_end =
