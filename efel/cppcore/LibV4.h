@@ -29,7 +29,5 @@ using std::vector;
 namespace LibV4 {
 int peak_indices(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int __peak_indices(const vector<double>& v, double min_spike_height,
-                   double threshold, vector<int>& peakindices);
 }
 #endif
