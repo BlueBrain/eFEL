@@ -106,7 +106,7 @@ int LibV3::trace_check(mapStr2intVec& IntFeatureData,
   }
 }
 
-int LibV3::__peak_indices(double dThreshold, vector<double>& V,
+static int __peak_indices(double dThreshold, vector<double>& V,
                           vector<int>& PeakIndex) {
   vector<int> upVec, dnVec;
   double dtmp;
@@ -193,7 +193,7 @@ int LibV3::ISI_values(mapStr2intVec& IntFeatureData,
 
 // *** ISI_CV ***
 // the coefficient of variation of the ISI
-int LibV3::__ISI_CV(const vector<double>& isivalues, vector<double>& isicv) {
+static int __ISI_CV(const vector<double>& isivalues, vector<double>& isicv) {
   // mean
   double isi_mean = 0.;
   for (unsigned i = 0; i < isivalues.size(); i++) {
@@ -370,7 +370,7 @@ int LibV3::first_spike_time(mapStr2intVec& IntFeatureData,
 
 // spike half width
 // for spike amplitude = v_peak - v_AHP
-int LibV3::__spike_width1(const vector<double>& t, const vector<double>& v,
+static int __spike_width1(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peak_indices,
                           const vector<int>& min_ahp_indices, double stim_start,
                           vector<double>& spike_width1) {
@@ -544,11 +544,6 @@ int LibV3::AHP_depth_abs(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV3::__rest_voltage_value(vector<double>& V, vector<int>& PeakIndex,
-                                vector<double>& PeakVoltage) {
-  // printf("\n  LibV1  This is inside  __rest_voltage_value()");
-  return 1;
-}
 int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
@@ -594,7 +589,7 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
 // *** adaptation_index2 ***
 // as adaptation_index, but start at the second ISI instead of the round(N *
 // spikeskipf)
-int LibV3::__adaptation_index2(double StimStart, double StimEnd, double Offset,
+static int __adaptation_index2(double StimStart, double StimEnd, double Offset,
                                const vector<double>& peakVTime,
                                vector<double>& adaptation_index) {
   list<double> SpikeTime;
@@ -746,7 +741,7 @@ int LibV3::AP_amplitude(mapStr2intVec& IntFeatureData,
 // spike width calculation according to threshold value for the first spike
 // unfortunately spike width means the width of the spike on onset not at half
 // maximum
-int LibV3::__AP_width(const vector<double>& t, const vector<double>& v,
+static int __AP_width(const vector<double>& t, const vector<double>& v,
                       double stimstart, double threshold,
                       const vector<int>& peakindices,
                       const vector<int>& minahpindices,
@@ -859,7 +854,7 @@ int LibV3::doublet_ISI(mapStr2intVec& IntFeatureData,
 //
 // *** AP begin indices ***
 //
-int LibV3::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
                               const vector<int>& ahpi, vector<int>& apbi) {
   // derivative at peak start according to eCode specification 10mV/ms
@@ -957,7 +952,7 @@ int LibV3::AP_begin_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP end indices ***
 //
-int LibV3::__AP_end_indices(const vector<double>& t, const vector<double>& v,
+static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
                             const vector<int>& pi, vector<int>& apei) {
   // derivative at peak end according to eCode specification -10mV/ms
   // according to Shaul -12mV/ms
@@ -1009,7 +1004,7 @@ int LibV3::AP_end_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP rise indices ***
 //
-int LibV3::__AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
+static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& pi, vector<int>& apri) {
   apri.resize(apbi.size());
   for (unsigned i = 0; i < apri.size(); i++) {
@@ -1055,7 +1050,7 @@ int LibV3::AP_rise_indices(mapStr2intVec& IntFeatureData,
 
 // *** AP fall indices ***
 //
-int LibV3::__AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
+static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& apei, const vector<int>& pi,
                              vector<int>& apfi) {
   apfi.resize(apbi.size());
@@ -1105,7 +1100,7 @@ int LibV3::AP_fall_indices(mapStr2intVec& IntFeatureData,
 
 // eFeatures
 // *** AP_duration according to E7 and E15 ***
-int LibV3::__AP_duration(const vector<double>& t,
+static int __AP_duration(const vector<double>& t,
                          const vector<int>& apbeginindices,
                          const vector<int>& endindices,
                          vector<double>& apduration) {
@@ -1145,7 +1140,7 @@ int LibV3::AP_duration(mapStr2intVec& IntFeatureData,
 }
 // end of AP_duration
 
-int LibV3::__depolarized_base(const vector<double>& t, const vector<double>& v,
+static int __depolarized_base(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
                               const vector<int>& apbi,
                               const vector<int>& apendi,
