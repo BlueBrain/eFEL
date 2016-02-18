@@ -30,7 +30,7 @@ using std::bind2nd;
 using std::greater_equal;
 
 // slope of loglog of ISI curve
-int LibV5::__ISI_log_slope(const vector<double>& isiValues,
+static int __ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
                            int maxnSpike, bool semilog) {
   std::deque<double> skippedISIValues;
@@ -520,7 +520,7 @@ int LibV5::AHP_depth_abs(mapStr2intVec& IntFeatureData,
 
 // spike half width
 // for spike amplitude = v_peak - v_AHP
-int LibV5::__spike_width1(const vector<double>& t, const vector<double>& v,
+static int __spike_width1(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peak_indices,
                           const vector<int>& min_ahp_indices, double stim_start,
                           vector<double>& spike_width1) {
@@ -609,7 +609,7 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
 //
 // *** AP begin indices ***
 //
-int LibV5::__AP_begin_indices(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
                               const vector<int>& ahpi, vector<int>& apbi,
                               double dTh) {
@@ -724,7 +724,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   }
   return retVal;
 }
-int LibV5::__irregularity_index(vector<double>& isiValues,
+static int __irregularity_index(vector<double>& isiValues,
                                 vector<double>& irregularity_index) {
   double ISISub, iRI;
   iRI = ISISub = 0;
@@ -765,7 +765,7 @@ int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV5::__number_initial_spikes(vector<double>& peak_times, double stimstart,
+static int __number_initial_spikes(vector<double>& peak_times, double stimstart,
                                    double stimend, double initial_perc,
                                    vector<int>& number_initial_spikes) {
   double initialLength = (stimend - stimstart) * initial_perc;
@@ -1090,7 +1090,7 @@ int LibV5::AP2_width(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV5::__AHP_time_from_peak(const vector<double>& t,
+static int __AHP_time_from_peak(const vector<double>& t,
                                 const vector<int>& peakIndices,
                                 const vector<int>& minAHPIndices,
                                 vector<double>& ahpTimeFromPeak) {
@@ -1100,6 +1100,7 @@ int LibV5::__AHP_time_from_peak(const vector<double>& t,
   }
   return ahpTimeFromPeak.size();
 }
+
 
 int LibV5::AHP_time_from_peak(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
@@ -1136,7 +1137,7 @@ int LibV5::AHP_time_from_peak(mapStr2intVec& IntFeatureData,
   return retval;
 }
 
-int LibV5::__AHP_depth_from_peak(const vector<double>& v,
+static int __AHP_depth_from_peak(const vector<double>& v,
                                  const vector<int>& peakIndices,
                                  const vector<int>& minAHPIndices,
                                  vector<double>& ahpDepthFromPeak) {
@@ -1246,7 +1247,7 @@ int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
 }
 
 // spike width at spike start
-int LibV5::__AP_begin_width(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
                             const vector<int>& AP_begin_indices,
                             const vector<int>& min_ahp_indices,
                             vector<double>& AP_begin_width) {
@@ -1316,7 +1317,7 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV5::__AP_begin_time(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_time(const vector<double>& t, const vector<double>& v,
                            const vector<int>& AP_begin_indices,
                            vector<double>& AP_begin_time) {
 
@@ -1355,7 +1356,7 @@ int LibV5::AP_begin_time(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV5::__AP_begin_voltage(const vector<double>& t, const vector<double>& v,
+static int __AP_begin_voltage(const vector<double>& t, const vector<double>& v,
                               const vector<int>& AP_begin_indices,
                               vector<double>& AP_begin_voltage) {
 
@@ -1534,39 +1535,7 @@ int LibV5::AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV5::voltage_deflection_begin(mapStr2intVec& IntFeatureData,
-                                    mapStr2doubleVec& DoubleFeatureData,
-                                    mapStr2Str& StringData) {
-  int retVal;
-  int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
-                            string("voltage_deflection_begin"), nSize);
-  if (retVal) {
-    return nSize;
-  } else {
-    vector<double> v;
-    vector<double> t;
-    vector<double> stimStart;
-    vector<double> stimEnd;
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
-    if (retVal < 0) return -1;
-    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
-    if (retVal < 0) return -1;
-    retVal =
-        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-    if (retVal < 0) return -1;
-    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-    if (retVal < 0) return -1;
-    vector<double> vd;
-    retVal = __voltage_deflection_begin(v, t, stimStart[0], stimEnd[0], vd);
-    if (retVal >= 0) {
-      setDoubleVec(DoubleFeatureData, StringData, "voltage_deflection_begin",
-                   vd);
-    }
-    return retVal;
-  }
-}
-int LibV5::__voltage_deflection_begin(const vector<double>& v,
+static int __voltage_deflection_begin(const vector<double>& v,
                                       const vector<double>& t, double stimStart,
                                       double stimEnd, vector<double>& vd) {
   double deflection_range_percentage = 0.10;
@@ -1600,6 +1569,39 @@ int LibV5::__voltage_deflection_begin(const vector<double>& v,
 
   vd.push_back(volt - base);
   return 1;
+}
+
+int LibV5::voltage_deflection_begin(mapStr2intVec& IntFeatureData,
+                                    mapStr2doubleVec& DoubleFeatureData,
+                                    mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            string("voltage_deflection_begin"), nSize);
+  if (retVal) {
+    return nSize;
+  } else {
+    vector<double> v;
+    vector<double> t;
+    vector<double> stimStart;
+    vector<double> stimEnd;
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("V"), v);
+    if (retVal < 0) return -1;
+    retVal = getDoubleVec(DoubleFeatureData, StringData, string("T"), t);
+    if (retVal < 0) return -1;
+    retVal =
+        getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimStart);
+    if (retVal < 0) return -1;
+    retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
+    if (retVal < 0) return -1;
+    vector<double> vd;
+    retVal = __voltage_deflection_begin(v, t, stimStart[0], stimEnd[0], vd);
+    if (retVal >= 0) {
+      setDoubleVec(DoubleFeatureData, StringData, "voltage_deflection_begin",
+                   vd);
+    }
+    return retVal;
+  }
 }
 
 // Check if a cell is transiently stuck (i.e. not firing any spikes) at the end
@@ -1925,6 +1927,39 @@ int LibV5::check_AISInitiation(mapStr2intVec& IntFeatureData,
 // end of check_AISInitation
 //
 
+static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
+                           double stimStart, double stimEnd,
+                           vector<double>& ap_phaseslopes, vector<int> apbi,
+                           double range) {
+
+  vector<double> dvdt(v.size());
+  vector<double> dv;
+  vector<double> dt;
+  int apbegin_index, range_max_index, range_min_index;
+  double ap_phaseslope;
+  getCentralDifferenceDerivative(1., v, dv);
+  getCentralDifferenceDerivative(1., t, dt);
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
+
+  for (unsigned i = 0; i < apbi.size(); i++) {
+    apbegin_index = apbi[i];
+    range_min_index = apbegin_index - int(range);
+    range_max_index = apbegin_index + int(range);
+    if (range_min_index < 0 or range_max_index < 0) return -1;
+    if (range_min_index > (int)t.size() or range_max_index > (int)t.size())
+      return -1;
+    if (v[range_max_index] - v[range_min_index] == 0) return -1;
+    ap_phaseslope = (dvdt[range_max_index] - dvdt[range_min_index]) /
+                    (v[range_max_index] - v[range_min_index]);
+    ap_phaseslopes.push_back(ap_phaseslope);
+    // printf("slope %f, mint %f, minv %f, mindvdt %f\n", ap_phaseslope,
+    // t[range_min_index], v[range_min_index], dvdt[range_min_index]);
+    // printf("slope %f, maxt %f, maxv %f, maxdvdt %f\n", ap_phaseslope,
+    // t[range_max_index], v[range_max_index], dvdt[range_max_index]);
+  }
+
+  return ap_phaseslopes.size();
+}
 /// Calculate the slope of the V, dVdt plot at the beginning of every spike
 /// (at the point where the derivative crosses the DerivativeThreshold)
 int LibV5::AP_phaseslope(mapStr2intVec& IntFeatureData,
@@ -1999,39 +2034,6 @@ int LibV5::AP_phaseslope_AIS(mapStr2intVec& IntFeatureData,
   }
 }
 
-int LibV5::__AP_phaseslope(const vector<double>& v, const vector<double>& t,
-                           double stimStart, double stimEnd,
-                           vector<double>& ap_phaseslopes, vector<int> apbi,
-                           double range) {
-
-  vector<double> dvdt(v.size());
-  vector<double> dv;
-  vector<double> dt;
-  int apbegin_index, range_max_index, range_min_index;
-  double ap_phaseslope;
-  getCentralDifferenceDerivative(1., v, dv);
-  getCentralDifferenceDerivative(1., t, dt);
-  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(), std::divides<double>());
-
-  for (unsigned i = 0; i < apbi.size(); i++) {
-    apbegin_index = apbi[i];
-    range_min_index = apbegin_index - int(range);
-    range_max_index = apbegin_index + int(range);
-    if (range_min_index < 0 or range_max_index < 0) return -1;
-    if (range_min_index > (int)t.size() or range_max_index > (int)t.size())
-      return -1;
-    if (v[range_max_index] - v[range_min_index] == 0) return -1;
-    ap_phaseslope = (dvdt[range_max_index] - dvdt[range_min_index]) /
-                    (v[range_max_index] - v[range_min_index]);
-    ap_phaseslopes.push_back(ap_phaseslope);
-    // printf("slope %f, mint %f, minv %f, mindvdt %f\n", ap_phaseslope,
-    // t[range_min_index], v[range_min_index], dvdt[range_min_index]);
-    // printf("slope %f, maxt %f, maxv %f, maxdvdt %f\n", ap_phaseslope,
-    // t[range_max_index], v[range_max_index], dvdt[range_max_index]);
-  }
-
-  return ap_phaseslopes.size();
-}
 
 int LibV5::BAC_width(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
