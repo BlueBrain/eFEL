@@ -258,8 +258,7 @@ vector<int>& cFeature::getmapIntData(string strName) {
   map<string, vector<int> >::iterator mapstr2IntItr;
   mapstr2IntItr = mapIntData.find(strName);
   if (mapstr2IntItr == mapIntData.end()) {
-    GErrorStr =
-        GErrorStr + string("Feature [") + strName + "] data is missing\n";
+    GErrorStr += "Feature [" + strName + "] data is missing\n";
   }
   return mapstr2IntItr->second;
 }
@@ -267,8 +266,7 @@ vector<double>& cFeature::getmapDoubleData(string strName) {
   map<string, vector<double> >::iterator mapstr2DoubleItr;
   mapstr2DoubleItr = mapDoubleData.find(strName);
   if (mapstr2DoubleItr == mapDoubleData.end()) {
-    GErrorStr =
-        GErrorStr + string("Feature [") + strName + "] data is missing\n";
+    GErrorStr += "Feature [" + strName + "] data is missing\n";
   }
   return mapstr2DoubleItr->second;
 }
@@ -510,7 +508,7 @@ mapDoubleData.end(); mapItrDouble++){
 
 int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   if (mapDoubleData.find(strName) != mapDoubleData.end()) {
-    if (strName == string("V")) {
+    if (strName == "V") {
       if (logging) {
         logfile << "Feature \"V\" set. New trace, clearing maps." << endl;
       }
@@ -575,7 +573,7 @@ double cFeature::getDistance(string strName, double mean, double std) {
 
   // Check if a the trace doesn't contain any spikes outside of the stimulus
   // interval
-  retVal = getFeatureInt(string("trace_check"), feature_veci);
+  retVal = getFeatureInt("trace_check", feature_veci);
   if (retVal < 0) {
     // printf("Warning: Trace check failed");
     return 250.0;
@@ -588,7 +586,7 @@ double cFeature::getDistance(string strName, double mean, double std) {
     exit(1);
   }
 
-  if (featureType == string("int")) {
+  if (featureType == "int") {
     retVal = getFeatureInt(strName, feature_veci);
     intFlag = 1;
   } else {
