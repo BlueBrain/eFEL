@@ -27,7 +27,7 @@
 // get all local minima
 // assume spikes between local minima
 // check if the assumed spike is bigger than min_spike_height
-int LibV4::__peak_indices(const vector<double>& v, double min_spike_height,
+static int __peak_indices(const vector<double>& v, double min_spike_height,
                           double threshold, vector<int>& peakindices) {
   vector<double> dv;
   vector<int> minimum_indices;
