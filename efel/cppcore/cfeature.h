@@ -21,8 +21,6 @@
 
 #include "types.h"
 
-#include <fstream>
-
 #include <map>
 #include <string>
 #include <vector>
@@ -30,15 +28,17 @@
 
 #include "FillFptrTable.h"
 #include "DependencyTree.h"
+#include "eFELLogger.h"
 
 using std::string;
 using std::vector;
+
 
 class cFeature {
   mapStr2intVec mapIntData;
   mapStr2doubleVec mapDoubleData;
   mapStr2Str mapStrData;
-  map<string, string> featuretypes;
+  std::map<string, string> featuretypes;
   FILE* fin;
   void fillfeaturetypes();
 
@@ -46,11 +46,10 @@ class cFeature {
   std::map<string, vector<featureStringPair > > fptrlookup;
   vector<int>& getmapIntData(string strName);
   vector<double>& getmapDoubleData(string strName);
-  std::fstream logfile;
-  bool logging;
+
+  eFELLogger logger;
 
   cFeature(const string& depFile, const string& outdir);
-  ~cFeature();
   int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
   int setFeatureInt(string strName, vector<int>& intVec);
@@ -81,17 +80,6 @@ class cFeature {
       return error / bio_sd / v.size();
     } else {
       return 250.;
-    }
-  }
-
-  template<typename T>
-  void appendtolog(const vector<T>& v, size_t max = 10)
-  {
-    for (size_t i = 0; i < v.size() && i < max; i++) {
-      logfile << " " << v[i];
-    }
-    if (v.size() > max) {
-      logfile << " ...";
     }
   }
 };

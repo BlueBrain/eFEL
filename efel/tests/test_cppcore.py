@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 import os
+import shutil
+import tempfile
 import nose.tools as nt
 
 import numpy as np
@@ -154,3 +156,17 @@ class TestCppcore(object):
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
         efel.cppcore.getFeature("does_not_exist", list())
+
+    def test_logging(self):
+        import efel
+        tempdir = tempfile.mkdtemp('efel_tests')
+        try:
+            efel.cppcore.Initialize(efel.getDependencyFileLocation(), tempdir)
+            self.setup_data()
+            with open(os.path.join(tempdir, 'fllog.txt')) as fd:
+                contents = fd.read()
+                nt.ok_('Initializing' in contents)
+                # test vector working (if more than 10 elements, prints ...
+                nt.ok_('...' in contents)
+        finally:
+            shutil.rmtree(tempdir)
