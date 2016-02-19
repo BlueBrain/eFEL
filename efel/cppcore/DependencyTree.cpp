@@ -71,22 +71,23 @@ int cTree::deblank(string &str) {
  * FptrTable :
  * FptrLookup | vector of pairs:
  *                  first | string: feature name
- *                  second | vector of pairs:
- *                      first: fptr
- *                      second: string
- *
+ *                  second | vector of featureStringPair
  *
  */
-int cTree::setFeaturePointers(
-    map<string, map<string, fptr> *> &mapFptrLib, map<string, fptr> *FptrTable,
-    map<string, vector<pair<fptr, string> > > *FptrLookup) {
+int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
+                              feature2function *FptrTable,
+                              map<string, vector<featureStringPair > > *FptrLookup) 
+{
   list<string>::iterator lstItr;
-  map<string, map<string, fptr> *>::iterator mapLibItr;
-  map<string, fptr> *fptrTbl;
-  map<string, fptr>::iterator mapFeatureItr;
+  map<string, feature2function *>::iterator mapLibItr;
+  feature2function *fptrTbl;
+  feature2function::iterator mapFeatureItr;
+
   string strLibFeature, strLib, strFeature;
   string wildcards;
-  vector<pair<fptr, string> > vecfptr;
+
+  vector<featureStringPair> vecfptr;
+
   int nPos;
   int wcpos;
 
@@ -141,13 +142,13 @@ int cTree::setFeaturePointers(
 
       // Add the feature function pointer and wildcards to the list of dependent
       // features
-      vecfptr.push_back(pair<fptr, string>(mapFeatureItr->second, wildcards));
-      (FptrTable)
-          ->insert(pair<string, fptr>(strFeature, mapFeatureItr->second));
+      vecfptr.push_back(featureStringPair(mapFeatureItr->second, wildcards));
+      FptrTable->insert(std::pair<string, feature_function>(
+              strFeature, mapFeatureItr->second));
     }
     // Add the vecfptr from above to a map with as key the base featurei
     FptrLookup->insert(
-        pair<string, vector<pair<fptr, string> > >(strFeature, vecfptr));
+        std::pair<string, vector<featureStringPair> >(strFeature, vecfptr));
   }
 
   return 1;

@@ -20,17 +20,13 @@
 #ifndef MAPOPERATIONS_H
 #define MAPOPERATIONS_H
 
-#include <map>
+#include "types.h"
+
 #include <string>
 #include <vector>
 
-using std::map;
 using std::string;
 using std::vector;
-
-typedef map<string, vector<int> > mapStr2intVec;
-typedef map<string, vector<double> > mapStr2doubleVec;
-typedef map<string, string> mapStr2Str;
 
 extern string GErrorStr;
 

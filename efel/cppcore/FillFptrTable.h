@@ -19,28 +19,19 @@
 #ifndef __FILLFPTRTBL
 #define __FILLFPTRTBL
 
+#include "types.h"
+
 #include "LibV1.h"
 #include "LibV2.h"
 #include "LibV3.h"
 #include "LibV4.h"
 #include "LibV5.h"
 
-#include <map>
-#include <string>
-#include <vector>
-
-using std::map;
-using std::string;
-using std::vector;
-
-typedef int (*fptr)(map<string, vector<int> > &, map<string, vector<double> > &,
-                    map<string, string> &);
-
-extern map<string, fptr> FptrTableV1;
-extern map<string, fptr> FptrTableV2;
-extern map<string, fptr> FptrTableV3;
-extern map<string, fptr> FptrTableV4;
-extern map<string, fptr> FptrTableV5;
+extern feature2function FptrTableV1;
+extern feature2function FptrTableV2;
+extern feature2function FptrTableV3;
+extern feature2function FptrTableV4;
+extern feature2function FptrTableV5;
 
 int FillFptrTable();
 #endif

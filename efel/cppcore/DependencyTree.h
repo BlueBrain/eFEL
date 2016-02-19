@@ -19,6 +19,8 @@
 #ifndef __DEPENDENCYTREE_H
 #define __DEPENDENCYTREE_H
 
+#include "types.h"
+
 #include <list>
 #include <map>
 #include <string>
@@ -27,13 +29,8 @@
 
 using std::list;
 using std::map;
-using std::pair;
 using std::string;
 using std::vector;
-
-typedef int (*fptr)(map<string, vector<int> > &, map<string, vector<double> > &,
-                    map<string, string> &);
-extern map<string, fptr> FptrTableV1;
 
 class cTree {
   vector<string> strDependencyFile;
@@ -47,12 +44,13 @@ class cTree {
   cTree(const char *strFileName);
   int printTree();
   int getDependencyList(string str);
-  int setFeaturePointers(map<string, map<string, fptr> *> &mapFptrLib,
-                         map<string, fptr> *FptrTable,
-                         map<string, vector<fptr> > *FptrLookup);
-  int setFeaturePointers(map<string, map<string, fptr> *> &mapFptrLib,
-                         map<string, fptr> *FptrTable,
-                         map<string, vector<pair<fptr, string> > > *FptrLookup);
+  int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
+                         feature2function *FptrTable,
+                         map<string, vector<feature_function> > *FptrLookup);
+
+  int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
+                         feature2function *FptrTable,
+                         map<string, vector<featureStringPair > > *FptrLookup);
   int getChilds(string strLine, list<string> &childs);
   int getDependency(string strLine, string parent_stim);
   int deblank(string &str);
