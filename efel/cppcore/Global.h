@@ -23,20 +23,14 @@
 #include <string>
 #include <vector>
 
-using std::map;
-using std::string;
-using std::vector;
+feature2function FptrTableV1;
+feature2function FptrTableV2;
+feature2function FptrTableV3;
+feature2function FptrTableV4;
+feature2function FptrTableV5;
+feature2function FptrTable;
 
-typedef int (*fptr)(map<string, vector<int> > &, map<string, vector<double> > &,
-                    map<string, string> &);
-
-map<string, fptr> FptrTableV1;
-map<string, fptr> FptrTableV2;
-map<string, fptr> FptrTableV3;
-map<string, fptr> FptrTableV4;
-map<string, fptr> FptrTableV5;
-map<string, fptr> FptrTable;
-map<string, map<string, fptr> *> mapFptrLib;
+std::map<std::string, feature2function*> mapFptrLib;
 
 string GErrorStr;
 

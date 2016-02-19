@@ -19,6 +19,8 @@
 #ifndef CFEATURE_H_
 #define CFEATURE_H_
 
+#include "types.h"
+
 #include <fstream>
 
 #include <map>
@@ -29,20 +31,19 @@
 #include "FillFptrTable.h"
 #include "DependencyTree.h"
 
-using std::map;
 using std::string;
 using std::vector;
 
 class cFeature {
-  map<string, vector<int> > mapIntData;
-  map<string, vector<double> > mapDoubleData;
-  map<string, string> mapStrData;
+  mapStr2intVec mapIntData;
+  mapStr2doubleVec mapDoubleData;
+  mapStr2Str mapStrData;
   map<string, string> featuretypes;
   FILE* fin;
   void fillfeaturetypes();
 
  public:
-  map<string, vector<pair<fptr, string> > > fptrlookup;
+  std::map<string, vector<featureStringPair > > fptrlookup;
   vector<int>& getmapIntData(string strName);
   vector<double>& getmapDoubleData(string strName);
   std::fstream logfile;
@@ -50,7 +51,7 @@ class cFeature {
 
   cFeature(const string& depFile, const string& outdir);
   ~cFeature();
-  int getmapfptrVec(string strName, vector<fptr>& vFptr);
+  int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
   int setFeatureInt(string strName, vector<int>& intVec);
   int getFeatureInt(string strName, vector<int>& vec);

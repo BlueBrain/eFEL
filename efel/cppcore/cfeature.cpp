@@ -352,7 +352,7 @@ void cFeature::getTraces(const string& wildcards, vector<string>& params) {
 
 int cFeature::calc_features(const string& name) {
   // stimulus extension
-  map<string, vector<pair<fptr, string> > >::const_iterator lookup_it(
+  map<string, vector<featureStringPair> >::const_iterator lookup_it(
       fptrlookup.find(name));
   if (lookup_it == fptrlookup.end()) {
     fprintf(stderr,
@@ -365,19 +365,19 @@ int cFeature::calc_features(const string& name) {
 
   bool last_failed = false;
 
-  for (vector<pair<fptr, string> >::const_iterator pfptrstring =
+  for (vector<featureStringPair>::const_iterator pfptrstring =
            lookup_it->second.begin();
        pfptrstring != lookup_it->second.end(); ++pfptrstring) {
     // set parameters, for now only the wildcard 'stimulusname'
     //
+    feature_function function = pfptrstring->first;
     string wildcard = pfptrstring->second;
     if (wildcard.empty()) {
       // make sure that
-      //      the feature is called only once
-      //      the feature operates on "V" and "T" if it operates on traces at
-      // all
+      //  - the feature is called only once
+      //  - the feature operates on "V" and "T" if it operates on traces at all
       setFeatureString("params", "");
-      if ((*pfptrstring->first)(mapIntData, mapDoubleData, mapStrData) < 0) {
+      if (function(mapIntData, mapDoubleData, mapStrData) < 0) {
         // GErrorStr += "\nFeature [" + name + "] called twice, or doesn't
         // operate on V and T.";
         // return -1;i
@@ -387,23 +387,22 @@ int cFeature::calc_features(const string& name) {
       }
     } else {
       // make sure that
-      //      the feature is called once for every trace according to the
-      // wildcard
-      //      the feature operates on each trace
+      //  -the feature is called once for every trace according to the wildcard
+      //  -the feature operates on each trace
       vector<string> params;
       // TODO
       // read stimulus configuration file and parse additional parameters
       // such as number of required traces
-      getTraces(pfptrstring->second, params);
+      getTraces(wildcard, params);
       if (params.empty()) {
-        GErrorStr += "\nMissing trace with wildcards " + pfptrstring->second;
+        GErrorStr += "\nMissing trace with wildcards " + wildcard;
         return -1;
       }
       for (unsigned i = 0; i < params.size(); i++) {
         // setting the "params" entry here makes sure that the required features
         // require specific traces also
         setFeatureString("params", params[i]);
-        if ((*pfptrstring->first)(mapIntData, mapDoubleData, mapStrData) < 0) {
+        if (function(mapIntData, mapDoubleData, mapStrData) < 0) {
           last_failed = true;
         } else {
           last_failed = false;

@@ -151,7 +151,7 @@ int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
  */
 void getTraces(mapStr2doubleVec& mapDoubleData, const string& wildcards,
                vector<string>& params) {
-  map<string, vector<double> >::const_iterator map_it;
+  mapStr2doubleVec::const_iterator map_it;
   string featurename;
   params.clear();
   for (map_it = mapDoubleData.begin(); map_it != mapDoubleData.end();
@@ -210,6 +210,7 @@ int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
     return -1;
   }
 }
+
 // standard deviation over all traces obtained with the same stimulus
 int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
                       const string& feature, const string& stimulus_name,
