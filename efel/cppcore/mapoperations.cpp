@@ -29,7 +29,7 @@ int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
                 vector<int>& vec) {
   mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(param));
   if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr = GErrorStr + "Parameter [" + param + "] is missing in int map\n";
+    GErrorStr += "Parameter [" + param + "] is missing in int map\n";
     return -1;
   }
   vec = mapstr2IntItr->second;
@@ -41,8 +41,7 @@ int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
   mapStr2doubleVec::iterator mapstr2DoubleItr;
   mapstr2DoubleItr = DoubleFeatureData.find(param);
   if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr =
-        GErrorStr + "Parameter [" + param + "] is missing in double map\n";
+    GErrorStr += "Parameter [" + param + "] is missing in double map\n";
     return -1;
   }
   vec = mapstr2DoubleItr->second;
@@ -90,7 +89,7 @@ int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
   strFeature += params;
   mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(strFeature));
   if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing\n";
+    GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
     return -1;
   }
   v = mapstr2IntItr->second;
@@ -105,7 +104,7 @@ int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
   mapStr2doubleVec::iterator mapstr2DoubleItr(
       DoubleFeatureData.find(strFeature));
   if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr = GErrorStr + "\nFeature [" + strFeature + "] is missing\n";
+    GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
     return -1;
   }
   v = mapstr2DoubleItr->second;
