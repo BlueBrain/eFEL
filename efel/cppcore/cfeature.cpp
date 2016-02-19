@@ -25,22 +25,20 @@
 using std::cout;
 using std::endl;
 
-cFeature::cFeature(const string& strDepFile, const string& outdir) {
+
+
+cFeature::cFeature(const string& strDepFile, const string& outdir)
+  : logger(outdir)
+{
   FillFptrTable();
   mapFptrLib["LibV1"] = &FptrTableV1;
   mapFptrLib["LibV2"] = &FptrTableV2;
   mapFptrLib["LibV3"] = &FptrTableV3;
   mapFptrLib["LibV4"] = &FptrTableV4;
   mapFptrLib["LibV5"] = &FptrTableV5;
+
   fillfeaturetypes();
-  logging = false;
-  if (!outdir.empty()) {
-    logging = true;
-    string filename = outdir + "/fllog.txt";
-    if (logging) {
-      logfile.open(filename.c_str(), std::fstream::out | std::fstream::app);
-    }
-  }
+
   cTree DepTree(strDepFile.c_str());
   // get Error
   if (DepTree.ErrorStr.length() != 0) {
@@ -54,10 +52,8 @@ cFeature::cFeature(const string& strDepFile, const string& outdir) {
   // log output
   time_t rawtime;
   time(&rawtime);
-  if (logging) {
-    logfile << "\n" << ctime(&rawtime) << "Initializing new session." << endl;
-    logfile << "Using dependcy file: " << strDepFile << endl;
-  }
+  logger << "\n" << ctime(&rawtime) << "Initializing new session." << endl;
+  logger << "Using dependency file: " << strDepFile << endl;
 }
 
 int cFeature::setVersion(string strDepFile) {
@@ -248,12 +244,6 @@ void cFeature::get_feature_names(vector<string>& feature_names) {
   }
 }
 
-cFeature::~cFeature() {
-  if (logging) {
-    logfile.close();
-  }
-}
-
 vector<int>& cFeature::getmapIntData(string strName) {
   map<string, vector<int> >::iterator mapstr2IntItr;
   mapstr2IntItr = mapIntData.find(strName);
@@ -297,12 +287,7 @@ int cFeature::printMapMember(FILE* fp) {
 }
 
 int cFeature::setFeatureInt(string strName, vector<int>& v) {
-  // log output
-  if (logging) {
-    logfile << "Set " << strName << ":";
-    appendtolog(v);
-    logfile << endl;
-  }
+  logger << "Set " << strName << ":" << v << endl;
   // printf ("Setting int feature [%s] = %d\n", strName.c_str(),v[0]);
   mapIntData[strName] = v;
   return 1;
@@ -417,52 +402,35 @@ int cFeature::calc_features(const string& name) {
 }
 
 int cFeature::getFeatureInt(string strName, vector<int>& vec) {
-  if (logging) {
-    logfile << "Going to calculate feature " << strName << " ..." << endl;
-  }
+  logger << "Going to calculate feature " << strName << " ..." << endl;
   if (calc_features(strName) < 0) {
-    if (logging) {
-      logfile << "Failed to calculate feature " << strName << ": " << GErrorStr
+    logger << "Failed to calculate feature " << strName << ": " << GErrorStr
               << endl;
-    }
     return -1;
   }
   vec = getmapIntData(strName);
 
-  if (logging) {
-    logfile << "Calculated feature " << strName << ":";
-    appendtolog(vec);
-    logfile << endl;
-  }
+  logger << "Calculated feature " << strName << ":" << vec << endl;
+
   return vec.size();
 }
 
 int cFeature::getFeatureDouble(string strName, vector<double>& vec) {
-  if (logging) {
-    logfile << "Going to calculate feature " << strName << " ..." << endl;
-  }
+  logger << "Going to calculate feature " << strName << " ..." << endl;
   if (calc_features(strName) < 0) {
-    if (logging) {
-      logfile << "Failed to calculate feature " << strName << ": " << GErrorStr
+    logger << "Failed to calculate feature " << strName << ": " << GErrorStr
               << endl;
-    }
     return -1;
   }
   vec = getmapDoubleData(strName);
 
-  if (logging) {
-    logfile << "Calculated feature " << strName << ":";
-    appendtolog(vec);
-    logfile << endl;
-  }
+  logger << "Calculated feature " << strName << ":" << vec << endl;
+
   return vec.size();
 }
 
 int cFeature::setFeatureString(const string& key, const string& value) {
-  // log output
-  if (logging) {
-    logfile << "Set " << key << ": " << value << endl;
-  }
+  logger << "Set " << key << ": " << value << endl;
   mapStrData[key] = value;
   return 1;
 }
@@ -508,9 +476,7 @@ mapDoubleData.end(); mapItrDouble++){
 int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   if (mapDoubleData.find(strName) != mapDoubleData.end()) {
     if (strName == "V") {
-      if (logging) {
-        logfile << "Feature \"V\" set. New trace, clearing maps." << endl;
-      }
+      logger << "Feature \"V\" set. New trace, clearing maps." << endl;
       mapDoubleData.clear();
       mapIntData.clear();
       mapStrData.clear();
@@ -519,11 +485,8 @@ int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   mapDoubleData[strName] = v;
 
   // log data output
-  if (logging) {
-    logfile << "Set " << strName << ":";
-    appendtolog(v);
-    logfile << endl;
-  }
+  logger << "Set " << strName << ":" << v << endl;
+
   return 1;
 }
 
