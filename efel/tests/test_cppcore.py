@@ -154,3 +154,22 @@ class TestCppcore(object):
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
         efel.cppcore.getFeature("does_not_exist", list())
+
+    def test_registerFeature(self):
+        import efel.cppcore
+
+        def getTwiceAP_Amp(output):
+            feature_values = list()
+            efel.cppcore.getFeature('AP_amplitude', feature_values)
+            output.extend(2*x for x in feature_values)
+            return len(feature_values)
+
+        self.setup_data()
+        efel.cppcore.registerFeature('getTwiceAP_Amp', getTwiceAP_Amp)
+        features = list()
+        ret = efel.cppcore.getFeature('getTwiceAP_Amp', features)
+        nt.ok_(isinstance(features[0], float))
+        nt.eq_(5, len(features))
+        nt.ok_(np.allclose(2 * np.array([80.45724099440199, 80.46320199354948, 80.73300299176428,
+                                         80.9965359926715, 81.87292599493423]),
+                           features))
