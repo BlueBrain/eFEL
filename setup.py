@@ -55,7 +55,8 @@ cppcore_headers = ['Utils.h',
                    'efel.h',
                    'cfeature.h',
                    'Global.h',
-                   'mapoperations.h']
+                   'mapoperations.h',
+                   'types.h']
 cppcore_sources = [
     os.path.join(
         cppcore_dir,
@@ -65,7 +66,6 @@ cppcore_headers = [
         'cppcore',
         filename) for filename in cppcore_headers]
 
-print(cppcore_headers)
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
                     include_dirs=['efel/cppcore/'])
