@@ -1,8 +1,10 @@
 all: install	
-install:
-	pip install . --upgrade
-install3:
-	pip3 install . --upgrade
+install: clean
+	python setup.py sdist
+	pip install dist/*.tar.gz --upgrade
+install3: clean
+	python3 setup.py sdist
+	pip3 install dist/*.tar.gz --upgrade
 doc_efeatures:
 	rm -rf docs/build_efeatures && \
 	mkdir docs/build_efeatures && \
@@ -44,6 +46,7 @@ clean:
 	rm -rf build_cmake
 	rm -rf build
 	rm -rf docs/build
+	rm -rf dist
 cpp:
 	mkdir -p build_cmake && \
 	cd build_cmake && \
