@@ -1,4 +1,4 @@
-all: install	
+all: install
 install: clean
 	python setup.py sdist
 	pip install dist/*.tar.gz --upgrade
@@ -55,3 +55,6 @@ cpp:
 push: clean install test doc doc_upload
 	git push
 	git push --tags
+graph:
+	pip install pygraphviz==1.3.1
+	utils/efel_graph_dependency -i efel/DependencyV5.txt --graph dependencies.png --graph-deps
