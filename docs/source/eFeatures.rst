@@ -16,7 +16,7 @@ Implemented eFeatures (to be continued)
 Spike event features
 --------------------
 
-.. image:: figures/inv_ISI.png
+.. image:: _static/figures/inv_ISI.png
 
 **LibV5 : inv_time_to_first_spike**
 
@@ -90,12 +90,12 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-**LibV1 : Spikecount**                                                           
+**LibV1 : Spikecount**
 
-number of spikes in the trace                                                    
+number of spikes in the trace
 
-- **Required features**: LibV1:peak_indices                                     
-- **Units**: constant                                                            
+- **Required features**: LibV1:peak_indices
+- **Units**: constant
 - **Pseudocode**: ::
 
     Spikecount = len(peak_indices)
@@ -121,11 +121,11 @@ The slope of a linear fit to a semilog plot of the ISI values
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
 - **Pseudocode**: ::
-  
+
     x = range(1, len(ISI_values)+1)
     log_ISI_values = numpy.log(ISI_values)
     slope, _ = numpy.polyfit(x, log_ISI_values, 1)
-    
+
     ISI_semilog_slope = slope
 
 **LibV5 : ISI_log_slope**
@@ -135,17 +135,17 @@ The slope of a linear fit to a loglog plot of the ISI values
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
 - **Pseudocode**: ::
-  
+
     log_x = numpy.log(range(1, len(ISI_values)+1))
     log_ISI_values = numpy.log(ISI_values)
     slope, _ = numpy.polyfit(log_x, log_ISI_values, 1)
-    
+
     ISI_log_slope = slope
-    
+
 Spike shape features
 --------------------
 
-.. image:: figures/AP_Amplitude.png
+.. image:: _static/figures/AP_Amplitude.png
 
 **LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp**
 
@@ -160,7 +160,7 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_Amplitude[1]
     APlast_amp = AP_Amplitude[-1]
 
-.. image:: figures/AHP.png
+.. image:: _static/figures/AHP.png
 
 **LibV1 : AHP_depth**
 
@@ -185,7 +185,7 @@ Time between AP peaks and first AHP depths
     AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
 
 
-.. image:: figures/AP_duration_half_width.png
+.. image:: _static/figures/AP_duration_half_width.png
 
 
 **LibV2 : AP_duration_half_width**
@@ -218,7 +218,7 @@ Width of spike at threshold
 Voltage features
 ----------------
 
-.. image:: figures/voltage_features.png
+.. image:: _static/figures/voltage_features.png
 
 
 **LibV5 : steady_state_voltage_stimend**
@@ -233,7 +233,7 @@ The average voltage during the last 10% of the stimulus duration.
     begin_time = stim_end - 0.1 * stim_duration
     end_time = stim_end
     steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t < end_time) & (t >= begin_time))])
-    
+
 
 **LibV1 : steady_state_voltage**
 
@@ -250,15 +250,15 @@ The average voltage after the stimulus
 
 The average voltage during the last 10% of time before the stimulus.
 
-- **Required features**: t, V, stim_start, stim_end 
+- **Required features**: t, V, stim_start, stim_end
 - **Parameters**: voltage_base_start_perc (default = 0.9)
                   voltage_base_end_perc (default = 1.0)
 - **Units**: mV
 - **Pseudocode**: ::
 
-    voltage_base = numpy.mean(voltage[numpy.where(                                  
-        (t >= voltage_base_start_perc * stim_start) & 
-        (t <= voltage_base_end_perc * stim_start))])       
+    voltage_base = numpy.mean(voltage[numpy.where(
+        (t >= voltage_base_start_perc * stim_start) &
+        (t <= voltage_base_end_perc * stim_start))])
 
 **LibV5 : decay_time_constant_after_stim**
 
@@ -269,17 +269,17 @@ The decay time constant of the voltage right after the stimulus
                   decay_end_after_stim (default = 10.0 ms)
 - **Units**: ms
 - **Pseudocode**: ::
-  
-    time_interval = t[numpy.where(t => decay_start_after_stim &                  
-                       t < decay_end_after_stim)] - t[numpy.where(t == stim_end)]                                             
-    voltage_interval = abs(voltages[numpy.where(t => decay_start_after_stim & 
-                                    t < decay_end_after_stim)] 
+
+    time_interval = t[numpy.where(t => decay_start_after_stim &
+                       t < decay_end_after_stim)] - t[numpy.where(t == stim_end)]
+    voltage_interval = abs(voltages[numpy.where(t => decay_start_after_stim &
+                                    t < decay_end_after_stim)]
                            - voltages[numpy.where(t == decay_start_after_stim)])
-                                                                                    
-    log_voltage_interval = numpy.log(voltage_interval)                                                               
-    slope, _ = numpy.polyfit(time_interval, log_voltage_interval, 1)                                                  
-                                                                                    
-    decay_time_constant_after_stim = -1. / slope                                    
+
+    log_voltage_interval = numpy.log(voltage_interval)
+    slope, _ = numpy.polyfit(time_interval, log_voltage_interval, 1)
+
+    decay_time_constant_after_stim = -1. / slope
 
 
 Requested eFeatures
@@ -307,7 +307,7 @@ Time between AP peaks and last AHP depths
 
     last_AHP_indices = last_min_element(voltage, peak_indices)
     AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
-    
+
 
 **LibV5 : steady_state_voltage_stimend_from_voltage_base**
 
@@ -358,7 +358,7 @@ The minimum voltage during stimulus
 - **Pseudocode**: ::
 
     max_duringstim_from_voltage_base = max_duringstim - voltage_base
-    
+
 **LibV5 : diff_max_duringstim**
 Difference between maximum and steady state during stimulation
 
@@ -367,7 +367,7 @@ Difference between maximum and steady state during stimulation
 - **Pseudocode**: ::
 
     diff_max_duringstim: max_duringstim - steady_state_voltage_stimend
-    
+
 **LibV5 : diff_min_duringstim**
 Difference between minimum and steady state during stimulation
 

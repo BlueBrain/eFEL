@@ -5,33 +5,33 @@ DEAP optimisation
 
 Introduction
 ------------
-Using the eFEL, pyNeuron and the DEAP optimisation library one can very easily 
+Using the eFEL, pyNeuron and the DEAP optimisation library one can very easily
 set up a genetic algorithm to fit parameters of a neuron model.
 
-We propose this setup because it leverages the power of the Python language 
-to load several software tools in a compact script. The DEAP 
+We propose this setup because it leverages the power of the Python language
+to load several software tools in a compact script. The DEAP
 (Distributed Evolutionary Algorithms in Python) allows you to easily switch
-algorithms. Parallelising your evaluation function over cluster computers 
-becomes a matter of only adding a couple of lines to your 
-`code <http://deap.readthedocs.org/en/latest/tutorials/basic/part4.html>`_, 
+algorithms. Parallelising your evaluation function over cluster computers
+becomes a matter of only adding a couple of lines to your
+`code <http://deap.readthedocs.org/en/latest/tutorials/basic/part4.html>`_,
 thanks to `pyScoop <http://pyscoop.org>`_.
 
-In this example we will assume you have installed 
-`eFEL <https://github.com/BlueBrain/eFEL>`_, 
-`pyNeuron <http://www.neuron.yale.edu/neuron/download/compile_linux#otheroptions>`_ 
+In this example we will assume you have installed
+`eFEL <https://github.com/BlueBrain/eFEL>`_,
+`pyNeuron <http://www.neuron.yale.edu/neuron/download/compile_linux#otheroptions>`_
 and `DEAP <https://github.com/DEAP/deap>`_
 
-The code of the example below can be downloaded from 
+The code of the example below can be downloaded from
 `here <https://github.com/BlueBrain/eFEL/tree/master/examples/deap>`_
 
-To keep the example simple, let's start from a passive single compartmental 
-model. The parameters to fit will be the conductance and reversal potential 
+To keep the example simple, let's start from a passive single compartmental
+model. The parameters to fit will be the conductance and reversal potential
 of the leak channel. We will simulate the model for 1000 ms, and at 500 ms
 a step current of 1.0 nA is injected until the end of the simulation.
 
-The objective values of the optimisation will be the voltage before the 
-current injection (i.e. the 'voltage_base' feature), and the steady state 
-voltage during the current injection at the end of the simulation 
+The objective values of the optimisation will be the voltage before the
+current injection (i.e. the 'voltage_base' feature), and the steady state
+voltage during the current injection at the end of the simulation
 ('steady_state_voltage').
 
 Evaluation function
@@ -57,12 +57,12 @@ This translates into the following file (let's call it 'deap_efel_eval1.py')::
 
 
     def evaluate(individual, target_voltage1=-80, target_voltage2=-60):
-        """                                                                          
-        Evaluate a neuron model with parameters e_pas and g_pas, extracts            
-        eFeatures from resulting traces and returns a tuple with                      
-        abs(voltage_base-target_voltage1) and                                        
-        abs(steady_state_voltage-target_voltage2)                                    
-        """     
+        """
+        Evaluate a neuron model with parameters e_pas and g_pas, extracts
+        eFeatures from resulting traces and returns a tuple with
+        abs(voltage_base-target_voltage1) and
+        abs(steady_state_voltage-target_voltage2)
+        """
 
         neuron.h.v_init = target_voltage1
 
@@ -108,9 +108,9 @@ This translates into the following file (let's call it 'deap_efel_eval1.py')::
 
 Setting up the algorithm
 ------------------------
-Now that we have an evaluation function we just have to pass this to the DEAP 
+Now that we have an evaluation function we just have to pass this to the DEAP
 optimisation library. DEAP allows you to easily set up a genetic algorithm
-to optimise your evaluation function. Let us first import all the necessary 
+to optimise your evaluation function. Let us first import all the necessary
 components::
 
     import random
@@ -125,7 +125,7 @@ components::
     from deap import algorithms
     random.seed(1)
 
-Next we define a number of constants that will be used as settings for DEAP 
+Next we define a number of constants that will be used as settings for DEAP
 later::
 
     # Population size
@@ -139,7 +139,7 @@ later::
     # The parent and offspring population size are set the same
     MU = OFFSPRING_SIZE
     LAMBDA = OFFSPRING_SIZE
-    # Crossover probability 
+    # Crossover probability
     CXPB = 0.7
     # Mutation probability, should sum to one together with CXPB
     MUTPB = 0.3
@@ -157,14 +157,14 @@ We have two parameters with the following bounds::
     UPPER = [1e-4, -20.0]
 
 
-As evolutionary algorithm we choose 
+As evolutionary algorithm we choose
 `NSGA2 <http://www.tik.ee.ethz.ch/pisa/selectors/nsga2/nsga2_documentation.txt>`_::
 
     SELECTOR = "NSGA2"
 
 
-Let's create the DEAP individual and fitness. 
-We set the weights of the fitness values to -1.0 so that the fitness function 
+Let's create the DEAP individual and fitness.
+We set the weights of the fitness values to -1.0 so that the fitness function
 will be minimised instead of maximised::
 
     creator.create("Fitness", base.Fitness, weights=[-1.0] * 2)
@@ -173,8 +173,8 @@ The individual will just be a list (of two parameters)::
 
     creator.create("Individual", list, fitness=creator.Fitness)
 
-We want to start with individuals for which the parameters are picked from a 
-uniform random distribution. Let's create a function that returns such a 
+We want to start with individuals for which the parameters are picked from a
+uniform random distribution. Let's create a function that returns such a
 random list based on the bounds and the dimensions of the problem::
 
     def uniform(lower_list, upper_list, dimensions):
@@ -187,7 +187,7 @@ random list based on the bounds and the dimensions of the problem::
             return [random.uniform(lower_list, upper_list)
                     for _ in range(dimensions)]
 
-DEAP works with the concept of 'toolboxes'. The user defines genetic 
+DEAP works with the concept of 'toolboxes'. The user defines genetic
 algorithm's individuals, operators, etc by registering them in a toolbox.
 
 We first create the toolbox::
@@ -268,7 +268,7 @@ as 'deap_efel.py'.
 
 Running the code
 ----------------
-Assuming that the necessary dependencies are installed correctly the 
+Assuming that the necessary dependencies are installed correctly the
 optimisation can then be run with::
 
     python deap_efel.py
