@@ -245,7 +245,8 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
               bind2nd(std::minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), std::ptr_fun(::fabs));
+    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), 
+              static_cast<double(*)(double)>(fabs));
     apfi[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               pi[i];
   }
