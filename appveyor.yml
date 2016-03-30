@@ -7,4 +7,5 @@ environment:
 build_script:
     - "python setup.py build"
 test_script:
-    - "make test"
+    - "pip install nose coverage --upgrade"
+    - "python setup.py nosetests"
