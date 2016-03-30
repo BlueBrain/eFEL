@@ -6,3 +6,5 @@ environment:
     - PYTHON: "C:\\Python27"
 build_script:
     - "python setup.py build"
+test_script:
+    - "python setup.py nosetests"
