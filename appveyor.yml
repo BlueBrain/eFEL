@@ -7,4 +7,4 @@ environment:
 build_script:
     - "python setup.py build"
 test_script:
-    - "python setup.py nosetests"
+    - "make test"
