@@ -12,6 +12,8 @@ notifications:
     on_success: change
     on_failure: change
     on_start: false
+git:
+    depth: 2147483647
 cache:
     directories:
       - $HOME/.cache/pip
