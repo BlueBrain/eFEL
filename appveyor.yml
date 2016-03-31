@@ -6,7 +6,7 @@ environment:
     - PYTHON: "C:\\Python27"
 build_script:
     - "python -m pip install pip --upgrade"
-    - "python setup.py build bdist_wheel"
+    - "python setup.py build"
 test_script:
     - "python -m pip install nose coverage --upgrade"
     - "python setup.py nosetests"
