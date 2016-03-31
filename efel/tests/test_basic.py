@@ -44,13 +44,13 @@ testdata_dir = os.path.join(
     'testdata')
 
 
-meanfrequency1_url = 'file://%s' % urllib.pathname2url(
+meanfrequency1_url = 'file:%s' % urllib.pathname2url(
     os.path.join(
         os.path.abspath(testdata_dir),
         'basic',
         'mean_frequency_1.txt'))
 
-zeroISIlog1_url = 'file://%s' % urllib.pathname2url(
+zeroISIlog1_url = 'file:%s' % urllib.pathname2url(
     os.path.join(
         os.path.abspath(testdata_dir),
         'basic',
