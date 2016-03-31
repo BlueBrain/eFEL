@@ -5,7 +5,7 @@ environment:
   matrix:
     - PYTHON: "C:\\Python27"
 build_script:
-    - "set PATH=C:\<python-dir>\scripts;%PATH%"
+    - "set PATH=C:\\<python-dir>\\scripts;%PATH%"
     - "pip install pip --upgrade"
     - "python setup.py build bdist_wheel"
 test_script:
