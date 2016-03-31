@@ -1,24 +1,5 @@
 """IO handler for eFEL"""
 
-"""
-Copyright (c) 2015, EPFL/Blue Brain Project
-
- This file is part of eFEL <https://github.com/BlueBrain/eFEL>
-
- This library is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License version 3.0 as published
- by the Free Software Foundation.
-
- This library is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- details.
-
- You should have received a copy of the GNU Lesser General Public License
- along with this library; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-"""
-
 import os
 
 # Python 2 has urlparse module, Python 3 has urllib.parse
@@ -30,7 +11,7 @@ except ImportError:
     # pylint:enable=E0611,F0401
 
 import mimetypes
-mimetypes.init([])
+
 
 def load_fragment(fragment_url, mime_type=None):
     """Load fragment
@@ -51,7 +32,8 @@ def load_fragment(fragment_url, mime_type=None):
         if mime_type is None:
             raise TypeError(
                 'load_fragment: impossible to guess MIME type from url, '
-                'please specify the type manually as argument: %s' % path)
+                'please specify the type manually as argument: path=%s url=%s' %
+                (path, fragment_url))
 
     if scheme == 'file':
         file_handle = open(os.path.join(server_loc, path), 'r')
