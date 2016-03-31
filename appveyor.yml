@@ -5,8 +5,8 @@ environment:
   matrix:
     - PYTHON: "C:\\Python27"
 build_script:
-    - ps: Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile "c:\\get-pip.py"
-    - "python c:\\get-pip.py"
+    - "set PATH=C:\<python-dir>\scripts;%PATH%"
+    - "pip install pip --upgrade"
     - "python setup.py build bdist_wheel"
 test_script:
     - "pip install nose coverage --upgrade"
