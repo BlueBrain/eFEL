@@ -5,6 +5,8 @@ environment:
   matrix:
     - PYTHON: "C:\\Python27"
 build_script:
+    - ps: Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile "c:\\get-pip.py"
+    - "python c:\\get-pip.py"
     - "python setup.py build"
 test_script:
     - "pip install nose coverage --upgrade"
