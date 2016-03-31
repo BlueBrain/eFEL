@@ -30,7 +30,7 @@ except ImportError:
     # pylint:enable=E0611,F0401
 
 import mimetypes
-
+mimetypes.init([])
 
 def load_fragment(fragment_url, mime_type=None):
     """Load fragment
