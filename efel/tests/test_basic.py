@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import os
+import urllib
 import nose.tools as nt
 
 
@@ -43,14 +44,18 @@ testdata_dir = os.path.join(
     'testdata')
 
 
-meanfrequency1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                                'basic',
-                                                'mean_frequency_1.txt')
+meanfrequency1_url = 'file://%s' % urllib.pathname2url(
+    os.path.join(
+        os.path.abspath(testdata_dir),
+        'basic',
+        'mean_frequency_1.txt'))
 
-zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                             'basic',
-                                             'zero_ISI_log_slope_skip'
-                                             '95824004.abf.csv')
+zeroISIlog1_url = 'file://%s' % urllib.pathname2url(
+    os.path.join(
+        os.path.abspath(testdata_dir),
+        'basic',
+        'zero_ISI_log_slope_skip'
+        '95824004.abf.csv'))
 
 
 def test_import():
