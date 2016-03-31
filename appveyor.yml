@@ -5,9 +5,8 @@ environment:
   matrix:
     - PYTHON: "C:\\Python27"
 build_script:
-    - "set PATH=C:\\<python-dir>\\scripts;%PATH%"
-    - "pip install pip --upgrade"
+    - "python -m pip install pip --upgrade"
     - "python setup.py build bdist_wheel"
 test_script:
-    - "pip install nose coverage --upgrade"
+    - "python -m pip install nose coverage --upgrade"
     - "python setup.py nosetests"
