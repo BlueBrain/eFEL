@@ -23,10 +23,8 @@ def load_fragment(fragment_url, mime_type=None):
 
     scheme = parsed_url.scheme
     server_loc = parsed_url.netloc
-    path = parsed_url.path
+    path = os.path.normpath(parsed_url.path).lstrip('\\')
     fragment_string = parsed_url.fragment
-
-    path = path.lstrip('\\')
 
     if mime_type is None:
         mimetypes.init()
