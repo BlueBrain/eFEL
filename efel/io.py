@@ -1,4 +1,32 @@
-"""IO handler for eFEL"""
+"""IO handler for eFEL
+
+This module provides the user-facing Python API of the eFEL.
+The convenience functions defined here call the underlying 'cppcore' library
+to hide the lower level API from the user.
+All functions in this module can be called as efel.functionname, it is
+not necessary to include 'api' as in efel.api.functionname.
+
+
+Copyright (c) 2015, EPFL/Blue Brain Project
+
+ This file is part of eFEL <https://github.com/BlueBrain/eFEL>
+
+ This library is free software; you can redistribute it and/or modify it under
+ the terms of the GNU Lesser General Public License version 3.0 as published
+ by the Free Software Foundation.
+
+ This library is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+"""
+
+
+# pylint: disable=R0912
 
 import os
 
@@ -30,10 +58,15 @@ def load_fragment(fragment_url, mime_type=None):
         mimetypes.init()
         mime_type, _ = mimetypes.guess_type(path)
         if mime_type is None:
-            raise TypeError(
-                'load_fragment: impossible to guess MIME type from url, '
-                'please specify the type manually as argument: path=%s url=%s' %
-                (path, fragment_url))
+            _, ext = os.path.splitext(path)
+            if ext.lower() == '.csv':
+                mime_type = 'text/csv'
+            else:
+                raise TypeError(
+                    'load_fragment: impossible to guess MIME type from url, '
+                    'please specify the type manually as argument: '
+                    'path=%s, url=%s' %
+                    (path, fragment_url))
 
     if scheme == 'file':
         file_handle = open(os.path.join(server_loc, path), 'r')
