@@ -26,6 +26,8 @@ def load_fragment(fragment_url, mime_type=None):
     path = parsed_url.path
     fragment_string = parsed_url.fragment
 
+    path = path.lstrip('\\')
+
     if mime_type is None:
         mimetypes.init()
         mime_type, _ = mimetypes.guess_type(path)
@@ -36,7 +38,6 @@ def load_fragment(fragment_url, mime_type=None):
                 (path, fragment_url))
 
     if scheme == 'file':
-        path = path.lstrip('\\')
         file_handle = open(os.path.join(server_loc, path), 'r')
 
     if 'text/' in mime_type:
