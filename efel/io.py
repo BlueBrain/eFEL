@@ -19,11 +19,11 @@ def load_fragment(fragment_url, mime_type=None):
     Load a fragment (e.g. time series data) from a given URL
     """
 
-    parsed_url = up.urlparse(fragment_url)
+    parsed_url = up.urlsplit(fragment_url)
 
     scheme = parsed_url.scheme
     server_loc = parsed_url.netloc
-    path = os.path.normpath(parsed_url.path)
+    path = parsed_url.path
     fragment_string = parsed_url.fragment
 
     if mime_type is None:
@@ -36,6 +36,7 @@ def load_fragment(fragment_url, mime_type=None):
                 (path, fragment_url))
 
     if scheme == 'file':
+        path = path.lstrip('\\')
         file_handle = open(os.path.join(server_loc, path), 'r')
 
     if 'text/' in mime_type:
