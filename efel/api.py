@@ -29,15 +29,15 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 import os
 import sys
-
 import numpy
+import six
 
 import efel
 
 try:
     import efel.cppcore as cppcore
 except ImportError:
-    raise ImportError(
+    six.reraise(ImportError, ImportError(
         '\n'
         'It looks like the efel.cppcore package could not be found.\n'
         'Could it be that you are running the \'import efel\' in a directory '
@@ -45,7 +45,7 @@ except ImportError:
         '(like e.g. the eFEL source directory) ?\n'
         'If this is the case, please try to import from another directory.\n'
         'If the issue persists, please create a ticket at '
-        'github.com/BlueBrain/eFEL/issues.\n'), None, sys.exc_info()[2]
+        'github.com/BlueBrain/eFEL/issues.\n'), sys.exc_info()[2])
 
 _settings = efel.Settings()
 _int_settings = {}
