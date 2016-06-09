@@ -27,11 +27,25 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
-import numpy
 import os
+import sys
+
+import numpy
 
 import efel
-import efel.cppcore as cppcore
+
+try:
+    import efel.cppcore as cppcore
+except ImportError:
+    raise ImportError(
+        '\n'
+        'It looks like the efel.cppcore package could not be found.\n'
+        'Could it be that you are running the \'import efel\' in a directory '
+        'that has a subdirectory called \'efel\' '
+        '(like e.g. the eFEL source directory) ?\n'
+        'If this is the case, please try to import from another directory.\n'
+        'If the issue persists, please create a ticket at '
+        'github.com/BlueBrain/eFEL/issues.\n'), None, sys.exc_info()[2]
 
 _settings = efel.Settings()
 _int_settings = {}
