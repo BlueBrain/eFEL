@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <list>

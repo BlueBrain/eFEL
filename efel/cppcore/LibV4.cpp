@@ -18,6 +18,7 @@
 
 #include "LibV4.h"
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <math.h>
 
