@@ -3,6 +3,7 @@ python:
   - '2.6'
   - '2.7'
   - '3.4'
+  - '3.5'
 install: pip install pip --upgrade
 script: make test
 notifications:
@@ -12,6 +13,8 @@ notifications:
     on_success: change
     on_failure: change
     on_start: false
+git:
+    depth: 2147483647
 cache:
     directories:
       - $HOME/.cache/pip
