@@ -199,7 +199,8 @@ static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
     vpeak.resize(pi[i] - apbi[i]);
     transform(v.begin() + apbi[i], v.begin() + pi[i], vpeak.begin(),
               bind2nd(std::minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), std::ptr_fun(::fabs));
+    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), 
+              static_cast<double(*)(double)>(fabs));
     apri[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               apbi[i];
   }
@@ -245,7 +246,8 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
               bind2nd(std::minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), std::ptr_fun(::fabs));
+    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), 
+              static_cast<double(*)(double)>(fabs));
     apfi[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               pi[i];
   }

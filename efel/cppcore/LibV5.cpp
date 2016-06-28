@@ -1810,8 +1810,8 @@ static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
     apbegin_index = apbi[i];
     range_min_index = apbegin_index - int(range);
     range_max_index = apbegin_index + int(range);
-    if (range_min_index < 0 or range_max_index < 0) return -1;
-    if (range_min_index > (int)t.size() or range_max_index > (int)t.size())
+    if (range_min_index < 0 || range_max_index < 0) return -1;
+    if (range_min_index > (int)t.size() || range_max_index > (int)t.size())
       return -1;
     if (v[range_max_index] - v[range_min_index] == 0) return -1;
     ap_phaseslope = (dvdt[range_max_index] - dvdt[range_min_index]) /
