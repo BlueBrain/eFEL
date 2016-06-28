@@ -156,26 +156,6 @@ Full documentation
 ==================
 The full documentation can be found [here](http://bluebrain.github.io/eFEL)
 
-<!---
-How to cite
-===========
-Every main version has a DOI:
-
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22430.svg)](http://dx.doi.org/10.5281/zenodo.22430)
-
-To cite the latest version (2.6):
-```xml
-@misc{werner_van_geit_2015_30074,
-  author       = {Werner Van Geit and
-                  croessert and
-                  Luis and
-                  MikeG and
-                  The Gitter Badger},
-  title        = {eFEL 2.6},
-  month        = sep,
-  year         = 2015,
-  doi          = {10.5281/zenodo.30074},
-  url          = {http://dx.doi.org/10.5281/zenodo.30074}
-}
-```
--->
+Funding
+=======
+This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP)
