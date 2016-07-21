@@ -96,7 +96,9 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AHP_depth_abs"] = "double";
   featuretypes["time_constant"] = "double";
   featuretypes["voltage_deflection"] = "double";
+  featuretypes["voltage_deflection_vb_ssse"] = "double";
   featuretypes["ohmic_input_resistance"] = "double";
+  featuretypes["ohmic_input_resistance_vb_ssse"] = "double";
   featuretypes["maximum_voltage"] = "double";
   featuretypes["minimum_voltage"] = "double";
   featuretypes["steady_state_voltage"] = "double";

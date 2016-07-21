@@ -30174,6 +30174,7 @@
         -32.599145073862502,
         -33.373859665012652
     ],
+    "ohmic_input_resistance_vb_ssse": null,
     "AHP_depth_from_peak": [
         66.465427163651626,
         53.553887537431038,
@@ -30244,6 +30245,9 @@
     ],
     "minimum_voltage": [
         -75.87104945779376
+    ],
+    "voltage_deflection_vb_ssse": [
+        36.42682562490954
     ],
     "Spikecount": [
         6

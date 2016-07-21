@@ -2282,3 +2282,74 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
 
   return 1;
 }
+
+
+/// *** Voltage deflection between voltage_base and steady_state_voltage_stimend
+
+int LibV5::voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "voltage_deflection_vb_ssse", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> voltage_base;
+  retVal = getDoubleVec(DoubleFeatureData, StringData,
+                        "voltage_base", voltage_base);
+  if (retVal <= 0) return -1;
+
+  vector<double> steady_state_voltage_stimend;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, 
+                            "steady_state_voltage_stimend",
+                        steady_state_voltage_stimend);
+  if (retVal <= 0) return -1;
+
+  vector<double> voltage_deflection_vb_ssse;
+
+  voltage_deflection_vb_ssse.push_back(
+          steady_state_voltage_stimend[0] - voltage_base[0]);
+  
+  setDoubleVec(DoubleFeatureData, StringData, 
+            "voltage_deflection_vb_ssse", voltage_deflection_vb_ssse);
+  retVal = 1;
+
+  return retVal;
+}
+
+
+// *** ohmic input resistance based on voltage_deflection_vb_ssse***
+
+int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "ohmic_input_resistance_vb_ssse", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> voltage_deflection_vb_ssse;
+  retVal = getDoubleVec(DoubleFeatureData, StringData,
+                        "voltage_deflection_vb_ssse", voltage_deflection_vb_ssse);
+  if (retVal <= 0) return -1;
+  vector<double> stimulus_current;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "stimulus_current",
+                        stimulus_current);
+
+  if (retVal <= 0) return -1;
+  vector<double> ohmic_input_resistance_vb_ssse;
+
+  ohmic_input_resistance_vb_ssse.push_back(
+          voltage_deflection_vb_ssse[0] / stimulus_current[0]);  
+  setDoubleVec(DoubleFeatureData, StringData, 
+            "ohmic_input_resistance_vb_ssse", ohmic_input_resistance_vb_ssse);
+  retVal = 1;
+
+  return retVal;
+}
+
+

@@ -125,6 +125,7 @@
     "minimum_voltage",
     "number_initial_spikes",
     "ohmic_input_resistance",
+    "ohmic_input_resistance_vb_ssse",
     "peak_indices",
     "peak_time",
     "peak_voltage",
@@ -143,5 +144,6 @@
     "voltage_after_stim",
     "voltage_base",
     "voltage_deflection",
-    "voltage_deflection_begin"
+    "voltage_deflection_begin",
+    "voltage_deflection_vb_ssse"
 ]

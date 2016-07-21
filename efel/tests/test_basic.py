@@ -870,6 +870,43 @@ def test_ohmic_inputresistance():
         stimulus_current)
 
 
+def test_ohmic_input_resistance_vb_ssse():
+    """basic: Test ohmic_input_resistance_vb_ssse"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['ohmic_input_resistance_vb_ssse', 'voltage_deflection_vb_ssse']
+
+    stimulus_current = 10.0
+    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    voltage_deflection = feature_values[0]['voltage_deflection_vb_ssse'][0]
+    ohmic_input_resistance = \
+        feature_values[0]['ohmic_input_resistance_vb_ssse'][0]
+    nt.assert_equal(
+        ohmic_input_resistance,
+        voltage_deflection /
+        stimulus_current)
+
+
 def test_spikecount2():
     """basic: Test Spikecount 2: test empty trace"""
 
