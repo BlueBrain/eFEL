@@ -20,7 +20,9 @@ LibV1:AHP_depth_abs_slow	#LibV1:peak_indices
 LibV1:AHP_slow_time         #LibV1:AHP_depth_abs_slow
 LibV1:time_constant
 LibV1:voltage_deflection
+LibV5:voltage_deflection_vb_ssse #LibV5:voltage_base #LibV5:steady_state_voltage_stimend 
 LibV1:ohmic_input_resistance    #LibV1:voltage_deflection
+LibV5:ohmic_input_resistance_vb_ssse    #LibV5:voltage_deflection_vb_ssse
 LibV1:maximum_voltage
 LibV1:minimum_voltage
 LibV1:interpolate

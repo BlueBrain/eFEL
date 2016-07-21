@@ -248,6 +248,11 @@ int FillFptrTable() {
   FptrTableV5["decay_time_constant_after_stim"] =
       &LibV5::decay_time_constant_after_stim;
 
+  FptrTableV5["ohmic_input_resistance_vb_ssse"] =
+      &LibV5::ohmic_input_resistance_vb_ssse;
+  FptrTableV5["voltage_deflection_vb_ssse"] =
+      &LibV5::voltage_deflection_vb_ssse;
+  
   //****************** end of FptrTableV5 *****************************
 
   return 1;
