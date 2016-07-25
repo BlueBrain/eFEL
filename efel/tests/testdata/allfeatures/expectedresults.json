@@ -30210,6 +30210,9 @@
     "voltage_deflection": [
         35.648256555882398
     ],
+    "maximum_voltage_from_voltagebase": [
+        93.461855873508085
+    ],
     "AP_begin_width": [
         4.7000000000010687,
         4.4000000000010004,
@@ -30541,9 +30544,6 @@
     ],
     "AP1_width": [
         1.5414218555179071
-    ],
-    "maximum_voltage_from_voltage_base": [
-        93.461855873508085
     ],
     "AP_rise_rate_change": [
         -0.4889129014340407,

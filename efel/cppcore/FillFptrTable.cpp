@@ -252,8 +252,8 @@ int FillFptrTable() {
       &LibV5::ohmic_input_resistance_vb_ssse;
   FptrTableV5["voltage_deflection_vb_ssse"] =
       &LibV5::voltage_deflection_vb_ssse;
-  FptrTableV5["maximum_voltage_from_voltage_base"] =
-      &LibV5::maximum_voltage_from_voltage_base;
+  FptrTableV5["maximum_voltage_from_voltagebase"] =
+      &LibV5::maximum_voltage_from_voltagebase;
   
   //****************** end of FptrTableV5 *****************************
 

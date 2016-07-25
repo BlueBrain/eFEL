@@ -1993,7 +1993,7 @@ int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
                         peakvoltage);
   if (retVal <= 0) {
     GErrorStr +=
-        "Error calculating peak_voltage for AP_amplitude_from_voltage_base";
+        "Error calculating peak_voltage for AP_amplitude_from_voltagebase";
     return -1;
   }
 
@@ -2353,13 +2353,13 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
 }
 
 // *** Diff between maximum voltage during stimulus and voltage_base ***
-int LibV5::maximum_voltage_from_voltage_base(mapStr2intVec& IntFeatureData,
+int LibV5::maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
   int retVal;
   int nSize;
   retVal = CheckInDoublemap(DoubleFeatureData, StringData,
-                            "maximum_voltage_from_voltage_base", nSize);
+                            "maximum_voltage_from_voltagebase", nSize);
   if (retVal)
     return nSize;
 
@@ -2373,13 +2373,13 @@ int LibV5::maximum_voltage_from_voltage_base(mapStr2intVec& IntFeatureData,
                         voltage_base);
   if (retVal <= 0) return -1;
 
-  vector<double> maximum_voltage_from_voltage_base;
+  vector<double> maximum_voltage_from_voltagebase;
 
-  maximum_voltage_from_voltage_base.push_back(
+  maximum_voltage_from_voltagebase.push_back(
           maximum_voltage[0] - voltage_base[0]);  
   setDoubleVec(DoubleFeatureData, StringData, 
-            "maximum_voltage_from_voltage_base", 
-            maximum_voltage_from_voltage_base);
+            "maximum_voltage_from_voltagebase", 
+            maximum_voltage_from_voltagebase);
   retVal = 1;
 
   return retVal;

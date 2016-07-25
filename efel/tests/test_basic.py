@@ -1077,8 +1077,8 @@ def test_steady_state_voltage_stimend():
                            feature_values['steady_state_voltage_stimend'][0])
 
 
-def test_maximum_voltage_from_voltage_base():
-    """basic: Test maximum_voltage_from_voltage_base"""
+def test_maximum_voltage_from_voltagebase():
+    """basic: Test maximum_voltage_from_voltagebase"""
 
     import efel
     efel.reset()
@@ -1097,7 +1097,7 @@ def test_maximum_voltage_from_voltage_base():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['maximum_voltage_from_voltage_base', 'voltage_base']
+    features = ['maximum_voltage_from_voltagebase', 'voltage_base']
 
     feature_values = \
         efel.getFeatureValues(
@@ -1110,11 +1110,11 @@ def test_maximum_voltage_from_voltage_base():
 
     voltage_base = feature_values['voltage_base'][0]
 
-    maximum_voltage_from_voltage_base = maximum_voltage - voltage_base
+    maximum_voltage_from_voltagebase = maximum_voltage - voltage_base
 
     nt.assert_almost_equal(
-        maximum_voltage_from_voltage_base,
-        feature_values['maximum_voltage_from_voltage_base'][0])
+        maximum_voltage_from_voltagebase,
+        feature_values['maximum_voltage_from_voltagebase'][0])
 
 
 def decay_time_constant_after_stim(time, voltage, interval_start,
