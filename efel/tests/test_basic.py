@@ -996,6 +996,15 @@ def test_getFeatureNames():
     nt.assert_equal(efel.getFeatureNames(), expected_featurenames)
 
 
+def test_getFeatureNameExists():
+    """basic: Test FeatureNameExists"""
+
+    import efel
+    efel.reset()
+    nt.assert_true(efel.FeatureNameExists('voltage_base'))
+    nt.assert_false(efel.FeatureNameExists('voltage_base_wrong'))
+
+
 def test_steady_state_voltage1():
     """basic: steady_state_voltage 1"""
 
