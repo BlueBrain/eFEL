@@ -997,7 +997,7 @@ def test_getFeatureNames():
 
 
 def test_steady_state_voltage1():
-    """basic: steady_state_voltage 1"""
+    """basic: Test steady_state_voltage"""
 
     import efel
     efel.reset()
@@ -1040,7 +1040,7 @@ def test_steady_state_voltage1():
 
 
 def test_steady_state_voltage_stimend():
-    """basic: steady_state_voltage_stimend 1"""
+    """basic: Test steady_state_voltage_stimend"""
 
     import efel
     efel.reset()
@@ -1075,6 +1075,46 @@ def test_steady_state_voltage_stimend():
 
     nt.assert_almost_equal(steady_state_voltage_stimend,
                            feature_values['steady_state_voltage_stimend'][0])
+
+
+def test_maximum_voltage_from_voltage_base():
+    """basic: Test maximum_voltage_from_voltage_base"""
+
+    import efel
+    efel.reset()
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['maximum_voltage_from_voltage_base', 'voltage_base']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)[0]
+
+    maximum_voltage = numpy.max(voltage[numpy.where(
+        (time <= stim_end) & (time >= stim_start)
+    )])
+
+    voltage_base = feature_values['voltage_base'][0]
+
+    maximum_voltage_from_voltage_base = maximum_voltage - voltage_base
+
+    nt.assert_almost_equal(
+        maximum_voltage_from_voltage_base,
+        feature_values['maximum_voltage_from_voltage_base'][0])
 
 
 def decay_time_constant_after_stim(time, voltage, interval_start,

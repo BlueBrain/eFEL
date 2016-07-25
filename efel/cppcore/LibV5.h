@@ -208,5 +208,8 @@ int voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
 int ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
+int maximum_voltage_from_voltage_base(mapStr2intVec& IntFeatureData,
+                                   mapStr2doubleVec& DoubleFeatureData,
+                                   mapStr2Str& StringData);
 }
 #endif

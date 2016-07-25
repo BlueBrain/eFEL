@@ -2352,4 +2352,35 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
+// *** Diff between maximum voltage during stimulus and voltage_base ***
+int LibV5::maximum_voltage_from_voltage_base(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "maximum_voltage_from_voltage_base", nSize);
+  if (retVal)
+    return nSize;
 
+  vector<double> maximum_voltage;
+  retVal = getDoubleVec(DoubleFeatureData, StringData,
+                        "maximum_voltage", maximum_voltage);
+  if (retVal <= 0) return -1;
+
+  vector<double> voltage_base;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "voltage_base",
+                        voltage_base);
+  if (retVal <= 0) return -1;
+
+  vector<double> maximum_voltage_from_voltage_base;
+
+  maximum_voltage_from_voltage_base.push_back(
+          maximum_voltage[0] - voltage_base[0]);  
+  setDoubleVec(DoubleFeatureData, StringData, 
+            "maximum_voltage_from_voltage_base", 
+            maximum_voltage_from_voltage_base);
+  retVal = 1;
+
+  return retVal;
+}
