@@ -117,6 +117,7 @@
     "is_not_stuck",
     "max_amp_difference",
     "maximum_voltage",
+    "maximum_voltage_from_voltagebase",
     "mean_AP_amplitude",
     "mean_frequency",
     "min_AHP_indices",

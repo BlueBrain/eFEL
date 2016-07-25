@@ -147,3 +147,4 @@ LibV5:voltage
 LibV5:steady_state_voltage_stimend
 LibV5:voltage_base
 LibV5:decay_time_constant_after_stim
+LibV5:maximum_voltage_from_voltagebase #LibV5:voltage_base #LibV1:maximum_voltage
