@@ -164,6 +164,23 @@ def getFeatureNames():
     return feature_names
 
 
+def FeatureNameExists(feature_name):
+    """Does a certain feature name exist ?
+
+    Parameters
+    ==========
+    feature_name : string
+                  Name of the feature to check
+
+    Returns
+    =======
+    FeatureNameExists : bool
+                    True if feature_name exists, otherwise False
+    """
+
+    return feature_name in getFeatureNames()
+
+
 def getDistance(trace, featureName, mean, std):
     """Calculate distance value for a list of traces.
 
