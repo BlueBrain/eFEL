@@ -1526,21 +1526,34 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
 static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
                             double stimStart, double stimEnd,
                             vector<double>& maxV, vector<double>& minV) {
-  int stimstartindex;
-  if (stimStart >= t[t.size() - 1]) {
+  if (stimStart > t[t.size() - 1]) {
     GErrorStr += "\nStimulus start larger than max time in trace\n";
     return -1;
   }
-  if (stimEnd >= t[t.size() - 1]) {
+  if (stimEnd > t[t.size() - 1]) {
     GErrorStr += "\nStimulus end larger than max time in trace\n";
     return -1;
   }
 
-  for (stimstartindex = 0; t[stimstartindex] < stimStart; stimstartindex++) {
-  };
-  int stimendindex;
-  for (stimendindex = 0; t[stimendindex] < stimEnd; stimendindex++) {
-  };
+  int stimstartindex, stimendindex;
+  
+  for (stimstartindex = 0; 
+          t[stimstartindex] < stimStart && stimstartindex <= t.size(); 
+          stimstartindex++) {};
+  for (stimendindex = 0; 
+          t[stimendindex] < stimEnd && stimstartindex <= t.size(); 
+          stimendindex++) {};
+  
+  if (stimstartindex >= t.size()) {
+    GErrorStr += "\nStimulus start index not found\n";
+    return -1;
+  }
+
+  if (stimendindex >= t.size()) {
+    GErrorStr += "\nStimulus end index not found\n";
+    return -1;
+  }
+
   maxV.push_back(*max_element(&v[stimstartindex], &v[stimendindex]));
   minV.push_back(*min_element(&v[stimstartindex], &v[stimendindex]));
   return 1;
