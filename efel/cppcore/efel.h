@@ -33,6 +33,6 @@ FEATURELIB_API int setFeatureString(const char *key, const char *value);
 FEATURELIB_API int getFeatureString(const char *key, char **value);
 FEATURELIB_API int printFptr();
 FEATURELIB_API char *getgError();
-FEATURELIB_API double getDistance(const char *strName, double mean, double std);
+FEATURELIB_API double getDistance(const char *strName, double mean, double std, bool trace_check);
 }
 #endif

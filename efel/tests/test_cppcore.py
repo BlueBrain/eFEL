@@ -42,17 +42,20 @@ testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 def test_import():
     """cppcore: Testing import of cppcore"""
-    import efel.cppcore
+    import efel.cppcore  # NOQA
 
 
 class TestCppcore(object):
 
-    def setup(self):
+    """Test cppcore"""
+
+    def setup(self):  # pylint: disable=R0201
         """Setup"""
         import efel
         efel.cppcore.Initialize(efel.getDependencyFileLocation(), "log")
 
-    def setup_data(self):
+    def setup_data(self):  # pylint: disable=R0201
+        """Set up data"""
         import efel
         stim_start = 500.0
         stim_end = 900.0
@@ -80,8 +83,7 @@ class TestCppcore(object):
         efel.cppcore.setFeatureDouble('burst_factor', [1.5])
         efel.cppcore.setFeatureDouble("initial_perc", [0.1])
 
-
-    def test_getFeatureNames(self):
+    def test_getFeatureNames(self):  # pylint: disable=R0201
         """cppcore: Testing getting all feature names"""
         import efel.cppcore
         feature_names = []
@@ -93,7 +95,7 @@ class TestCppcore(object):
             expected_featurenames = json.load(featurenames_json)
         nt.assert_equal(feature_names, expected_featurenames)
 
-    def test_getFeatureDouble_failure(self):
+    def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
         import efel.cppcore
         feature_values = list()
@@ -103,12 +105,14 @@ class TestCppcore(object):
         nt.assert_equal(return_value, -1)
 
     @nt.raises(TypeError)
-    def test_getFeatureDouble_wrong_type(self):
+    def test_getFeatureDouble_wrong_type(self):  # pylint: disable=R0201
+        """cppcore: Teting getFeatureDouble with wrong type"""
         import efel.cppcore
         efel.cppcore.getFeatureDouble("AP_fall_indices", list())
 
     @nt.raises(TypeError)
-    def test_getFeatureInt_wrong_type(self):
+    def test_getFeatureInt_wrong_type(self):  # pylint: disable=R0201
+        """cppcore: Teting getFeatureInt with wrong type"""
         import efel.cppcore
         efel.cppcore.getFeatureInt("AP_amplitude", list())
 
@@ -122,29 +126,32 @@ class TestCppcore(object):
             efel.cppcore.getDistance(
                 'AP_amplitude',
                 50.0,
-                10.0))
+                10.0,
+                trace_check=True))
 
     def test_getFeature(self):
+        """cppcore: Testing getFeature"""
         import efel.cppcore
         self.setup_data()
 
-        #get double feature
+        # get double feature
         feature_values = list()
         efel.cppcore.getFeature('AP_amplitude', feature_values)
         nt.ok_(isinstance(feature_values[0], float))
         nt.eq_(5, len(feature_values))
-        nt.ok_(np.allclose([80.45724099440199, 80.46320199354948, 80.73300299176428,
-                            80.9965359926715, 81.87292599493423],
-                           feature_values))
+        nt.ok_(
+            np.allclose(
+                [80.45724099440199, 80.46320199354948, 80.73300299176428,
+                 80.9965359926715, 81.87292599493423], feature_values))
 
-        #get int feature
+        # get int feature
         feature_values = list()
         efel.cppcore.getFeature('AP_fall_indices', feature_values)
         nt.ok_(isinstance(feature_values[0], int))
         nt.eq_(5, len(feature_values))
         nt.eq_([5665, 6066, 6537, 7170, 8275], feature_values)
 
-    def test_getFeature_failure(self):
+    def test_getFeature_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
         feature_values = list()
@@ -152,12 +159,13 @@ class TestCppcore(object):
         nt.assert_equal(return_value, -1)
 
     @nt.raises(TypeError)
-    def test_getFeature_non_existant(self):
+    def test_getFeature_non_existant(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
         efel.cppcore.getFeature("does_not_exist", list())
 
-    def test_logging(self):
+    def test_logging(self):  # pylint: disable=R0201
+        """cppcore: Testing logging"""
         import efel
         tempdir = tempfile.mkdtemp('efel_tests')
         try:

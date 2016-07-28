@@ -203,15 +203,22 @@ static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-static PyObject* getDistance(PyObject* self, PyObject* args) {
+static PyObject* getDistance_wrapper(PyObject* self, 
+        PyObject* args, PyObject* kwds) {
   char* feature_name;
   double mean, std, distance;
+  int trace_check;
 
-  if (!PyArg_ParseTuple(args, "sdd", &feature_name, &mean, &std)) {
+  static char *kwlist[] = {"feature_name", "mean", "std", "trace_check", NULL};
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|i", kwlist, 
+              &feature_name, &mean, &std, 
+              &trace_check)) {
     return NULL;
   }
 
-  distance = pFeature->getDistance(feature_name, mean, std);
+  distance = pFeature->getDistance(feature_name, mean, std, 
+          trace_check);
 
   return Py_BuildValue("d", distance);
 }
@@ -256,7 +263,7 @@ static PyMethodDef CppCoreMethods[] = {
     {"getFeatureNames", getFeatureNames, METH_VARARGS,
       "Get the names of all the available features"},
 
-    {"getDistance", getDistance, METH_VARARGS,
+    {"getDistance", (PyCFunction)getDistance_wrapper, METH_VARARGS|METH_KEYWORDS,
       "Get the distance between a feature and experimental data"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
