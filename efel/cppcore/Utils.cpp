@@ -22,12 +22,13 @@
 #include <iostream>
 #include <iostream>
 #include <iterator>
+#include <math.h>
 
 int LinearInterpolation(double Stepdx, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,
                         vector<double>& InterpY) {
   unsigned nCount = Y.size();
-  int nPts = int((X[nCount - 1] - X[0]) / Stepdx);  // Because time is in
+  int nPts = ceil((X[nCount - 1] - X[0]) / Stepdx) + 1;  // Because time is in
                                                     // millisecond and needs to
                                                     // be interpolated at 0.1 ms
                                                     // interval
