@@ -530,7 +530,8 @@ int cFeature::printFeature(const char* strFileName) {
   return 1;
 }
 
-double cFeature::getDistance(string strName, double mean, double std) {
+double cFeature::getDistance(string strName, double mean, double std, 
+        bool trace_check) {
 
   vector<double> feature_vec;
   vector<int> feature_veci;
@@ -540,10 +541,11 @@ double cFeature::getDistance(string strName, double mean, double std) {
 
   // Check if a the trace doesn't contain any spikes outside of the stimulus
   // interval
-  retVal = getFeatureInt("trace_check", feature_veci);
-  if (retVal < 0) {
-    // printf("Warning: Trace check failed");
-    return 250.0;
+  if (trace_check) {
+      retVal = getFeatureInt("trace_check", feature_veci);
+      if (retVal < 0) {
+          return 250.0;
+      }
   }
 
   // check datatype of feature

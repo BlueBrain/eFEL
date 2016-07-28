@@ -113,9 +113,10 @@ char *getgError() {
   return (char *)error.c_str();
 }
 
-double getDistance(const char *strName, double mean, double std) {
+double getDistance(const char *strName, double mean, double std, 
+        bool trace_check) {
   double value;
-  value = pFeature->getDistance(string(strName), mean, std);
+  value = pFeature->getDistance(string(strName), mean, std, trace_check);
   return value;
 }
 

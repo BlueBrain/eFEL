@@ -181,7 +181,7 @@ def FeatureNameExists(feature_name):
     return feature_name in getFeatureNames()
 
 
-def getDistance(trace, featureName, mean, std):
+def getDistance(trace, featureName, mean, std, trace_check=None):
     """Calculate distance value for a list of traces.
 
     Parameters
@@ -212,7 +212,17 @@ def getDistance(trace, featureName, mean, std):
     for item in list(trace.keys()):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
-    return efel.cppcore.getDistance(featureName, mean, std)
+    if trace_check is not None:
+        return efel.cppcore.getDistance(
+            featureName,
+            mean,
+            std,
+            trace_check=1 if trace_check else 0)
+    else:
+        return efel.cppcore.getDistance(
+        featureName,
+        mean,
+        std)
 
 
 def _initialise():

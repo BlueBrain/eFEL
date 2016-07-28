@@ -736,6 +736,49 @@ def test_getDistance1():
             10))
 
 
+def test_getDistance_trace_check():
+    """basic: Test getDistance trace_check option"""
+
+    import numpy
+    import efel
+    efel.reset()
+
+    dt = 0.1
+
+    # voltage trace at constant -70 mV
+    v = numpy.zeros(int(100 / dt)) - 70.0
+
+    # create 'spikes' at 20, 40 and 60 ms
+    v[int(20 / dt):int(25 / dt)] = 20.
+    v[int(40 / dt):int(45 / dt)] = 20.
+    v[int(60 / dt):int(65 / dt)] = 20.
+
+    traces = []
+    trace = {}
+    trace['T'] = numpy.arange(len(v)) * dt
+    trace['V'] = v
+    trace['stim_start'] = [10]
+    trace['stim_end'] = [70]
+    traces.append(trace)
+
+    nt.assert_almost_equal(efel.getDistance(trace, 'Spikecount', 0, 1), 3.0)
+
+    trace['stim_end'] = [50]
+
+    efel.reset()
+    nt.assert_almost_equal(
+        efel.getDistance(
+            trace,
+            'Spikecount',
+            0,
+            1,
+            trace_check=False),
+        3.0)
+
+    efel.reset()
+    nt.assert_almost_equal(efel.getDistance(trace, 'Spikecount', 0, 1), 250.0)
+
+
 def test_APlast_amp():
     """basic: Test APlast_amp"""
 
