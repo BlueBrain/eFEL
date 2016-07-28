@@ -195,6 +195,8 @@ def getDistance(trace, featureName, mean, std, trace_check=None):
            Mean to calculate the distance from
     std : float
           Std to scale the distance with
+    trace_check : float
+          Let the library check if there are spikes outside of stimulus interval
 
     Returns
     =======
