@@ -207,7 +207,7 @@ static PyObject* getDistance_wrapper(PyObject* self,
         PyObject* args, PyObject* kwds) {
   char* feature_name;
   double mean, std, distance;
-  int trace_check;
+  int trace_check = 1;
 
   static char *kwlist[] = {"feature_name", "mean", "std", "trace_check", NULL};
 
