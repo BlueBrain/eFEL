@@ -162,6 +162,29 @@ The relative height of the action potential from spike onset
 
 .. image:: _static/figures/AHP.png
 
+**LibV1 : AHP_depth_abs**
+
+Absolute voltage values at the first after-hyperpolarization
+
+- **Required features**: LibV5:min_AHP_values (mV)
+- **Units**: mV
+
+**LibV1 : AHP_depth_abs_slow**
+
+Absolute voltage values at the first after-hyperpolarization starting 5 ms after
+the peak
+
+- **Required features**: LibV1:peak_indices
+- **Units**: mV
+
+**LibV1 : AHP_slow_time**
+
+Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
+interspike interval 
+
+- **Required features**: LibV1:AHP_depth_abs_slow
+- **Units**: constant
+  
 **LibV1 : AHP_depth**
 
 Relative voltage values at the first after-hyperpolarization
@@ -332,6 +355,8 @@ The minimum voltage during stimulus
 
 **LibV5 : min_duringstim_from_voltage_base**
 The minimum voltage during stimulus
+Absolute voltage values at the first after-hyperpolarization starting 5 ms after
+the peak
 
 - **Required features**: LibV5: min_duringstim (mV), LibV5: voltage_base (mV)
 - **Units**: mV
