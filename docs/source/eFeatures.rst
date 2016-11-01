@@ -355,8 +355,6 @@ The minimum voltage during stimulus
 
 **LibV5 : min_duringstim_from_voltage_base**
 The minimum voltage during stimulus
-Absolute voltage values at the first after-hyperpolarization starting 5 ms after
-the peak
 
 - **Required features**: LibV5: min_duringstim (mV), LibV5: voltage_base (mV)
 - **Units**: mV
