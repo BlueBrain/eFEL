@@ -28,14 +28,15 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
 import os
-import sys
 import numpy
-import six
 
 import efel
+import efel.cppcore as cppcore
 
+"""
+Disabling cppcore importerror override, it confuses users in case the error
+is caused by something else
 try:
-    import efel.cppcore as cppcore
 except ImportError:
     six.reraise(ImportError, ImportError(
         '\n'
@@ -46,6 +47,7 @@ except ImportError:
         'If this is the case, please try to import from another directory.\n'
         'If the issue persists, please create a ticket at '
         'github.com/BlueBrain/eFEL/issues.\n'), sys.exc_info()[2])
+"""
 
 _settings = efel.Settings()
 _int_settings = {}
@@ -222,9 +224,9 @@ def getDistance(trace, featureName, mean, std, trace_check=None):
             trace_check=1 if trace_check else 0)
     else:
         return efel.cppcore.getDistance(
-        featureName,
-        mean,
-        std)
+            featureName,
+            mean,
+            std)
 
 
 def _initialise():
