@@ -1561,19 +1561,33 @@ int LibV5::mean_AP_amplitude(mapStr2intVec& IntFeatureData,
     return nSize;
 
   vector<double> AP_amplitude;
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "mean_AP_amplitude",
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "AP_amplitude",
                         AP_amplitude);
-  if (retVal <= 0) {
+
+  if (retVal < 0) {
     GErrorStr += "Error calculating AP_amplitude for mean_AP_amplitude";
     return -1;
+  } else if (retVal == 0) {
+    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
+    return -1;
+  } else if (AP_amplitude.size() == 0) {
+    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
+    return -1;
   }
+
   vector<double> mean_AP_amplitude;
+  double mean_amp = 0.0;
+
   for (unsigned i = 0; i < AP_amplitude.size(); i++) {
-    mean_AP_amplitude[0] = mean_AP_amplitude[0] + AP_amplitude[i];
+    mean_amp += AP_amplitude[i];
   }
-  mean_AP_amplitude[0] = mean_AP_amplitude[0] / AP_amplitude.size();
+
+  mean_amp /= AP_amplitude.size();
+  mean_AP_amplitude.push_back(mean_amp);
+
   setDoubleVec(DoubleFeatureData, StringData, "mean_AP_amplitude",
                mean_AP_amplitude);
+
   return mean_AP_amplitude.size();
 }
 

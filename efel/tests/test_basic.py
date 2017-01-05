@@ -1303,3 +1303,33 @@ def test_getmeanfeaturevalues():
 
     nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
                     mean_feature_values[0]['AP_amplitude'])
+
+
+def test_mean_AP_amplitude():
+    """basic: Test mean_AP_amplitude"""
+
+    import efel
+    efel.reset()
+
+    import numpy
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            ['AP_amplitude', 'mean_AP_amplitude'], raise_warnings=False)
+
+    nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
+                    feature_values[0]['mean_AP_amplitude'])
