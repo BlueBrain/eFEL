@@ -1,6 +1,12 @@
-"""IO handler for eFEL"""
+"""IO handler for eFEL
 
-"""
+This module provides the user-facing Python API of the eFEL.
+The convenience functions defined here call the underlying 'cppcore' library
+to hide the lower level API from the user.
+All functions in this module can be called as efel.functionname, it is
+not necessary to include 'api' as in efel.api.functionname.
+
+
 Copyright (c) 2015, EPFL/Blue Brain Project
 
  This file is part of eFEL <https://github.com/BlueBrain/eFEL>
@@ -18,6 +24,9 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  along with this library; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+
+
+# pylint: disable=R0912
 
 import os
 
@@ -38,20 +47,26 @@ def load_fragment(fragment_url, mime_type=None):
     Load a fragment (e.g. time series data) from a given URL
     """
 
-    parsed_url = up.urlparse(fragment_url)
+    parsed_url = up.urlsplit(fragment_url)
 
     scheme = parsed_url.scheme
     server_loc = parsed_url.netloc
-    path = parsed_url.path
+    path = os.path.normpath(parsed_url.path).lstrip('\\')
     fragment_string = parsed_url.fragment
 
     if mime_type is None:
         mimetypes.init()
         mime_type, _ = mimetypes.guess_type(path)
         if mime_type is None:
-            raise TypeError(
-                'load_fragment: impossible to guess MIME type from url, '
-                'please specify the type manually as argument: %s' % path)
+            _, ext = os.path.splitext(path)
+            if ext.lower() == '.csv':
+                mime_type = 'text/csv'
+            else:
+                raise TypeError(
+                    'load_fragment: impossible to guess MIME type from url, '
+                    'please specify the type manually as argument: '
+                    'path=%s, url=%s' %
+                    (path, fragment_url))
 
     if scheme == 'file':
         file_handle = open(os.path.join(server_loc, path), 'r')

@@ -5,3 +5,5 @@
 /build.sh.lviz
 *.pyc
 /build.sh
+.coverage
+coverage.xml

@@ -29,14 +29,12 @@ update_version:
 	git add GITHASH.txt && \
 	git add VERSION.txt && \
 	git commit -m 'Updated version number'
-test: install
+test:
 	pip install nose coverage --upgrade
-	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
-		--cover-package efel
-test3: install3
+	python setup.py nosetests
+test3:
 	pip3 install nose coverage --upgrade
-	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
-		--cover-package efel
+	python setup.py nosetests
 pypi: test
 	pip install twine --upgrade
 	rm -rf dist

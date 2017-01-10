@@ -1,0 +1,12 @@
+version: 1.0.{build}
+build:
+  verbosity: minimal
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+build_script:
+    - "python -m pip install numpy"
+    - "python setup.py build"
+test_script:
+    - "python -m pip install nose coverage --upgrade"
+    - "python setup.py nosetests"
