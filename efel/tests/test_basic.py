@@ -263,7 +263,6 @@ def test_multiprocessing_traces():
     feature_values_serial = efel.getFeatureValues(
         [trace1, trace2],
         [feature_name], raise_warnings=True)
-    print feature_values_serial
 
     efel.reset()
     import multiprocessing
@@ -273,7 +272,6 @@ def test_multiprocessing_traces():
         [trace1, trace2],
         [feature_name], parallel_map=pool.map, raise_warnings=False)
 
-    print feature_values_parallel
     nt.assert_equal(
         list(feature_values_serial[0]['peak_time']),
         list(feature_values_parallel[0]['peak_time']))
