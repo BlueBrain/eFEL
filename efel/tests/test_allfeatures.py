@@ -146,7 +146,7 @@ def test_allfeatures():
 
     import numpy
     nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
-    for feature_name, feature_value in feature_values.iteritems():
+    for feature_name, feature_value in feature_values.items():
         if feature_name != 'voltage':
             expected_value = expected_results[feature_name]
             if feature_name is None:
