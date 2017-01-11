@@ -31,6 +31,7 @@ LibV1:steady_state_voltage
 LibV3:depolarized_base
 LibV1:ISI_CV	#LibV1:ISI_values
 LibV1:Spikecount	#LibV1:peak_indices
+LibV5:Spikecount_stimint	#LibV1:peak_time
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values
 LibV2:AP_rise_indices       #LibV1:peak_indices     #LibV5:AP_begin_indices
 LibV2:AP_end_indices        #LibV1:peak_indices

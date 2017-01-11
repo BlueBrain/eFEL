@@ -92,13 +92,24 @@ time from stimulus start to last spike
 
 **LibV1 : Spikecount**
 
-number of spikes in the trace
+number of spikes in the trace, including outside of stimulus interval
 
 - **Required features**: LibV1:peak_indices
 - **Units**: constant
 - **Pseudocode**: ::
 
     Spikecount = len(peak_indices)
+
+**LibV5 : Spikecount_stimint**
+
+number of spikes inside the stimulus interval
+
+- **Required features**: LibV1:peak_time
+- **Units**: constant
+- **Pseudocode**: ::
+
+    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
+    Spikecount_stimint = len(peaktimes_stimint)
 
 **LibV5 : number_initial_spikes**
 

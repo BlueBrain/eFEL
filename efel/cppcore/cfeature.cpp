@@ -163,6 +163,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AHP_depth_abs_slow"] = "double";
   featuretypes["AHP_slow_time"] = "double";
   featuretypes["Spikecount"] = "int";
+  featuretypes["Spikecount_stimint"] = "int";
   featuretypes["AHP_depth"] = "double";
   featuretypes["amp_drop_first_second"] = "double";
   featuretypes["amp_drop_first_last"] = "double";

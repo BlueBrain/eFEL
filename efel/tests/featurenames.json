@@ -90,6 +90,7 @@
     "ISI_semilog_slope",
     "ISI_values",
     "Spikecount",
+    "Spikecount_stimint",
     "adaptation_index",
     "adaptation_index2",
     "all_ISI_values",
