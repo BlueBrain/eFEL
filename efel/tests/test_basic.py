@@ -47,6 +47,10 @@ meanfrequency1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                                 'basic',
                                                 'mean_frequency_1.txt')
 
+spikeoutsidestim_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                                  'basic',
+                                                  'spike_outside_stim.txt')
+
 zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                              'basic',
                                              'zero_ISI_log_slope_skip'
@@ -839,6 +843,49 @@ def test_spikecount1():
     peak_indices = feature_values[0]['peak_indices']
     spikecount = feature_values[0]['Spikecount'][0]
     nt.assert_equal(len(peak_indices), spikecount)
+
+
+def test_spikecount_stimint1():
+    """basic: Test Spikecount_stimint 1"""
+
+    import numpy
+    import efel
+    efel.reset()
+
+    stim_start = 700.0
+    stim_end = 2700.0
+
+    time = efel.io.load_fragment('%s#col=1' % spikeoutsidestim_url)
+    voltage = efel.io.load_fragment('%s#col=2' % spikeoutsidestim_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['peak_time', 'Spikecount_stimint', 'Spikecount']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    peak_times = feature_values[0]['peak_time']
+    spikecount = feature_values[0]['Spikecount'][0]
+    spikecount_stimint = feature_values[0]['Spikecount_stimint'][0]
+
+    interval_peaktimes, = \
+        numpy.where((peak_times >= stim_start) & (peak_times <= stim_end))
+
+    nt.assert_equal(
+        len(interval_peaktimes),
+        spikecount_stimint)
+
+    nt.assert_equal(
+        spikecount,
+        spikecount_stimint + 2)
 
 
 def test_spikecount_libv4peakindices():
