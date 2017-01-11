@@ -262,9 +262,10 @@ def test_multiprocessing_traces():
 
     feature_values_serial = efel.getFeatureValues(
         [trace1, trace2],
-        [feature_name], raise_warnings=False)
+        [feature_name], raise_warnings=True)
     print feature_values_serial
 
+    efel.reset()
     import multiprocessing
     pool = multiprocessing.Pool()
 
