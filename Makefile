@@ -33,6 +33,7 @@ test: install
 	pip install nose coverage --upgrade
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 		--cover-package efel
+	cat efel/tests/log/fllog.txt
 test3: install3
 	pip3 install nose coverage --upgrade
 	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
