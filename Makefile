@@ -32,7 +32,7 @@ update_version:
 test: install
 	pip install nose coverage --upgrade
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
-		--cover-package efel || (cat log/fllog.txt; exit 1;)
+		--cover-package efel test_basic.py:test_multiprocessing_traces || (cat log/fllog.txt; exit 1;)
 	cat efel/tests/log/fllog.txt
 test3: install3
 	pip3 install nose coverage --upgrade
