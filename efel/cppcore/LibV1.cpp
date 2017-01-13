@@ -84,12 +84,14 @@ static int __peak_indices(double dThreshold, vector<double>& V,
     }
   }
   if (dnVec.size() == 0) {
-    printf("\nVoltage never goes below or above threshold in spike detection.\n");
+    GErrorStr += 
+        "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
 
   if (dnVec.size() != upVec.size()) {
-    printf("\nVoltage never goes below threshold after last spike.\n");
+    GErrorStr += 
+        "\nVoltage never goes below threshold after last spike.\n";
     return 0;
   }
 
