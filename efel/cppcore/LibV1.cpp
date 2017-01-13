@@ -1623,7 +1623,7 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-
+static bool is_nan(double x) { return x != x; }
 // *** steady state voltage ***
 static int __steady_state_voltage(const vector<double>& v,
                                   const vector<double>& t, double stimEnd,
@@ -1633,9 +1633,14 @@ static int __steady_state_voltage(const vector<double>& v,
   for (int i = t.size() - 1; t[i] > stimEnd; i--) {
     mean += v[i];
     mean_size++;
+    if(is_nan(v[i])){
+       cout << "NAN found, i: " << i << " t[i]: " << t[i] << " v[i]: " << v[i] << '\n';
+    }
   }
   cout << "__steady_state_voltage: mean_size: " << mean_size
-      << " mean: " << mean << " t.size(): " << t.size() << '\n';
+      << " mean: " << mean 
+      << " v.size(): " << v.size()
+      << " t.size(): " << t.size() << '\n';
   mean /= mean_size;
   ssv.push_back(mean);
   return 1;
