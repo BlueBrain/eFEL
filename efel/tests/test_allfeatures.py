@@ -147,16 +147,15 @@ def test_allfeatures():
     import numpy
     nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
     for feature_name, feature_value in feature_values.items():
-        if feature_name != 'voltage':
-            expected_value = expected_results[feature_name]
-            if feature_name is None:
-                equal = (expected_value is None)
-            if expected_value is None:
-                equal = (feature_value is None)
-            else:
-                equal = numpy.allclose(feature_value, expected_value)
+        expected_value = expected_results[feature_name]
+        if feature_name is None:
+            equal = (expected_value is None)
+        if expected_value is None:
+            equal = (feature_value is None)
+        else:
+            equal = numpy.allclose(feature_value, expected_value)
 
-            if not equal:
-                print("Difference in feature %s: value=%s expected=%s" %
-                      (feature_name, feature_value, expected_value))
-            nt.assert_true(equal)
+        if not equal:
+            print("Difference in feature %s: value=%s expected=%s" %
+                  (feature_name, feature_value, expected_value))
+        nt.assert_true(equal)
