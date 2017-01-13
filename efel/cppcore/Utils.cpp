@@ -23,11 +23,19 @@
 #include <iostream>
 #include <iterator>
 #include <math.h>
+#include <assert.h>
 
 int LinearInterpolation(double Stepdx, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,
                         vector<double>& InterpY) {
-  unsigned nCount = Y.size();
+
+  // Safety checks
+  assert(X.size() == Y.size());
+  assert(X.size() > 2);
+  assert(Stepdx != 0);
+  
+  unsigned nCount = X.size();
+
   int nPts = ceil((X[nCount - 1] - X[0]) / Stepdx) + 1;  // Because time is in
                                                     // millisecond and needs to
                                                     // be interpolated at 0.1 ms
@@ -35,13 +43,22 @@ int LinearInterpolation(double Stepdx, const vector<double>& X,
   double input = X[0];
   unsigned int i = 1;
   double dif1, dif2;
+
   InterpY.push_back(Y[0]);
   InterpX.push_back(X[0]);
+
   for (int j = 1; j < nPts; j++) {
     input = input + Stepdx;
+
     while ((X[i] < input) && (i < nCount-1)) i++;
-    dif1 = X[i] - X[i - 1];  //!=0 per definition
+    assert(i >= 1);
+    assert(i < nCount);
+
+    dif1 = X[i] - X[i - 1];
+    assert(dif1 != 0); //!=0 per definition
+    
     dif2 = input - X[i - 1];
+
     InterpY.push_back(Y[i - 1] + ((Y[i] - Y[i - 1]) * dif2 / dif1));
     InterpX.push_back(input);
   }
