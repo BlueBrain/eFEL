@@ -19,6 +19,8 @@
 #include "mapoperations.h"
 #include <math.h>
 
+#include <iostream>
+
 extern string GErrorStr;
 
 /*
@@ -63,6 +65,8 @@ void setIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
   string params;
   getStrParam(StringData, "params", params);
   key += params;
+  std::cout << "Setting Int[" << value.size() << "]: " << key << ": "
+      << (value.size() ? value[0] : -1) << '\n';
   IntFeatureData[key] = value;
 }
 
@@ -71,6 +75,8 @@ void setDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
   string params;
   getStrParam(StringData, "params", params);
   key += params;
+  std::cout << "Setting double[" << value.size() << "]: " << key << ": "
+      << (value.size() ? value[0] : -100.0) << '\n';
   DoubleFeatureData[key] = value;
 }
 

@@ -1634,6 +1634,8 @@ static int __steady_state_voltage(const vector<double>& v,
     mean += v[i];
     mean_size++;
   }
+  cout << "__steady_state_voltage: mean_size: " << mean_size
+      << " mean: " << mean << " t.size(): " << t.size() << '\n';
   mean /= mean_size;
   ssv.push_back(mean);
   return 1;

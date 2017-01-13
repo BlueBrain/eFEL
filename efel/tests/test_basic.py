@@ -224,9 +224,17 @@ def test_empty_trace():
 
 def test_multiprocessing_traces():
     """basic: Test multiprocessing map"""
+    def print_settings(name):
+        print('Settings: %s' % name)
+        print('_settings: %s' % vars(efel.api._settings))
+        print('_int_settings: %s' % efel.api._int_settings)
+        print('_double_settings: %s' % efel.api._double_settings)
+        print('*' * 10)
 
     import efel
+    print_settings(0)
     efel.reset()
+    print_settings(1)
     import numpy
 
     stim_start = 31.2
@@ -260,9 +268,11 @@ def test_multiprocessing_traces():
     trace2['stim_start'] = [stim_start]
     trace2['stim_end'] = [stim_end]
 
+    print_settings(2)
     feature_values_serial = efel.getFeatureValues(
         [trace1, trace2],
         [feature_name], raise_warnings=False)
+    print_settings(3)
 
     efel.reset()
     import multiprocessing
