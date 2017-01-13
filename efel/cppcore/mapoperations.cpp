@@ -99,6 +99,10 @@ int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
     return -1;
   }
   v = mapstr2IntItr->second;
+
+  std::cout << "Getting int[" << v.size() << "]: " << strFeature << ": "
+      << (v.size() ? v[0] : -100.0) << '\n';
+
   return (v.size());
 }
 
@@ -114,11 +118,17 @@ int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
     return -1;
   }
   v = mapstr2DoubleItr->second;
+
+  std::cout << "Getting double[" << v.size() << "]: " << strFeature << ": "
+      << (v.size() ? v[0] : -100.0) << '\n';
+
   return (v.size());
 }
 
 int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
                   string strFeature, int& nSize) {
+  std::cout << "CheckInIntmap" << strFeature << '\n';
+
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
@@ -133,6 +143,9 @@ int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
 
 int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize) {
+
+  std::cout << "CheckInDoublemap" << strFeature << '\n';
+
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
