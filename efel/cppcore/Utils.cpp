@@ -39,7 +39,7 @@ int LinearInterpolation(double Stepdx, const vector<double>& X,
   InterpX.push_back(X[0]);
   for (int j = 1; j < nPts; j++) {
     input = input + Stepdx;
-    while ((X[i] < input) && (i < nCount)) i++;
+    while ((X[i] < input) && (i < nCount-1)) i++;
     dif1 = X[i] - X[i - 1];  //!=0 per definition
     dif2 = input - X[i - 1];
     InterpY.push_back(Y[i - 1] + ((Y[i] - Y[i - 1]) * dif2 / dif1));
