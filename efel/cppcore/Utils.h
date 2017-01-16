@@ -19,6 +19,10 @@
 #ifndef __UTILS
 #define __UTILS
 
+
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <vector>
 
 using std::vector;
@@ -54,5 +58,16 @@ ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
   }
   return lowest;
 }
+
+#define EFEL_ASSERT(assertion, message) efel_assert(assertion, message, __FILE__,__LINE__)
+inline void
+efel_assert(bool assertion, const char *message, const char *file, const int line)
+{
+  if(!assertion){
+    printf("Assertion fired(%s:%d): %s\n", file, line, message);
+    exit(-1);
+  }
+}
+
 
 #endif

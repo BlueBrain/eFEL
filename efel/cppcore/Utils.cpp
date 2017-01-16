@@ -25,39 +25,36 @@
 #include <math.h>
 #include <assert.h>
 
-int LinearInterpolation(double Stepdx, const vector<double>& X,
-                        const vector<double>& Y, vector<double>& InterpX,
+int LinearInterpolation(double Stepdx,
+                        const vector<double>& X,
+                        const vector<double>& Y,
+                        vector<double>& InterpX,
                         vector<double>& InterpY) {
 
   // Safety checks
-  assert(X.size() == Y.size());
-  assert(X.size() > 2);
+  EFEL_ASSERT(X.size() == Y.size(), "X & Y have to have the same point count");
+  EFEL_ASSERT(2 < X.size(), "Need at least 2 points in X");
   assert(Stepdx != 0);
   
-  unsigned nCount = X.size();
+  size_t nCount = X.size() - 1;
+  size_t i = 1;
 
-  int nPts = ceil((X[nCount - 1] - X[0]) / Stepdx) + 1;  // Because time is in
-                                                    // millisecond and needs to
-                                                    // be interpolated at 0.1 ms
-                                                    // interval
   double input = X[0];
-  unsigned int i = 1;
   double dif1, dif2;
 
   InterpY.push_back(Y[0]);
   InterpX.push_back(X[0]);
 
-  for (int j = 1; j < nPts; j++) {
-    input = input + Stepdx;
+  while(input < X[nCount]){
+    input += Stepdx;
 
-    while ((X[i] < input) && (i < nCount-1)) i++;
-    assert(i >= 1);
-    assert(i < nCount);
+    while (X[i] < input && i < nCount) {
+      i++;
+    }
 
     dif1 = X[i] - X[i - 1];
-    assert(dif1 != 0); //!=0 per definition
-    
     dif2 = input - X[i - 1];
+    assert(dif1 != 0); //!=0 per definition
 
     InterpY.push_back(Y[i - 1] + ((Y[i] - Y[i - 1]) * dif2 / dif1));
     InterpX.push_back(input);
