@@ -29,7 +29,6 @@
 
 
 using std::bind2nd;
-using std::cout;
 using std::find_if;
 using std::greater;
 using std::greater_equal;
@@ -1623,7 +1622,6 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-static bool is_nan(double x) { return x != x; }
 // *** steady state voltage ***
 static int __steady_state_voltage(const vector<double>& v,
                                   const vector<double>& t, double stimEnd,
@@ -1633,14 +1631,7 @@ static int __steady_state_voltage(const vector<double>& v,
   for (int i = t.size() - 1; t[i] > stimEnd; i--) {
     mean += v[i];
     mean_size++;
-    if(is_nan(v[i])){
-       cout << "NAN found, i: " << i << " t[i]: " << t[i] << " v[i]: " << v[i] << '\n';
-    }
   }
-  cout << "__steady_state_voltage: mean_size: " << mean_size
-      << " mean: " << mean 
-      << " v.size(): " << v.size()
-      << " t.size(): " << t.size() << '\n';
   mean /= mean_size;
   ssv.push_back(mean);
   return 1;
@@ -1745,7 +1736,7 @@ int LibV1::printVectorI(char* strName, vector<int> vec) {
     }
     pos1 = max_element(vec.begin(), vec.end());
     pos2 = min_element(vec.begin(), vec.end());
-    cout << "max :" << *pos1 << " min :" << *pos2;
+    std::cout << "max :" << *pos1 << " min :" << *pos2;
   }
   printf("]\n");
   return 0;
@@ -1763,7 +1754,7 @@ int LibV1::printVectorD(char* strName, vector<double> vec) {
     }
     pos1 = max_element(vec.begin(), vec.end());
     pos2 = min_element(vec.begin(), vec.end());
-    cout << "max :" << *pos1 << " min :" << *pos2;
+    std::cout << "max :" << *pos1 << " min :" << *pos2;
   }
   printf("]\n");
   return 0;
