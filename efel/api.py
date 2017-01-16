@@ -62,8 +62,10 @@ def reset():
     original state.
     """
 
-    global _settings
+    global _settings, _int_settings, _double_settings
     _settings = efel.Settings()
+    _int_settings = {}
+    _double_settings = {}
 
     setDoubleSetting('spike_skipf', 0.1)
     setIntSetting('max_spike_skip', 2)

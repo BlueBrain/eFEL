@@ -93,6 +93,7 @@ int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
     return -1;
   }
   v = mapstr2IntItr->second;
+
   return (v.size());
 }
 
@@ -108,6 +109,7 @@ int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
     return -1;
   }
   v = mapstr2DoubleItr->second;
+
   return (v.size());
 }
 

@@ -29,7 +29,6 @@
 
 
 using std::bind2nd;
-using std::cout;
 using std::find_if;
 using std::greater;
 using std::greater_equal;
@@ -84,13 +83,13 @@ static int __peak_indices(double dThreshold, vector<double>& V,
     }
   }
   if (dnVec.size() == 0) {
-    GErrorStr +=
+    GErrorStr += 
         "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
 
   if (dnVec.size() != upVec.size()) {
-    GErrorStr +=
+    GErrorStr += 
         "\nVoltage never goes below threshold after last spike.\n";
     return 0;
   }
@@ -1623,7 +1622,6 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-
 // *** steady state voltage ***
 static int __steady_state_voltage(const vector<double>& v,
                                   const vector<double>& t, double stimEnd,
@@ -1738,7 +1736,7 @@ int LibV1::printVectorI(char* strName, vector<int> vec) {
     }
     pos1 = max_element(vec.begin(), vec.end());
     pos2 = min_element(vec.begin(), vec.end());
-    cout << "max :" << *pos1 << " min :" << *pos2;
+    std::cout << "max :" << *pos1 << " min :" << *pos2;
   }
   printf("]\n");
   return 0;
@@ -1756,7 +1754,7 @@ int LibV1::printVectorD(char* strName, vector<double> vec) {
     }
     pos1 = max_element(vec.begin(), vec.end());
     pos2 = min_element(vec.begin(), vec.end());
-    cout << "max :" << *pos1 << " min :" << *pos2;
+    std::cout << "max :" << *pos1 << " min :" << *pos2;
   }
   printf("]\n");
   return 0;

@@ -144,14 +144,18 @@ def test_allfeatures():
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
 
-    all_equal = True
+    import numpy
     nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
-    for feature_name, feature_value in list(feature_values.items())[:1]:
-        # feature_value = feature_values[feature_name]
+    for feature_name, feature_value in feature_values.items():
         expected_value = expected_results[feature_name]
-        if feature_value != expected_value:
-            print("Difference in feature %s: value=%s expected=%s" % \
-                (feature_name, feature_value, expected_value))
-            all_equal = False
+        if feature_name is None:
+            equal = (expected_value is None)
+        if expected_value is None:
+            equal = (feature_value is None)
+        else:
+            equal = numpy.allclose(feature_value, expected_value)
 
-    nt.assert_true(all_equal)
+        if not equal:
+            print("Difference in feature %s: value=%s expected=%s" %
+                  (feature_name, feature_value, expected_value))
+        nt.assert_true(equal)

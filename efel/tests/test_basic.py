@@ -224,7 +224,6 @@ def test_empty_trace():
 
 def test_multiprocessing_traces():
     """basic: Test multiprocessing map"""
-
     import efel
     efel.reset()
     import numpy
@@ -264,6 +263,7 @@ def test_multiprocessing_traces():
         [trace1, trace2],
         [feature_name], raise_warnings=False)
 
+    efel.reset()
     import multiprocessing
     pool = multiprocessing.Pool()
 
