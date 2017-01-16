@@ -83,7 +83,7 @@ static int __peak_indices(double dThreshold, vector<double>& V,
     }
   }
   if (dnVec.size() == 0) {
-    GErrorStr += 
+    GErrorStr +=
         "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
@@ -1527,24 +1527,24 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     GErrorStr += "\nStimulus start larger than max time in trace\n";
     return -1;
   }
+
   if (stimEnd > t[t.size() - 1]) {
     GErrorStr += "\nStimulus end larger than max time in trace\n";
     return -1;
   }
 
-  int stimstartindex, stimendindex;
-  
-  for (stimstartindex = 0; 
-          t[stimstartindex] < stimStart && stimstartindex <= t.size(); 
-          stimstartindex++) {};
-  for (stimendindex = 0; 
-          t[stimendindex] < stimEnd && stimstartindex <= t.size(); 
-          stimendindex++) {};
-  
+  size_t stimstartindex = 0;
+  while(t[stimstartindex] < stimStart && stimstartindex <= t.size())
+       stimstartindex++;
+
   if (stimstartindex >= t.size()) {
     GErrorStr += "\nStimulus start index not found\n";
     return -1;
   }
+
+  size_t stimendindex = 0;
+  while(t[stimendindex] < stimEnd && stimstartindex <= t.size())
+       stimendindex++;
 
   if (stimendindex >= t.size()) {
     GErrorStr += "\nStimulus end index not found\n";
@@ -1553,6 +1553,7 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
 
   maxV.push_back(*max_element(&v[stimstartindex], &v[stimendindex]));
   minV.push_back(*min_element(&v[stimstartindex], &v[stimendindex]));
+
   return 1;
 }
 

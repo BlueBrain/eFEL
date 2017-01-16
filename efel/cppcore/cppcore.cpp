@@ -112,7 +112,7 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
   }
 }
 
-static PyObject* 
+static PyObject*
 _getfeature(PyObject* self, PyObject* args, const string &type) {
   char* feature_name;
   PyObject* py_values;
@@ -203,22 +203,24 @@ static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-static PyObject* getDistance_wrapper(PyObject* self, 
-        PyObject* args, PyObject* kwds) {
+static PyObject* getDistance_wrapper(PyObject* self,
+                                     PyObject* args,
+                                     PyObject* kwds) {
   char* feature_name;
   double mean, std, distance;
   int trace_check = 1;
 
-  static char *kwlist[] = {"feature_name", "mean", "std", "trace_check", NULL};
+  const char *kwlist[] = {"feature_name", "mean", "std", "trace_check", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|i", kwlist, 
-              &feature_name, &mean, &std, 
-              &trace_check)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|i",
+                                   const_cast<char**>(kwlist),
+                                   &feature_name, &mean, &std,
+                                   &trace_check)) {
     return NULL;
   }
 
-  distance = pFeature->getDistance(feature_name, mean, std, 
-          trace_check);
+  distance = pFeature->getDistance(feature_name, mean, std,
+                                   trace_check);
 
   return Py_BuildValue("d", distance);
 }
