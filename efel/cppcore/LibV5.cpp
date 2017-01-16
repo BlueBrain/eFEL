@@ -37,7 +37,6 @@ static int __ISI_log_slope(const vector<double>& isiValues,
 
   vector<double> log_isivalues;
   vector<double> x;
-  vector<double> log_x;
 
   for (unsigned i = 0; i < isiValues.size(); i++) {
     skippedISIValues.push_back(isiValues[i]);
@@ -59,19 +58,22 @@ static int __ISI_log_slope(const vector<double>& isiValues,
 
   for (unsigned i = 0; i < skippedISIValues.size(); i++) {
     log_isivalues.push_back(log(skippedISIValues[i]));
-    x.push_back((double)i + 1);
-    log_x.push_back(log((double)i + 1));
+    if (semilog) {
+      x.push_back((double)i + 1);
+    } else {
+      x.push_back(log((double)i + 1));
+    }
   }
 
   vector<double> result;
-  if (semilog) {
-    slope_straight_line_fit(x, log_isivalues, result);
-  } else {
-    slope_straight_line_fit(log_x, log_isivalues, result);
-  }
-  // result[0] is the slope
+  if (x.size() == 0 || log_isivalues.size() == 0)
+    return -1;
 
-  if (!(result[0] >= 0) && !(result[0] <= 0)) return -1;
+  slope_straight_line_fit(x, log_isivalues, result);
+
+  // result[0] is the slope
+  if (result[0] == 0. || is_nan(result[0]))
+    return -1;
 
   slope.push_back(result[0]);
 

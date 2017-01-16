@@ -69,5 +69,8 @@ efel_assert(bool assertion, const char *message, const char *file, const int lin
   }
 }
 
-
+inline bool is_nan(double x)
+{
+  return x != x;
+}
 #endif

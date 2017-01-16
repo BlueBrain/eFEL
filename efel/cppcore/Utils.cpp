@@ -97,13 +97,12 @@ void getfivepointstencilderivative(const vector<double>& v,
 // slope[2] = coefficient of determination R^2
 void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
                              vector<double>& slope) {
+
+  EFEL_ASSERT(x.size() == y.size(), "X & Y have to have the same point count");
+  EFEL_ASSERT(1 <= x.size(), "Need at least 1 points in X");
+
   slope.resize(3);
-  if (x.size() != y.size()) {
-    printf("Unequal vectors in straight line fit\n");
-    slope[0] = 1.;
-    slope[1] = 1000.;
-    return;
-  }
+
   double sum_x = 0.;
   double sum_y = 0.;
   double sum_x2 = 0.;
