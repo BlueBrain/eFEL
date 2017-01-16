@@ -89,8 +89,7 @@ static int __peak_indices(double dThreshold, vector<double>& V,
   }
 
   if (dnVec.size() != upVec.size()) {
-    GErrorStr += 
-        "\nVoltage never goes below threshold after last spike.\n";
+    GErrorStr += "\nVoltage never goes below threshold after last spike.\n";
     return 0;
   }
 
@@ -1339,9 +1338,6 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   //
   vector<double> log_v(dvdt_decay.size(), 0.);
 
-  // stores slope and relative deviation
-  vector<double> slope;
-
   // golden section search algorithm
   const double PHI = 1.618033988;
   vector<double> x(3, .0);
@@ -1352,8 +1348,10 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   for (unsigned i = 0; i < log_v.size(); i++) {
     log_v[i] = log(v_decay[i] - v_decay.back() + x[1]);
   }
-  slope_straight_line_fit(t_decay, log_v, slope);
-  double residuum = slope[1];
+
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(t_decay, log_v);
+  double residuum = fit.average_rss;
   bool right = true;
   double newx;
   while (x[2] - x[0] > .01) {
@@ -1367,9 +1365,9 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
     for (unsigned i = 0; i < log_v.size(); i++) {
       log_v[i] = log(v_decay[i] - v_decay.back() + newx);
     }
-    slope_straight_line_fit(t_decay, log_v, slope);
+    fit = slope_straight_line_fit(t_decay, log_v);
 
-    if (slope[1] < residuum) {
+    if (fit.average_rss < residuum) {
       if (right) {
         x[0] = x[1];
         x[1] = newx;
@@ -1377,7 +1375,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
         x[2] = x[1];
         x[1] = newx;
       }
-      residuum = slope[1];
+      residuum = fit.average_rss;
     } else {
       if (right) {
         x[2] = newx;
@@ -1387,7 +1385,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
       right = !right;
     }
   }
-  tc.push_back(-1. / slope[0]);
+  tc.push_back(-1. / fit.slope);
   return 1;
 }
 int LibV1::time_constant(mapStr2intVec& IntFeatureData,
@@ -1649,13 +1647,13 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
 
   vector<double> v;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
+  if (retVal < 1) return -1;
   vector<double> t;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
+  if (retVal < 1) return -1;
   vector<double> stimEnd;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
+  if (retVal != 1) return -1;
 
   vector<double> ssv;
   retVal = __steady_state_voltage(v, t, stimEnd[0], ssv);

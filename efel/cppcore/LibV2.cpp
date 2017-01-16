@@ -965,10 +965,10 @@ int LibV2::E39(mapStr2intVec& IntFeatureData,
                      freq);
       frequency[i] = freq[0];
     }
-    vector<double> slope;
-    slope_straight_line_fit(current, frequency, slope);
-    vector<double> e39(1, slope[0]);
-    vector<double> e39_cod(1, slope[2]);
+    linear_fit_result fit;
+    fit = slope_straight_line_fit(current, frequency);
+    vector<double> e39(1, fit.slope);
+    vector<double> e39_cod(1, fit.r_square);
     setDoubleVec(DoubleFeatureData, StringData, "E39", e39);
     setDoubleVec(DoubleFeatureData, StringData, "E39_cod", e39_cod);
     return e39.size();

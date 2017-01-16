@@ -25,6 +25,8 @@
 #include <deque>
 #include <functional>
 #include <iterator>
+#include <Utils.h>
+
 
 using std::bind2nd;
 using std::greater_equal;
@@ -56,7 +58,7 @@ static int __ISI_log_slope(const vector<double>& isiValues,
     }
   }
 
-  for (unsigned i = 0; i < skippedISIValues.size(); i++) {
+  for (size_t i = 0; i < skippedISIValues.size(); i++) {
     log_isivalues.push_back(log(skippedISIValues[i]));
     if (semilog) {
       x.push_back((double)i + 1);
@@ -65,17 +67,16 @@ static int __ISI_log_slope(const vector<double>& isiValues,
     }
   }
 
-  vector<double> result;
   if (x.size() == 0 || log_isivalues.size() == 0)
     return -1;
 
-  slope_straight_line_fit(x, log_isivalues, result);
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(x, log_isivalues);
 
-  // result[0] is the slope
-  if (result[0] == 0. || is_nan(result[0]))
+  if (fit.slope == 0. || is_nan(fit.slope))
     return -1;
 
-  slope.push_back(result[0]);
+  slope.push_back(fit.slope);
 
   return slope.size();
 }
@@ -2167,11 +2168,10 @@ double __decay_time_constant_after_stim(const vector<double>& times,
     decayTimes[i] = times[decayStartIdx + i];
   }
 
-  vector<double> result;
-  // result[0] is the slope
-  slope_straight_line_fit(decayTimes, decayValues, result);
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(decayTimes, decayValues);
 
-  const double tau = -1.0 / result[0];
+  const double tau = -1.0 / fit.slope;
   return std::abs(tau);
 }
 

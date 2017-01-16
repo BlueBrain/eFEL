@@ -27,14 +27,23 @@
 
 using std::vector;
 
+struct linear_fit_result
+{
+  double slope;
+  // average residual sum squares
+  double average_rss;
+  // coefficient of determination R^2
+  double r_square;
+};
+
 int LinearInterpolation(double dt, const vector<double>& X,
                         const vector<double>& Y, vector<double>& InterpX,
                         vector<double>& InterpY);
 int getCentralDifferenceDerivative(double dx, const vector<double>& v,
                                    vector<double>& dv);
 void getfivepointstencilderivative(const vector<double>& v, vector<double>& dv);
-void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
-                             vector<double>& slope);
+linear_fit_result slope_straight_line_fit(const vector<double>& x,
+                                          const vector<double>& y);
 
 template <class ForwardIterator>
 ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
