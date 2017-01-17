@@ -1837,8 +1837,7 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   }
 
   vector<int> minahpindices;
-  retval =
-      getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
+  retval = getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
   if (retval < 0) return -1;
   vector<double> apwidth;
   retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,
