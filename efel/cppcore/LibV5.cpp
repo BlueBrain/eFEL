@@ -428,6 +428,7 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
 
   int end_index = distance(t.begin(), t.end());
   peak_indices_plus.push_back(end_index);

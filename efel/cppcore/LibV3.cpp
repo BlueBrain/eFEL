@@ -446,7 +446,9 @@ int LibV3::min_AHP_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
+  if (retVal <= 0) return -1;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
 
   int end_index = distance(
       t.begin(), find_if(t.begin(), t.end(),
@@ -1147,8 +1149,9 @@ int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
       getIntVec(IntFeatureData, StringData, "AP_end_indices", apendi);
   if (retVal < 0) return -1;
   vector<int> apbi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  if (retVal < 0) return -1;
+
   vector<double> dep_base;
   retVal = __depolarized_base(t, v, stimstart[0], stimend[0], apbi, apendi,
                               dep_base);

@@ -361,7 +361,9 @@ int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
+  if (retVal <= 0) return -1;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
 
   int end_index = distance(
       t.begin(), find_if(t.begin(), t.end(),
@@ -1054,7 +1056,6 @@ static int __spike_width2(vector<double>& t, vector<double>& V,
   vector<double> v, dv1, dv2;
   double dx = t[1] - t[0];
   double VoltThreshold, VoltMax, HalfV, T0, V0, V1, fraction, TStart, TEnd;
-  size_t index;
   for (size_t i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
     v.clear();
     dv1.clear();
@@ -1068,12 +1069,11 @@ static int __spike_width2(vector<double>& t, vector<double>& V,
       v.push_back(V[j]);
     }
 
-    index = v.size();  // tbr
     getCentralDifferenceDerivative(dx, v, dv1);
     getCentralDifferenceDerivative(dx, dv1, dv2);
     double dMax = dv2[0];
 
-    index = 0;
+    size_t index = 0;
     for (size_t j = 1; j < dv2.size(); ++j) {
       if (dMax <= dv2[j]) {
         dMax = dv2[j];
