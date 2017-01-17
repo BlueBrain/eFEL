@@ -121,8 +121,7 @@ int LibV2::AP_begin_indices(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimend);
   if (retVal < 0) return -1;
   vector<int> ahpi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
+  retVal = getIntVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
   if (retVal < 0) return -1;
   vector<int> apbi;
   retVal = __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi);
@@ -221,8 +220,7 @@ int LibV2::AP_rise_indices(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
   if (retVal < 0) return -1;
   vector<int> apbi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   if (retVal < 0) return -1;
   vector<int> pi;
   retVal = getIntVec(IntFeatureData, StringData, "peak_indices", pi);
@@ -792,8 +790,7 @@ int LibV2::fast_AHP_change(mapStr2intVec& IntFeatureData,
     return nsize;
   }
   vector<double> fastahp;
-  retval =
-      getDoubleVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
+  retval = getDoubleVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
   if (retval < 0) return -1;
   vector<double> fastahpchange;
   retval = __fast_AHP_change(fastahp, fastahpchange);
@@ -965,10 +962,10 @@ int LibV2::E39(mapStr2intVec& IntFeatureData,
                      freq);
       frequency[i] = freq[0];
     }
-    vector<double> slope;
-    slope_straight_line_fit(current, frequency, slope);
-    vector<double> e39(1, slope[0]);
-    vector<double> e39_cod(1, slope[2]);
+    linear_fit_result fit;
+    fit = slope_straight_line_fit(current, frequency);
+    vector<double> e39(1, fit.slope);
+    vector<double> e39_cod(1, fit.r_square);
     setDoubleVec(DoubleFeatureData, StringData, "E39", e39);
     setDoubleVec(DoubleFeatureData, StringData, "E39_cod", e39_cod);
     return e39.size();

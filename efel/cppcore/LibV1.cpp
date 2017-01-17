@@ -83,14 +83,13 @@ static int __peak_indices(double dThreshold, vector<double>& V,
     }
   }
   if (dnVec.size() == 0) {
-    GErrorStr += 
+    GErrorStr +=
         "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
 
   if (dnVec.size() != upVec.size()) {
-    GErrorStr += 
-        "\nVoltage never goes below threshold after last spike.\n";
+    GErrorStr += "\nVoltage never goes below threshold after last spike.\n";
     return 0;
   }
 
@@ -362,7 +361,9 @@ int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
+  if (retVal <= 0) return -1;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
 
   int end_index = distance(
       t.begin(), find_if(t.begin(), t.end(),
@@ -1055,7 +1056,6 @@ static int __spike_width2(vector<double>& t, vector<double>& V,
   vector<double> v, dv1, dv2;
   double dx = t[1] - t[0];
   double VoltThreshold, VoltMax, HalfV, T0, V0, V1, fraction, TStart, TEnd;
-  size_t index;
   for (size_t i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
     v.clear();
     dv1.clear();
@@ -1069,12 +1069,11 @@ static int __spike_width2(vector<double>& t, vector<double>& V,
       v.push_back(V[j]);
     }
 
-    index = v.size();  // tbr
     getCentralDifferenceDerivative(dx, v, dv1);
     getCentralDifferenceDerivative(dx, dv1, dv2);
     double dMax = dv2[0];
 
-    index = 0;
+    size_t index = 0;
     for (size_t j = 1; j < dv2.size(); ++j) {
       if (dMax <= dv2[j]) {
         dMax = dv2[j];
@@ -1339,9 +1338,6 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   //
   vector<double> log_v(dvdt_decay.size(), 0.);
 
-  // stores slope and relative deviation
-  vector<double> slope;
-
   // golden section search algorithm
   const double PHI = 1.618033988;
   vector<double> x(3, .0);
@@ -1352,8 +1348,10 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   for (unsigned i = 0; i < log_v.size(); i++) {
     log_v[i] = log(v_decay[i] - v_decay.back() + x[1]);
   }
-  slope_straight_line_fit(t_decay, log_v, slope);
-  double residuum = slope[1];
+
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(t_decay, log_v);
+  double residuum = fit.average_rss;
   bool right = true;
   double newx;
   while (x[2] - x[0] > .01) {
@@ -1367,9 +1365,9 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
     for (unsigned i = 0; i < log_v.size(); i++) {
       log_v[i] = log(v_decay[i] - v_decay.back() + newx);
     }
-    slope_straight_line_fit(t_decay, log_v, slope);
+    fit = slope_straight_line_fit(t_decay, log_v);
 
-    if (slope[1] < residuum) {
+    if (fit.average_rss < residuum) {
       if (right) {
         x[0] = x[1];
         x[1] = newx;
@@ -1377,7 +1375,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
         x[2] = x[1];
         x[1] = newx;
       }
-      residuum = slope[1];
+      residuum = fit.average_rss;
     } else {
       if (right) {
         x[2] = newx;
@@ -1387,7 +1385,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
       right = !right;
     }
   }
-  tc.push_back(-1. / slope[0]);
+  tc.push_back(-1. / fit.slope);
   return 1;
 }
 int LibV1::time_constant(mapStr2intVec& IntFeatureData,
@@ -1529,24 +1527,24 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     GErrorStr += "\nStimulus start larger than max time in trace\n";
     return -1;
   }
+
   if (stimEnd > t[t.size() - 1]) {
     GErrorStr += "\nStimulus end larger than max time in trace\n";
     return -1;
   }
 
-  int stimstartindex, stimendindex;
-  
-  for (stimstartindex = 0; 
-          t[stimstartindex] < stimStart && stimstartindex <= t.size(); 
-          stimstartindex++) {};
-  for (stimendindex = 0; 
-          t[stimendindex] < stimEnd && stimstartindex <= t.size(); 
-          stimendindex++) {};
-  
+  size_t stimstartindex = 0;
+  while(t[stimstartindex] < stimStart && stimstartindex <= t.size())
+       stimstartindex++;
+
   if (stimstartindex >= t.size()) {
     GErrorStr += "\nStimulus start index not found\n";
     return -1;
   }
+
+  size_t stimendindex = 0;
+  while(t[stimendindex] < stimEnd && stimstartindex <= t.size())
+       stimendindex++;
 
   if (stimendindex >= t.size()) {
     GErrorStr += "\nStimulus end index not found\n";
@@ -1555,6 +1553,7 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
 
   maxV.push_back(*max_element(&v[stimstartindex], &v[stimendindex]));
   minV.push_back(*min_element(&v[stimstartindex], &v[stimendindex]));
+
   return 1;
 }
 
@@ -1649,13 +1648,13 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
 
   vector<double> v;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
+  if (retVal < 1) return -1;
   vector<double> t;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
+  if (retVal < 1) return -1;
   vector<double> stimEnd;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
+  if (retVal != 1) return -1;
 
   vector<double> ssv;
   retVal = __steady_state_voltage(v, t, stimEnd[0], ssv);
@@ -1838,8 +1837,7 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   }
 
   vector<int> minahpindices;
-  retval =
-      getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
+  retval = getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
   if (retval < 0) return -1;
   vector<double> apwidth;
   retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,

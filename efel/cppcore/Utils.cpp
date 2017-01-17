@@ -25,39 +25,34 @@
 #include <math.h>
 #include <assert.h>
 
-int LinearInterpolation(double Stepdx, const vector<double>& X,
-                        const vector<double>& Y, vector<double>& InterpX,
+int LinearInterpolation(double Stepdx,
+                        const vector<double>& X,
+                        const vector<double>& Y,
+                        vector<double>& InterpX,
                         vector<double>& InterpY) {
-
-  // Safety checks
-  assert(X.size() == Y.size());
-  assert(X.size() > 2);
+  EFEL_ASSERT(X.size() == Y.size(), "X & Y have to have the same point count");
+  EFEL_ASSERT(2 < X.size(), "Need at least 2 points in X");
   assert(Stepdx != 0);
   
-  unsigned nCount = X.size();
+  size_t nCount = X.size() - 1;
+  size_t i = 1;
 
-  int nPts = ceil((X[nCount - 1] - X[0]) / Stepdx) + 1;  // Because time is in
-                                                    // millisecond and needs to
-                                                    // be interpolated at 0.1 ms
-                                                    // interval
   double input = X[0];
-  unsigned int i = 1;
   double dif1, dif2;
 
   InterpY.push_back(Y[0]);
   InterpX.push_back(X[0]);
 
-  for (int j = 1; j < nPts; j++) {
-    input = input + Stepdx;
+  while(input < X[nCount]){
+    input += Stepdx;
 
-    while ((X[i] < input) && (i < nCount-1)) i++;
-    assert(i >= 1);
-    assert(i < nCount);
+    while (X[i] < input && i < nCount) {
+      i++;
+    }
 
     dif1 = X[i] - X[i - 1];
-    assert(dif1 != 0); //!=0 per definition
-    
     dif2 = input - X[i - 1];
+    assert(dif1 != 0); //!=0 per definition
 
     InterpY.push_back(Y[i - 1] + ((Y[i] - Y[i - 1]) * dif2 / dif1));
     InterpX.push_back(input);
@@ -93,41 +88,40 @@ void getfivepointstencilderivative(const vector<double>& v,
   dv[v.size() - 1] = v[v.size() - 1] - v[v.size() - 2];
 }
 
-// fit a straight line to the points (x[i],y[i]) and return the slope y'(x)
-//
-// slope[0] = slope
-// slope[1] = average residual sum squares
-// slope[2] = coefficient of determination R^2
-void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
-                             vector<double>& slope) {
-  slope.resize(3);
-  if (x.size() != y.size()) {
-    printf("Unequal vectors in straight line fit\n");
-    slope[0] = 1.;
-    slope[1] = 1000.;
-    return;
-  }
+// fit a straight line to the points (x[i], y[i]) and return the slope y'(x)
+linear_fit_result
+slope_straight_line_fit(const vector<double>& x,
+                        const vector<double>& y
+                        ) {
+  EFEL_ASSERT(x.size() == y.size(), "X & Y have to have the same point count");
+  EFEL_ASSERT(1 <= x.size(), "Need at least 1 points in X");
+
   double sum_x = 0.;
   double sum_y = 0.;
   double sum_x2 = 0.;
   double sum_xy = 0.;
+
+  linear_fit_result result;
+
   for (unsigned i = 0; i < x.size(); i++) {
     sum_x += x[i];
     sum_y += y[i];
     sum_x2 += x[i] * x[i];
     sum_xy += x[i] * y[i];
   }
+
   double delta = x.size() * sum_x2 - sum_x * sum_x;
-  slope[0] = (x.size() * sum_xy - sum_x * sum_y) / delta;
-  //
+  result.slope = (x.size() * sum_xy - sum_x * sum_y) / delta;
+
   // calculate sum of squared residuals
-  double yintercept = (sum_y - slope[0] * sum_x) / x.size();
+  double yintercept = (sum_y - result.slope * sum_x) / x.size();
   double residuals = 0.;
   for (unsigned i = 0; i < x.size(); i++) {
-    double res = y[i] - yintercept - slope[0] * x[i];
+    double res = y[i] - yintercept - result.slope * x[i];
     residuals += res * res;
   }
-  slope[1] = residuals / x.size();
+  result.average_rss = residuals / x.size();
+
   // calculate the coefficient of determination R^2
   double y_av = sum_y / x.size();
   double sstot = 0.;
@@ -135,5 +129,7 @@ void slope_straight_line_fit(const vector<double>& x, const vector<double>& y,
     double dev = y[i] - y_av;
     sstot += dev * dev;
   }
-  slope[2] = 1. - residuals / sstot;
+  result.r_square = 1. - residuals / sstot;
+
+  return result;
 }

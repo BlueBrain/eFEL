@@ -34,8 +34,7 @@ int LibV3::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal =
-      CheckInIntmap(IntFeatureData, StringData, "interpolate", nSize);
+  retVal = CheckInIntmap(IntFeatureData, StringData, "interpolate", nSize);
   if (retVal)
     return nSize;
 
@@ -446,7 +445,9 @@ int LibV3::min_AHP_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end);
+  if (retVal <= 0) return -1;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
 
   int end_index = distance(
       t.begin(), find_if(t.begin(), t.end(),
@@ -757,8 +758,7 @@ int LibV3::AP_width(mapStr2intVec& IntFeatureData,
     return -1;
   }
   vector<int> minahpindices;
-  retval =
-      getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
+  retval = getIntVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
   if (retval < 0) return -1;
   vector<double> apwidth;
   retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,
@@ -783,8 +783,7 @@ int LibV3::doublet_ISI(mapStr2intVec& IntFeatureData,
     return nsize;
   }
   vector<double> pvt;
-  retval =
-      getDoubleVec(DoubleFeatureData, StringData, "peak_time", pvt);
+  retval = getDoubleVec(DoubleFeatureData, StringData, "peak_time", pvt);
   if (retval < 2) {
     GErrorStr += "\nNeed at least two spikes for doublet_ISI.\n";
     return -1;
@@ -884,8 +883,7 @@ int LibV3::AP_begin_indices(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimend);
   if (retVal < 0) return -1;
   vector<int> ahpi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
+  retVal = getIntVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
   if (retVal < 0) return -1;
   vector<int> apbi;
   retVal = __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi);
@@ -980,8 +978,7 @@ int LibV3::AP_rise_indices(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
   if (retVal < 0) return -1;
   vector<int> apbi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   if (retVal < 0) return -1;
   vector<int> pi;
   retVal = getIntVec(IntFeatureData, StringData, "peak_indices", pi);
@@ -1026,12 +1023,10 @@ int LibV3::AP_fall_indices(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
   if (retVal < 0) return -1;
   vector<int> apbi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   if (retVal < 0) return -1;
   vector<int> apei;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_end_indices", apei);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_end_indices", apei);
   if (retVal < 0) return -1;
   vector<int> pi;
   retVal = getIntVec(IntFeatureData, StringData, "peak_indices", pi);
@@ -1143,12 +1138,12 @@ int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_end", stimend);
   if (retVal < 0) return -1;
   vector<int> apendi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_end_indices", apendi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_end_indices", apendi);
   if (retVal < 0) return -1;
   vector<int> apbi;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  retVal = getIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  if (retVal < 0) return -1;
+
   vector<double> dep_base;
   retVal = __depolarized_base(t, v, stimstart[0], stimend[0], apbi, apendi,
                               dep_base);
