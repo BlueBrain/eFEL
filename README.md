@@ -7,8 +7,8 @@ Introduction
 ============
 
 The Electrophys Feature Extraction Library (eFEL) allows neuroscientists
-to automatically extract features from time series data recorded from neurons 
-(both in vitro and in silico). 
+to automatically extract features from time series data recorded from neurons
+(both in vitro and in silico).
 Examples are the action potential width and amplitude in voltage traces recorded
 during whole-cell patch clamp experiments.
 The user of the library provides a set of traces and selects the features to
@@ -23,8 +23,7 @@ library can be found [here](http://bluebrain.github.io/eFEL/installation.html#in
 Requirements
 ============
 
-* [Python 2.6+](https://www.python.org/download/releases/2.7/) or 
-[Python 3.4+](https://www.python.org/download/releases/3.4.3/)
+* [Python 2.7+](https://www.python.org/download/releases/2.7/) or [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
@@ -40,7 +39,7 @@ The easiest way to install eFEL is to use [pip](https://pip.pypa.io)
 pip install efel
 ```
 
-In case you don't have administrator access this command might fail with a 
+In case you don't have administrator access this command might fail with a
 permission error. In that case you could install eFEL in your home directory
 
 ```bash
@@ -78,9 +77,9 @@ To get a list with all the available feature names
 efel.getFeatureNames()
 ```
 
-The python function to extract features is getFeatureValues(...). 
-Below is a short example on how to use this function. The code and example 
-trace are available 
+The python function to extract features is getFeatureValues(...).
+Below is a short example on how to use this function. The code and example
+trace are available
 [here](https://github.com/BlueBrain/eFEL/blob/master/examples/basic/basic_example1.py)
 
 ```python

@@ -1,13 +1,7 @@
-PYVERSION:=$(shell python -c 'import sys; v = sys.version_info; print("%s.%s" % v[0:2])')
 all: install
 install: clean
-	#on python 2.6, pre-install last supported version of numpy
-	test "2.6" = $(PYVERSION) && pip install 'numpy==1.10.0' || true
 	python setup.py sdist
-	#upgrade all packages to their maximum, except on python 2.6, which needs
-	# to keep numpy at version set above
-	pip install dist/*.tar.gz --upgrade \
-		`test "2.6" = $(PYVERSION) && echo '--upgrade-strategy=only-if-needed'`
+	pip install dist/*.tar.gz --upgrade
 install3: clean
 	python3 setup.py sdist
 	pip3 install dist/*.tar.gz --upgrade
@@ -39,7 +33,6 @@ test: install
 	pip install nose coverage --upgrade
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 	   --cover-package efel || (cat log/fllog.txt; exit 1;)
-	# cat efel/tests/log/fllog.txt
 test3: install3
 	pip3 install nose coverage --upgrade
 	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
