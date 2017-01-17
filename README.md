@@ -20,6 +20,13 @@ At the moment we provide a way to automatically compile and install the library
 as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
 library can be found [here](http://bluebrain.github.io/eFEL/installation.html#installing-the-c-standalone-library).
 
+News
+====
+
+* 2016/01/17: We dropped support for Python 2.6. We're following the numpy and coverage module who also dropped support recently.
+For the moment eFEL still works with Python 2.6, you will just have to install the right (older) versions of the dependencies.
+The eFEL code isn't automatically tested on 2.6 anymore.
+
 Requirements
 ============
 
