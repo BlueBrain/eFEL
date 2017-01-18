@@ -17,6 +17,7 @@
  */
 
 #include "LibV5.h"
+#include "Utils.h"
 
 #include <math.h>
 #include <algorithm>
@@ -25,7 +26,6 @@
 #include <deque>
 #include <functional>
 #include <iterator>
-#include <Utils.h>
 
 
 using std::bind2nd;
