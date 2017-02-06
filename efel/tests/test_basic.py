@@ -449,6 +449,73 @@ def test_zero_ISI_log_slope_skip():
     nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
 
 
+def test_peak_indices():
+    """basic: Test peak_indices"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 650.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['peak_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    peak_indices = feature_values[0]['peak_indices']
+
+    nt.assert_equal(len(peak_indices), 5)
+
+
+def test_strict_stiminterval():
+    """basic: Test strict_stiminterval"""
+
+    import efel
+
+    for strict, n_of_spikes in [(False, 5), (True, 3)]:
+        efel.reset()
+        efel.setIntSetting("strict_stiminterval", strict)
+
+        stim_start = 600.0
+        stim_end = 750.0
+
+        time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+        voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        trace['stim_start'] = [stim_start]
+        trace['stim_end'] = [stim_end]
+
+        features = ['peak_indices', 'peak_time', 'Spikecount']
+
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                features, raise_warnings=False)
+
+        peak_indices = feature_values[0]['peak_indices']
+        peak_time = feature_values[0]['peak_time']
+        spikecount = feature_values[0]['Spikecount']
+
+        nt.assert_equal(len(peak_indices), n_of_spikes)
+        nt.assert_equal(len(peak_time), n_of_spikes)
+        nt.assert_equal(spikecount, n_of_spikes)
+
+
 def test_ISI_log_slope():
     """basic: Test ISI_log_slope"""
 
