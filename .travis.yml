@@ -22,7 +22,7 @@ deploy:
   user: wvangeit
   password:
     secure: jHnj/T6sANjIHvvJenBwThkpFZRb9lyAirzt1aXwuBWYiFQ8ojrapIOr/wf5hAtMgAPMGUgdV315g53ZawKFBuHmTuDuhnFyqyH07wha/licvga3o7juPFaIIvYN5SeOGygvrxCtMKx5p/VzWuhf04pKJMqGqE2lj4RDwwmGIjY=
-  distributions: "sdist bdist_wheel"
+  distributions: "sdist"
 before_install:
       - pip install codecov
 after_success:
