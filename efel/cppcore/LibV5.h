@@ -214,5 +214,8 @@ int maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
 int Spikecount_stimint(mapStr2intVec& IntFeatureData,                                    
                        mapStr2doubleVec& DoubleFeatureData, 
                        mapStr2Str& StringData); 
+int peak_indices(mapStr2intVec& IntFeatureData,                                    
+                       mapStr2doubleVec& DoubleFeatureData, 
+                       mapStr2Str& StringData); 
 }
 #endif

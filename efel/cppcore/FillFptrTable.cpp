@@ -256,6 +256,8 @@ int FillFptrTable() {
       &LibV5::maximum_voltage_from_voltagebase;
   FptrTableV5["Spikecount_stimint"] = &LibV5::Spikecount_stimint;
   
+  FptrTableV5["peak_indices"] = &LibV5::peak_indices;
+  
   //****************** end of FptrTableV5 *****************************
 
   return 1;
