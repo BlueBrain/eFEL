@@ -2,6 +2,7 @@
 [![codecov.io](http://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master)](http://codecov.io/github/BlueBrain/eFEL?branch=master)
 [![Code Climate](https://codeclimate.com/github/BlueBrain/eFEL/badges/gpa.svg)](https://codeclimate.com/github/BlueBrain/eFEL)
 [![Join the chat at https://gitter.im/BlueBrain/eFEL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BlueBrain/eFEL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Documentation Status](https://readthedocs.org/projects/efel/badge/?version=latest)](http://efel.readthedocs.io/en/latest/?badge=latest)
 
 Introduction
 ============
@@ -18,7 +19,7 @@ the values to the user.
 The core of the library is written in C++, and a Python wrapper is included.
 At the moment we provide a way to automatically compile and install the library
 as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
-library can be found [here](http://bluebrain.github.io/eFEL/installation.html#installing-the-c-standalone-library).
+library can be found [here](http://efel.readthedocs.io/en/latest/installation.html#installing-the-c-standalone-library).
 
 News
 ====
