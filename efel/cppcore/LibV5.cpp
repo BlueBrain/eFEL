@@ -29,7 +29,7 @@
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
-                           int maxnSpike, bool semilog) {
+                           unsigned maxnSpike, bool semilog) {
   std::deque<double> skippedISIValues;
 
   vector<double> log_isivalues;
@@ -41,14 +41,13 @@ static int __ISI_log_slope(const vector<double>& isiValues,
 
   if (skip) {
     // Remove n spikes given by spike_skipf or max_spike_skip
-    int isisToRemove = (int)((isiValues.size() * (spikeSkipf - 1)) + 0.5);
-    // spike To remove is minimum of spike_skipf or max_spike_skip
-    if (0 <= isisToRemove && maxnSpike - 1 < isisToRemove) {
-      isisToRemove = maxnSpike - 1;
-    }
+    unsigned isisToRemove =
+        (unsigned)((isiValues.size() + 1) * spikeSkipf + .5);
+
+    isisToRemove = std::min(maxnSpike, isisToRemove);
 
     // Remove spikeToRemove spike from SpikeTime list
-    for (size_t i = 0; i < static_cast<size_t>(isisToRemove); i++) {
+    for (unsigned i = 0; i < isisToRemove; i++) {
       skippedISIValues.pop_front();
     }
   }
@@ -140,7 +139,7 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
   }
   retVal = getDoubleParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
   {
-    if (retVal < 0) return -1;
+    if (retVal <= 0) return -1;
   };
   // spikeSkipf is a fraction hence value should lie between >=0 and <1. [0 1)
   if ((spikeSkipf[0] < 0) || (spikeSkipf[0] >= 1)) {
@@ -149,12 +148,12 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
   }
   retVal = getIntParam(IntFeatureData, "max_spike_skip", maxnSpike);
   {
-    if (retVal < 0) return -1;
+    if (retVal <= 0) return -1;
   };
 
   bool semilog = false;
-  retVal = __ISI_log_slope(isivalues, slope, false, 0, 0,
-                           semilog);  // true,spikeSkipf[0],maxnSpike[0]);
+  retVal = __ISI_log_slope(isivalues, slope, true, spikeSkipf[0], maxnSpike[0],
+                           semilog);
   if (retVal >= 0) {
     setDoubleVec(DoubleFeatureData, StringData, "ISI_log_slope_skip", slope);
     return slope.size();
@@ -2486,7 +2485,7 @@ static int __peak_indices(double threshold, vector<double>& V,
   if (upVec.size() > dnVec.size()) {
     unsigned size_diff = upVec.size() - dnVec.size();
     for (unsigned i = 0; i < size_diff; i++) {
-        upVec.pop_back();
+      upVec.pop_back();
     }
   }
 
