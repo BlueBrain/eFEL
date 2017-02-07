@@ -26,9 +26,6 @@
 #include <functional>
 #include <iterator>
 
-using std::bind2nd;
-using std::greater_equal;
-
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
@@ -397,39 +394,28 @@ int LibV5::inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-// min_AHP_indices
-// find the first minimum between two spikes,
-// and the first minimum between the last spike and the time the stimulus ends
-int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInIntmap(IntFeatureData, StringData, "min_AHP_indices", nSize);
-  if (retVal) return nSize;
+static int __min_AHP_indices(const vector<double>& t, const vector<double>& v,
+                             const vector<int>& peak_indices,
+                             const double stim_start, const double stim_end,
+                             const bool strict_stiminterval,
+                             vector<int>& min_ahp_indices,
+                             vector<double>& min_ahp_values) {
+  vector<int> peak_indices_plus = peak_indices;
+  int end_index = -1;
 
-  vector<int> peak_indices_plus;
-  vector<int> min_ahp_indices;
-  vector<double> v;
-  vector<double> min_ahp_values;
-  // vector<double> stim_end;
-  vector<double> t;
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal =
-      getIntVec(IntFeatureData, StringData, "peak_indices", peak_indices_plus);
-  if (retVal < 1) {
-    GErrorStr +=
-        "\n At least one spike required for calculation of "
-        "min_AHP_indices.\n";
-    return -1;
+  if (strict_stiminterval) {
+    end_index =
+        distance(t.begin(),
+                 find_if(t.begin(), t.end(),
+                         std::bind2nd(std::greater_equal<double>(), stim_end)));
+  } else {
+    end_index = distance(t.begin(), t.end());
   }
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
 
-  int end_index = distance(t.begin(), t.end());
+  int ahpindex = -1;
+
   peak_indices_plus.push_back(end_index);
 
-  int ahpindex;
   for (unsigned i = 0; i < peak_indices_plus.size() - 1; i++) {
     ahpindex = distance(
         v.begin(), first_min_element(v.begin() + peak_indices_plus[i],
@@ -437,12 +423,86 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
 
     if (ahpindex != end_index - 1) {
       min_ahp_indices.push_back(ahpindex);
+
+      EFEL_ASSERT(ahpindex < v.size(),
+                  "AHP index falls outside of voltage array");
       min_ahp_values.push_back(v[ahpindex]);
     }
   }
-  setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-  setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
+
   return min_ahp_indices.size();
+}
+
+// min_AHP_indices
+// find the first minimum between two spikes,
+// and the first minimum between the last spike and the time the stimulus ends
+int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+
+  retVal = CheckInIntmap(IntFeatureData, StringData, "min_AHP_indices", nSize);
+  if (retVal) return nSize;
+
+  double stim_start, stim_end;
+  vector<int> min_ahp_indices, strict_stiminterval_vec, peak_indices;
+  vector<double> v, t, stim_start_vec, stim_end_vec, min_ahp_values;
+  bool strict_stiminterval;
+
+  // Get voltage
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+
+  // Get time
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+
+  // Get peak_indices
+  retVal = getIntVec(IntFeatureData, StringData, "peak_indices", peak_indices);
+  if (retVal < 1) {
+    GErrorStr +=
+        "\n At least one spike required for calculation of "
+        "min_AHP_indices.\n";
+    return -1;
+  }
+
+  // Get strict_stiminterval
+  retVal = getIntParam(IntFeatureData, "strict_stiminterval",
+                       strict_stiminterval_vec);
+  if (retVal <= 0) {
+    strict_stiminterval = false;
+  } else {
+    strict_stiminterval = bool(strict_stiminterval_vec[0]);
+  }
+
+  // Get stim_start
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, "stim_start", stim_start_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_start = stim_start_vec[0];
+  }
+
+  /// Get stim_end
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_end = stim_end_vec[0];
+  }
+
+  retVal =
+      __min_AHP_indices(t, v, peak_indices, stim_start, stim_end,
+                        strict_stiminterval, min_ahp_indices, min_ahp_values);
+
+  if (retVal > 0) {
+    setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+    setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
+                 min_ahp_values);
+  }
+  return retVal;
 }
 
 int LibV5::min_AHP_values(mapStr2intVec& IntFeatureData,
@@ -478,9 +538,10 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peak_indices,
                           const vector<int>& min_ahp_indices, double stim_start,
                           vector<double>& spike_width1) {
-  int start_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), stim_start)));
+  int start_index =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), stim_start)));
   vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   copy(min_ahp_indices.begin(), min_ahp_indices.end(),
        min_ahp_indices_plus.begin() + 1);
@@ -493,10 +554,10 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
     double t_dev_rise;
     double t_dev_fall;
     double delta_t;
-    int rise_index =
-        distance(v.begin(), find_if(v.begin() + min_ahp_indices_plus[i - 1],
-                                    v.begin() + peak_indices[i - 1],
-                                    bind2nd(greater_equal<double>(), v_half)));
+    int rise_index = distance(
+        v.begin(), find_if(v.begin() + min_ahp_indices_plus[i - 1],
+                           v.begin() + peak_indices[i - 1],
+                           std::bind2nd(std::greater_equal<double>(), v_half)));
     v_dev = v_half - v[rise_index];
     delta_v = v[rise_index] - v[rise_index - 1];
     delta_t = t[rise_index] - t[rise_index - 1];
@@ -504,7 +565,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
     int fall_index = distance(
         v.begin(), find_if(v.begin() + peak_indices[i - 1],
                            v.begin() + min_ahp_indices_plus[i],
-                           bind2nd(std::less_equal<double>(), v_half)));
+                           std::bind2nd(std::less_equal<double>(), v_half)));
     v_dev = v_half - v[fall_index];
     delta_v = v[fall_index] - v[fall_index - 1];
     delta_t = t[fall_index] - t[fall_index - 1];
@@ -580,9 +641,10 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 
   // restrict to time interval where stimulus is applied
   vector<int> minima;
-  int stimbeginindex = distance(
-      t.begin(),
-      find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
+  int stimbeginindex =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), stimstart)));
   minima.push_back(stimbeginindex);
   for (unsigned i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
@@ -611,8 +673,9 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     do {
       begin = distance(
           dvdt.begin(),
-          find_if(dvdt.begin() + newbegin, dvdt.begin() + minima[i + 1],
-                  bind2nd(greater_equal<double>(), derivativethreshold)));
+          find_if(
+              dvdt.begin() + newbegin, dvdt.begin() + minima[i + 1],
+              std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
       // printf("%d %d\n", newbegin, minima[i+1]);
       if (begin == minima[i + 1]) {
         // printf("Skipping %d %d\n", newbegin, minima[i+1]);
@@ -622,7 +685,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
       }
       newbegin = begin + 1;
     } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
-                     bind2nd(std::less<double>(), derivativethreshold)) !=
+                     std::bind2nd(std::less<double>(), derivativethreshold)) !=
              dvdt.begin() + begin + width);
     if (skip) {
       continue;
@@ -713,13 +776,14 @@ static int __number_initial_spikes(vector<double>& peak_times, double stimstart,
                                    vector<int>& number_initial_spikes) {
   double initialLength = (stimend - stimstart) * initial_perc;
 
-  int startIndex = distance(
-      peak_times.begin(), find_if(peak_times.begin(), peak_times.end(),
-                                  bind2nd(greater_equal<double>(), stimstart)));
-  int endIndex = distance(
-      peak_times.begin(),
-      find_if(peak_times.begin(), peak_times.end(),
-              bind2nd(greater_equal<double>(), stimstart + initialLength)));
+  int startIndex =
+      distance(peak_times.begin(),
+               find_if(peak_times.begin(), peak_times.end(),
+                       std::bind2nd(std::greater_equal<double>(), stimstart)));
+  int endIndex = distance(peak_times.begin(),
+                          find_if(peak_times.begin(), peak_times.end(),
+                                  std::bind2nd(std::greater_equal<double>(),
+                                               stimstart + initialLength)));
 
   number_initial_spikes.push_back(endIndex - startIndex);
 
@@ -973,8 +1037,8 @@ static int __AHP_time_from_peak(const vector<double>& t,
                                 const vector<int>& peakIndices,
                                 const vector<int>& minAHPIndices,
                                 vector<double>& ahpTimeFromPeak) {
-  if (peakIndices.size() > minAHPIndices.size()) return -1;
-  for (unsigned i = 0; i < peakIndices.size(); i++) {
+  for (unsigned i = 0; i < peakIndices.size() && i < minAHPIndices.size();
+       i++) {
     ahpTimeFromPeak.push_back(t[minAHPIndices[i]] - t[peakIndices[i]]);
   }
   return ahpTimeFromPeak.size();
@@ -1117,7 +1181,7 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
                             const vector<int>& min_ahp_indices,
                             vector<double>& AP_begin_width) {
   // int start_index = distance(t.begin(), find_if(t.begin(), t.end(),
-  // bind2nd(greater_equal<double>(), stim_start)));
+  // std::bind2nd(std::greater_equal<double>(), stim_start)));
   /// vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   // copy(min_ahp_indices.begin(), min_ahp_indices.end(),
   // min_ahp_indices_plus.begin());
@@ -1130,7 +1194,7 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
     int fall_index = distance(
         v.begin(),
         find_if(v.begin() + rise_index + 1, v.begin() + min_ahp_indices[i],
-                bind2nd(std::less_equal<double>(), v_start)));
+                std::bind2nd(std::less_equal<double>(), v_start)));
     // v_dev = v_start - v[fall_index];
     // delta_v = v[fall_index] - v[fall_index - 1];
     // delta_t = t[fall_index] - t[fall_index - 1];
@@ -2046,12 +2110,14 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
 
   double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
-  unsigned start_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), start_time)));
-  unsigned stop_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), stimEnd[0])));
+  unsigned start_index =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), start_time)));
+  unsigned stop_index =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), stimEnd[0])));
 
   unsigned mean_size = 0;
   double mean = 0.0;
@@ -2137,8 +2203,9 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 }
 
 size_t get_index(const vector<double>& times, double t) {
-  return distance(times.begin(), find_if(times.begin(), times.end(),
-                                         bind2nd(greater_equal<double>(), t)));
+  return distance(times.begin(),
+                  find_if(times.begin(), times.end(),
+                          std::bind2nd(std::greater_equal<double>(), t)));
 }
 
 double __decay_time_constant_after_stim(const vector<double>& times,

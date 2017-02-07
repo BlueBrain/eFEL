@@ -47,6 +47,10 @@ meanfrequency1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                                 'basic',
                                                 'mean_frequency_1.txt')
 
+ahptest1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                          'basic',
+                                          'ahptest_1.txt')
+
 spikeoutsidestim_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                                   'basic',
                                                   'spike_outside_stim.txt')
@@ -477,6 +481,72 @@ def test_peak_indices():
     peak_indices = feature_values[0]['peak_indices']
 
     nt.assert_equal(len(peak_indices), 5)
+
+
+def test_min_AHP_indices():
+    """basic: Test min_AHP_indices"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 650.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['min_AHP_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    min_AHP_indices = feature_values[0]['min_AHP_indices']
+
+    nt.assert_equal(len(min_AHP_indices), 5)
+
+
+def test_min_AHP_indices_strict():
+    """basic: Test min_AHP_indices with strict_stiminterval"""
+
+    import efel
+
+    for strict, n_of_ahp in [(False, 17), (True, 16)]:
+        efel.reset()
+        efel.setIntSetting('strict_stiminterval', strict)
+
+        stim_start = 700.0
+        stim_end = 2700.0
+
+        time = efel.io.load_fragment('%s#col=1' % ahptest1_url)
+        voltage = efel.io.load_fragment('%s#col=2' % ahptest1_url)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        trace['stim_start'] = [stim_start]
+        trace['stim_end'] = [stim_end]
+
+        features = ['min_AHP_indices', 'AHP_time_from_peak', 'peak_time']
+
+        feature_values = \
+            efel.getFeatureValues(
+                [trace],
+                features, raise_warnings=False)
+
+        min_AHP_indices = feature_values[0]['min_AHP_indices']
+        AHP_time_from_peak = feature_values[0]['AHP_time_from_peak']
+
+        nt.assert_equal(len(min_AHP_indices), n_of_ahp)
+        nt.assert_equal(len(AHP_time_from_peak), n_of_ahp)
 
 
 def test_strict_stiminterval():
