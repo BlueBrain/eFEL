@@ -1517,3 +1517,37 @@ def test_mean_AP_amplitude():
 
     nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
                     feature_values[0]['mean_AP_amplitude'])
+
+
+def test_unfinished_peak():
+    """basic: Test if unfinished peak doesn't break Spikecount"""
+    import numpy
+
+    import efel
+    efel.setIntSetting('strict_stiminterval', True)
+
+    dt = 0.1
+    v = numpy.zeros(int(100 / dt)) - 70.0
+    v[int(20 / dt):int(25 / dt)] = 20.
+    v[int(40 / dt):int(45 / dt)] = 20.
+    v[int(60 / dt):int(65 / dt)] = 20.
+
+    trace = {}
+    trace['T'] = numpy.arange(len(v)) * dt
+    trace['V'] = v
+    trace['stim_start'] = [10]
+    trace['stim_end'] = [70]
+
+    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
+    spikecount = traces_results[0]['Spikecount'][0]
+
+    nt.assert_equal(spikecount, 3)
+
+    # When the signal at the end of the trace is larger than the threshold,
+    # Spikecount and possibly other features cannont be estimated.
+    v[int(80 / dt):] = -19
+
+    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
+    spikecount = traces_results[0]['Spikecount'][0]
+
+    nt.assert_equal(spikecount, 3)
