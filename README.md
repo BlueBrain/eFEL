@@ -160,7 +160,7 @@ Results are in mV.
 
 Full documentation
 ==================
-The full documentation can be found [here](http://bluebrain.github.io/eFEL)
+The full documentation can be found [here](http://efel.readthedocs.io)
 
 Funding
 =======
