@@ -2483,9 +2483,11 @@ static int __peak_indices(double threshold, vector<double>& V,
     return 0;
   }
 
-  if (dnVec.size() != upVec.size()) {
-    GErrorStr += "\nVoltage never goes below threshold after last spike.\n";
-    return 0;
+  if (upVec.size() > dnVec.size()) {
+    unsigned size_diff = upVec.size() - dnVec.size();
+    for (unsigned i = 0; i < size_diff; i++) {
+        upVec.pop_back();
+    }
   }
 
   PeakIndex.clear();
@@ -2493,6 +2495,7 @@ static int __peak_indices(double threshold, vector<double>& V,
   for (unsigned i = 0; i < upVec.size(); i++) {
     dtmp = -1e9;
     itmp = -1;
+    EFEL_ASSERT(i < dnVec.size(), "dnVec array too small");
     for (j = upVec[i]; j <= dnVec[i]; j++) {
       if (dtmp < V[j]) {
         dtmp = V[j];
