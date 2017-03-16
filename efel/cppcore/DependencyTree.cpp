@@ -18,25 +18,30 @@
 
 #include "DependencyTree.h"
 
-#include <cstdio>
+#include <algorithm> //remove
+#include <cctype> //isspace
 #include <fstream>
 
-cTree::cTree() {
-  printf("\n This is constructor of cTree"); 
+static void removeAllWhiteSpace(string &str) {
+  str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
 }
 
 cTree::cTree(const char *strFileName) {
-  char strLine[3000];
-  std::ifstream infile(strFileName);
-  if (infile.is_open()) {
-    infile.getline(strLine, 3000, '\n');
-    strDependencyFile.push_back(strLine);
-    while (!infile.eof()) {
-      // printf("%s\n", strLine );
-      infile.getline(strLine, 3000, '\n');
-      strDependencyFile.push_back(strLine);
+  std::string line;
+
+  std::ifstream input(strFileName);
+  if (input.is_open()) {
+
+    std::getline(input, line);
+    removeAllWhiteSpace(line);
+    if (!line.empty())
+      strDependencyFile.push_back(line);
+    while (!(input.fail() || input.eof())) {
+      std::getline(input, line);
+      removeAllWhiteSpace(line);
+      if (!line.empty())
+        strDependencyFile.push_back(line);
     }
-    infile.close();
   } else {
     ErrorStr = ErrorStr + string("\nCould not open the file ") + strFileName;
   }
@@ -45,21 +50,6 @@ cTree::cTree(const char *strFileName) {
 int cTree::getDependencyList(string) {
   for (unsigned i = 0; i < strDependencyFile.size(); i++) {
   }
-  return 1;
-}
-
-int cTree::printTree() {
-  printf("\n This is inside printTree ");
-  return 1;
-}
-
-int cTree::deblank(string &str) {
-  size_t startpos = str.find_first_not_of(" \t");
-  size_t endpos = str.find_last_not_of(" \t");
-  if ((string::npos == startpos) || (string::npos == endpos))
-    str = "";
-  else
-    str = str.substr(startpos, endpos - startpos + 1);
   return 1;
 }
 
@@ -76,7 +66,7 @@ int cTree::deblank(string &str) {
  */
 int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
                               feature2function *FptrTable,
-                              map<string, vector<featureStringPair > > *FptrLookup) 
+                              map<string, vector<featureStringPair > > *FptrLookup)
 {
   list<string>::iterator lstItr;
   map<string, feature2function *>::iterator mapLibItr;
@@ -87,9 +77,6 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
   string wildcards;
 
   vector<featureStringPair> vecfptr;
-
-  int nPos;
-  int wcpos;
 
   if (vecFeature.size() == 0) return -1;
 
@@ -105,9 +92,8 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
     for (lstItr = FinalList.begin(); lstItr != FinalList.end(); lstItr++) {
       // Here strLibFeature is the feature name of the dependent feature
       strLibFeature = *lstItr;
-      nPos = strLibFeature.find(":");
-      wcpos = strLibFeature.find(";");
-      if (nPos <= 0) {
+      size_t nPos = strLibFeature.find(":");
+      if (nPos == string::npos || nPos == 0) {
         ErrorStr += "\nLibrary version is missing in [" + strLibFeature +
                     "] expected format Lib:Feature";
         return -1;
@@ -116,7 +102,8 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
       strLib = strLibFeature.substr(0, nPos);
 
       // Put feature name in strFeature
-      if (wcpos < 0) {
+      size_t wcpos = strLibFeature.find(";");
+      if (wcpos == string::npos) {
         strFeature = strLibFeature.substr(nPos + 1);
         wildcards = "";
       } else {
@@ -161,41 +148,31 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
  *
  */
 int cTree::getAllParents(vector<string> &lstFeature) {
-  string strLine, FeatureName;
-  int nPos;
   for (unsigned i = 0; i < strDependencyFile.size(); i++) {
-    strLine = strDependencyFile[i];
-    deblank(strLine);
-    nPos = int(strLine.find_first_of('#'));
-    FeatureName = strLine.substr(0, nPos - 1);
-    deblank(FeatureName);
-    if (FeatureName.size() != 0) lstFeature.push_back(FeatureName);
+    const string& strLine = strDependencyFile[i];
+    size_t nPos = strLine.find_first_of('#');
+    string FeatureName = strLine.substr(0, nPos);
+    if (!FeatureName.empty()) {
+      lstFeature.push_back(FeatureName);
+    }
   }
   return 1;
 }
+
 int cTree::getChilds(string str, list<string> &childs) {
   string strLine, FeatureName;
-  int nPos;
-  deblank(str);
   for (unsigned i = 0; i < strDependencyFile.size(); i++) {
     strLine = strDependencyFile[i];
-    deblank(strLine);
-    nPos = int(strLine.find_first_of('#'));
-    FeatureName = strLine.substr(0, nPos - 1);
-    deblank(FeatureName);
-    if (FeatureName != str)
+    size_t nPos = strLine.find_first_of('#');
+    if (strLine.substr(0, nPos) != str)
       continue;
     else {
-      int nPos = int(strLine.find_first_of('#'));
+      size_t nPos = strLine.find_first_of('#');
       string Token;
-      while (nPos >= 0) {
+      while (nPos != string::npos) {
         strLine = strLine.substr(nPos + 1);
-        nPos = int(strLine.find_first_of('#'));
-        if (nPos > 0)
-          Token = strLine.substr(0, nPos - 1);
-        else
-          Token = strLine;
-        deblank(Token);
+        nPos = strLine.find_first_of('#');
+        Token = strLine.substr(0, nPos);
         childs.push_back(Token);
       }
     }
@@ -212,8 +189,8 @@ int cTree::getDependency(string strLine, string wildcards) {
   list<string> tmpChild;
 
   // parse wildcards out of "LibVx:feature_name;wildcards_name"
-  int wcpos = strLine.find(";");
-  if (wcpos >= 0) {
+  size_t wcpos = strLine.find(";");
+  if (wcpos != string::npos) {
     wildcards = strLine.substr(wcpos);
     strLine = strLine.substr(0, wcpos);
   }
@@ -233,10 +210,10 @@ int cTree::getDependency(string strLine, string wildcards) {
 
 int cTree::AddUniqueItem(string strFeature, list<string> &lstFinal) {
   list<string>::iterator lstItr;
-  int FoundFlag = 0;
+  bool FoundFlag = false;
   for (lstItr = lstFinal.begin(); lstItr != lstFinal.end(); lstItr++) {
     if (strFeature == *lstItr) {
-      FoundFlag = 1;
+      FoundFlag = true;
       break;
     }
   }

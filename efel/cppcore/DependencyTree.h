@@ -40,9 +40,8 @@ class cTree {
   string ErrorStr;
   list<string> FinalList;
   list<string> ChildList;
-  cTree();
+  cTree() {};
   cTree(const char *strFileName);
-  int printTree();
   int getDependencyList(string str);
   int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
                          feature2function *FptrTable,
@@ -53,7 +52,6 @@ class cTree {
                          map<string, vector<featureStringPair > > *FptrLookup);
   int getChilds(string strLine, list<string> &childs);
   int getDependency(string strLine, string parent_stim);
-  int deblank(string &str);
   int AddUniqueItem(string strFeature, list<string> &lstFinal);
   int getAllParents(vector<string> &vecFeature);
 };
