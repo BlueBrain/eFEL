@@ -12,6 +12,7 @@ information about the start and end times of the current injection stimulus, we 
 times as well as the filename::
 
    import efel
+   
    data = efel.io.load_neo_file("path/first_file.abf", stim_start=200, stim_end=700)
 
 Since some file formats can contain multiple recording episodes (e.g. trials) and multiple
