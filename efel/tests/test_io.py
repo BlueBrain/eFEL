@@ -10,6 +10,11 @@ testdata_dir = os.path.join(
         os.path.abspath(__file__)),
     'testdata')
 
+neo_test_files_dir = os.path.join(
+    os.path.dirname(
+        os.path.abspath(__file__)),
+    'neo_test_files')
+    
 meanfrequency1_filename = os.path.join(testdata_dir,
                                        'basic',
                                        'mean_frequency_1.txt')
@@ -118,3 +123,46 @@ def test_load_fragment_allcolumns():
     time_numpy = numpy.loadtxt(meanfrequency1_filename)
 
     numpy.testing.assert_array_equal(time_io, time_numpy)
+
+
+def test_load_neo_file_stim_time_arg ():
+    import neo
+    import efel
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.pickle")    
+  
+    #test load_neo_file without stim time
+    nt.assert_raises(ValueError, efel.io.load_neo_file,file_name)
+    #test load_neo_file with stim time arguments
+    result = efel.io.load_neo_file(file_name, stim_start=0, stim_end=20) 
+    #test load_neo_file with stim time incomplete arguments
+    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name, stim_start=0)
+    nt.assert_equal(True, all(result[0][0][0]['T'] == [ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]))
+    nt.assert_equal(True, all(result[0][0][0]['V'] == [[0],[1],[2],[3],[4],[5],[6],[7],[8],[9]]))
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+
+def test_load_neo_file_stim_time_epoch ():
+    import neo
+    import efel
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.pickle")
+
+    result = efel.io.load_neo_file(file_name)
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+    
+
+def test_load_neo_file_stim_time_events ():
+    import neo
+    import efel
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time.pickle")
+
+    result = efel.io.load_neo_file(file_name)
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+    
+def test_load_neo_file_stim_time_events_incomplete ():
+    import neo
+    import efel
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time_incomplete.pickle")
+
+    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)

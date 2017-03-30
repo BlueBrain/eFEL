@@ -103,6 +103,7 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
             returned object : [Segments_1, Segments_2, ..., Segments_n] 
             Segments_1 = [Traces_1, Traces_2, ..., Traces_n] 
     """
+
     import numpy as np
     import neo
     import quantities as pq
@@ -126,33 +127,35 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
                 event_start = False
                 event_end = False
                 for event in seg.events :
-                    if event.name in ("stim_start", "stimulus_start", "stimulation_start", "current_injection_start") :   
-                        if stim_start is None :
-                            if event_start == False :
-                                event = event.rescale('ms').magnitude
-                                stim_start = event[0]
+                    rescaled = False
+                    if rescaled is False :
+                        if event.name in ("stim_start", "stimulus_start", "stimulation_start", "current_injection_start") :   
+                            if stim_start is None :
+                                if event_start == False :
+                                    event = event.rescale('ms').magnitude
+                                    stim_start = event[0]
+                                    rescaled = True
+                                else :
+                                    raise ValueError('It seems that there are two events (or an epoch and an event), related to stimulation start.' 
+                                    +' The program does not know which one to chose')
                             else :
-                                raise ValueError('It seems that there are two events (or an epoch and an event), related to stimulation start.' 
-                                +' The program does not know which one to chose')
+                                raise ValueError('It seems that stimulation start time is defined in epochs and an event.' 
+                                    +' The program does not know which one to chose')
 
-                        else :
-                            raise ValueError('It seems that stimulation start time is defined in epochs and an event.' 
-                                +' The program does not know which one to chose')
-
-                    if event.name in ("stim_end", "stimulus_end", "stimulation_end", "current_injection_end") :
-                        if stim_end is None :
-                            if event_end == False :
-                                event = event.rescale('ms').magnitude                                
-                                stim_end = event[-1]
-                                
+                    if rescaled is False :
+                        if event.name in ("stim_end", "stimulus_end", "stimulation_end", "current_injection_end") :
+                            if stim_end is None :
+                                if event_end == False :
+                                    event = event.rescale('ms').magnitude                                
+                                    stim_end = event[-1]
+                                    
+                                else :
+                                    raise ValueError('It seems that there are two events, or an epoch and an event, related to stimulation end.' 
+                                    +' The program does not know which one to chose')
                             else :
-                                raise ValueError('It seems that there are two events, or an epoch and an event, related to stimulation end.' 
-                                +' The program does not know which one to chose')
+                                raise ValueError('It seems that stimulation end time is defined in epochs and an event.' 
+                                    +' The program does not know which one to chose')
 
-                        else :
-                            raise ValueError('It seems that stimulation end time is defined in epochs and an event.' 
-                                +' The program does not know which one to chose')
-                         
     if stim_start is None or stim_end is None :
         raise ValueError('No stim_start or stim_end has been found inside epochs or events. You can directly specify their value as argument "stim_start" and "stim_end"')
 
@@ -169,8 +172,13 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
             for sig in analogsignals :
                 traces.append({})
 
+                # print (sig)
+                # print (sig.rescale('mV').magnitude)
+
                 traces[count_traces]['T'] = sig.times.rescale('ms').magnitude
-                traces[count_traces]['V'] = sig.rescale('mV').magnitude  
+                # print (traces[count_traces]['T'])
+                traces[count_traces]['V'] = sig.rescale('mV').magnitude 
+                # print (traces[count_traces]['V']) 
 
                 traces[count_traces]['stim_start'] = [stim_start]
                 traces[count_traces]['stim_end'] = [stim_end]            
