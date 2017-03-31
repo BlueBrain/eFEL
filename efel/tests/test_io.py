@@ -128,7 +128,7 @@ def test_load_fragment_allcolumns():
 def test_load_neo_file_stim_time_arg ():
     import neo
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.pickle")    
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.mat")    
   
     #test load_neo_file without stim time
     nt.assert_raises(ValueError, efel.io.load_neo_file,file_name)
@@ -141,20 +141,20 @@ def test_load_neo_file_stim_time_arg ():
     nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
     nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
 
-# def test_load_neo_file_stim_time_epoch ():
-#     import neo
-#     import efel
-#     file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.pickle")
+def test_load_neo_file_stim_time_epoch ():
+    import neo
+    import efel
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.mat")
 
-#     result = efel.io.load_neo_file(file_name)
-#     nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
-#     nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+    result = efel.io.load_neo_file(file_name)
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
     
 
 def test_load_neo_file_stim_time_events ():
     import neo
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time.pickle")
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time.mat")
 
     result = efel.io.load_neo_file(file_name)
     nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
@@ -163,6 +163,6 @@ def test_load_neo_file_stim_time_events ():
 def test_load_neo_file_stim_time_events_incomplete ():
     import neo
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time_incomplete.pickle")
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time_incomplete.mat")
 
     nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)

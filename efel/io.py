@@ -133,7 +133,10 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
                             if stim_start is None :
                                 if event_start == False :
                                     event = event.rescale('ms').magnitude
-                                    stim_start = event[0]
+                                    if type(event) is list :
+                                        stim_start = event[0]
+                                    else :
+                                        stim_start = event
                                     rescaled = True
                                 else :
                                     raise ValueError('It seems that there are two events (or an epoch and an event), related to stimulation start.' 
@@ -147,8 +150,10 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
                             if stim_end is None :
                                 if event_end == False :
                                     event = event.rescale('ms').magnitude                                
-                                    stim_end = event[-1]
-                                    
+                                    if type(event) is list :
+                                        stim_end = event[-1]
+                                    else :
+                                        stim_end = event
                                 else :
                                     raise ValueError('It seems that there are two events, or an epoch and an event, related to stimulation end.' 
                                     +' The program does not know which one to chose')
@@ -172,13 +177,8 @@ def load_neo_file (file_name, stim_start=None, stim_end=None):
             for sig in analogsignals :
                 traces.append({})
 
-                # print (sig)
-                # print (sig.rescale('mV').magnitude)
-
                 traces[count_traces]['T'] = sig.times.rescale('ms').magnitude
-                # print (traces[count_traces]['T'])
                 traces[count_traces]['V'] = sig.rescale('mV').magnitude 
-                # print (traces[count_traces]['V']) 
 
                 traces[count_traces]['stim_start'] = [stim_start]
                 traces[count_traces]['stim_end'] = [stim_end]            
