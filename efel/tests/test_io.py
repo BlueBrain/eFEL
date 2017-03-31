@@ -141,14 +141,14 @@ def test_load_neo_file_stim_time_arg ():
     nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
     nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
 
-def test_load_neo_file_stim_time_epoch ():
-    import neo
-    import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.pickle")
+# def test_load_neo_file_stim_time_epoch ():
+#     import neo
+#     import efel
+#     file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.pickle")
 
-    result = efel.io.load_neo_file(file_name)
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+#     result = efel.io.load_neo_file(file_name)
+#     nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
+#     nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
     
 
 def test_load_neo_file_stim_time_events ():
