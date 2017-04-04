@@ -74,7 +74,7 @@ setup(
     name="efel",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    install_requires=['numpy>=1.6', 'six', 'neo>=0.5.0'],
+    install_requires=['numpy>=1.6', 'six', 'neo>=0.5.0', 'scipy'],
     packages=['efel'],
     author="BlueBrain Project, EPFL",
     maintainer="Werner Van Geit",
