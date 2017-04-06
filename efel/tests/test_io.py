@@ -14,7 +14,7 @@ neo_test_files_dir = os.path.join(
     os.path.dirname(
         os.path.abspath(__file__)),
     'neo_test_files')
-    
+
 meanfrequency1_filename = os.path.join(testdata_dir,
                                        'basic',
                                        'mean_frequency_1.txt')
@@ -125,40 +125,33 @@ def test_load_fragment_allcolumns():
     numpy.testing.assert_array_equal(time_io, time_numpy)
 
 
-def test_load_neo_file_stim_time_arg ():
-    import neo
+def test_load_neo_file_stim_time_arg():
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.mat")    
-  
-    #test load_neo_file without stim time
-    nt.assert_raises(ValueError, efel.io.load_neo_file,file_name)
-    #test load_neo_file with stim time arguments
-    result = efel.io.load_neo_file(file_name, stim_start=0, stim_end=20) 
-    #test load_neo_file with stim time incomplete arguments
-    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name, stim_start=0)
-    nt.assert_equal(True, all(result[0][0][0]['T'] == [ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]))
-    nt.assert_equal(True, all(result[0][0][0]['V'] == [[0],[1],[2],[3],[4],[5],[6],[7],[8],[9]]))
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
+    file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.mat")
 
-def test_extract_stim_times_from_neo_data_two_epochs ():
-    import neo
-    import efel
-    import quantities as pq
+    # test load_neo_file without stim time
+    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)
+    # test load_neo_file with stim time arguments
+    result = efel.io.load_neo_file(file_name, stim_start=0, stim_end=20)
+    # test load_neo_file with stim time incomplete arguments
+    nt.assert_raises(
+        ValueError,
+        efel.io.load_neo_file,
+        file_name,
+        stim_start=0)
+    nt.assert_equal(
+        True, all(
+            result[0][0][0]['T'] == [
+                0., 1., 2., 3., 4., 5., 6., 7., 8., 9.]))
+    nt.assert_equal(
+        True, all(
+            result[0][0][0]['V'] == [
+                [0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]))
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
 
-    bl = neo.core.Block()
-    seg = neo.core.Segment()
-    data = range(10)
-    rate = 1000*pq.Hz
-    signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
-    seg.analogsignals.append(signal)
-    seg.epochs.append(neo.core.Epoch(times=pq.Quantity([0.0,20.0], units=pq.ms), name="stim"))
-    seg.epochs.append(neo.core.Epoch(times=pq.Quantity([0.0,20.0], units=pq.ms), name="stim"))    
-    bl.segments.append(seg)
 
-    nt.assert_raises(ValueError, efel.io.extract_stim_times_from_neo_data, [bl], None, None)
-
-def test_extract_stim_times_from_neo_data_two_events_start ():
+def test_extract_stim_times_from_neo_data_two_epochs():
     import neo
     import efel
     import quantities as pq
@@ -166,16 +159,30 @@ def test_extract_stim_times_from_neo_data_two_events_start ():
     bl = neo.core.Block()
     seg = neo.core.Segment()
     data = range(10)
-    rate = 1000*pq.Hz
+    rate = 1000 * pq.Hz
     signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
     seg.analogsignals.append(signal)
-    seg.events.append(neo.core.Event(times=[0.0]*pq.ms, units=pq.ms, name="stim_start" ))
-    seg.events.append(neo.core.Event(times=[20.0]*pq.ms, units=pq.ms, name="stim_start" ))   
+    seg.epochs.append(
+        neo.core.Epoch(
+            times=pq.Quantity([0.0, 20.0],
+                              units=pq.ms),
+            name="stim"))
+    seg.epochs.append(
+        neo.core.Epoch(
+            times=pq.Quantity([0.0, 20.0],
+                              units=pq.ms),
+            name="stim"))
     bl.segments.append(seg)
 
-    nt.assert_raises(ValueError, efel.io.extract_stim_times_from_neo_data, [bl], None, None) 
+    nt.assert_raises(
+        ValueError,
+        efel.io.extract_stim_times_from_neo_data,
+        [bl],
+        None,
+        None)
 
-def test_extract_stim_times_from_neo_data_two_events_end ():
+
+def test_extract_stim_times_from_neo_data_two_events_start():
     import neo
     import efel
     import quantities as pq
@@ -183,16 +190,30 @@ def test_extract_stim_times_from_neo_data_two_events_end ():
     bl = neo.core.Block()
     seg = neo.core.Segment()
     data = range(10)
-    rate = 1000*pq.Hz
+    rate = 1000 * pq.Hz
     signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
     seg.analogsignals.append(signal)
-    seg.events.append(neo.core.Event(times=[0.0]*pq.ms, units=pq.ms, name="stim_end" ))
-    seg.events.append(neo.core.Event(times=[20.0]*pq.ms, units=pq.ms, name="stim_end" ))   
+    seg.events.append(
+        neo.core.Event(
+            times=[0.0] * pq.ms,
+            units=pq.ms,
+            name="stim_start"))
+    seg.events.append(
+        neo.core.Event(
+            times=[20.0] * pq.ms,
+            units=pq.ms,
+            name="stim_start"))
     bl.segments.append(seg)
 
-    nt.assert_raises(ValueError, efel.io.extract_stim_times_from_neo_data, [bl], None, None) 
+    nt.assert_raises(
+        ValueError,
+        efel.io.extract_stim_times_from_neo_data,
+        [bl],
+        None,
+        None)
 
-def test_extract_stim_times_from_neo_data_start_in_epoch_event ():
+
+def test_extract_stim_times_from_neo_data_two_events_end():
     import neo
     import efel
     import quantities as pq
@@ -200,17 +221,30 @@ def test_extract_stim_times_from_neo_data_start_in_epoch_event ():
     bl = neo.core.Block()
     seg = neo.core.Segment()
     data = range(10)
-    rate = 1000*pq.Hz
+    rate = 1000 * pq.Hz
     signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
     seg.analogsignals.append(signal)
-    seg.epochs.append(neo.core.Epoch(times=pq.Quantity([0.0,20.0], units=pq.ms), name="stim"))
-    seg.events.append(neo.core.Event(times=[0.0]*pq.ms, units=pq.ms, name="stim_start" ))
+    seg.events.append(
+        neo.core.Event(
+            times=[0.0] * pq.ms,
+            units=pq.ms,
+            name="stim_end"))
+    seg.events.append(
+        neo.core.Event(
+            times=[20.0] * pq.ms,
+            units=pq.ms,
+            name="stim_end"))
     bl.segments.append(seg)
 
-    nt.assert_raises(ValueError, efel.io.extract_stim_times_from_neo_data, [bl], None, None) 
+    nt.assert_raises(
+        ValueError,
+        efel.io.extract_stim_times_from_neo_data,
+        [bl],
+        None,
+        None)
 
 
-def test_extract_stim_times_from_neo_data_end_in_epoch_event ():
+def test_extract_stim_times_from_neo_data_start_in_epoch_event():
     import neo
     import efel
     import quantities as pq
@@ -218,16 +252,30 @@ def test_extract_stim_times_from_neo_data_end_in_epoch_event ():
     bl = neo.core.Block()
     seg = neo.core.Segment()
     data = range(10)
-    rate = 1000*pq.Hz
+    rate = 1000 * pq.Hz
     signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
     seg.analogsignals.append(signal)
-    seg.epochs.append(neo.core.Epoch(times=pq.Quantity([0.0,20.0], units=pq.ms), name="stim"))
-    seg.events.append(neo.core.Event(times=[0.0]*pq.ms, units=pq.ms, name="stim_end" )) 
+    seg.epochs.append(
+        neo.core.Epoch(
+            times=pq.Quantity([0.0, 20.0],
+                              units=pq.ms),
+            name="stim"))
+    seg.events.append(
+        neo.core.Event(
+            times=[0.0] * pq.ms,
+            units=pq.ms,
+            name="stim_start"))
     bl.segments.append(seg)
 
-    nt.assert_raises(ValueError, efel.io.extract_stim_times_from_neo_data, [bl], None, None) 
+    nt.assert_raises(
+        ValueError,
+        efel.io.extract_stim_times_from_neo_data,
+        [bl],
+        None,
+        None)
 
-def test_extract_stim_times_from_neo_data_event_time_list (): 
+
+def test_extract_stim_times_from_neo_data_end_in_epoch_event():
     import neo
     import efel
     import quantities as pq
@@ -235,44 +283,86 @@ def test_extract_stim_times_from_neo_data_event_time_list ():
     bl = neo.core.Block()
     seg = neo.core.Segment()
     data = range(10)
-    rate = 1000*pq.Hz
+    rate = 1000 * pq.Hz
     signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
     seg.analogsignals.append(signal)
-    seg.events.append(neo.core.Event(times=[0.0, 1.0]*pq.ms, units=pq.ms, name="stim_start" ))
-    seg.events.append(neo.core.Event(times=[10.0, 20.0]*pq.ms, units=pq.ms, name="stim_end" ))   
+    seg.epochs.append(
+        neo.core.Epoch(
+            times=pq.Quantity([0.0, 20.0],
+                              units=pq.ms),
+            name="stim"))
+    seg.events.append(
+        neo.core.Event(
+            times=[0.0] * pq.ms,
+            units=pq.ms,
+            name="stim_end"))
     bl.segments.append(seg)
 
-    nt.assert_equal((0.0,20.0), efel.io.extract_stim_times_from_neo_data([bl], None, None) )
+    nt.assert_raises(
+        ValueError,
+        efel.io.extract_stim_times_from_neo_data,
+        [bl],
+        None,
+        None)
 
 
-
-
-
-
-
-
-def test_load_neo_file_stim_time_epoch ():
+def test_extract_stim_times_from_neo_data_event_time_list():
     import neo
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_epoch_times.mat")
+    import quantities as pq
+
+    bl = neo.core.Block()
+    seg = neo.core.Segment()
+    data = range(10)
+    rate = 1000 * pq.Hz
+    signal = neo.core.AnalogSignal(data, sampling_rate=rate, units="mV")
+    seg.analogsignals.append(signal)
+    seg.events.append(
+        neo.core.Event(
+            times=[
+                0.0,
+                1.0] * pq.ms,
+            units=pq.ms,
+            name="stim_start"))
+    seg.events.append(
+        neo.core.Event(
+            times=[
+                10.0,
+                20.0] * pq.ms,
+            units=pq.ms,
+            name="stim_end"))
+    bl.segments.append(seg)
+
+    nt.assert_equal(
+        (0.0, 20.0), efel.io.extract_stim_times_from_neo_data(
+            [bl], None, None))
+
+
+def test_load_neo_file_stim_time_epoch():
+    import efel
+    file_name = os.path.join(
+        neo_test_files_dir,
+        "neo_test_file_epoch_times.mat")
 
     result = efel.io.load_neo_file(file_name)
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
-    
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
 
-def test_load_neo_file_stim_time_events ():
-    import neo
+
+def test_load_neo_file_stim_time_events():
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time.mat")
+    file_name = os.path.join(
+        neo_test_files_dir,
+        "neo_test_file_events_time.mat")
 
     result = efel.io.load_neo_file(file_name)
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0] )
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0] )
-    
-def test_load_neo_file_stim_time_events_incomplete ():
-    import neo
+    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
+    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
+
+
+def test_load_neo_file_stim_time_events_incomplete():
     import efel
-    file_name = os.path.join(neo_test_files_dir, "neo_test_file_events_time_incomplete.mat")
+    file_name = os.path.join(neo_test_files_dir,
+                             "neo_test_file_events_time_incomplete.mat")
 
     nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)
