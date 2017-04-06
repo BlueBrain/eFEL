@@ -1,10 +1,9 @@
+TEST_REQUIREMENTS=nose coverage
+
 all: install
 install: clean
 	python setup.py sdist
 	pip install dist/*.tar.gz --upgrade
-install3: clean
-	python3 setup.py sdist
-	pip3 install dist/*.tar.gz --upgrade
 doc_efeatures:
 	rm -rf docs/build_efeatures && \
 	mkdir docs/build_efeatures && \
@@ -23,20 +22,17 @@ doc_upload: doc
 	git commit -m "Updating docs" && \
 	git push "git@github.com:BlueBrain/eFEL.git" master:gh-pages --force && \
 	rm -rf .git
+install_test_requirements:
+	pip install -q $(TEST_REQUIREMENTS) --upgrade
 update_version:
 	cd efel && \
 	python -c 'import version; version._get_version_number()' && \
 	git add GITHASH.txt && \
 	git add VERSION.txt && \
 	git commit -m 'Updated version number'
-test: install
-	pip install nose coverage --upgrade
+test: install install_test_requirements
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 	   --cover-package efel 
-test3: install3
-	pip3 install nose coverage --upgrade
-	cd efel/tests; nosetests-3.4 -s -v -x --with-coverage --cover-xml \
-		--cover-package efel
 pypi: test
 	pip install twine --upgrade
 	rm -rf dist
