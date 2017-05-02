@@ -1,9 +1,12 @@
-TEST_REQUIREMENTS=nose coverage
+TEST_REQUIREMENTS=nose coverage virtualenv
 
 all: install
 install: clean
 	python setup.py sdist
-	pip install dist/*.tar.gz --upgrade
+	pip install `ls dist/efel-*.tar.gz`[neo] --upgrade
+virtualenv: clean
+	virtualenv pyenv
+	. ./pyenv/bin/activate	
 doc_efeatures:
 	rm -rf docs/build_efeatures && \
 	mkdir docs/build_efeatures && \
@@ -30,7 +33,7 @@ update_version:
 	git add GITHASH.txt && \
 	git add VERSION.txt && \
 	git commit -m 'Updated version number'
-test: install install_test_requirements
+test: virtualenv install install_test_requirements
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 	   --cover-package efel 
 pypi: test
@@ -44,6 +47,7 @@ clean:
 	rm -rf build
 	rm -rf docs/build
 	rm -rf dist
+	rm -rf pyenv
 cpp:
 	mkdir -p build_cmake && \
 	cd build_cmake && \
