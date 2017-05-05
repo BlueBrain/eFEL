@@ -75,7 +75,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     install_requires=['numpy>=1.6', 'six'],
-    extras_require={'neo': ['neo>=0.5.0', 'scipy']},
+    extras_require={'neo': ['neo[neomatlabio]>=0.5.1']},
     packages=['efel'],
     author="BlueBrain Project, EPFL",
     maintainer="Werner Van Geit",
