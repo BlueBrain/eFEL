@@ -3,7 +3,8 @@ TEST_REQUIREMENTS=nose coverage virtualenv
 all: install
 install: clean
 	python setup.py sdist
-	pip install `ls dist/efel-*.tar.gz`[neo] --upgrade
+	# pip install `ls dist/efel-*.tar.gz`[neo] --upgrade
+	pip install `ls dist/efel-*.tar.gz` --upgrade
 virtualenv: clean
 	virtualenv pyenv
 	. ./pyenv/bin/activate	
