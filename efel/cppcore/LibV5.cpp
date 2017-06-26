@@ -2577,3 +2577,37 @@ int LibV5::peak_indices(mapStr2intVec& IntFeatureData,
 
   return retval;
 }
+
+int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
+                                          mapStr2doubleVec& DoubleFeatureData,
+                                          mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "sag_amplitude", nSize);
+  if (retVal) return nSize;
+
+  vector<double> steady_state_voltage_stimend;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "steady_state_voltage_stimend", 
+                   steady_state_voltage_stimend);
+  if (retVal <= 0) return -1;
+
+  vector<double> minimum_voltage;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "minimum_voltage", 
+                   minimum_voltage);
+  if (retVal <= 0) return -1;
+  
+  vector<double> sag_amplitude;
+
+  sag_amplitude.push_back(steady_state_voltage_stimend[0] - minimum_voltage[0]);
+      
+  setDoubleVec(DoubleFeatureData, StringData, "sag_amplitude",
+               sag_amplitude);
+  retVal = 1;
+
+  return retVal;
+}

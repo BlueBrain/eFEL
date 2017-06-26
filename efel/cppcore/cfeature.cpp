@@ -237,6 +237,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["voltage_base"] = "double";
   featuretypes["decay_time_constant_after_stim"] = "double";
   featuretypes["maximum_voltage_from_voltagebase"] = "double";
+  featuretypes["sag_amplitude"] = "double";
 
   // end of feature types
 }

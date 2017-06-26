@@ -51,9 +51,14 @@ ahptest1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                           'basic',
                                           'ahptest_1.txt')
 
-spikeoutsidestim_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                                  'basic',
-                                                  'spike_outside_stim.txt')
+spikeoutsidestim_url = 'file://%s' % os.path.join(
+    os.path.abspath(testdata_dir),
+    'basic',
+    'spike_outside_stim.txt')
+
+sagtrace1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                           'basic',
+                                           'sagtrace_1.txt')
 
 zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                              'basic',
@@ -79,7 +84,7 @@ def test_version():
 
 
 def test_setDependencyFileLocation_wrongpath():
-    """basic: Test if setDependencyFileLocation fails when path doesn't exist"""
+    """basic: Test if setDependencyFileLocation fails if path doesn't exist"""
 
     import efel
     efel.reset()
@@ -1097,6 +1102,48 @@ def test_ohmic_inputresistance():
         stimulus_current)
 
 
+def test_sag_amplitude():
+    """basic: Test sag_amplitude"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 800.0
+    stim_end = 3800.0
+
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+
+    import matplotlib.pyplot as plt
+    plt.plot(time, voltage)
+    plt.show()
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'sag_amplitude',
+        'steady_state_voltage_stimend',
+        'minimum_voltage']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    steady_state_voltage_stimend = feature_values[
+        0]['steady_state_voltage_stimend'][0]
+    minimum_voltage = feature_values[0]['minimum_voltage'][0]
+    sag_amplitude = feature_values[0]['sag_amplitude'][0]
+    nt.assert_equal(
+        sag_amplitude,
+        steady_state_voltage_stimend - minimum_voltage)
+
+
 def test_ohmic_input_resistance_vb_ssse():
     """basic: Test ohmic_input_resistance_vb_ssse"""
 
@@ -1242,7 +1289,10 @@ def test_steady_state_voltage1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = os.path.join(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    test_data_path = os.path.join(
+        testdata_dir,
+        'basic',
+        'mean_frequency_1.txt')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
@@ -1388,7 +1438,10 @@ def test_decay_time_constant_after_stim1():
     stim_start = 500.0
     stim_end = 900.0
 
-    test_data_path = os.path.join(testdata_dir, 'basic', 'mean_frequency_1.txt')
+    test_data_path = os.path.join(
+        testdata_dir,
+        'basic',
+        'mean_frequency_1.txt')
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
