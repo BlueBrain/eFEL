@@ -1140,6 +1140,38 @@ def test_sag_amplitude():
         steady_state_voltage_stimend - minimum_voltage)
 
 
+def test_sag_amplitude_pos_deflect():
+    """basic: Test if sag_amplitude throws error on positive deflection"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['sag_amplitude']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
+
+    nt.assert_equal(
+        feature_values[0]['sag_amplitude'],
+        None)
+
+
 def test_ohmic_input_resistance_vb_ssse():
     """basic: Test ohmic_input_resistance_vb_ssse"""
 

@@ -2587,6 +2587,7 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
                             "sag_amplitude", nSize);
   if (retVal) return nSize;
 
+  // Get steady_state_voltage_stimend
   vector<double> steady_state_voltage_stimend;
   retVal =
       getDoubleVec(DoubleFeatureData, StringData, 
@@ -2594,20 +2595,38 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
                    steady_state_voltage_stimend);
   if (retVal <= 0) return -1;
 
+  // Get voltage_deflection_stim_ssse  
+  double voltage_deflection_stim_ssse = 0.0;
+  vector<double> voltage_deflection_vb_ssse_vec;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "voltage_deflection_vb_ssse", 
+                   voltage_deflection_vb_ssse_vec);
+  if (retVal <= 0) {
+      return -1;
+  } else {
+      voltage_deflection_stim_ssse = voltage_deflection_vb_ssse_vec[0];
+  }
+  
+  // Get minimum_voltage
   vector<double> minimum_voltage;
   retVal =
       getDoubleVec(DoubleFeatureData, StringData, 
                    "minimum_voltage", 
                    minimum_voltage);
   if (retVal <= 0) return -1;
-  
+ 
+  // Calculate sag_amplitude
   vector<double> sag_amplitude;
-
-  sag_amplitude.push_back(steady_state_voltage_stimend[0] - minimum_voltage[0]);
-      
+  if (voltage_deflection_stim_ssse <= 0) {
+      sag_amplitude.push_back(steady_state_voltage_stimend[0] 
+              - minimum_voltage[0]);
+  } else {
+      //In case of positive voltage deflection, return an error
+      return -1;
+  }
   setDoubleVec(DoubleFeatureData, StringData, "sag_amplitude",
                sag_amplitude);
   retVal = 1;
-
   return retVal;
 }
