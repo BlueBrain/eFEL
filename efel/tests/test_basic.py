@@ -1114,10 +1114,6 @@ def test_sag_amplitude():
     time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
     voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
 
-    import matplotlib.pyplot as plt
-    plt.plot(time, voltage)
-    plt.show()
-
     trace = {}
 
     trace['T'] = time
