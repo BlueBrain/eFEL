@@ -132,6 +132,8 @@
     "peak_time",
     "peak_voltage",
     "sag_amplitude",
+    "sag_ratio1",
+    "sag_ratio2",
     "single_burst_ratio",
     "spike_half_width",
     "spike_width2",

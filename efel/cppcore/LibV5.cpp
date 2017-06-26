@@ -2577,7 +2577,6 @@ int LibV5::peak_indices(mapStr2intVec& IntFeatureData,
 
   return retval;
 }
-
 int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
                                           mapStr2doubleVec& DoubleFeatureData,
                                           mapStr2Str& StringData) {
@@ -2623,6 +2622,7 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
               - minimum_voltage[0]);
   } else {
       //In case of positive voltage deflection, return an error
+      GErrorStr += "\nsag_amplitude: voltage_deflection is positive\n";
       return -1;
   }
   setDoubleVec(DoubleFeatureData, StringData, "sag_amplitude",
@@ -2630,3 +2630,100 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
   retVal = 1;
   return retVal;
 }
+
+int LibV5::sag_ratio1(mapStr2intVec& IntFeatureData,
+                                          mapStr2doubleVec& DoubleFeatureData,
+                                          mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "sag_ratio1", nSize);
+  if (retVal) return nSize;
+
+  // Get sag_amplitude
+  vector<double> sag_amplitude;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "sag_amplitude", 
+                   sag_amplitude);
+  if (retVal <= 0) return -1;
+
+  // Get voltage_base
+  vector<double> voltage_base;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "voltage_base", 
+                   voltage_base);
+  if (retVal <= 0) {return -1;}
+  
+  // Get minimum_voltage
+  vector<double> minimum_voltage;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "minimum_voltage", 
+                   minimum_voltage);
+  if (retVal <= 0) return -1;
+ 
+  // Calculate sag_ratio1
+  vector<double> sag_ratio1;
+  if (minimum_voltage[0] == voltage_base[0]) {
+      GErrorStr += "\nsag_ratio1: voltage_base equals minimum_voltage\n";
+      //In case of possible division by zero return error
+      return -1;
+  } else {
+      sag_ratio1.push_back(sag_amplitude[0] / (voltage_base[0] - minimum_voltage[0]));
+  }
+  setDoubleVec(DoubleFeatureData, StringData, "sag_ratio1",
+               sag_ratio1);
+  retVal = 1;
+  return retVal;
+}
+
+int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
+                                          mapStr2doubleVec& DoubleFeatureData,
+                                          mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+                            "sag_ratio2", nSize);
+  if (retVal) return nSize;
+
+  // Get voltage_base
+  vector<double> voltage_base;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "voltage_base", 
+                   voltage_base);
+  if (retVal <= 0) {return -1;}
+  
+  // Get minimum_voltage
+  vector<double> minimum_voltage;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "minimum_voltage", 
+                   minimum_voltage);
+  if (retVal <= 0) return -1;
+ 
+  // Get steady_state_voltage_stimend
+  vector<double> steady_state_voltage_stimend;
+  retVal =
+      getDoubleVec(DoubleFeatureData, StringData, 
+                   "steady_state_voltage_stimend", 
+                   steady_state_voltage_stimend);
+  if (retVal <= 0) return -1;
+  
+  // Calculate sag_ratio2
+  vector<double> sag_ratio2;
+  if (minimum_voltage[0] == voltage_base[0]) {
+      GErrorStr += "\nsag_ratio2: voltage_base equals minimum_voltage\n";
+      //In case of possible division by zero return error
+      return -1;
+  } else {
+      sag_ratio2.push_back((voltage_base[0] - steady_state_voltage_stimend[0]) / (voltage_base[0] - minimum_voltage[0]));
+  }
+  setDoubleVec(DoubleFeatureData, StringData, "sag_ratio2",
+               sag_ratio2);
+  retVal = 1;
+  return retVal;
+}
+
