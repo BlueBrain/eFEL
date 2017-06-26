@@ -257,6 +257,9 @@ int FillFptrTable() {
   FptrTableV5["Spikecount_stimint"] = &LibV5::Spikecount_stimint;
   
   FptrTableV5["peak_indices"] = &LibV5::peak_indices;
+  FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;
+  FptrTableV5["sag_ratio1"] = &LibV5::sag_ratio1;
+  FptrTableV5["sag_ratio2"] = &LibV5::sag_ratio2;
   
   //****************** end of FptrTableV5 *****************************
 

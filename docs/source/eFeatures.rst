@@ -315,6 +315,51 @@ The decay time constant of the voltage right after the stimulus
 
     decay_time_constant_after_stim = -1. / slope
 
+.. image:: _static/figures/sag.png
+
+**LibV5 : sag_amplitude**
+
+The difference between the minimal voltage and the steady state at stimend
+
+- **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, minimum_voltage, voltage_deflection_stim_ssse
+- **Parameters**: 
+- **Units**: mV
+- **Pseudocode**: ::
+
+    if (voltage_deflection_stim_ssse <= 0):
+        sag_amplitude = steady_state_voltage_stimend - minimum_voltage
+    else:
+        sag_amplitude = None
+
+
+**LibV5 : sag_ratio1**
+
+The ratio between the sag amplitude and the maximal sag extend from voltage base
+
+- **Required features**: t, V, stim_start, stim_end, sag_amplitude, voltage_base, minimum_voltage
+- **Parameters**: 
+- **Units**: constant
+- **Pseudocode**: ::
+
+    if voltage_base != minimum_voltage:
+        sag_ratio1 = sag_amplitude / (voltage_base - minimum_voltage)
+    else:
+        sag_ratio1 = None
+
+**LibV5 : sag_ratio2**
+
+The ratio between the maximal extends of sag from steady state and voltage base
+
+- **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, voltage_base, minimum_voltage
+- **Parameters**: 
+- **Units**: constant
+- **Pseudocode**: ::
+
+    if voltage_base != minimum_voltage:
+        sag_ratio2 = (voltage_base - steady_state_voltage_stimend) / (voltage_base - minimum_voltage)
+    else:
+        sag_ratio2 = None
+
 
 Requested eFeatures
 ===================

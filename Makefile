@@ -15,7 +15,7 @@ doc_efeatures:
 	ls -al ../../build_efeatures && \
 	pdflatex -output-directory=../../build_efeatures efeature-documentation.tex
 doc: install doc_efeatures
-	pip install sphinx sphinx-autobuild
+	pip install sphinx sphinx-autobuild sphinx_rtd_theme
 	cd docs; $(MAKE) clean; $(MAKE) html
 doc_upload: doc
 	cd docs/build/html && \
@@ -57,6 +57,8 @@ cpp:
 push: clean install test doc doc_upload
 	git push
 	git push --tags
+format:	
+	clang-format -i -style="google" efel/cppcore/*.cpp
 graph:
 	pip install pygraphviz==1.3.1
 	utils/efel_graph_dependency -i efel/DependencyV5.txt --graph dependencies.png --graph-deps

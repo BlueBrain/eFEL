@@ -152,6 +152,8 @@ def test_allfeatures():
             equal = (expected_value is None)
         if expected_value is None:
             equal = (feature_value is None)
+        elif feature_value is None:
+            equal = (expected_value is None)
         else:
             equal = numpy.allclose(feature_value, expected_value)
 

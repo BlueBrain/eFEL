@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 """Update the featurenames json file that contains the expected names"""
 
