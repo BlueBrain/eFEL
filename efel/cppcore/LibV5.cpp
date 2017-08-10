@@ -2355,8 +2355,8 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                    voltage_deflection_vb_ssse);
   if (retVal <= 0) return -1;
   vector<double> stimulus_current;
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "stimulus_current",
-                        stimulus_current);
+  retVal = getDoubleParam(DoubleFeatureData, "stimulus_current", 
+                          stimulus_current);
 
   if (retVal <= 0) return -1;
   vector<double> ohmic_input_resistance_vb_ssse;
