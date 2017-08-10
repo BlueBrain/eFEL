@@ -1508,8 +1508,8 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
                         "voltage_deflection", voltage_deflection);
   if (retVal < 0) return -1;
   vector<double> stimulus_current;
-  retVal = getDoubleVec(DoubleFeatureData, StringData, "stimulus_current",
-                        stimulus_current);
+  retVal = getDoubleParam(DoubleFeatureData, "stimulus_current",
+                          stimulus_current);
   if (retVal < 0) return -1;
   vector<double> oir;
   retVal = __ohmic_input_resistance(voltage_deflection[0],

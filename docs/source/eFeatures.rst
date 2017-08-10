@@ -360,6 +360,28 @@ The ratio between the maximal extends of sag from steady state and voltage base
     else:
         sag_ratio2 = None
 
+**LibV1 : ohmic_input_resistance**
+
+The ratio between the voltage deflection and stimulus current
+
+- **Required features**: t, V, stim_start, stim_end, voltage_deflection
+- **Parameters**: stimulus_current
+- **Units**: mV/nA
+- **Pseudocode**: ::
+
+    ohmic_input_resistance = voltage_deflection / stimulus_current
+
+**LibV5 : ohmic_input_resistance_vb_ssse**
+
+The ratio between the voltage deflection (between voltage base and steady-state voltage at stimend) and stimulus current
+
+- **Required features**: t, V, stim_start, stim_end, voltage_deflection_vb_ssse
+- **Parameters**: stimulus_current
+- **Units**: mV/nA
+- **Pseudocode**: ::
+
+    ohmic_input_resistance_vb_ssse = voltage_deflection_vb_ssse / stimulus_current
+
 
 Requested eFeatures
 ===================
