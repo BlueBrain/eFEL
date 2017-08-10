@@ -29,7 +29,9 @@ int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
                 vector<int>& vec) {
   mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(param));
   if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr += "Parameter [" + param + "] is missing in int map\n";
+    GErrorStr += "Parameter [" + param + "] is missing in int map."
+                 "In the python interface this can be set using the "
+                 "setIntSetting() function\n";
     return -1;
   }
   vec = mapstr2IntItr->second;
