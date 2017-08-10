@@ -29,7 +29,9 @@ int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
                 vector<int>& vec) {
   mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(param));
   if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr += "Parameter [" + param + "] is missing in int map\n";
+    GErrorStr += "Parameter [" + param + "] is missing in int map."
+                 "In the python interface this can be set using the "
+                 "setIntSetting() function\n";
     return -1;
   }
   vec = mapstr2IntItr->second;
@@ -41,7 +43,10 @@ int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
   mapStr2doubleVec::iterator mapstr2DoubleItr;
   mapstr2DoubleItr = DoubleFeatureData.find(param);
   if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr += "Parameter [" + param + "] is missing in double map\n";
+    GErrorStr += "Parameter [" + param +
+                 "] is missing in double map. "
+                 "In the python interface this can be set using the "
+                 "setDoubleSetting() function\n";
     return -1;
   }
   vec = mapstr2DoubleItr->second;
