@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Reading different file formats &mdash; eFEL 2.11.50 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="eFEL 2.11.50 documentation" href="index.html"/>
+        <link rel="up" title="Python" href="python_examples.html"/>
+        <link rel="next" title="eFeature descriptions" href="eFeatures.html"/>
+        <link rel="prev" title="DEAP optimisation" href="deap_optimisation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eFEL
+          
+
+          
+            
+            <img src="_static/bbp.jpg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.11.50
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="python_examples.html">Python</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="python_example1.html">Quick start</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deap_optimisation.html">DEAP optimisation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Reading different file formats</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stimulus-information-within-the-file">Stimulus information within the file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="eFeatures.html">eFeature descriptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eFEL</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="examples.html">Examples</a> &raquo;</li>
+        
+          <li><a href="python_examples.html">Python</a> &raquo;</li>
+        
+      <li>Reading different file formats</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/neoIO_example.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="reading-different-file-formats">
+<h1>Reading different file formats<a class="headerlink" href="#reading-different-file-formats" title="Permalink to this headline">¶</a></h1>
+<p>Neo is a Python package which provides support for reading a wide range of neurophysiology file
+formats, including Spike2, NeuroExplorer, AlphaOmega, Axon, Blackrock, Plexon and Tdt.</p>
+<p>The function <code class="xref py py-func docutils literal"><span class="pre">efel.io.load_neo_file()</span></code> reads data from any of the file formats supported by
+Neo and formats it for use in eFEL.</p>
+<p>As an example, suppose we have an .abf file containing a single trace. Since eFEL requires
+information about the start and end times of the current injection stimulus, we provide these
+times as well as the filename:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">efel</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">efel</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">load_neo_file</span><span class="p">(</span><span class="s2">&quot;path/first_file.abf&quot;</span><span class="p">,</span> <span class="n">stim_start</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">stim_end</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since some file formats can contain multiple recording episodes (e.g. trials) and multiple
+signals per episode, the function returns traces in a list of lists, like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="p">:</span> <span class="p">[</span><span class="n">Segment_1</span><span class="p">,</span> <span class="n">Segment_2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">Segment_n</span><span class="p">]</span>
+         <span class="k">with</span> <span class="n">Segment_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trace_1</span><span class="p">,</span> <span class="n">Trace_2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">Trace_n</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Since our file contains only a single recording episode, our list of traces is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">traces</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>which we pass to eFEL as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">efel</span><span class="o">.</span><span class="n">getFeatureValues</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;AP_amplitude&#39;</span><span class="p">,</span> <span class="s1">&#39;voltage_base&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="stimulus-information-within-the-file">
+<h2>Stimulus information within the file<a class="headerlink" href="#stimulus-information-within-the-file" title="Permalink to this headline">¶</a></h2>
+<p>Some file formats can store information about the current injection stimulus. In this second
+example, the file contains an <code class="xref py py-class docutils literal"><span class="pre">Epoch</span></code> object named “stimulation”, so we don’t need to
+explicitly specify <cite>stim_start</cite> and <cite>stim_end</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data2</span> <span class="o">=</span> <span class="n">efel</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">load_neo_file</span><span class="p">(</span><span class="s2">&quot;path/second_file.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="eFeatures.html" class="btn btn-neutral float-right" title="eFeature descriptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="deap_optimisation.html" class="btn btn-neutral" title="DEAP optimisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, BBP, EPFL.
+      Last updated on Aug 23, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.11.50',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

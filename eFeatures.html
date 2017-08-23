@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eFeature descriptions &mdash; eFEL 2.11.50 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="eFEL 2.11.50 documentation" href="index.html"/>
+        <link rel="next" title="Python API" href="api.html"/>
+        <link rel="prev" title="Reading different file formats" href="neoIO_example.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eFEL
+          
+
+          
+            
+            <img src="_static/bbp.jpg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.11.50
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eFeature descriptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-efeatures-to-be-continued">Implemented eFeatures (to be continued)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spike-event-features">Spike event features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spike-shape-features">Spike shape features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#voltage-features">Voltage features</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-steady-state-voltage-stimend">LibV5 : steady_state_voltage_stimend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv1-steady-state-voltage">LibV1 : steady_state_voltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-voltage-base">LibV5 : voltage_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-decay-time-constant-after-stim">LibV5 : decay_time_constant_after_stim</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-sag-amplitude">LibV5 : sag_amplitude</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-sag-ratio1">LibV5 : sag_ratio1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-sag-ratio2">LibV5 : sag_ratio2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv1-ohmic-input-resistance">LibV1 : ohmic_input_resistance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-ohmic-input-resistance-vb-ssse">LibV5 : ohmic_input_resistance_vb_ssse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libv5-voltage-deflection-vb-ssse">LibV5 : voltage_deflection_vb_ssse</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#requested-efeatures">Requested eFeatures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eFEL</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eFeature descriptions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eFeatures.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="efeature-descriptions">
+<h1>eFeature descriptions<a class="headerlink" href="#efeature-descriptions" title="Permalink to this headline">¶</a></h1>
+<p>A pdf document describing the eFeatures is available
+<a class="reference external" href="http://bluebrain.github.io/eFEL/efeature-documentation.pdf">here</a>.</p>
+<p>Not every eFeature has a description in this document yet,
+the complete set will be available shortly.</p>
+<div class="section" id="implemented-efeatures-to-be-continued">
+<h2>Implemented eFeatures (to be continued)<a class="headerlink" href="#implemented-efeatures-to-be-continued" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="spike-event-features">
+<h3>Spike event features<a class="headerlink" href="#spike-event-features" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/inv_ISI.png" src="_images/inv_ISI.png" />
+<p><strong>LibV5 : inv_time_to_first_spike</strong></p>
+<p>1.0 over time to first spike; returns 0 when no spike</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: time_to_first_spike</p>
+</li>
+<li><p class="first"><strong>Units</strong>: Hz</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_to_first_spike</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">inv_time_to_first_spike</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">time_to_first_spike</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_time_to_first_spike</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fith_ISI, inv_last_ISI</strong></p>
+<p>1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: peak_time (ms)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: Hz</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">all_isi_values_vec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">peak_time</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">inv_first_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_first_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">inv_first_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_first_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">inv_second_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_second_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">inv_third_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_third_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="n">inv_fourth_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_fourth_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="n">inv_fifth_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_fifth_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_isi_values_vec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">inv_last_ISI</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">all_isi_values_vec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">inv_last_ISI</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : time_to_last_spike</strong></p>
+<p>time from stimulus start to last spike</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: peak_time (ms), stimstart (ms)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">time_to_last_spike</span> <span class="o">=</span> <span class="n">peak_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">stimstart</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">time_to_last_spike</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV1 : Spikecount</strong></p>
+<p>number of spikes in the trace, including outside of stimulus interval</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:peak_indices</p>
+</li>
+<li><p class="first"><strong>Units</strong>: constant</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Spikecount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_indices</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : Spikecount_stimint</strong></p>
+<p>number of spikes inside the stimulus interval</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:peak_time</p>
+</li>
+<li><p class="first"><strong>Units</strong>: constant</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">peaktimes_stimint</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">peak_time</span> <span class="o">&gt;=</span> <span class="n">stim_start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">peak_time</span> <span class="o">&lt;=</span> <span class="n">stim_end</span><span class="p">))</span>
+<span class="n">Spikecount_stimint</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaktimes_stimint</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : number_initial_spikes</strong></p>
+<p>number of spikes at the beginning of the stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:peak_time</p>
+</li>
+<li><p class="first"><strong>Required parameters</strong>: initial_perc (default=0.1)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: constant</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">initial_length</span> <span class="o">=</span> <span class="p">(</span><span class="n">stimend</span> <span class="o">-</span> <span class="n">stimstart</span><span class="p">)</span> <span class="o">*</span> <span class="n">initial_perc</span>
+<span class="n">number_initial_spikes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> \
+    <span class="p">(</span><span class="n">peak_time</span> <span class="o">&gt;=</span> <span class="n">stimstart</span><span class="p">)</span> <span class="o">&amp;</span> \
+    <span class="p">(</span><span class="n">peak_time</span> <span class="o">&lt;=</span> <span class="n">stimstart</span> <span class="o">+</span> <span class="n">initial_length</span><span class="p">)))</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : ISI_semilog_slope</strong></p>
+<p>The slope of a linear fit to a semilog plot of the ISI values</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, ISI_values</p>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ISI_values</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">log_ISI_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ISI_values</span><span class="p">)</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">log_ISI_values</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ISI_semilog_slope</span> <span class="o">=</span> <span class="n">slope</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : ISI_log_slope</strong></p>
+<p>The slope of a linear fit to a loglog plot of the ISI values</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, ISI_values</p>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">log_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ISI_values</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">log_ISI_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ISI_values</span><span class="p">)</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_ISI_values</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ISI_log_slope</span> <span class="o">=</span> <span class="n">slope</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="spike-shape-features">
+<h3>Spike shape features<a class="headerlink" href="#spike-shape-features" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/AP_Amplitude.png" src="_images/AP_Amplitude.png" />
+<p><strong>LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp</strong></p>
+<p>The relative height of the action potential from spike onset</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5:AP_begin_indices, LibV1:peak_voltage (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">AP_Amplitude</span> <span class="o">=</span> <span class="n">voltage</span><span class="p">[</span><span class="n">AP_begin_indices</span><span class="p">]</span> <span class="o">-</span> <span class="n">peak_voltage</span>
+<span class="n">AP1_amp</span> <span class="o">=</span> <span class="n">AP_Amplitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">AP2_amp</span> <span class="o">=</span> <span class="n">AP_Amplitude</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">APlast_amp</span> <span class="o">=</span> <span class="n">AP_Amplitude</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<img alt="_images/AHP.png" src="_images/AHP.png" />
+<p><strong>LibV1 : AHP_depth_abs</strong></p>
+<p>Absolute voltage values at the first after-hyperpolarization</p>
+<ul class="simple">
+<li><strong>Required features</strong>: LibV5:min_AHP_values (mV)</li>
+<li><strong>Units</strong>: mV</li>
+</ul>
+<p><strong>LibV1 : AHP_depth_abs_slow</strong></p>
+<p>Absolute voltage values at the first after-hyperpolarization starting 5 ms after
+the peak</p>
+<ul class="simple">
+<li><strong>Required features</strong>: LibV1:peak_indices</li>
+<li><strong>Units</strong>: mV</li>
+</ul>
+<p><strong>LibV1 : AHP_slow_time</strong></p>
+<p>Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
+interspike interval</p>
+<ul class="simple">
+<li><strong>Required features</strong>: LibV1:AHP_depth_abs_slow</li>
+<li><strong>Units</strong>: constant</li>
+</ul>
+<p><strong>LibV1 : AHP_depth</strong></p>
+<p>Relative voltage values at the first after-hyperpolarization</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:voltage_base (mV), LibV5:min_AHP_values (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_AHP_values</span> <span class="o">=</span> <span class="n">first_min_element</span><span class="p">(</span><span class="n">voltage</span><span class="p">,</span> <span class="n">peak_indices</span><span class="p">)</span>
+<span class="n">AHP_depth</span> <span class="o">=</span> <span class="n">min_AHP_values</span><span class="p">[:]</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : AHP_time_from_peak</strong></p>
+<p>Time between AP peaks and first AHP depths</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:peak_indices, LibV5:min_AHP_values (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_AHP_indices</span> <span class="o">=</span> <span class="n">first_min_element</span><span class="p">(</span><span class="n">voltage</span><span class="p">,</span> <span class="n">peak_indices</span><span class="p">)</span>
+<span class="n">AHP_time_from_peak</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">min_AHP_indices</span><span class="p">[:]]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="n">peak_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<img alt="_images/AP_duration_half_width.png" src="_images/AP_duration_half_width.png" />
+<p><strong>LibV2 : AP_duration_half_width</strong></p>
+<p>Width of spike at half spike amplitude</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV2: AP_rise_indices, LibV2: AP_fall_indices</p>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">AP_rise_indices</span> <span class="o">=</span> <span class="n">index_before_peak</span><span class="p">((</span><span class="n">v</span><span class="p">(</span><span class="n">peak_indices</span><span class="p">)</span> <span class="o">-</span> <span class="n">v</span><span class="p">(</span><span class="n">AP_begin_indices</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">AP_fall_indices</span> <span class="o">=</span> <span class="n">index_after_peak</span><span class="p">((</span><span class="n">v</span><span class="p">(</span><span class="n">peak_indices</span><span class="p">)</span> <span class="o">-</span> <span class="n">v</span><span class="p">(</span><span class="n">AP_begin_indices</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">AP_duration_half_width</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">AP_fall_indices</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span><span class="p">(</span><span class="n">AP_rise_indices</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV1 : AP_width</strong></p>
+<p>Width of spike at threshold</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1: peak_indices, LibV5: min_AHP_indices, threshold</p>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_AHP_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stim_start_index</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">min_AHP_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">onset_time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">min_AHP_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">min_AHP_indices</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">offset_time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">min_AHP_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">min_AHP_indices</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">onset_time</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">AP_width</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">offset_time</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">t</span><span class="p">(</span><span class="n">onset_time</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="voltage-features">
+<h3>Voltage features<a class="headerlink" href="#voltage-features" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/voltage_features.png" src="_images/voltage_features.png" />
+<div class="section" id="libv5-steady-state-voltage-stimend">
+<h4>LibV5 : steady_state_voltage_stimend<a class="headerlink" href="#libv5-steady-state-voltage-stimend" title="Permalink to this headline">¶</a></h4>
+<p>The average voltage during the last 10% of the stimulus duration.</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">stim_duration</span> <span class="o">=</span> <span class="n">stim_end</span> <span class="o">-</span> <span class="n">stim_start</span>
+<span class="n">begin_time</span> <span class="o">=</span> <span class="n">stim_end</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">stim_duration</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">stim_end</span>
+<span class="n">steady_state_voltage_stimend</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">voltage</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">end_time</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">begin_time</span><span class="p">))])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv1-steady-state-voltage">
+<h4>LibV1 : steady_state_voltage<a class="headerlink" href="#libv1-steady-state-voltage" title="Permalink to this headline">¶</a></h4>
+<p>The average voltage after the stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_end</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">steady_state_voltage</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">voltage</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">stim_end</span><span class="p">))])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-voltage-base">
+<h4>LibV5 : voltage_base<a class="headerlink" href="#libv5-voltage-base" title="Permalink to this headline">¶</a></h4>
+<p>The average voltage during the last 10% of time before the stimulus.</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Parameters</strong>: voltage_base_start_perc (default = 0.9)</dt>
+<dd><p class="first last">voltage_base_end_perc (default = 1.0)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">voltage_base</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">voltage</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">voltage_base_start_perc</span> <span class="o">*</span> <span class="n">stim_start</span><span class="p">)</span> <span class="o">&amp;</span>
+    <span class="p">(</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="n">voltage_base_end_perc</span> <span class="o">*</span> <span class="n">stim_start</span><span class="p">))])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-decay-time-constant-after-stim">
+<h4>LibV5 : decay_time_constant_after_stim<a class="headerlink" href="#libv5-decay-time-constant-after-stim" title="Permalink to this headline">¶</a></h4>
+<p>The decay time constant of the voltage right after the stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Parameters</strong>: decay_start_after_stim (default = 1.0 ms)</dt>
+<dd><p class="first last">decay_end_after_stim (default = 10.0 ms)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>Units</strong>: ms</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">time_interval</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">=&gt;</span> <span class="n">decay_start_after_stim</span> <span class="o">&amp;</span>
+                   <span class="n">t</span> <span class="o">&lt;</span> <span class="n">decay_end_after_stim</span><span class="p">)]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">stim_end</span><span class="p">)]</span>
+<span class="n">voltage_interval</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">voltages</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">=&gt;</span> <span class="n">decay_start_after_stim</span> <span class="o">&amp;</span>
+                                <span class="n">t</span> <span class="o">&lt;</span> <span class="n">decay_end_after_stim</span><span class="p">)]</span>
+                       <span class="o">-</span> <span class="n">voltages</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">decay_start_after_stim</span><span class="p">)])</span>
+
+<span class="n">log_voltage_interval</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">voltage_interval</span><span class="p">)</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">time_interval</span><span class="p">,</span> <span class="n">log_voltage_interval</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">decay_time_constant_after_stim</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">slope</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<img alt="_images/sag.png" src="_images/sag.png" />
+</div>
+<div class="section" id="libv5-sag-amplitude">
+<h4>LibV5 : sag_amplitude<a class="headerlink" href="#libv5-sag-amplitude" title="Permalink to this headline">¶</a></h4>
+<p>The difference between the minimal voltage and the steady state at stimend</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, steady_state_voltage_stimend, minimum_voltage, voltage_deflection_stim_ssse</p>
+</li>
+<li><p class="first"><strong>Parameters</strong>:</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">voltage_deflection_stim_ssse</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">sag_amplitude</span> <span class="o">=</span> <span class="n">steady_state_voltage_stimend</span> <span class="o">-</span> <span class="n">minimum_voltage</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sag_amplitude</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-sag-ratio1">
+<h4>LibV5 : sag_ratio1<a class="headerlink" href="#libv5-sag-ratio1" title="Permalink to this headline">¶</a></h4>
+<p>The ratio between the sag amplitude and the maximal sag extend from voltage base</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, sag_amplitude, voltage_base, minimum_voltage</p>
+</li>
+<li><p class="first"><strong>Parameters</strong>:</p>
+</li>
+<li><p class="first"><strong>Units</strong>: constant</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">voltage_base</span> <span class="o">!=</span> <span class="n">minimum_voltage</span><span class="p">:</span>
+    <span class="n">sag_ratio1</span> <span class="o">=</span> <span class="n">sag_amplitude</span> <span class="o">/</span> <span class="p">(</span><span class="n">voltage_base</span> <span class="o">-</span> <span class="n">minimum_voltage</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sag_ratio1</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-sag-ratio2">
+<h4>LibV5 : sag_ratio2<a class="headerlink" href="#libv5-sag-ratio2" title="Permalink to this headline">¶</a></h4>
+<p>The ratio between the maximal extends of sag from steady state and voltage base</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, steady_state_voltage_stimend, voltage_base, minimum_voltage</p>
+</li>
+<li><p class="first"><strong>Parameters</strong>:</p>
+</li>
+<li><p class="first"><strong>Units</strong>: constant</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">voltage_base</span> <span class="o">!=</span> <span class="n">minimum_voltage</span><span class="p">:</span>
+    <span class="n">sag_ratio2</span> <span class="o">=</span> <span class="p">(</span><span class="n">voltage_base</span> <span class="o">-</span> <span class="n">steady_state_voltage_stimend</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">voltage_base</span> <span class="o">-</span> <span class="n">minimum_voltage</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sag_ratio2</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv1-ohmic-input-resistance">
+<h4>LibV1 : ohmic_input_resistance<a class="headerlink" href="#libv1-ohmic-input-resistance" title="Permalink to this headline">¶</a></h4>
+<p>The ratio between the voltage deflection and stimulus current</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, voltage_deflection</p>
+</li>
+<li><p class="first"><strong>Parameters</strong>: stimulus_current</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV/nA</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ohmic_input_resistance</span> <span class="o">=</span> <span class="n">voltage_deflection</span> <span class="o">/</span> <span class="n">stimulus_current</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-ohmic-input-resistance-vb-ssse">
+<h4>LibV5 : ohmic_input_resistance_vb_ssse<a class="headerlink" href="#libv5-ohmic-input-resistance-vb-ssse" title="Permalink to this headline">¶</a></h4>
+<p>The ratio between the voltage deflection (between voltage base and steady-state voltage at stimend) and stimulus current</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, voltage_deflection_vb_ssse</p>
+</li>
+<li><p class="first"><strong>Parameters</strong>: stimulus_current</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV/nA</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ohmic_input_resistance_vb_ssse</span> <span class="o">=</span> <span class="n">voltage_deflection_vb_ssse</span> <span class="o">/</span> <span class="n">stimulus_current</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="libv5-voltage-deflection-vb-ssse">
+<h4>LibV5 : voltage_deflection_vb_ssse<a class="headerlink" href="#libv5-voltage-deflection-vb-ssse" title="Permalink to this headline">¶</a></h4>
+<p>The voltage deflection between voltage base and steady-state voltage at stimend</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: t, V, stim_start, stim_end, voltage_base, steady_state_voltage_stimend</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">voltage_deflection_vb_ssse</span> <span class="o">=</span> <span class="n">steady_state_voltage_stimend</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="requested-efeatures">
+<h2>Requested eFeatures<a class="headerlink" href="#requested-efeatures" title="Permalink to this headline">¶</a></h2>
+<p><strong>LibV1 : AHP_depth_last</strong></p>
+<p>Relative voltage values at the last after-hyperpolarization</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:voltage_base (mV), LibV5:last_AHP_values (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">last_AHP_values</span> <span class="o">=</span> <span class="n">last_min_element</span><span class="p">(</span><span class="n">voltage</span><span class="p">,</span> <span class="n">peak_indices</span><span class="p">)</span>
+<span class="n">AHP_depth</span> <span class="o">=</span> <span class="n">last_AHP_values</span><span class="p">[:]</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : AHP_time_from_peak_last</strong></p>
+<p>Time between AP peaks and last AHP depths</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV1:peak_indices, LibV5:min_AHP_values (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">last_AHP_indices</span> <span class="o">=</span> <span class="n">last_min_element</span><span class="p">(</span><span class="n">voltage</span><span class="p">,</span> <span class="n">peak_indices</span><span class="p">)</span>
+<span class="n">AHP_time_from_peak_last</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">last_AHP_indices</span><span class="p">[:]]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="n">peak_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : steady_state_voltage_stimend_from_voltage_base</strong></p>
+<p>The average voltage during the last 90% of the stimulus duration realtive to voltage_base</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5: steady_state_voltage_stimend (mV), LibV5: voltage_base (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">steady_state_voltage_stimend_from_voltage_base</span> <span class="o">=</span> <span class="n">steady_state_voltage_stimend</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : min_duringstim</strong>
+The minimum voltage during stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>:</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_duringstim</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">voltage</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="n">stim_end</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">stim_start</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : min_duringstim_from_voltage_base</strong>
+The minimum voltage during stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5: min_duringstim (mV), LibV5: voltage_base (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_duringstim_from_voltage_base</span> <span class="o">=</span> <span class="n">min_duringstim</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : max_duringstim</strong>
+The minimum voltage during stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>:</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">min_duringstim</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">voltage</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="n">stim_end</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">stim_start</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : max_duringstim_from_voltage_base</strong>
+The minimum voltage during stimulus</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5: max_duringstim (mV), LibV5: voltage_base (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">max_duringstim_from_voltage_base</span> <span class="o">=</span> <span class="n">max_duringstim</span> <span class="o">-</span> <span class="n">voltage_base</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : diff_max_duringstim</strong>
+Difference between maximum and steady state during stimulation</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5: max_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">diff_max_duringstim</span><span class="p">:</span> <span class="n">max_duringstim</span> <span class="o">-</span> <span class="n">steady_state_voltage_stimend</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>LibV5 : diff_min_duringstim</strong>
+Difference between minimum and steady state during stimulation</p>
+<ul>
+<li><p class="first"><strong>Required features</strong>: LibV5: min_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)</p>
+</li>
+<li><p class="first"><strong>Units</strong>: mV</p>
+</li>
+<li><p class="first"><strong>Pseudocode</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">diff_min_duringstim</span><span class="p">:</span> <span class="n">min_duringstim</span> <span class="o">-</span> <span class="n">steady_state_voltage_stimend</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="neoIO_example.html" class="btn btn-neutral" title="Reading different file formats" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, BBP, EPFL.
+      Last updated on Aug 23, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.11.50',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DEAP optimisation &mdash; eFEL 2.11.50 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="eFEL 2.11.50 documentation" href="index.html"/>
+        <link rel="up" title="Python" href="python_examples.html"/>
+        <link rel="next" title="Reading different file formats" href="neoIO_example.html"/>
+        <link rel="prev" title="Quick start" href="python_example1.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eFEL
+          
+
+          
+            
+            <img src="_static/bbp.jpg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.11.50
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="python_examples.html">Python</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="python_example1.html">Quick start</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">DEAP optimisation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluation-function">Evaluation function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-algorithm">Setting up the algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-code">Running the code</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neoIO_example.html">Reading different file formats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="eFeatures.html">eFeature descriptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eFEL</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="examples.html">Examples</a> &raquo;</li>
+        
+          <li><a href="python_examples.html">Python</a> &raquo;</li>
+        
+      <li>DEAP optimisation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/deap_optimisation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="deap-optimisation">
+<h1><a class="toc-backref" href="#id1">DEAP optimisation</a><a class="headerlink" href="#deap-optimisation" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#deap-optimisation" id="id1">DEAP optimisation</a><ul>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#evaluation-function" id="id3">Evaluation function</a></li>
+<li><a class="reference internal" href="#setting-up-the-algorithm" id="id4">Setting up the algorithm</a></li>
+<li><a class="reference internal" href="#running-the-code" id="id5">Running the code</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Using the eFEL, pyNeuron and the DEAP optimisation library one can very easily
+set up a genetic algorithm to fit parameters of a neuron model.</p>
+<p>We propose this setup because it leverages the power of the Python language
+to load several software tools in a compact script. The DEAP
+(Distributed Evolutionary Algorithms in Python) allows you to easily switch
+algorithms. Parallelising your evaluation function over cluster computers
+becomes a matter of only adding a couple of lines to your
+<a class="reference external" href="http://deap.readthedocs.org/en/latest/tutorials/basic/part4.html">code</a>,
+thanks to <a class="reference external" href="http://pyscoop.org">pyScoop</a>.</p>
+<p>In this example we will assume you have installed
+<a class="reference external" href="https://github.com/BlueBrain/eFEL">eFEL</a>,
+<a class="reference external" href="http://www.neuron.yale.edu/neuron/download/compile_linux#otheroptions">pyNeuron</a>
+and <a class="reference external" href="https://github.com/DEAP/deap">DEAP</a></p>
+<p>The code of the example below can be downloaded from
+<a class="reference external" href="https://github.com/BlueBrain/eFEL/tree/master/examples/deap">here</a></p>
+<p>To keep the example simple, let’s start from a passive single compartmental
+model. The parameters to fit will be the conductance and reversal potential
+of the leak channel. We will simulate the model for 1000 ms, and at 500 ms
+a step current of 1.0 nA is injected until the end of the simulation.</p>
+<p>The objective values of the optimisation will be the voltage before the
+current injection (i.e. the ‘voltage_base’ feature), and the steady state
+voltage during the current injection at the end of the simulation
+(‘steady_state_voltage’).</p>
+</div>
+<div class="section" id="evaluation-function">
+<h2><a class="toc-backref" href="#id3">Evaluation function</a><a class="headerlink" href="#evaluation-function" title="Permalink to this headline">¶</a></h2>
+<p>We now have to use pyNeuron to define the evaluation function to be optimised.
+The input arguments are the parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">g_pas</span><span class="p">,</span> <span class="n">e_pas</span>
+</pre></div>
+</div>
+<p>and the return values:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">abs</span><span class="p">(</span><span class="n">voltage_base</span> <span class="o">-</span> <span class="n">target_voltage1</span><span class="p">)</span>
+<span class="nb">abs</span><span class="p">(</span><span class="n">steady_state_voltage</span> <span class="o">-</span> <span class="n">target_voltage2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This translates into the following file (let’s call it ‘deap_efel_eval1.py’):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">neuron</span>
+<span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s1">&#39;stdrun.hoc&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">efel</span>
+
+<span class="c1"># pylint: disable=W0212</span>
+
+
+<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">individual</span><span class="p">,</span> <span class="n">target_voltage1</span><span class="o">=-</span><span class="mi">80</span><span class="p">,</span> <span class="n">target_voltage2</span><span class="o">=-</span><span class="mi">60</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a neuron model with parameters e_pas and g_pas, extracts</span>
+<span class="sd">    eFeatures from resulting traces and returns a tuple with</span>
+<span class="sd">    abs(voltage_base-target_voltage1) and</span>
+<span class="sd">    abs(steady_state_voltage-target_voltage2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">v_init</span> <span class="o">=</span> <span class="n">target_voltage1</span>
+
+    <span class="n">soma</span> <span class="o">=</span> <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">Section</span><span class="p">()</span>
+
+    <span class="n">soma</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s1">&#39;pas&#39;</span><span class="p">)</span>
+
+    <span class="n">soma</span><span class="o">.</span><span class="n">g_pas</span> <span class="o">=</span> <span class="n">individual</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">soma</span><span class="o">.</span><span class="n">e_pas</span> <span class="o">=</span> <span class="n">individual</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">clamp</span> <span class="o">=</span> <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">IClamp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">soma</span><span class="p">)</span>
+
+    <span class="n">stim_start</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">stim_end</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="n">clamp</span><span class="o">.</span><span class="n">amp</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">clamp</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">stim_start</span>
+    <span class="n">clamp</span><span class="o">.</span><span class="n">dur</span> <span class="o">=</span> <span class="mi">100000</span>
+
+    <span class="n">voltage</span> <span class="o">=</span> <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+    <span class="n">voltage</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">)</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
+
+    <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">tstop</span> <span class="o">=</span> <span class="n">stim_end</span>
+    <span class="n">neuron</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="n">trace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span>
+    <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage</span>
+    <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;stim_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim_start</span><span class="p">]</span>
+    <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;stim_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim_end</span><span class="p">]</span>
+    <span class="n">traces</span> <span class="o">=</span> <span class="p">[</span><span class="n">trace</span><span class="p">]</span>
+
+    <span class="n">features</span> <span class="o">=</span> <span class="n">efel</span><span class="o">.</span><span class="n">getFeatureValues</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;voltage_base&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;steady_state_voltage&quot;</span><span class="p">])</span>
+    <span class="n">voltage_base</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;voltage_base&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">steady_state_voltage</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;steady_state_voltage&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">target_voltage1</span> <span class="o">-</span> <span class="n">voltage_base</span><span class="p">),</span> \
+        <span class="nb">abs</span><span class="p">(</span><span class="n">target_voltage2</span> <span class="o">-</span> <span class="n">steady_state_voltage</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-the-algorithm">
+<h2><a class="toc-backref" href="#id4">Setting up the algorithm</a><a class="headerlink" href="#setting-up-the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have an evaluation function we just have to pass this to the DEAP
+optimisation library. DEAP allows you to easily set up a genetic algorithm
+to optimise your evaluation function. Let us first import all the necessary
+components:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">import</span> <span class="nn">deap</span>
+<span class="kn">import</span> <span class="nn">deap.gp</span>
+<span class="kn">import</span> <span class="nn">deap.benchmarks</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">base</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">creator</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">algorithms</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next we define a number of constants that will be used as settings for DEAP
+later:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Population size</span>
+<span class="n">POP_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="c1"># Number of offspring in every generation</span>
+<span class="n">OFFSPRING_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Number of generations</span>
+<span class="n">NGEN</span> <span class="o">=</span> <span class="mi">300</span>
+
+<span class="c1"># The parent and offspring population size are set the same</span>
+<span class="n">MU</span> <span class="o">=</span> <span class="n">OFFSPRING_SIZE</span>
+<span class="n">LAMBDA</span> <span class="o">=</span> <span class="n">OFFSPRING_SIZE</span>
+<span class="c1"># Crossover probability</span>
+<span class="n">CXPB</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="c1"># Mutation probability, should sum to one together with CXPB</span>
+<span class="n">MUTPB</span> <span class="o">=</span> <span class="mf">0.3</span>
+
+<span class="c1"># Eta parameter of cx and mut operators</span>
+<span class="n">ETA</span> <span class="o">=</span> <span class="mf">10.0</span>
+</pre></div>
+</div>
+<p>We have two parameters with the following bounds:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># The size of the individual is 2 (parameters g_pas and e_pas)</span>
+<span class="n">IND_SIZE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">LOWER</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-8</span><span class="p">,</span> <span class="o">-</span><span class="mf">100.0</span><span class="p">]</span>
+<span class="n">UPPER</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-4</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>As evolutionary algorithm we choose
+<a class="reference external" href="http://www.tik.ee.ethz.ch/pisa/selectors/nsga2/nsga2_documentation.txt">NSGA2</a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SELECTOR</span> <span class="o">=</span> <span class="s2">&quot;NSGA2&quot;</span>
+</pre></div>
+</div>
+<p>Let’s create the DEAP individual and fitness.
+We set the weights of the fitness values to -1.0 so that the fitness function
+will be minimised instead of maximised:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The individual will just be a list (of two parameters):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">Fitness</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We want to start with individuals for which the parameters are picked from a
+uniform random distribution. Let’s create a function that returns such a
+random list based on the bounds and the dimensions of the problem:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill array &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>DEAP works with the concept of ‘toolboxes’. The user defines genetic
+algorithm’s individuals, operators, etc by registering them in a toolbox.</p>
+<p>We first create the toolbox:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">Toolbox</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then we register the ‘uniform’ function we defined above:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;uniformparams&quot;</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">LOWER</span><span class="p">,</span> <span class="n">UPPER</span><span class="p">,</span> <span class="n">IND_SIZE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The three last parameters of this register call will be passed on to the
+‘uniform’ function call</p>
+<p>Now we can also register an individual:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;Individual&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">initIterate</span><span class="p">,</span>
+    <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">,</span>
+    <span class="n">toolbox</span><span class="o">.</span><span class="n">uniformparams</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And a population as list of individuals:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">Individual</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The function to evaluate we defined above. Assuming you saved that files as
+‘deap_efel_eval1.py’, we can import it as a module, and register the function:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">deap_efel_eval1</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;evaluate&quot;</span><span class="p">,</span> <span class="n">deap_efel_eval1</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the mutation and crossover operator we use builtin operators that are
+typically used with NSGA2:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;mate&quot;</span><span class="p">,</span>
+    <span class="n">deap</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">cxSimulatedBinaryBounded</span><span class="p">,</span>
+    <span class="n">eta</span><span class="o">=</span><span class="n">ETA</span><span class="p">,</span>
+    <span class="n">low</span><span class="o">=</span><span class="n">LOWER</span><span class="p">,</span>
+    <span class="n">up</span><span class="o">=</span><span class="n">UPPER</span><span class="p">)</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mutate&quot;</span><span class="p">,</span> <span class="n">deap</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">mutPolynomialBounded</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">ETA</span><span class="p">,</span>
+                 <span class="n">low</span><span class="o">=</span><span class="n">LOWER</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="n">UPPER</span><span class="p">,</span> <span class="n">indpb</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And then we specify the selector to be used:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;select&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">selNSGA2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We initialise the population with the size of the offspring:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">MU</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And register some statistics we want to print during the run of the algorithm:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">first_stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Statistics</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">second_stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Statistics</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">MultiStatistics</span><span class="p">(</span><span class="n">obj1</span><span class="o">=</span><span class="n">first_stats</span><span class="p">,</span> <span class="n">obj2</span><span class="o">=</span><span class="n">second_stats</span><span class="p">)</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The only thing that is left now is to run the algorithm in ‘main’:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pop</span><span class="p">,</span> <span class="n">logbook</span> <span class="o">=</span> <span class="n">algorithms</span><span class="o">.</span><span class="n">eaMuPlusLambda</span><span class="p">(</span>
+        <span class="n">pop</span><span class="p">,</span>
+        <span class="n">toolbox</span><span class="p">,</span>
+        <span class="n">MU</span><span class="p">,</span>
+        <span class="n">LAMBDA</span><span class="p">,</span>
+        <span class="n">CXPB</span><span class="p">,</span>
+        <span class="n">MUTPB</span><span class="p">,</span>
+        <span class="n">NGEN</span><span class="p">,</span>
+        <span class="n">stats</span><span class="p">,</span>
+        <span class="n">halloffame</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For you convenience the full code is in a code block below. It should be saved
+as ‘deap_efel.py’.</p>
+</div>
+<div class="section" id="running-the-code">
+<h2><a class="toc-backref" href="#id5">Running the code</a><a class="headerlink" href="#running-the-code" title="Permalink to this headline">¶</a></h2>
+<p>Assuming that the necessary dependencies are installed correctly the
+optimisation can then be run with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">deap_efel</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The full code of ‘deap_efel.py’:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">import</span> <span class="nn">deap</span>
+<span class="kn">import</span> <span class="nn">deap.gp</span>
+<span class="kn">import</span> <span class="nn">deap.benchmarks</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">base</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">creator</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">algorithms</span>
+
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">POP_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">OFFSPRING_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">NGEN</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">ALPHA</span> <span class="o">=</span> <span class="n">POP_SIZE</span>
+<span class="n">MU</span> <span class="o">=</span> <span class="n">OFFSPRING_SIZE</span>
+<span class="n">LAMBDA</span> <span class="o">=</span> <span class="n">OFFSPRING_SIZE</span>
+<span class="n">CXPB</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">MUTPB</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">ETA</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="n">SELECTOR</span> <span class="o">=</span> <span class="s2">&quot;NSGA2&quot;</span>
+
+<span class="n">IND_SIZE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">LOWER</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-8</span><span class="p">,</span> <span class="o">-</span><span class="mf">100.0</span><span class="p">]</span>
+<span class="n">UPPER</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-4</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">]</span>
+
+<span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">Fitness</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill array &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower_list</span><span class="p">,</span> <span class="n">upper_list</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)]</span>
+
+<span class="n">toolbox</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">Toolbox</span><span class="p">()</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;uniformparams&quot;</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">LOWER</span><span class="p">,</span> <span class="n">UPPER</span><span class="p">,</span> <span class="n">IND_SIZE</span><span class="p">)</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;Individual&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">initIterate</span><span class="p">,</span>
+    <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">,</span>
+    <span class="n">toolbox</span><span class="o">.</span><span class="n">uniformparams</span><span class="p">)</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">Individual</span><span class="p">)</span>
+
+
+<span class="kn">import</span> <span class="nn">deap_efel_eval1</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;evaluate&quot;</span><span class="p">,</span> <span class="n">deap_efel_eval1</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span>
+
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;mate&quot;</span><span class="p">,</span>
+    <span class="n">deap</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">cxSimulatedBinaryBounded</span><span class="p">,</span>
+    <span class="n">eta</span><span class="o">=</span><span class="n">ETA</span><span class="p">,</span>
+    <span class="n">low</span><span class="o">=</span><span class="n">LOWER</span><span class="p">,</span>
+    <span class="n">up</span><span class="o">=</span><span class="n">UPPER</span><span class="p">)</span>
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mutate&quot;</span><span class="p">,</span> <span class="n">deap</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">mutPolynomialBounded</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">ETA</span><span class="p">,</span>
+                 <span class="n">low</span><span class="o">=</span><span class="n">LOWER</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="n">UPPER</span><span class="p">,</span> <span class="n">indpb</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;variate&quot;</span><span class="p">,</span> <span class="n">deap</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">varAnd</span><span class="p">)</span>
+
+<span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s2">&quot;select&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">selNSGA2</span><span class="p">)</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">MU</span><span class="p">)</span>
+
+<span class="n">first_stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Statistics</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">second_stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Statistics</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">MultiStatistics</span><span class="p">(</span><span class="n">obj1</span><span class="o">=</span><span class="n">first_stats</span><span class="p">,</span> <span class="n">obj2</span><span class="o">=</span><span class="n">second_stats</span><span class="p">)</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pop</span><span class="p">,</span> <span class="n">logbook</span> <span class="o">=</span> <span class="n">algorithms</span><span class="o">.</span><span class="n">eaMuPlusLambda</span><span class="p">(</span>
+        <span class="n">pop</span><span class="p">,</span>
+        <span class="n">toolbox</span><span class="p">,</span>
+        <span class="n">MU</span><span class="p">,</span>
+        <span class="n">LAMBDA</span><span class="p">,</span>
+        <span class="n">CXPB</span><span class="p">,</span>
+        <span class="n">MUTPB</span><span class="p">,</span>
+        <span class="n">NGEN</span><span class="p">,</span>
+        <span class="n">stats</span><span class="p">,</span>
+        <span class="n">halloffame</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="neoIO_example.html" class="btn btn-neutral float-right" title="Reading different file formats" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="python_example1.html" class="btn btn-neutral" title="Quick start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, BBP, EPFL.
+      Last updated on Aug 23, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.11.50',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

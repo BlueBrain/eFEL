@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python API &mdash; eFEL 2.11.50 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="eFEL 2.11.50 documentation" href="index.html"/>
+        <link rel="next" title="Developer’s Guide" href="developers.html"/>
+        <link rel="prev" title="eFeature descriptions" href="eFeatures.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eFEL
+          
+
+          
+            
+            <img src="_static/bbp.jpg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.11.50
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eFeatures.html">eFeature descriptions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eFEL</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Python API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-efel.api">
+<span id="python-api"></span><h1>Python API<a class="headerlink" href="#module-efel.api" title="Permalink to this headline">¶</a></h1>
+<p>eFEL Python API functions.</p>
+<p>This module provides the user-facing Python API of the eFEL.
+The convenience functions defined here call the underlying ‘cppcore’ library
+to hide the lower level API from the user.
+All functions in this module can be called as efel.functionname, it is
+not necessary to include ‘api’ as in efel.api.functionname.</p>
+<p>Copyright (c) 2015, EPFL/Blue Brain Project</p>
+<blockquote>
+<div><p>This file is part of eFEL &lt;<a class="reference external" href="https://github.com/BlueBrain/eFEL">https://github.com/BlueBrain/eFEL</a>&gt;</p>
+<p>This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License version 3.0 as published
+by the Free Software Foundation.</p>
+<p>This library is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with this library; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="efel.api.FeatureNameExists">
+<code class="descclassname">efel.api.</code><code class="descname">FeatureNameExists</code><span class="sig-paren">(</span><em>feature_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#FeatureNameExists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.FeatureNameExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does a certain feature name exist ?</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>feature_name</strong> (<em>string</em>) – Name of the feature to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>FeatureNameExists</strong> – True if feature_name exists, otherwise False</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.getDependencyFileLocation">
+<code class="descclassname">efel.api.</code><code class="descname">getDependencyFileLocation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#getDependencyFileLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.getDependencyFileLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of the Dependency file</p>
+<p>The eFEL uses ‘Dependency’ files to let the user define which versions
+of certain features are used to calculate.
+The installation directory of the eFEL contains a default
+‘DependencyV5.txt’ file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>location</strong> – path to the location of a Dependency file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.getDistance">
+<code class="descclassname">efel.api.</code><code class="descname">getDistance</code><span class="sig-paren">(</span><em>trace</em>, <em>featureName</em>, <em>mean</em>, <em>std</em>, <em>trace_check=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#getDistance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.getDistance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate distance value for a list of traces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>trace</strong> (<em>trace dicts</em>) – Trace dict that represents one trace. The dict should have the
+following keys: ‘T’, ‘V’, ‘stim_start’, ‘stim_end’</li>
+<li><strong>featureName</strong> (<em>string</em>) – Name of the the features for which to calculate the distance</li>
+<li><strong>mean</strong> (<em>float</em>) – Mean to calculate the distance from</li>
+<li><strong>std</strong> (<em>float</em>) – Std to scale the distance with</li>
+<li><strong>trace_check</strong> (<em>float</em>) – Let the library check if there are spikes outside of stimulus interval</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>distance</strong> – The absolute number of standard deviation the feature is away
+from the mean. In case of anomalous results a value of ‘250’
+standard deviations is returned. This can happen if: a feature
+generates an error, there are spikes outside of the stimulus
+interval, the feature returns a NaN, etc.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.getFeatureNames">
+<code class="descclassname">efel.api.</code><code class="descname">getFeatureNames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#getFeatureNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.getFeatureNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list with the name of all the available features</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>feature_names</strong> – A list that contains all the feature names available in
+the eFEL. These names can be used in the featureNames
+argument of e.g. getFeatureValues()</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of strings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.getFeatureValues">
+<code class="descclassname">efel.api.</code><code class="descname">getFeatureValues</code><span class="sig-paren">(</span><em>traces</em>, <em>featureNames</em>, <em>parallel_map=None</em>, <em>return_list=True</em>, <em>raise_warnings=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#getFeatureValues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.getFeatureValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate feature values for a list of traces.</p>
+<p>This function is the core of the eFEL API. A list of traces (in the form
+of dictionaries) is passed as argument, together with a list of feature
+names.</p>
+<p>The return value consists of a list of dictionaries, one for each input
+trace. The keys in the dictionaries are the names of the calculated
+features, the corresponding values are lists with the feature values.
+Beware that every feature returns an array of values. E.g. AP_amplitude
+will return a list with the amplitude of every action potential.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>traces</strong> (<em>list of trace dicts</em>) – Every trace dict represent one trace. The dict should have the
+following keys: ‘T’, ‘V’, ‘stim_start’, ‘stim_end’</li>
+<li><strong>feature_names</strong> (<em>list of string</em>) – List with the names of the features to be calculated on all
+the traces.</li>
+<li><strong>parallel_map</strong> (<em>map function</em>) – Map function to parallelise over the traces. Default is the
+serial map() function</li>
+<li><strong>return_list</strong> (<em>boolean</em>) – By default the function returns a list of dicts. This
+optional argument can disable this, so that the result of the
+parallel_map() is returned. Can be useful for performance
+reasons when an iterator is preferred.</li>
+<li><strong>raise_warnings</strong> (<em>boolean</em>) – Raise warning when efel c++ returns an error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>feature_values</strong> – For every input trace a feature value dict is return (in
+the same order). The dict contains the keys of
+‘feature_names’, every key contains a numpy array with
+the feature values returned by the C++ efel code.
+The value is None if an error occured during the
+calculation of the feature.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of dicts</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.getMeanFeatureValues">
+<code class="descclassname">efel.api.</code><code class="descname">getMeanFeatureValues</code><span class="sig-paren">(</span><em>traces</em>, <em>featureNames</em>, <em>raise_warnings=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#getMeanFeatureValues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.getMeanFeatureValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function that returns the mean values from getFeatureValues()</p>
+<p>Instead of return a list of values for every feature as getFeatureValues()
+does, this function returns per trace one value for every feature, namely
+the mean value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>traces</strong> (<em>list of trace dicts</em>) – Every trace dict represent one trace. The dict should have the
+following keys: ‘T’, ‘V’, ‘stim_start’, ‘stim_end’</li>
+<li><strong>feature_names</strong> (<em>list of string</em>) – List with the names of the features to be calculated on all
+the traces.</li>
+<li><strong>raise_warnings</strong> (<em>boolean</em>) – Raise warning when efel c++ returns an error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>feature_values</strong> – For every input trace a feature value dict is return (in
+the same order). The dict contains the keys of
+‘feature_names’, every key contains the mean of the array
+that is returned by getFeatureValues()
+The value is None if an error occured during the
+calculation of the feature, or if the feature value array
+was empty.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of dicts</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.reset">
+<code class="descclassname">efel.api.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the efel to its initial state</p>
+<p>The user can set certain values in the efel, like the spike threshold.
+These values are persisten. This function will reset these value to their
+original state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.setDependencyFileLocation">
+<code class="descclassname">efel.api.</code><code class="descname">setDependencyFileLocation</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#setDependencyFileLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.setDependencyFileLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the location of the Dependency file</p>
+<p>The eFEL uses ‘Dependency’ files to let the user define which versions
+of certain features are used to calculate.
+The installation directory of the eFEL contains a default
+‘DependencyV5.txt’ file. Unless the user wants to change this file,
+it is not necessary to call this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> (<em>string</em>) – path to the location of a Dependency file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.setDerivativeThreshold">
+<code class="descclassname">efel.api.</code><code class="descname">setDerivativeThreshold</code><span class="sig-paren">(</span><em>newDerivativeThreshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#setDerivativeThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.setDerivativeThreshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the threshold for the derivate for detecting the spike onset</p>
+<p>Some featurea use a threshold on dV/dt to calculate the beginning of an
+action potential. This function allows you to set this threshold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>derivative_threshold</strong> (<em>float</em>) – The new derivative threshold value (in the same units
+as the traces, e.g. mV/ms).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.setDoubleSetting">
+<code class="descclassname">efel.api.</code><code class="descname">setDoubleSetting</code><span class="sig-paren">(</span><em>setting_name</em>, <em>new_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#setDoubleSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.setDoubleSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a certain double setting to a new value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.setIntSetting">
+<code class="descclassname">efel.api.</code><code class="descname">setIntSetting</code><span class="sig-paren">(</span><em>setting_name</em>, <em>new_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#setIntSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.setIntSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a certain integer setting to a new value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="efel.api.setThreshold">
+<code class="descclassname">efel.api.</code><code class="descname">setThreshold</code><span class="sig-paren">(</span><em>newThreshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/efel/api.html#setThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#efel.api.setThreshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the spike detection threshold in the eFEL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>threshold</strong> (<em>float</em>) – The new spike detection threshold value (in the same units
+as the traces, e.g. mV).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developers.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="eFeatures.html" class="btn btn-neutral" title="eFeature descriptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, BBP, EPFL.
+      Last updated on Aug 23, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.11.50',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
