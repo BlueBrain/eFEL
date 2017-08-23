@@ -797,9 +797,6 @@ Note that a successful calculation of a feature can also result in an empty vect
   APPEND voltage\_deflection / stimulus\_current TO ohmic\_input\_resistance
   }
   Yield \myid{voltage deflection} divided by \myid{stimulus current}.
-  \mybox{remarks:}{
-  The regular feature E29 determins $R_\mathrm{in}$ far more accurately.
-  }
 \end{efeature}
 
 \begin{efeature}
@@ -1812,48 +1809,6 @@ Note that a successful calculation of a feature can also result in an empty vect
 \end{efeature}
 
 \begin{efeature}
-  {E29}
-  {LibV2}
-  {E29}
-  {M$\Omega$}
-  {steady state hyper;IV*}
-  {stimulus current}
-  {none}
-  {Ohmic input resistance}
-  {
-  FOR suffix IN IV* DO \+ \\
-    APPEND stimulus\_current;suffix TO x \\
-    APPEND steady\_state\_hyper;suffix TO y \- \\
-  ENDFOR \\
-  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
-  APPEND slope TO E29
-  }
-  Get the points (\myid{stimulus current}, \myid{steady state hyper}) for all repetitions and iterations of the stimulus protocol \myid{IV} and fit a straight line.
-  Yield the slope.
-  
-\end{efeature}
-
-\begin{efeature}
-  {E29: coefficient of determination}
-  {LibV2}
-  {E29\_cod}
-  {none}
-  {E29}
-  {none}
-  {none}
-  {The coefficient of determination (often: R$^2$) of the straight line fit according to E29}
-  {
-  FOR suffix IN IV* DO \+ \\
-    APPEND stimulus\_current;suffix TO x \\
-    APPEND steady\_state\_hyper;suffix TO y \- \\
-  ENDFOR \\
-  slope, residuals, $R^2$ = fit\_straight\_line(x, y) \\
-  APPEND $R^2$ TO E29\_cod
-  }
-  
-\end{efeature}
-
-\begin{efeature}
   {E39}
   {LibV2}
   {E39}
@@ -1910,38 +1865,6 @@ Note that a successful calculation of a feature can also result in an empty vect
   APPEND mean of time\_to\_first\_spike;IDrest* at index 0 TO E40
   }
   Take the mean of \myid{time to first spike} over all repetitions and iterations of the stimulus protocol \myid{IDrest}
-  
-\end{efeature}
-
-\begin{efeature}
-  {time constant mean}
-  {LibV2}
-  {time\_constant\_mean}
-  {ms}
-  {time constant;IV*}
-  {none}
-  {none}
-  {Membrane time constant}
-  {
-  APPEND mean of time\_consant;IV* at index 0 TO time\_constant\_mean
-  }
-  Take the mean of \myid{time constant} over all repetitions and iterations of the stimulus protocol \myid{IV}
-  
-\end{efeature}
-
-\begin{efeature}
-  {time constant standard deviation}
-  {LibV2}
-  {time\_constant\_std}
-  {ms}
-  {time constant mean\\&time constant;IV*}
-  {none}
-  {none}
-  {Standard deviation of the membrane time constant}
-  {
-  APPEND standard deviation of time\_constant;IV* at index 0 TO time\_constant\_std
-  }
-  Calculate the standard deviations of all values of \myid{time constant} obtained on different repetitions and iterations of the stimulus protocol \myid{IV}.
   
 \end{efeature}
 
