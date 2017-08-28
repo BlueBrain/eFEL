@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import os
+import numpy
 import nose.tools as nt
 
 
@@ -51,6 +52,10 @@ ahptest1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                           'basic',
                                           'ahptest_1.txt')
 
+tau20_0_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                         'basic',
+                                         'tau20.0.csv')
+
 spikeoutsidestim_url = 'file://%s' % os.path.join(
     os.path.abspath(testdata_dir),
     'basic',
@@ -64,6 +69,42 @@ zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                              'basic',
                                              'zero_ISI_log_slope_skip'
                                              '95824004.abf.csv')
+
+
+def load_data(data_name, interp=False, interp_dt=0.1):
+    """Load data file"""
+
+    import efel
+
+    trace = {}
+
+    if data_name == 'mean_frequency1':
+        stim_start = 500.0
+        stim_end = 900.0
+
+        time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+        voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    elif data_name == 'tau20.0':
+        stim_start = 100.0
+        stim_end = 1000.0
+
+        time = efel.io.load_fragment('%s#col=1' % tau20_0_url)
+        voltage = efel.io.load_fragment('%s#col=2' % tau20_0_url)
+
+        trace['decay_start_after_stim'] = [1.0]
+        trace['decay_end_after_stim'] = [10.0]
+    else:
+        raise ValueError('Unknown data set name: %s' % data_name)
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    if interp:
+        time, voltage = interpolate(time, voltage, interp_dt)
+
+    return trace, time, voltage, stim_start, stim_end
 
 
 def test_import():
@@ -99,7 +140,6 @@ def test_nonexisting_feature():
     import efel
     efel.reset()
 
-    import numpy
     trace = {}
     trace['T'] = numpy.arange(0, 100, 0.1)
     trace['V'] = numpy.ones(len(trace['T'])) * -80.0
@@ -119,7 +159,6 @@ def test_failing_double_feature():
     import efel
     efel.reset()
 
-    import numpy
     trace = {}
     trace['T'] = numpy.arange(0, 100, 0.1)
     trace['V'] = numpy.ones(len(trace['T'])) * -80.0
@@ -139,7 +178,6 @@ def test_raise_warnings():
     import efel
     efel.reset()
 
-    import numpy
     trace = {}
     trace['T'] = numpy.arange(0, 100, 0.1)
     trace['V'] = numpy.ones(len(trace['T'])) * -80.0
@@ -176,7 +214,6 @@ def test_failing_int_feature():
     import efel
     efel.reset()
 
-    import numpy
     trace = {}
     trace['T'] = numpy.arange(0, 100, 0.1)
     trace['V'] = numpy.ones(len(trace['T'])) * -80.0
@@ -195,8 +232,6 @@ def test_empty_trace():
 
     import efel
     efel.reset()
-
-    import numpy
 
     max_time = 3000.0
     stim_start = 700.0
@@ -235,7 +270,6 @@ def test_multiprocessing_traces():
     """basic: Test multiprocessing map"""
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 31.2
     stim_end = 431.2
@@ -300,7 +334,6 @@ def test_consecutive_traces():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 31.2
     stim_end = 431.2
@@ -429,6 +462,34 @@ def test_setDerivativeThreshold():
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][1]
     nt.assert_almost_equal(AP_begin_voltage, -51.6400489995987)
     nt.assert_not_equal(AP_begin_voltage, AP_begin_voltage_orig)
+
+
+def interpolate(time, voltage, new_dt):
+    """Interpolate voltage to new dt"""
+
+    interp_time = numpy.arange(time[0], time[-1] + new_dt, new_dt)
+    interp_voltage = numpy.interp(interp_time, time, voltage)
+
+    return interp_time, interp_voltage
+
+
+def test_interpolate():
+    """basic: Test interpolate"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ['voltage']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    interp_voltage = feature_values[0]['voltage']
+    nt.assert_equal(len(interp_voltage), len(voltage))
+    nt.assert_true(numpy.allclose(interp_voltage, voltage))
 
 
 def test_zero_ISI_log_slope_skip():
@@ -594,7 +655,6 @@ def test_strict_stiminterval():
 def test_ISI_log_slope():
     """basic: Test ISI_log_slope"""
 
-    import numpy
     import efel
     efel.reset()
 
@@ -630,7 +690,6 @@ def test_ISI_log_slope():
 def test_ISI_semilog_slope():
     """basic: Test ISI_semilog_slope"""
 
-    import numpy
     import efel
     efel.reset()
 
@@ -668,7 +727,6 @@ def test_AP_begin_indices1():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 31.2
     stim_end = 431.2
@@ -720,26 +778,28 @@ def test_mean_frequency1():
     import efel
     efel.reset()
 
-    stim_start = 500.0
-    stim_end = 900.0
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
-
-    features = ['mean_frequency']
+    features = ['mean_frequency', 'peak_time']
 
     feature_values = \
         efel.getFeatureValues(
             [trace],
             features)
-    nt.assert_almost_equal(feature_values[0]['mean_frequency'][0], 15.2858453)
+
+    peak_times = feature_values[0]['peak_time']
+
+    stim_spikes = peak_times[numpy.where((stim_start <= peak_times)
+                                         & (peak_times <= stim_end))]
+    n_of_spikes = len(stim_spikes)
+
+    mean_frequency = float(n_of_spikes) * 1000 / \
+        (stim_spikes[-1] - stim_start)
+
+    nt.assert_almost_equal(
+        feature_values[0]['mean_frequency'][0],
+        mean_frequency)
 
 
 def test_ap_amplitude_outside_stim():
@@ -747,7 +807,6 @@ def test_ap_amplitude_outside_stim():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 700.0
     stim_end = 2700.0
@@ -822,23 +881,11 @@ def test_ap_amplitude_from_voltagebase1():
 def test_voltagebase1():
     """basic: Test voltagebase 1"""
 
-    import numpy
-
     import efel
     efel.reset()
 
-    stim_start = 500.0
-    stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
     features = ['voltage_base']
 
@@ -847,8 +894,10 @@ def test_voltagebase1():
             [trace],
             features)
 
-    voltage_base = numpy.mean(voltage[numpy.where(
-        (time >= 0.9 * stim_start) & (time <= stim_start))])
+    interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+    voltage_base = numpy.mean(interp_voltage[numpy.where(
+        (interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
 
     nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
                            places=5)
@@ -885,7 +934,6 @@ def test_getDistance1():
 def test_getDistance_trace_check():
     """basic: Test getDistance trace_check option"""
 
-    import numpy
     import efel
     efel.reset()
 
@@ -990,7 +1038,6 @@ def test_spikecount1():
 def test_spikecount_stimint1():
     """basic: Test Spikecount_stimint 1"""
 
-    import numpy
     import efel
     efel.reset()
 
@@ -1217,8 +1264,6 @@ def test_sag_ratio1_empty():
     import efel
     efel.reset()
 
-    import numpy
-
     max_time = 3000.0
     stim_start = 700.0
     stim_end = 2700.0
@@ -1328,7 +1373,6 @@ def test_spikecount2():
 
     import efel
     efel.reset()
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
@@ -1359,8 +1403,6 @@ def test_min_voltage_between_spikes1():
 
     import efel
     efel.reset()
-
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
@@ -1426,29 +1468,9 @@ def test_steady_state_voltage1():
 
     import efel
     efel.reset()
-    import numpy
 
-    stim_start = 500.0
-    stim_end = 900.0
-
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
     features = ['steady_state_voltage']
 
@@ -1457,11 +1479,7 @@ def test_steady_state_voltage1():
             [trace],
             features)[0]
 
-    begin_time = stim_end
-    end_time = max(time)
-    steady_state_voltage = numpy.mean(voltage[numpy.where(
-        (time <= end_time) & (time > begin_time)
-    )])
+    steady_state_voltage = numpy.mean(voltage[numpy.where(time >= stim_end)])
 
     nt.assert_almost_equal(steady_state_voltage,
                            feature_values['steady_state_voltage'][0])
@@ -1472,20 +1490,9 @@ def test_steady_state_voltage_stimend():
 
     import efel
     efel.reset()
-    import numpy
 
-    stim_start = 500.0
-    stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
     features = ['steady_state_voltage_stimend']
 
@@ -1510,20 +1517,9 @@ def test_maximum_voltage_from_voltagebase():
 
     import efel
     efel.reset()
-    import numpy
 
-    stim_start = 500.0
-    stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
     features = ['maximum_voltage_from_voltagebase', 'voltage_base']
 
@@ -1547,8 +1543,7 @@ def test_maximum_voltage_from_voltagebase():
 
 def decay_time_constant_after_stim(time, voltage, interval_start,
                                    interval_end, stim_start, stim_end):
-    '''numpy implementation'''
-    import numpy
+    """decay_time_constant_after_stim numpy implementation"""
 
     def get_index(ts, t):
         """get_index"""
@@ -1571,45 +1566,25 @@ def decay_time_constant_after_stim(time, voltage, interval_start,
 
 
 def test_decay_time_constant_after_stim1():
-    """basic: decay_time_constant_after_stim 1"""
+    """basic: Test decay_time_constant_after_stim 1"""
 
     import efel
     efel.reset()
-    import numpy
 
-    stim_start = 500.0
-    stim_end = 900.0
-
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'mean_frequency_1.txt')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {
-        'T': time,
-        'V': voltage,
-        'stim_start': [stim_start],
-        'stim_end': [stim_end],
-    }
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
 
     features = ['decay_time_constant_after_stim']
 
     feature_values = efel.getFeatureValues([trace], features)[0]
 
     expected = decay_time_constant_after_stim(
-        trace['T'],
-        trace['V'],
+        time,
+        voltage,
         stim_end + 1.0,
         stim_end + 10.0,
-        trace['stim_start'][0],
-        trace['stim_end'][0])
+        stim_start,
+        stim_end)
 
     nt.assert_almost_equal(
         expected,
@@ -1617,36 +1592,20 @@ def test_decay_time_constant_after_stim1():
 
 
 def test_decay_time_constant_after_stim2():
-    """basic: decay_time_constant_after_stim 2"""
+    """basic: Test decay_time_constant_after_stim 2"""
 
     import efel
     efel.reset()
-    import numpy
 
-    stim_start = 100.0
-    stim_end = 1000.0
-
-    test_data_path = os.path.join(testdata_dir, 'basic', 'tau20.0.csv')
-    data = numpy.loadtxt(test_data_path)
-
-    time = data[:, 0]
-    voltage = data[:, 1]
-
-    trace = {
-        'T': time,
-        'V': voltage,
-        'stim_start': [stim_start],
-        'stim_end': [stim_end],
-        'decay_start_after_stim': [1.0],
-        'decay_end_after_stim': [10.0]
-    }
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'tau20.0', interp=True)
 
     features = ['decay_time_constant_after_stim']
 
     feature_values = efel.getFeatureValues([trace], features)[0]
 
     nt.assert_almost_equal(
-        20.0,
+        19.9,
         feature_values['decay_time_constant_after_stim'][0], places=1)
 
 
@@ -1655,8 +1614,6 @@ def test_getmeanfeaturevalues():
 
     import efel
     efel.reset()
-
-    import numpy
 
     stim_start = 500.0
     stim_end = 900.0
@@ -1690,8 +1647,6 @@ def test_mean_AP_amplitude():
     import efel
     efel.reset()
 
-    import numpy
-
     stim_start = 500.0
     stim_end = 900.0
 
@@ -1716,7 +1671,6 @@ def test_mean_AP_amplitude():
 
 def test_unfinished_peak():
     """basic: Test if unfinished peak doesn't break Spikecount"""
-    import numpy
 
     import efel
     efel.setIntSetting('strict_stiminterval', True)

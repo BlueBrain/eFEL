@@ -32,31 +32,37 @@ int LinearInterpolation(double Stepdx,
                         vector<double>& InterpY) {
   EFEL_ASSERT(X.size() == Y.size(), "X & Y have to have the same point count");
   EFEL_ASSERT(2 < X.size(), "Need at least 2 points in X");
-  assert(Stepdx != 0);
-  
-  size_t nCount = X.size() - 1;
-  size_t i = 1;
+  EFEL_ASSERT(Stepdx > 0, "Interpolation step needs to be strictly positive");
+ 
+  double dx, dy, dydx;
+  double x = X[0];
 
-  double input = X[0];
-  double dif1, dif2;
+  // Create the x values
+  do {
+      InterpX.push_back(x);
+      x += Stepdx;
+  } while (x <= X[X.size() - 1]);
 
-  InterpY.push_back(Y[0]);
-  InterpX.push_back(X[0]);
 
-  while(input < X[nCount]){
-    input += Stepdx;
+  // Create the y values
+  unsigned j = 0;
+  for (unsigned i = 0; i < InterpX.size(); i++) {
+    x = InterpX[i];
 
-    while (X[i] < input && i < nCount) {
-      i++;
-    }
+    while ( X[j+1] < x ) j++;
 
-    dif1 = X[i] - X[i - 1];
-    dif2 = input - X[i - 1];
-    assert(dif1 != 0); //!=0 per definition
+    assert((j+1) < X.size());
 
-    InterpY.push_back(Y[i - 1] + ((Y[i] - Y[i - 1]) * dif2 / dif1));
-    InterpX.push_back(input);
+    dx = X[j+1] - X[j];
+    dy = Y[j+1] - Y[j];
+
+    assert(dx != 0); //!=0 per definition
+
+    dydx = dy/dx;
+
+    InterpY.push_back(Y[j] + dydx * (x - X[j]));
   }
+
   return 1;
 }
 
