@@ -155,7 +155,8 @@ def test_allfeatures():
         elif feature_value is None:
             equal = (expected_value is None)
         else:
-            equal = numpy.allclose(feature_value, expected_value)
+            equal = (len(feature_value) == len(expected_value)) \
+                and numpy.allclose(feature_value, expected_value)
 
         if not equal:
             print("Difference in feature %s: value=%s expected=%s" %
