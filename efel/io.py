@@ -192,7 +192,7 @@ def extract_stim_times_from_neo_data(blocks, stim_start, stim_end):
     return stim_start, stim_end
 
 
-def load_neo_file(file_name, stim_start=None, stim_end=None):
+def load_neo_file(file_name, stim_start=None, stim_end=None, **kwargs):
     """
         Use neo to load a data file and convert it to be readable by eFEL.
 
@@ -204,6 +204,7 @@ def load_neo_file(file_name, stim_start=None, stim_end=None):
                      Optional if there is an Epoch or two Events in the file
         stim_end : numerical value (ms)
                    Optional if there is an Epoch or two Events in the file
+        kwargs : keyword arguments to be passed to the read() method of the Neo IO class
 
         Epoch.name should be one of "stim", "stimulus", "stimulation",
         "current_injection"
@@ -220,7 +221,7 @@ def load_neo_file(file_name, stim_start=None, stim_end=None):
     import neo
 
     reader = neo.io.get_io(file_name)
-    blocks = reader.read()
+    blocks = reader.read(**kwargs)
 
     stim_start, stim_end = extract_stim_times_from_neo_data(
         blocks, stim_start, stim_end)
