@@ -535,7 +535,7 @@ int cFeature::printFeature(const char* strFileName) {
 }
 
 double cFeature::getDistance(string strName, double mean, double std, 
-        bool trace_check) {
+        bool trace_check, double error_dist) {
 
   vector<double> feature_vec;
   vector<int> feature_veci;
@@ -548,7 +548,7 @@ double cFeature::getDistance(string strName, double mean, double std,
   if (trace_check) {
       retVal = getFeatureInt("trace_check", feature_veci);
       if (retVal < 0) {
-          return 250.0;
+          return error_dist;
       }
   }
 
@@ -569,7 +569,7 @@ double cFeature::getDistance(string strName, double mean, double std,
   // printf("\n Calculating distance for [%s] values [", strName.c_str());
   if (retVal <= 0) {
     // printf ("\n Error in feature calculation... [%s]\n",GErrorStr.c_str() );
-    return 250;
+    return error_dist;
   } else {
     if (intFlag) {
       for (unsigned i = 0; i < feature_veci.size(); i++) {
@@ -579,8 +579,8 @@ double cFeature::getDistance(string strName, double mean, double std,
       dError = dError / std / feature_veci.size();
       if (dError != dError) {
         // printf("Warning: Error distance calculation generated NaN, returning
-        // 250\n");
-        return 250;
+        // error_dist\n");
+        return error_dist;
       }
       // printf("] TotalError = %f\n", dError);
       return dError;
@@ -593,14 +593,14 @@ double cFeature::getDistance(string strName, double mean, double std,
       if (dError != dError) {
         printf(
             "Warning: Error distance calculation generated NaN, returning "
-            "250\n");
-        return 250;
+            "error_dist\n");
+        return error_dist;
       }
       // printf("] TotalError = %f\n", dError);
       return dError;
     }
   }
-  return 250.0;
+  return error_dist;
 }
 
 string cFeature::featuretype(string featurename) {

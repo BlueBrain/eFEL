@@ -67,7 +67,7 @@ class cFeature {
   void get_feature_names(vector<string>& feature_names);
   int setVersion(string strDepFile);
   double getDistance(string strName, double mean, double std, 
-          bool trace_check=true);
+          bool trace_check=true, double error_dist=250);
 
   // calculation of GA errors
   template<typename T>

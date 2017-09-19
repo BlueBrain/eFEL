@@ -186,7 +186,13 @@ def FeatureNameExists(feature_name):
     return feature_name in getFeatureNames()
 
 
-def getDistance(trace, featureName, mean, std, trace_check=None):
+def getDistance(
+        trace,
+        featureName,
+        mean,
+        std,
+        trace_check=None,
+        error_dist=None):
     """Calculate distance value for a list of traces.
 
     Parameters
@@ -201,16 +207,20 @@ def getDistance(trace, featureName, mean, std, trace_check=None):
     std : float
           Std to scale the distance with
     trace_check : float
-          Let the library check if there are spikes outside of stimulus interval
+          Let the library check if there are spikes outside of stimulus
+          interval
+    error_dist : float
+          Distance returned when error, default is 250
 
     Returns
     =======
     distance : float
                The absolute number of standard deviation the feature is away
-               from the mean. In case of anomalous results a value of '250'
-               standard deviations is returned. This can happen if: a feature
-               generates an error, there are spikes outside of the stimulus
-               interval, the feature returns a NaN, etc.
+               from the mean. In case of anomalous results a value of
+               'error_dist' standard deviations is returned.
+               This can happen if: a feature generates an error, there are
+               spikes outside of the stimulus interval, the feature returns
+               a NaN, etc.
     """
 
     _initialise()
@@ -219,17 +229,19 @@ def getDistance(trace, featureName, mean, std, trace_check=None):
     for item in list(trace.keys()):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
+    kwargs = {}
+
+    kwargs['feature_name'] = featureName
+    kwargs['mean'] = mean
+    kwargs['std'] = std
+
     if trace_check is not None:
-        return efel.cppcore.getDistance(
-            featureName,
-            mean,
-            std,
-            trace_check=1 if trace_check else 0)
-    else:
-        return efel.cppcore.getDistance(
-            featureName,
-            mean,
-            std)
+        kwargs['trace_check'] = 1 if trace_check else 0
+
+    if error_dist is not None:
+        kwargs['error_dist'] = error_dist
+
+    return efel.cppcore.getDistance(**kwargs)
 
 
 def _initialise():
@@ -373,7 +385,7 @@ def _get_feature_values_serial(trace_featurenames):
 
 
 def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
-    """Convenience function that returns the mean values from getFeatureValues()
+    """Convenience function that returns mean values from getFeatureValues()
 
     Instead of return a list of values for every feature as getFeatureValues()
     does, this function returns per trace one value for every feature, namely
