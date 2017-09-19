@@ -124,7 +124,7 @@ def test_load_fragment_allcolumns():
 
     numpy.testing.assert_array_equal(time_io, time_numpy)
 
-"""
+
 def test_load_neo_file_stim_time_arg():
     import efel
     file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.mat")
@@ -366,5 +366,3 @@ def test_load_neo_file_stim_time_events_incomplete():
                              "neo_test_file_events_time_incomplete.mat")
 
     nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)
-
-"""
