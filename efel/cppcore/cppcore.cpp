@@ -207,20 +207,21 @@ static PyObject* getDistance_wrapper(PyObject* self,
                                      PyObject* args,
                                      PyObject* kwds) {
   char* feature_name;
-  double mean, std, distance;
+  double mean, std, distance, error_dist=250;
   int trace_check = 1;
 
-  const char *kwlist[] = {"feature_name", "mean", "std", "trace_check", NULL};
+  const char *kwlist[] = {"feature_name", "mean", "std", "trace_check", 
+      "error_dist", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|i",
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|id",
                                    const_cast<char**>(kwlist),
                                    &feature_name, &mean, &std,
-                                   &trace_check)) {
+                                   &trace_check, &error_dist)) {
     return NULL;
   }
 
   distance = pFeature->getDistance(feature_name, mean, std,
-                                   trace_check);
+                                   trace_check, error_dist);
 
   return Py_BuildValue("d", distance);
 }

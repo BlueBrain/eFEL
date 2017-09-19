@@ -931,6 +931,41 @@ def test_getDistance1():
             10))
 
 
+def test_getDistance_error_dist():
+    """basic: Test getDistance error_dist option"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 400.0
+    stim_end = 500.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    score_normal = efel.getDistance(
+        trace,
+        'AP_amplitude',
+        50,
+        10)
+    score_150 = efel.getDistance(
+        trace,
+        'AP_amplitude',
+        50,
+        10,
+        error_dist=150)
+
+    nt.assert_almost_equal(score_normal, 250)
+    nt.assert_almost_equal(score_150, 150)
+
+
 def test_getDistance_trace_check():
     """basic: Test getDistance trace_check option"""
 
