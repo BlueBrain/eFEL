@@ -1,0 +1,16 @@
+{
+  "name": "eFEL",
+  "description": "The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico).",
+  "version": "2.12.0",
+  "scripts": {
+    "build_doc": "echo 'efel.readthedocs.io'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueBrain/eFEL/releases",
+    "issuesurl": "https://github.com/BlueBrain/eFEL/issues"
+  },
+  "author": "Werner Van Geit (werner.vangeit@epfl.ch)",
+  "contributors": ["Ruben Moor", "Rajnish Ranjan", "Luis Riquelme", "Christian Roessert", "Werner Van Geit"],
+  "license": "LGPL/BSD"
+}
