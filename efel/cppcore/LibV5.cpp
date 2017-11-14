@@ -2085,6 +2085,25 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
   return v.size();
 }
 
+// return (possibly interpolate) time trace
+int LibV5::time(mapStr2intVec& IntFeatureData,
+                   mapStr2doubleVec& DoubleFeatureData,
+                   mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "time", nSize);
+  if (retVal > 0) return nSize;
+
+  vector<double> t;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal < 0) {
+    GErrorStr += "Error getting T for voltage";
+    return -1;
+  }
+
+  setDoubleVec(DoubleFeatureData, StringData, "time", t);
+  return t.size();
+}
+
 // *** The average voltage during the last 90% of the stimulus duration. ***
 int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
                                         mapStr2doubleVec& DoubleFeatureData,
