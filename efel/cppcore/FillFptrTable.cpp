@@ -242,6 +242,7 @@ int FillFptrTable() {
   FptrTableV5["min_voltage_between_spikes"] =
       &LibV5::min_voltage_between_spikes;
   FptrTableV5["voltage"] = &LibV5::voltage;
+  FptrTableV5["time"] = &LibV5::time;
   FptrTableV5["steady_state_voltage_stimend"] =
       &LibV5::steady_state_voltage_stimend;
   FptrTableV5["voltage_base"] = &LibV5::voltage_base;

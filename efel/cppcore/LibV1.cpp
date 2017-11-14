@@ -26,7 +26,8 @@
 #include <list>
 #include <math.h>
 #include <string>
-
+#include <sstream>
+#include <iomanip>
 
 using std::bind2nd;
 using std::find_if;
@@ -37,6 +38,12 @@ using std::list;
 using std::min_element;
 using std::max_element;
 
+template<typename T>
+std::string to_string(const T& value) {
+  std::ostringstream oss;
+  oss << std::setprecision(17) << value;
+  return oss.str();
+}
 
 int LibV1::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
@@ -1529,7 +1536,9 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
   }
 
   if (stimEnd > t[t.size() - 1]) {
-    GErrorStr += "\nStimulus end larger than max time in trace\n";
+    GErrorStr += "\nStimulus end larger than max time in trace. [stim_end: " + 
+        to_string(stimEnd) + ", max time: " + 
+        to_string(t[t.size() - 1]) + "]\n";
     return -1;
   }
 

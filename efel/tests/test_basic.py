@@ -481,13 +481,15 @@ def test_interpolate():
     trace, time, voltage, stim_start, stim_end = load_data(
         'mean_frequency1', interp=True)
 
-    features = ['voltage']
+    features = ['time', 'voltage']
 
     feature_values = \
         efel.getFeatureValues(
             [trace],
             features, raise_warnings=False)
+    interp_time = feature_values[0]['time']
     interp_voltage = feature_values[0]['voltage']
+    nt.assert_equal(len(interp_time), len(time))
     nt.assert_equal(len(interp_voltage), len(voltage))
     nt.assert_true(numpy.allclose(interp_voltage, voltage))
 

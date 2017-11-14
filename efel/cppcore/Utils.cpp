@@ -35,32 +35,57 @@ int LinearInterpolation(double Stepdx,
   EFEL_ASSERT(Stepdx > 0, "Interpolation step needs to be strictly positive");
  
   double dx, dy, dydx;
+  int InterpX_size;
   double x = X[0];
+  double start = X[0];
+  double stop = X[X.size() - 1] + Stepdx;
+  
+  // Inspired by the way numpy.arange works
+  // Do not remove the 'ceil' in favor of < stop in for loop
+  InterpX_size = ceil((stop - start)/Stepdx);
 
-  // Create the x values
-  do {
+  for (unsigned i = 0; i < InterpX_size; i++) {
       InterpX.push_back(x);
       x += Stepdx;
-  } while (x <= X[X.size() - 1]);
-
+  }
 
   // Create the y values
   unsigned j = 0;
   for (unsigned i = 0; i < InterpX.size(); i++) {
     x = InterpX[i];
 
-    while ( X[j+1] < x ) j++;
+    EFEL_ASSERT((j+1) < X.size(), "Interpolation accessing point outside of X");
+    
+    while ( X[j+1] < x ) {
+        j++;
+        if (j+1 >= X.size()) {
+            j = X.size() - 1;
+            break;
+        }
+        EFEL_ASSERT((j+1) < X.size(), 
+                "Interpolation accessing point outside of X");
+    }
+    
 
-    assert((j+1) < X.size());
 
-    dx = X[j+1] - X[j];
-    dy = Y[j+1] - Y[j];
+    if (j == X.size() - 1) {
+        // Last point
+        InterpY.push_back(Y[j]);
+        break;
+    } 
+    else {
+        EFEL_ASSERT((j+1) < X.size(), 
+                "Interpolation accessing point outside of X");
+        
+        dx = X[j+1] - X[j];
+        dy = Y[j+1] - Y[j];
 
-    assert(dx != 0); //!=0 per definition
+        EFEL_ASSERT(dx != 0,  "Interpolation using dx == 0"); //!=0 per definition
 
-    dydx = dy/dx;
+        dydx = dy/dx;
 
-    InterpY.push_back(Y[j] + dydx * (x - X[j]));
+        InterpY.push_back(Y[j] + dydx * (x - X[j]));
+    }
   }
 
   return 1;
