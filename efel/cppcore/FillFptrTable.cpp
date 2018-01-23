@@ -202,6 +202,7 @@ int FillFptrTable() {
   FptrTableV5["AP2_AP1_diff"] = &LibV5::AP2_AP1_diff;
   FptrTableV5["AP2_AP1_peak_diff"] = &LibV5::AP2_AP1_peak_diff;
   FptrTableV5["AP2_width"] = &LibV5::AP2_width;
+  FptrTableV5["APlast_width"] = &LibV5::APlast_width;
   FptrTableV5["AHP_depth_from_peak"] = &LibV5::AHP_depth_from_peak;
   FptrTableV5["AHP_time_from_peak"] = &LibV5::AHP_time_from_peak;
   FptrTableV5["AHP1_depth_from_peak"] = &LibV5::AHP1_depth_from_peak;

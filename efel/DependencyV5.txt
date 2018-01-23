@@ -104,6 +104,7 @@ LibV5:AP2_AP1_diff 	    #LibV1:AP_amplitude #LibV1:interpolate
 LibV5:AP2_AP1_peak_diff 	    #LibV1:peak_voltage #LibV1:interpolate 
 LibV5:AP1_width     #LibV5:spike_half_width #LibV1:interpolate 
 LibV5:AP2_width     #LibV5:spike_half_width #LibV1:interpolate 
+LibV5:APlast_width     #LibV5:spike_half_width #LibV1:interpolate 
 LibV5:AHP_depth_from_peak #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV5:AHP_time_from_peak #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV5:AHP1_depth_from_peak #LibV5:AHP_depth_from_peak #LibV1:interpolate 
