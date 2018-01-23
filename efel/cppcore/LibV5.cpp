@@ -1032,6 +1032,32 @@ int LibV5::AP2_width(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
+// Width of the last spike
+int LibV5::APlast_width(mapStr2intVec& IntFeatureData,
+                      mapStr2doubleVec& DoubleFeatureData,
+                      mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "APlast_width", nSize);
+  if (retVal) return nSize;
+  vector<double> spike_half_width, APlast_width;
+
+  unsigned spike_half_width_size = 
+      getDoubleVec(DoubleFeatureData, StringData, "spike_half_width",
+                        spike_half_width);
+  
+  if (spike_half_width_size < 1) {
+    GErrorStr +=
+        "\nError: At least one spike is needed for APlast_width.\n";  
+    return -1;
+  } else {
+    APlast_width.push_back(spike_half_width[spike_half_width_size - 1]);
+  }
+
+  setDoubleVec(DoubleFeatureData, StringData, "APlast_width", APlast_width);
+  return 1;
+}
+
+
 static int __AHP_time_from_peak(const vector<double>& t,
                                 const vector<int>& peakIndices,
                                 const vector<int>& minAHPIndices,

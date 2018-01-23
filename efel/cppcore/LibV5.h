@@ -104,6 +104,8 @@ int AP1_width(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AP2_width(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int APlast_width(mapStr2intVec& IntFeatureData,
+              mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
 int AHP_depth_from_peak(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,

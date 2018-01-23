@@ -196,6 +196,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP2_AP1_peak_diff"] = "double";
   featuretypes["AP1_width"] = "double";
   featuretypes["AP2_width"] = "double";
+  featuretypes["APlast_width"] = "double";
 
   featuretypes["AHP_depth_from_peak"] = "double";
   featuretypes["AHP_time_from_peak"] = "double";

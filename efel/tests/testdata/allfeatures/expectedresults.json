@@ -30219,8 +30219,8 @@
     "maximum_voltage_from_voltagebase": [
         93.46185587350809
     ],
-    "Spikecount_stimint": [
-        6
+    "APlast_width": [
+        3.146564672600746
     ],
     "AP_begin_width": [
         4.700000000001069,
@@ -30261,7 +30261,14 @@
     "voltage_deflection_vb_ssse": [
         36.42682562490954
     ],
-    "Spikecount": [
+    "AHP_depth_diff": [
+        3.4248109393580606,
+        1.7436647872763231,
+        0.4999656675678281,
+        0.9249722007074013,
+        0.0
+    ],
+    "Spikecount_stimint": [
         6
     ],
     "max_amp_difference": [
@@ -30361,12 +30368,8 @@
     "amp_drop_first_second": [
         9.486728686862524
     ],
-    "AHP_depth_diff": [
-        3.4248109393580606,
-        1.7436647872763231,
-        0.4999656675678281,
-        0.9249722007074013,
-        0.0
+    "Spikecount": [
+        6
     ],
     "steady_state_hyper": [
         -39.7063975216648

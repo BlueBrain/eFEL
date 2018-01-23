@@ -47,6 +47,7 @@
     "AP_rise_time",
     "AP_width",
     "APlast_amp",
+    "APlast_width",
     "BAC_maximum_voltage",
     "BAC_width",
     "BPAPAmplitudeLoc1",
