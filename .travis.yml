@@ -1,7 +1,6 @@
 language: python
 python:
   - '2.7'
-  - '3.5'
   - '3.6'
 install: pip install pip --upgrade
 script: make test
@@ -23,6 +22,8 @@ deploy:
   password:
     secure: jHnj/T6sANjIHvvJenBwThkpFZRb9lyAirzt1aXwuBWYiFQ8ojrapIOr/wf5hAtMgAPMGUgdV315g53ZawKFBuHmTuDuhnFyqyH07wha/licvga3o7juPFaIIvYN5SeOGygvrxCtMKx5p/VzWuhf04pKJMqGqE2lj4RDwwmGIjY=
   distributions: "sdist"
+  on:
+      condition: "$TRAVIS_EVENT_TYPE != cron"
 before_install:
       - pip install codecov
 after_success:
