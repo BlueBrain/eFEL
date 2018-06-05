@@ -145,6 +145,32 @@ _getfeature(PyObject* self, PyObject* args, const string &type) {
   return Py_BuildValue("i", return_value);
 }
 
+
+static PyObject*
+_getmapdata(PyObject* self, PyObject* args, const string &type) {
+  char* data_name;
+  PyObject* py_values = PyList_New(0);
+
+  if (!PyArg_ParseTuple(args, "s", &data_name)) {
+    return NULL;
+  }
+
+  if (type == "int") {
+    vector<int> return_values;
+    return_values = pFeature->getmapIntData(string(data_name));
+    PyList_from_vectorint(return_values, py_values);
+  } else if (type == "double") {
+    vector<double> return_values;
+    return_values = pFeature->getmapDoubleData(string(data_name));
+    PyList_from_vectordouble(return_values, py_values);
+  } else {
+    PyErr_SetString(PyExc_TypeError, "Unknown data name");
+    return NULL;
+  }
+
+  return py_values;
+}
+
 static PyObject* getfeature(PyObject* self, PyObject* args) {
   const string empty("");
   return _getfeature(self, args, empty);
@@ -169,6 +195,14 @@ static PyObject* getfeatureint(PyObject* self, PyObject* args) {
   const string type("int");
   return _getfeature(self, args, type);
 }
+static PyObject* getmapintdata(PyObject* self, PyObject* args) {
+  const string type("int");
+  return _getmapdata(self, args, type);
+}
+static PyObject* getmapdoubledata(PyObject* self, PyObject* args) {
+  const string type("double");
+  return _getmapdata(self, args, type);
+}
 
 static PyObject* setfeaturedouble(PyObject* self, PyObject* args) {
   char* feature_name;
@@ -189,6 +223,7 @@ static PyObject* getfeaturedouble(PyObject* self, PyObject* args) {
   const string type ("double");
   return _getfeature(self, args, type);
 }
+
 
 static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
   vector<string> feature_names;
@@ -253,6 +288,10 @@ static PyMethodDef CppCoreMethods[] = {
       "Get a integer feature."},
     {"getFeatureDouble", getfeaturedouble, METH_VARARGS,
       "Get a double feature."},
+    {"getMapIntData", getmapintdata, METH_VARARGS,
+      "Get a int data."},
+    {"getMapDoubleData", getmapdoubledata, METH_VARARGS,
+      "Get a double data."},
 
     {"setFeatureInt", setfeatureint, METH_VARARGS,
       "Set a integer feature."},

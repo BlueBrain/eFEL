@@ -89,6 +89,8 @@ class TestCppcore(object):
         feature_names = []
         efel.cppcore.getFeatureNames(feature_names)
 
+        feature_names += efel.pyfeatures.all_pyfeatures
+
         import json
         test_data_path = os.path.join(testdata_dir, '../featurenames.json')
         with open(test_data_path, 'r') as featurenames_json:

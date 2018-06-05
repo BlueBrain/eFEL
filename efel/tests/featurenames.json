@@ -152,5 +152,11 @@
     "voltage_base",
     "voltage_deflection",
     "voltage_deflection_begin",
-    "voltage_deflection_vb_ssse"
+    "voltage_deflection_vb_ssse",
+    "voltage",
+    "time",
+    "ISIs",
+    "initburst_sahp",
+    "initburst_sahp_vb",
+    "initburst_sahp_ssse"
 ]
