@@ -36,6 +36,9 @@ update_version:
 test: virtualenv install install_test_requirements
 	cd efel/tests; nosetests -s -v -x --with-coverage --cover-xml \
 	   --cover-package efel 
+debugtest: virtualenv install install_test_requirements
+	cd efel/tests; nosetests -a debugtest -s -v -x --with-coverage --cover-xml \
+	   --cover-package efel 
 pypi: test
 	pip install twine --upgrade
 	rm -rf dist

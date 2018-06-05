@@ -33,6 +33,8 @@ import numpy
 import efel
 import efel.cppcore as cppcore
 
+import efel.pyfeatures as pyfeatures
+
 """
 Disabling cppcore importerror override, it confuses users in case the error
 is caused by something else
@@ -78,6 +80,9 @@ def reset():
     setDoubleSetting("initial_perc", 0.1)
     setDoubleSetting("min_spike_height", 20.0)
     setIntSetting("strict_stiminterval", 0)
+    setDoubleSetting("initburst_freq_threshold", 50)
+    setDoubleSetting("initburst_sahp_start", 5)
+    setDoubleSetting("initburst_sahp_end", 100)
 
     _initialise()
 
@@ -165,6 +170,8 @@ def getFeatureNames():
     cppcore.Initialize(_settings.dependencyfile_path, "log")
     feature_names = []
     cppcore.getFeatureNames(feature_names)
+
+    feature_names += pyfeatures.all_pyfeatures
 
     return feature_names
 
@@ -331,6 +338,12 @@ def getFeatureValues(
         return map_result
 
 
+def get_py_feature(featureName):
+    """Return python feature"""
+
+    return getattr(pyfeatures, featureName)()
+
+
 def _get_feature_values_serial(trace_featurenames):
     """Single thread of getFeatureValues"""
 
@@ -342,7 +355,7 @@ def _get_feature_values_serial(trace_featurenames):
         try:
             len(trace['stim_start'])
             len(trace['stim_end'])
-        except:
+        except BaseException:
             raise Exception('Unable to determine length of stim_start or '
                             'stim_end, are you sure these are lists ?')
 
@@ -367,19 +380,22 @@ def _get_feature_values_serial(trace_featurenames):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     for featureName in featureNames:
-        cppcoreFeatureValues = list()
-        exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
-
-        if exitCode < 0:
-            if raise_warnings:
-                import warnings
-                warnings.warn(
-                    "Error while calculating feature %s: %s" %
-                    (featureName, cppcore.getgError()),
-                    RuntimeWarning)
-            featureDict[featureName] = None
+        if featureName in pyfeatures.all_pyfeatures:
+            featureDict[featureName] = get_py_feature(featureName)
         else:
-            featureDict[featureName] = numpy.array(cppcoreFeatureValues)
+            cppcoreFeatureValues = list()
+            exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
+
+            if exitCode < 0:
+                if raise_warnings:
+                    import warnings
+                    warnings.warn(
+                        "Error while calculating feature %s: %s" %
+                        (featureName, cppcore.getgError()),
+                        RuntimeWarning)
+                featureDict[featureName] = None
+            else:
+                featureDict[featureName] = numpy.array(cppcoreFeatureValues)
 
     return featureDict
 
@@ -426,5 +442,6 @@ def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
                 featureDict[key] = numpy.mean(values)
 
     return featureDicts
+
 
 reset()
