@@ -109,7 +109,13 @@ def _test_expected_value(feature_name, expected_values):
         trace = _load_trace(trace_name)
         feature_values = efel.getFeatureValues([trace], [feature_name])
 
-        nt.assert_almost_equal(feature_values[0][feature_name], expected_value)
+        if expected_value is None:
+            nt.assert_true(feature_values[0][feature_name] is None)
+        else:
+            nt.assert_true(
+                numpy.allclose(
+                    feature_values[0][feature_name],
+                    expected_value))
 
 
 def test_initburst_sahp():
