@@ -25,6 +25,8 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from __future__ import division
+
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
 import os
@@ -193,7 +195,7 @@ def FeatureNameExists(feature_name):
     return feature_name in getFeatureNames()
 
 
-def getDistance(
+def _getDistance_cpp(
         trace,
         featureName,
         mean,
@@ -249,6 +251,83 @@ def getDistance(
         kwargs['error_dist'] = error_dist
 
     return efel.cppcore.getDistance(**kwargs)
+
+
+def _get_feature(featureName, raise_warnings=None):
+    """Get feature value, decide to use python or cpp"""
+    if featureName in pyfeatures.all_pyfeatures:
+        return get_py_feature(featureName)
+    else:
+        return get_cpp_feature(featureName, raise_warnings=raise_warnings)
+
+
+def getDistance(
+        trace,
+        featureName,
+        mean,
+        std,
+        trace_check=True,
+        error_dist=250):
+    """Calculate distance value for a list of traces.
+
+    Parameters
+    ==========
+    trace : trace dicts
+            Trace dict that represents one trace. The dict should have the
+            following keys: 'T', 'V', 'stim_start', 'stim_end'
+    featureName : string
+                  Name of the the features for which to calculate the distance
+    mean : float
+           Mean to calculate the distance from
+    std : float
+          Std to scale the distance with
+    trace_check : float
+          Let the library check if there are spikes outside of stimulus
+          interval, default is True
+    error_dist : float
+          Distance returned when error, default is 250
+
+    Returns
+    =======
+    distance : float
+               The absolute number of standard deviation the feature is away
+               from the mean. In case of anomalous results a value of
+               'error_dist' standard deviations is returned.
+               This can happen if: a feature generates an error, there are
+               spikes outside of the stimulus interval, the feature returns
+               a NaN, etc.
+    """
+
+    _initialise()
+
+    # Next set time, voltage and the stimulus start and end
+    for item in list(trace.keys()):
+        cppcore.setFeatureDouble(item, [x for x in trace[item]])
+
+    if trace_check:
+        cppcoreFeatureValues = list()
+        retval = cppcore.getFeature('trace_check', cppcoreFeatureValues)
+        if retval < 0:
+            return error_dist
+
+    feature_values = _get_feature(featureName)
+
+    distance = 0
+    if feature_values is None or len(feature_values) < 1:
+        return error_dist
+    else:
+        # Am not using anything more fancy to avoid breaking exact
+        # reproducibility of legacy C++ code
+        for feature_value in feature_values:
+            distance += abs(feature_value - mean)
+
+        distance = distance / std / len(feature_values)
+
+        # Check for NaN
+        if distance != distance:
+            return error_dist
+
+        return distance
 
 
 def _initialise():
@@ -380,24 +459,27 @@ def _get_feature_values_serial(trace_featurenames):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     for featureName in featureNames:
-        if featureName in pyfeatures.all_pyfeatures:
-            featureDict[featureName] = get_py_feature(featureName)
-        else:
-            cppcoreFeatureValues = list()
-            exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
-
-            if exitCode < 0:
-                if raise_warnings:
-                    import warnings
-                    warnings.warn(
-                        "Error while calculating feature %s: %s" %
-                        (featureName, cppcore.getgError()),
-                        RuntimeWarning)
-                featureDict[featureName] = None
-            else:
-                featureDict[featureName] = numpy.array(cppcoreFeatureValues)
+        featureDict[featureName] = _get_feature(
+            featureName, raise_warnings=raise_warnings)
 
     return featureDict
+
+
+def get_cpp_feature(featureName, raise_warnings=None):
+    """Return value of feature implemented in cpp"""
+    cppcoreFeatureValues = list()
+    exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
+
+    if exitCode < 0:
+        if raise_warnings:
+            import warnings
+            warnings.warn(
+                "Error while calculating feature %s: %s" %
+                (featureName, cppcore.getgError()),
+                RuntimeWarning)
+        return None
+    else:
+        return numpy.array(cppcoreFeatureValues)
 
 
 def getMeanFeatureValues(traces, featureNames, raise_warnings=True):

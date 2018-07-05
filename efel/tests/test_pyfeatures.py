@@ -32,8 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import numpy
 import nose.tools as nt
-
-# from nose.plugins.attrib import attr
+from nose.plugins.attrib import attr  # NOQA
 
 import efel
 
@@ -154,6 +153,7 @@ def test_initburst_sahp_ssse():
     _test_expected_value(feature_name, expected_values)
 
 
+@attr('debugtest')
 def test_ISIs():
     """pyfeatures: Test ISIs feature"""
 
@@ -164,3 +164,78 @@ def test_ISIs():
     nt.assert_true(numpy.allclose(
         feature_values[0]['ISIs'][1:],
         feature_values[0]['ISI_values']))
+
+    nt.assert_almost_equal(
+        efel.getDistance(
+            mf1_trace,
+            'ISIs',
+            1.0,
+            1.0),
+        64.25000000001484)
+
+
+def test_pydistance():
+    """pyfeatures: Test python distance against cpp version"""
+    mf1_trace = _load_trace('mean_frequency1')
+
+    feature_name = 'AP_height'
+    mean = 1.0
+    std = 1.0
+
+    numpy.seterr(divide='ignore')
+
+    # Check if cpp and python the same if:
+    # - baseline
+    # - std = 0.0
+    # - trace_check is enabled
+    # - trace_check is enabled on faulty trace
+    # - trace_check is disabled on faulty trace
+    for args, stim_end in [
+        ((mf1_trace, feature_name, mean, std, None), 900),
+        ((mf1_trace, feature_name, mean, 0.0, None), 900),
+        ((mf1_trace, feature_name, mean, std, True), 900),
+        ((mf1_trace, feature_name, mean, std, True), 600),
+        ((mf1_trace, feature_name, mean, std, False), 600),
+    ]:
+        efel.reset()
+        mf1_trace['stim_end'] = [stim_end]
+        nt.assert_equal(
+            efel.getDistance(*args), efel.api._getDistance_cpp(*args))
+
+    # Extra sanity checks for trace_check
+    mf1_trace['stim_end'] = [600]
+
+    efel.reset()
+    nt.assert_almost_equal(efel.getDistance(
+        mf1_trace,
+        feature_name,
+        mean,
+        std,
+        trace_check=False), 30.422218394481284)
+
+    efel.reset()
+    nt.assert_almost_equal(efel.api._getDistance_cpp(
+        mf1_trace,
+        feature_name,
+        mean,
+        std,
+        trace_check=True), 250.0)
+
+
+@attr('debugtest')
+def test_pydistance_featurefail():
+    """pyfeatures: Test failure of feature in getdistance"""
+
+    mf1_trace = _load_trace('mean_frequency1')
+
+    feature_name = 'initburst_sahp'
+    mean = 1.0
+    std = 1.0
+
+    efel.reset()
+    nt.assert_almost_equal(efel.getDistance(
+        mf1_trace,
+        feature_name,
+        mean,
+        std,
+        trace_check=True), 250.0)
