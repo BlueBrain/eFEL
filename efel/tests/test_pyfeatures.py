@@ -85,7 +85,7 @@ traces_data = {
             'initburst_sahp_error.txt'),
         't_col': 1,
         'v_col': 2,
-        'stim_start': 250,
+        'stim_start': 800,
         'stim_end': 1600},
 }
 
@@ -116,6 +116,10 @@ def _test_expected_value(feature_name, expected_values):
 
     for trace_name, expected_value in expected_values.items():
         trace = _load_trace(trace_name)
+        import matplotlib.pyplot as plt
+        plt.plot(trace['T'], trace['V'])
+        plt.show()
+
         feature_values = efel.getFeatureValues([trace], [feature_name])
 
         if expected_value is None:
