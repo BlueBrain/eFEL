@@ -116,9 +116,6 @@ def _test_expected_value(feature_name, expected_values):
 
     for trace_name, expected_value in expected_values.items():
         trace = _load_trace(trace_name)
-        import matplotlib.pyplot as plt
-        plt.plot(trace['T'], trace['V'])
-        plt.show()
 
         feature_values = efel.getFeatureValues([trace], [feature_name])
 
