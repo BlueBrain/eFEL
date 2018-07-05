@@ -25,6 +25,8 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from __future__ import division
+
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
 import os

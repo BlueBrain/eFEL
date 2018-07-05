@@ -198,6 +198,7 @@ def test_pydistance():
         ((mf1_trace, feature_name, mean, std, True), 600),
         ((mf1_trace, feature_name, mean, std, False), 600),
     ]:
+        efel.reset()
         mf1_trace['stim_end'] = [stim_end]
         nt.assert_equal(
             efel.getDistance(*args), efel.api._getDistance_cpp(*args))
@@ -205,13 +206,16 @@ def test_pydistance():
     # Extra sanity check
     mf1_trace['stim_end'] = [600]
 
+    efel.reset()
     nt.assert_almost_equal(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
         std,
-        trace_check=False), 30.4222183945)
-    nt.assert_almost_equal(efel.getDistance(
+        trace_check=False), 30.422218394481284)
+
+    efel.reset()
+    nt.assert_almost_equal(efel.api._getDistance_cpp(
         mf1_trace,
         feature_name,
         mean,
