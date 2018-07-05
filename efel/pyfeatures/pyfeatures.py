@@ -159,7 +159,10 @@ def initburst_sahp():
             (time <= sahp_interval_end) &
             (time >= sahp_interval_start))]
 
-        min_volt_index = numpy.argmin(sahp_interval)
+        if len(sahp_interval) > 0:
+            min_volt_index = numpy.argmin(sahp_interval)
+        else:
+            return None
 
         slow_ahp = sahp_interval[min_volt_index]
 
