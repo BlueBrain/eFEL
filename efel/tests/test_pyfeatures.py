@@ -174,7 +174,6 @@ def test_ISIs():
         64.25000000001484)
 
 
-@attr('debugtest')
 def test_pydistance():
     """pyfeatures: Test python distance against cpp version"""
     mf1_trace = _load_trace('mean_frequency1')
@@ -203,7 +202,7 @@ def test_pydistance():
         nt.assert_equal(
             efel.getDistance(*args), efel.api._getDistance_cpp(*args))
 
-    # Extra sanity check
+    # Extra sanity checks for trace_check
     mf1_trace['stim_end'] = [600]
 
     efel.reset()
@@ -216,6 +215,25 @@ def test_pydistance():
 
     efel.reset()
     nt.assert_almost_equal(efel.api._getDistance_cpp(
+        mf1_trace,
+        feature_name,
+        mean,
+        std,
+        trace_check=True), 250.0)
+
+
+@attr('debugtest')
+def test_pydistance_featurefail():
+    """pyfeatures: Test failure of feature in getdistance"""
+
+    mf1_trace = _load_trace('mean_frequency1')
+
+    feature_name = 'initburst_sahp'
+    mean = 1.0
+    std = 1.0
+
+    efel.reset()
+    nt.assert_almost_equal(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
