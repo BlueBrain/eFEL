@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import numpy
 import nose.tools as nt
-
+from nose.plugins.attrib import attr #NOQA
 
 _multiprocess_can_split_ = True
 
