@@ -77,7 +77,17 @@ traces_data = {
         't_col': 1,
         'v_col': 2,
         'stim_start': 250,
-        'stim_end': 1600}}
+        'stim_end': 1600},
+    'init_burst_sahp_error': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'basic',
+            'initburst_sahp_error.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'stim_start': 250,
+        'stim_end': 1600},
+}
 
 
 def _load_trace(trace_name):
@@ -129,6 +139,17 @@ def test_initburst_sahp():
     _test_expected_value(feature_name, expected_values)
 
 
+@attr('debugtest')
+def test_initburst_sahp_argmin_error():
+    """pyfeatures: Test initburst_sahp argmin error"""
+
+    feature_name = 'initburst_sahp'
+    expected_values = {
+        'init_burst_sahp_error': None}
+
+    _test_expected_value(feature_name, expected_values)
+
+
 def test_initburst_sahp_vb():
     """pyfeatures: Test initburst_sahp_vb feature"""
 
@@ -153,7 +174,6 @@ def test_initburst_sahp_ssse():
     _test_expected_value(feature_name, expected_values)
 
 
-@attr('debugtest')
 def test_ISIs():
     """pyfeatures: Test ISIs feature"""
 
@@ -222,7 +242,6 @@ def test_pydistance():
         trace_check=True), 250.0)
 
 
-@attr('debugtest')
 def test_pydistance_featurefail():
     """pyfeatures: Test failure of feature in getdistance"""
 
