@@ -153,6 +153,23 @@ The slope of a linear fit to a loglog plot of the ISI values
 
     ISI_log_slope = slope
 
+**LibV1 : check_AISInitiation**
+
+Check initiation of AP in AIS
+
+- **Required features**: t, V, stim_start, stim_end, AP_begin_time, AP_begin_time;location_AIS
+- **Units**: ms
+- **Pseudocode**: ::
+
+    if len(AP_begin_time) != AP_begin_time;location_AIS:
+        return None
+    for soma_time, ais_time in zip(AP_begin_time, AP_begin_time;location_AIS):
+        if soma_time < ais_time:
+            return None
+    return [1]        
+
+
+
 Spike shape features
 --------------------
 
