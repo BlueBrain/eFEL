@@ -161,7 +161,7 @@ Check initiation of AP in AIS
 - **Units**: ms
 - **Pseudocode**: ::
 
-    if len(AP_begin_time) != AP_begin_time;location_AIS:
+    if len(AP_begin_time) != len(AP_begin_time;location_AIS):
         return None
     for soma_time, ais_time in zip(AP_begin_time, AP_begin_time;location_AIS):
         if soma_time < ais_time:
