@@ -153,7 +153,7 @@ The slope of a linear fit to a loglog plot of the ISI values
 
     ISI_log_slope = slope
 
-**LibV1 : check_AISInitiation**
+**LibV5 : check_AISInitiation**
 
 Check initiation of AP in AIS
 
