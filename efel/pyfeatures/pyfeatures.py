@@ -2,9 +2,7 @@
 
 """
 Copyright (c) 2015, Blue Brain Project/EPFL
-
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -15,7 +13,6 @@ modification, are permitted provided that the following conditions are met:
   * Neither the name of the copyright holder nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,7 +36,8 @@ all_pyfeatures = [
     'ISIs',
     'initburst_sahp',
     'initburst_sahp_vb',
-    'initburst_sahp_ssse']
+    'initburst_sahp_ssse',
+    'depol_block']
 
 
 def voltage():
@@ -168,7 +166,67 @@ def initburst_sahp():
 
         return numpy.array([slow_ahp])
 
+def depol_block():
+    """Check for a depolarization block"""
 
+    # if there is no depolarization block return 1
+    # if there is a depolarization block return None 
+    # so that it can generate an error of 250 compared to the experimental traces (specific to bluepyopt)
+    # subthreshold traces will also return None (only use for spiking traces)
+    
+    # Required trace data
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    
+    # Required cpp features
+    voltage = _get_cpp_feature("voltage")
+    time = _get_cpp_feature("time")
+    AP_begin_voltage = _get_cpp_feature("AP_begin_voltage")    
+    
+    stim_start_idx = numpy.flatnonzero(time >= stim_start)[0]
+    stim_end_idx = numpy.flatnonzero(time >= stim_end)[0]
+    
+    if AP_begin_voltage.size:
+        depol_block_threshold = numpy.mean(AP_begin_voltage) # mV
+    else:
+        depol_block_threshold = -50
+        
+    block_min_duration = 50.0 # ms
+    long_hyperpol_threshold = -75.0 # mV
+
+    bool_voltage = numpy.array(voltage > depol_block_threshold, dtype=int)
+    up_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == 1)
+    down_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == -1)
+    if len(up_indexes) > len(down_indexes):
+        down_indexes = numpy.append(down_indexes, [stim_end_idx])
+
+    if len(up_indexes) == 0:
+        # if it never gets high enough, that's not a good sign (meaning no spikes)
+        return None
+    else:
+        # if it stays in the depolarization block more than min_duration, flag as depolarization block
+        max_depol_duration = numpy.max([time[down_indexes[k]] - time[up_idx] for k, up_idx in enumerate(up_indexes)])
+        if max_depol_duration > block_min_duration:
+            return None
+    
+        
+    bool_voltage = numpy.array(voltage > long_hyperpol_threshold, dtype=int)
+    up_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == 1)
+    down_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == -1)
+    down_indexes = down_indexes[(down_indexes > stim_start_idx) & (down_indexes < stim_end_idx)]
+    if len(down_indexes) != 0:
+        up_indexes = up_indexes[(up_indexes > stim_start_idx) & (up_indexes < stim_end_idx) & (up_indexes > down_indexes[0])]
+        if len(up_indexes) < len(down_indexes):
+            up_indexes = numpy.append(up_indexes, [stim_end_idx])
+        max_hyperpol_duration = numpy.max([time[up_indexes[k]] - time[down_idx] for k, down_idx in enumerate(down_indexes)])
+        
+        # if it stays in hyperpolarzed stage for more than min_duration,
+        # flag as depolarization block
+        if max_hyperpol_duration > block_min_duration:
+            return None
+        
+    return numpy.array([1]) 
+   
 def _get_cpp_feature(feature_name):
     """Get cpp feature"""
     cppcoreFeatureValues = list()
