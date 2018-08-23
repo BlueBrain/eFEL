@@ -171,8 +171,7 @@ def depol_block():
 
     # if there is no depolarization block return 1
     # if there is a depolarization block return None 
-    # so that it can generate an error of 250 compared to the experimental traces (specific to bluepyopt)
-    # subthreshold traces will also return None (only use for spiking traces)
+    # subthreshold traces will also return 1 
     
     # Required trace data
     stim_start = _get_cpp_data("stim_start")
@@ -186,9 +185,11 @@ def depol_block():
     stim_start_idx = numpy.flatnonzero(time >= stim_start)[0]
     stim_end_idx = numpy.flatnonzero(time >= stim_end)[0]
     
-    if AP_begin_voltage.size:
+    if AP_begin_voltage is None:
+        return numpy.array([1]) # if subthreshold no depolarization block
+    elif AP_begin_voltage.size:
         depol_block_threshold = numpy.mean(AP_begin_voltage) # mV
-    else:
+    else:   
         depol_block_threshold = -50
         
     block_min_duration = 50.0 # ms
@@ -225,7 +226,7 @@ def depol_block():
         if max_hyperpol_duration > block_min_duration:
             return None
         
-    return numpy.array([1]) 
+    return numpy.array([1])  
    
 def _get_cpp_feature(feature_name):
     """Get cpp feature"""
