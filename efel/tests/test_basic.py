@@ -70,6 +70,9 @@ zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                              'zero_ISI_log_slope_skip'
                                              '95824004.abf.csv')
 
+derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                           'basic',
+                                           'derivwindow.txt')
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""

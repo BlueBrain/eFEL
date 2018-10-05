@@ -623,7 +623,7 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
 static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
                               const vector<int>& ahpi, vector<int>& apbi,
-                              double dTh) {
+                              double dTh, int derivative_window) {
   const double derivativethreshold = dTh;
   vector<double> dvdt(v.size());
   vector<double> dv;
@@ -664,7 +664,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
-    int width = 3;
+    int width = derivative_window;
     bool skip = false;
 
     // Detect where the derivate crosses derivativethreshold, and make sure
@@ -700,10 +700,13 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   int retVal;
   int nSize;
 
+  // Check if calculated already
   retVal = CheckInIntmap(IntFeatureData, StringData, "AP_begin_indices", nSize);
   if (retVal) {
     return nSize;
   }
+
+  // Get input parameters
   vector<double> t;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "T", t);
   if (retVal < 0) return -1;
@@ -721,6 +724,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
   vector<int> apbi;
 
+  // Get DerivativeThreshold
   vector<double> dTh;
   retVal = getDoubleParam(DoubleFeatureData, "DerivativeThreshold", dTh);
   if (retVal <= 0) {
@@ -728,8 +732,20 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
     // according to Shaul 12mV/ms
     dTh.push_back(12.0);
   }
+
+  // Get DerivativeWindow
+  vector<int> derivative_window;
+  retVal = getIntParam(IntFeatureData, "DerivativeWindow", derivative_window);
+  if (retVal <= 0) {
+    GErrorStr += "\nDerivativeWindow not set\n";
+    return -1;
+  }
+  
+  // Calculate feature
   retVal =
-      __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi, dTh[0]);
+      __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi, dTh[0], derivative_window[0]);
+
+  // Save feature value
   if (retVal >= 0) {
     setIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   }
