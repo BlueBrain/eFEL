@@ -85,6 +85,7 @@ def reset():
     setDoubleSetting("initburst_freq_threshold", 50)
     setDoubleSetting("initburst_sahp_start", 5)
     setDoubleSetting("initburst_sahp_end", 100)
+    setIntSetting("DerivativeWindow", 3)
 
     _initialise()
 

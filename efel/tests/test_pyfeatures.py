@@ -140,7 +140,6 @@ def test_initburst_sahp():
     _test_expected_value(feature_name, expected_values)
 
 
-@attr('debugtest')
 def test_initburst_sahp_argmin_error():
     """pyfeatures: Test initburst_sahp argmin error"""
 
