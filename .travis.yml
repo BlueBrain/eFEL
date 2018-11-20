@@ -4,6 +4,7 @@ python:
 - '3.6'
 - '3.7'
 install: pip install pip --upgrade
+dist: xenial
 script: make test
 notifications:
   webhooks:
