@@ -5,6 +5,7 @@ python:
 - '3.7'
 install: pip install pip --upgrade
 dist: xenial
+sudo: required
 script: make test
 notifications:
   webhooks:
