@@ -1,33 +1,33 @@
 language: python
 python:
-  - '2.7'
-  - '3.6'
+- '2.7'
+- '3.6'
 install: pip install pip --upgrade
 script: make test
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/8ae38b9a790ed3e31c7a
+    - https://webhooks.gitter.im/e/8ae38b9a790ed3e31c7a
     on_success: change
     on_failure: change
     on_start: false
 git:
-    depth: 2147483647
+  depth: 2147483647
 cache:
-    directories:
-      - $HOME/.cache/pip
+  directories:
+  - $HOME/.cache/pip
 deploy:
   provider: pypi
   user: wvangeit
   password:
-    secure: jHnj/T6sANjIHvvJenBwThkpFZRb9lyAirzt1aXwuBWYiFQ8ojrapIOr/wf5hAtMgAPMGUgdV315g53ZawKFBuHmTuDuhnFyqyH07wha/licvga3o7juPFaIIvYN5SeOGygvrxCtMKx5p/VzWuhf04pKJMqGqE2lj4RDwwmGIjY=
-  distributions: "sdist"
+    secure: c9fJz1IliA0Scg4MS1HBAFbyGHnTOViYbF0I0WhrspqeNyyF4WKBx2kQzvMguc6JVm8MrcqdrM2P/me7WiD9vO4geqO/kXsjeg8kE2JnlGtAgX8PpOaR0P/IFdVcmfIc//05QS8PyovVZMxqlOrya1CN9cO4NMDRM9LS2dAaih0=
+  distributions: sdist
   on:
-      condition: "$TRAVIS_EVENT_TYPE != cron && $TRAVIS_PYTHON_VERSION == 2.7"
+    condition: $TRAVIS_EVENT_TYPE != cron && $TRAVIS_PYTHON_VERSION == 2.7
 before_install:
-      - pip install codecov
+- pip install codecov
 after_success:
-      - codecov
+- codecov
 addons:
-    code_climate:
-        repo_token: 93198de899a0c9fdd2352396517f526f168656dcbec8aa51129c6689445276f5
+  code_climate:
+    repo_token: 93198de899a0c9fdd2352396517f526f168656dcbec8aa51129c6689445276f5
