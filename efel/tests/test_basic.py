@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import numpy
 import nose.tools as nt
-from nose.plugins.attrib import attr #NOQA
+from nose.plugins.attrib import attr  # NOQA
 
 _multiprocess_can_split_ = True
 
@@ -69,6 +69,10 @@ zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                              'basic',
                                              'zero_ISI_log_slope_skip'
                                              '95824004.abf.csv')
+
+derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                              'basic',
+                                              'derivwindow.txt')
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -1070,6 +1074,57 @@ def test_APlast_width():
     APlast_width = feature_values[0]['APlast_width'][0]
     spike_half_width = feature_values[0]['spike_half_width']
     nt.assert_equal(APlast_width, spike_half_width[-1])
+
+
+def test_derivwindow1():
+    """basic: Test DerivativeWindow"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 100.0
+    stim_end = 1000.0
+
+    time = efel.io.load_fragment('%s#col=1' % derivwindow1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % derivwindow1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_begin_voltage']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
+    nt.assert_almost_equal(AP_begin_voltage, -45.03627393790836)
+
+    efel.reset()
+    efel.setDoubleSetting('interp_step', 0.01)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
+    nt.assert_almost_equal(AP_begin_voltage, -83.57661997973835)
+
+    efel.reset()
+    efel.setDoubleSetting('interp_step', 0.01)
+    efel.setIntSetting('DerivativeWindow', 30)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
+    nt.assert_almost_equal(AP_begin_voltage, -45.505521563640386)
 
 
 def test_spikecount1():

@@ -83,6 +83,8 @@ class TestCppcore(object):
         efel.cppcore.setFeatureDouble('burst_factor', [1.5])
         efel.cppcore.setFeatureDouble("initial_perc", [0.1])
 
+        efel.cppcore.setFeatureInt("DerivativeWindow", [3])
+
     def test_getFeatureNames(self):  # pylint: disable=R0201
         """cppcore: Testing getting all feature names"""
         import efel.cppcore
