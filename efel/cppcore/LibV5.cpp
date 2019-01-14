@@ -2294,7 +2294,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
 
   if (decayTimes.size() < 1 || decayValues.size() < 1) {
       GErrorStr +=
-        "\nvoltage_base: no data points between startTime and endTime\n";
+        "\ndecay_time_constant_after_stim: no data points to calculate this feature\n";
       return -1;
   }
   else {
