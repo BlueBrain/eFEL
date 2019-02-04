@@ -2292,11 +2292,18 @@ double __decay_time_constant_after_stim(const vector<double>& times,
     decayTimes[i] = times[decayStartIdx + i];
   }
 
-  linear_fit_result fit;
-  fit = slope_straight_line_fit(decayTimes, decayValues);
+  if (decayTimes.size() < 1 || decayValues.size() < 1) {
+      GErrorStr +=
+        "\ndecay_time_constant_after_stim: no data points to calculate this feature\n";
+      return -1;
+  }
+  else {
+      linear_fit_result fit;
+      fit = slope_straight_line_fit(decayTimes, decayValues);
 
-  const double tau = -1.0 / fit.slope;
-  return std::abs(tau);
+      const double tau = -1.0 / fit.slope;
+      return std::abs(tau);
+  }
 }
 
 // *** Decay time constant measured during decay after the stimulus***
