@@ -6,3 +6,4 @@
 *.pyc
 /build.sh
 /pyenv
+/.python-version
