@@ -1,3 +1,5 @@
+<img src="docs/source/logo/eFELBanner.png"/>
+
 [![Build Status](https://travis-ci.org/BlueBrain/eFEL.svg?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
 [![codecov.io](http://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master)](http://codecov.io/github/BlueBrain/eFEL?branch=master)
 [![PyPI version](https://badge.fury.io/py/efel.svg)](https://badge.fury.io/py/efel)
