@@ -1,8 +1,55 @@
-[![Build Status](https://travis-ci.org/BlueBrain/eFEL.svg?branch=master)](https://travis-ci.org/BlueBrain/eFEL)
-[![codecov.io](http://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master)](http://codecov.io/github/BlueBrain/eFEL?branch=master)
-[![PyPI version](https://badge.fury.io/py/efel.svg)](https://badge.fury.io/py/efel)
-[![Join the chat at https://gitter.im/BlueBrain/eFEL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BlueBrain/eFEL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Documentation Status](https://readthedocs.org/projects/efel/badge/?version=latest)](http://efel.readthedocs.io/en/latest/?badge=latest)
+<img src="docs/source/logo/eFELBanner.png"/>
+
+<table>
+<tr>
+  <td>Latest Release</td>
+  <td>
+    <a href="https://pypi.org/project/efel/">
+    <img src="https://img.shields.io/pypi/v/efel.svg" alt="latest release" />
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>Documentation</td>
+  <td>
+    <a href="https://efel.readthedocs.io/">
+    <img src="https://readthedocs.org/projects/efel/badge/?version=latest" alt="latest documentation" />
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>License</td>
+  <td>
+    <a href="https://github.com/BlueBrain/efel/blob/master/LICENSE.txt">
+    <img src="https://img.shields.io/pypi/l/efel.svg" alt="license" />
+    </a>
+</td>
+</tr>
+<tr>
+  <td>Build Status</td>
+  <td>
+    <a href="https://travis-ci.org/BlueBrain/eFEL">
+    <img src="https://travis-ci.org/BlueBrain/eFEL.svg?branch=master" alt="travis build status" />
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>Coverage</td>
+  <td>
+    <a href="https://codecov.io/gh/BlueBrain/efel">
+    <img src="https://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master" alt="coverage" />
+    </a>
+  </td>
+</tr>
+<tr>
+    <td>Gitter</td>
+    <td>
+        <a href="https://gitter.im/bluebrain/efel">
+        <img src="https://badges.gitter.im/Join%20Chat.svg"
+    </a>
+    </td>
+</tr>
+</table>
 
 Introduction
 ============
