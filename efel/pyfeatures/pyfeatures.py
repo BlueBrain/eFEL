@@ -166,34 +166,34 @@ def initburst_sahp():
 
         return numpy.array([slow_ahp])
 
+
 def depol_block():
     """Check for a depolarization block"""
 
     # if there is no depolarization block return 1
-    # if there is a depolarization block return None 
-    # subthreshold traces will also return 1 
-    
+    # if there is a depolarization block return None
+    # subthreshold traces will also return 1
+
     # Required trace data
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
-    
+
     # Required cpp features
     voltage = _get_cpp_feature("voltage")
     time = _get_cpp_feature("time")
-    AP_begin_voltage = _get_cpp_feature("AP_begin_voltage")    
-    
+    AP_begin_voltage = _get_cpp_feature("AP_begin_voltage")
     stim_start_idx = numpy.flatnonzero(time >= stim_start)[0]
     stim_end_idx = numpy.flatnonzero(time >= stim_end)[0]
-    
+
     if AP_begin_voltage is None:
-        return numpy.array([1]) # if subthreshold no depolarization block
+        return numpy.array([1])  # if subthreshold no depolarization block
     elif AP_begin_voltage.size:
-        depol_block_threshold = numpy.mean(AP_begin_voltage) # mV
-    else:   
+        depol_block_threshold = numpy.mean(AP_begin_voltage)  # mV
+    else:
         depol_block_threshold = -50
-        
-    block_min_duration = 50.0 # ms
-    long_hyperpol_threshold = -75.0 # mV
+
+    block_min_duration = 50.0  # ms
+    long_hyperpol_threshold = -75.0  # mV
 
     bool_voltage = numpy.array(voltage > depol_block_threshold, dtype=int)
     up_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == 1)
@@ -209,8 +209,7 @@ def depol_block():
         max_depol_duration = numpy.max([time[down_indexes[k]] - time[up_idx] for k, up_idx in enumerate(up_indexes)])
         if max_depol_duration > block_min_duration:
             return None
-    
-        
+
     bool_voltage = numpy.array(voltage > long_hyperpol_threshold, dtype=int)
     up_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == 1)
     down_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == -1)
@@ -220,14 +219,15 @@ def depol_block():
         if len(up_indexes) < len(down_indexes):
             up_indexes = numpy.append(up_indexes, [stim_end_idx])
         max_hyperpol_duration = numpy.max([time[up_indexes[k]] - time[down_idx] for k, down_idx in enumerate(down_indexes)])
-        
+
         # if it stays in hyperpolarzed stage for more than min_duration,
         # flag as depolarization block
         if max_hyperpol_duration > block_min_duration:
             return None
-        
-    return numpy.array([1])  
-   
+
+    return numpy.array([1])
+
+
 def _get_cpp_feature(feature_name):
     """Get cpp feature"""
     cppcoreFeatureValues = list()
