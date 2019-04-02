@@ -35,7 +35,7 @@ int LinearInterpolation(double Stepdx,
   EFEL_ASSERT(Stepdx > 0, "Interpolation step needs to be strictly positive");
  
   double dx, dy, dydx;
-  int InterpX_size;
+  size_t InterpX_size;
   double x = X[0];
   double start = X[0];
   double stop = X[X.size() - 1] + Stepdx;
@@ -44,14 +44,14 @@ int LinearInterpolation(double Stepdx,
   // Do not remove the 'ceil' in favor of < stop in for loop
   InterpX_size = ceil((stop - start)/Stepdx);
 
-  for (unsigned i = 0; i < InterpX_size; i++) {
+  for (size_t i = 0; i < InterpX_size; i++) {
       InterpX.push_back(x);
       x += Stepdx;
   }
 
   // Create the y values
-  unsigned j = 0;
-  for (unsigned i = 0; i < InterpX.size(); i++) {
+  size_t j = 0;
+  for (size_t i = 0; i < InterpX.size(); i++) {
     x = InterpX[i];
 
     EFEL_ASSERT((j+1) < X.size(), "Interpolation accessing point outside of X");
@@ -93,12 +93,12 @@ int LinearInterpolation(double Stepdx,
 
 int getCentralDifferenceDerivative(double dx, const vector<double>& v,
                                    vector<double>& dv) {
-  unsigned n = v.size();
+  size_t n = v.size();
   dv.clear();
   // because formula is ((vec[i+1]+vec[i-1])/2)/dx hence it should iterate
   // through 1 to length-1
   dv.push_back((v[1] - v[0]) / dx);
-  for (unsigned i = 1; i < n - 1; i++) {
+  for (size_t i = 1; i < n - 1; i++) {
     dv.push_back(((v[i + 1] - v[i - 1]) / 2) / dx);
   }
   dv.push_back((v[n - 1] - v[n - 2]) / dx);
@@ -111,7 +111,7 @@ void getfivepointstencilderivative(const vector<double>& v,
   dv.resize(v.size());
   dv[0] = v[1] - v[0];
   dv[1] = (v[2] - v[0]) / 2.;
-  for (unsigned i = 2; i < v.size() - 2; i++) {
+  for (size_t i = 2; i < v.size() - 2; i++) {
     dv[i] = -v[i + 2] + 8 * v[i + 1] - 8 * v[i - 1] + v[i - 2];
     dv[i] /= 12.;
   }
@@ -134,7 +134,7 @@ slope_straight_line_fit(const vector<double>& x,
 
   linear_fit_result result;
 
-  for (unsigned i = 0; i < x.size(); i++) {
+  for (size_t i = 0; i < x.size(); i++) {
     sum_x += x[i];
     sum_y += y[i];
     sum_x2 += x[i] * x[i];
@@ -147,7 +147,7 @@ slope_straight_line_fit(const vector<double>& x,
   // calculate sum of squared residuals
   double yintercept = (sum_y - result.slope * sum_x) / x.size();
   double residuals = 0.;
-  for (unsigned i = 0; i < x.size(); i++) {
+  for (size_t i = 0; i < x.size(); i++) {
     double res = y[i] - yintercept - result.slope * x[i];
     residuals += res * res;
   }
@@ -156,7 +156,7 @@ slope_straight_line_fit(const vector<double>& x,
   // calculate the coefficient of determination R^2
   double y_av = sum_y / x.size();
   double sstot = 0.;
-  for (unsigned i = 0; i < x.size(); i++) {
+  for (size_t i = 0; i < x.size(); i++) {
     double dev = y[i] - y_av;
     sstot += dev * dev;
   }
