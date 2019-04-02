@@ -29,25 +29,25 @@
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
-                           unsigned maxnSpike, bool semilog) {
+                           size_t maxnSpike, bool semilog) {
   std::deque<double> skippedISIValues;
 
   vector<double> log_isivalues;
   vector<double> x;
 
-  for (unsigned i = 0; i < isiValues.size(); i++) {
+  for (size_t i = 0; i < isiValues.size(); i++) {
     skippedISIValues.push_back(isiValues[i]);
   }
 
   if (skip) {
     // Remove n spikes given by spike_skipf or max_spike_skip
-    unsigned isisToRemove =
-        (unsigned)((isiValues.size() + 1) * spikeSkipf + .5);
+    size_t isisToRemove =
+        (size_t)((isiValues.size() + 1) * spikeSkipf + .5);
 
     isisToRemove = std::min(maxnSpike, isisToRemove);
 
     // Remove spikeToRemove spike from SpikeTime list
-    for (unsigned i = 0; i < isisToRemove; i++) {
+    for (size_t i = 0; i < isisToRemove; i++) {
       skippedISIValues.pop_front();
     }
   }
@@ -400,7 +400,7 @@ static int __min_AHP_indices(const vector<double>& t, const vector<double>& v,
                              vector<int>& min_ahp_indices,
                              vector<double>& min_ahp_values) {
   vector<int> peak_indices_plus = peak_indices;
-  int end_index = -1;
+  unsigned end_index = 0;
 
   if (strict_stiminterval) {
     end_index =
@@ -411,11 +411,11 @@ static int __min_AHP_indices(const vector<double>& t, const vector<double>& v,
     end_index = distance(t.begin(), t.end());
   }
 
-  int ahpindex = -1;
+  size_t ahpindex = 0;
 
   peak_indices_plus.push_back(end_index);
 
-  for (unsigned i = 0; i < peak_indices_plus.size() - 1; i++) {
+  for (size_t i = 0; i < peak_indices_plus.size() - 1; i++) {
     ahpindex = distance(
         v.begin(), first_min_element(v.begin() + peak_indices_plus[i],
                                      v.begin() + peak_indices_plus[i + 1]));
@@ -544,7 +544,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
   vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   copy(min_ahp_indices.begin(), min_ahp_indices.end(),
        min_ahp_indices_plus.begin() + 1);
-  for (unsigned i = 1; i < min_ahp_indices_plus.size(); i++) {
+  for (size_t i = 1; i < min_ahp_indices_plus.size(); i++) {
     double v_half = (v[peak_indices[i - 1]] + v[min_ahp_indices_plus[i]]) / 2.;
     // interpolate this one time step where the voltage is close to v_half in
     // the rising and in the falling edge
@@ -633,7 +633,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  /*for (unsigned i = 0; i < dvdt.size(); i++) {
+  /*for (size_t i = 0; i < dvdt.size(); i++) {
       printf("%d %f %f\n", i, dvdt[i]);
   }
   printf("\n");*/
@@ -645,7 +645,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), stimstart)));
   minima.push_back(stimbeginindex);
-  for (unsigned i = 0; i < ahpi.size(); i++) {
+  for (size_t i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
     }
@@ -660,7 +660,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   minima.push_back(endindex);
   //}
   // printf("Found %d minima\n", minima.size());
-  for (unsigned i = 0; i < minima.size() - 1; i++) {
+  for (size_t i = 0; i < minima.size() - 1; i++) {
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
@@ -757,7 +757,7 @@ static int __irregularity_index(vector<double>& isiValues,
   iRI = ISISub = 0;
   if (isiValues.size() == 0) return -1;
 
-  for (unsigned i = 1; i < isiValues.size(); i++) {
+  for (size_t i = 1; i < isiValues.size(); i++) {
     ISISub = std::abs(isiValues[i] - isiValues[i - 1]);
     iRI = iRI + (ISISub);
   }
@@ -1057,7 +1057,7 @@ int LibV5::APlast_width(mapStr2intVec& IntFeatureData,
   if (retVal) return nSize;
   vector<double> spike_half_width, APlast_width;
 
-  unsigned spike_half_width_size = 
+  size_t spike_half_width_size = 
       getDoubleVec(DoubleFeatureData, StringData, "spike_half_width",
                         spike_half_width);
   
@@ -1078,7 +1078,7 @@ static int __AHP_time_from_peak(const vector<double>& t,
                                 const vector<int>& peakIndices,
                                 const vector<int>& minAHPIndices,
                                 vector<double>& ahpTimeFromPeak) {
-  for (unsigned i = 0; i < peakIndices.size() && i < minAHPIndices.size();
+  for (size_t i = 0; i < peakIndices.size() && i < minAHPIndices.size();
        i++) {
     ahpTimeFromPeak.push_back(t[minAHPIndices[i]] - t[peakIndices[i]]);
   }
@@ -1123,7 +1123,7 @@ static int __AHP_depth_from_peak(const vector<double>& v,
                                  const vector<int>& minAHPIndices,
                                  vector<double>& ahpDepthFromPeak) {
   if (peakIndices.size() < minAHPIndices.size()) return -1;
-  for (unsigned i = 0; i < minAHPIndices.size(); i++) {
+  for (size_t i = 0; i < minAHPIndices.size(); i++) {
     ahpDepthFromPeak.push_back(v[peakIndices[i]] - v[minAHPIndices[i]]);
   }
   return ahpDepthFromPeak.size();
@@ -1227,7 +1227,7 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   // copy(min_ahp_indices.begin(), min_ahp_indices.end(),
   // min_ahp_indices_plus.begin());
   if (AP_begin_indices.size() < min_ahp_indices.size()) return -1;
-  for (unsigned i = 0; i < min_ahp_indices.size(); i++) {
+  for (size_t i = 0; i < min_ahp_indices.size(); i++) {
     double v_start = v[AP_begin_indices[i]];
     // interpolate this one time step where the voltage is close to v_start in
     // the falling edge
@@ -1286,7 +1286,7 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
 static int __AP_begin_time(const vector<double>& t, const vector<double>& v,
                            const vector<int>& AP_begin_indices,
                            vector<double>& AP_begin_time) {
-  for (unsigned i = 0; i < AP_begin_indices.size(); i++) {
+  for (size_t i = 0; i < AP_begin_indices.size(); i++) {
     AP_begin_time.push_back(t[AP_begin_indices[i]]);
   }
   return AP_begin_time.size();
@@ -1320,7 +1320,7 @@ int LibV5::AP_begin_time(mapStr2intVec& IntFeatureData,
 static int __AP_begin_voltage(const vector<double>& t, const vector<double>& v,
                               const vector<int>& AP_begin_indices,
                               vector<double>& AP_begin_voltage) {
-  for (unsigned i = 0; i < AP_begin_indices.size(); i++) {
+  for (size_t i = 0; i < AP_begin_indices.size(); i++) {
     AP_begin_voltage.push_back(v[AP_begin_indices[i]]);
   }
   return AP_begin_voltage.size();
@@ -1480,7 +1480,7 @@ static int __voltage_deflection_begin(const vector<double>& v,
       range_begin + (stimEnd - stimStart) * (deflection_range_percentage);
   double base = 0.;
   int base_size = 0;
-  for (unsigned i = 0; i < t.size(); i++) {
+  for (size_t i = 0; i < t.size(); i++) {
     if (t[i] < stimStart) {
       base += v[i];
       base_size++;
@@ -1491,7 +1491,7 @@ static int __voltage_deflection_begin(const vector<double>& v,
   base /= base_size;
   double volt = 0;
   int volt_size = 0;
-  for (unsigned i = 0; i < t.size(); i++) {
+  for (size_t i = 0; i < t.size(); i++) {
     if (t[i] > range_stop) {
       break;
     }
@@ -1560,7 +1560,7 @@ int LibV5::is_not_stuck(mapStr2intVec& IntFeatureData,
   if (retval < 0) return -1;
 
   bool stuck = true;
-  for (unsigned i = 0; i < peak_time.size(); i++) {
+  for (size_t i = 0; i < peak_time.size(); i++) {
     if (peak_time[i] > stim_end[0] * 0.5 && peak_time[i] < stim_end[0]) {
       stuck = false;
       break;
@@ -1600,7 +1600,7 @@ int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
   int nCount = 0;
   double vSum = 0;
   // calculte the mean of voltage between startTime and endTime
-  for (unsigned i = 0; i < t.size(); i++) {
+  for (size_t i = 0; i < t.size(); i++) {
     if (t[i] >= startTime) {
       vSum = vSum + v[i];
       nCount++;
@@ -1639,7 +1639,7 @@ int LibV5::mean_AP_amplitude(mapStr2intVec& IntFeatureData,
   vector<double> mean_AP_amplitude;
   double mean_amp = 0.0;
 
-  for (unsigned i = 0; i < AP_amplitude.size(); i++) {
+  for (size_t i = 0; i < AP_amplitude.size(); i++) {
     mean_amp += AP_amplitude[i];
   }
 
@@ -1681,7 +1681,7 @@ int LibV5::BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
 
   // bpapheight.push_back(*max_element(v_dend.begin(), v_dend.end()) -
   // vb_dend[0]);
-  for (unsigned i = 0; i < peakvoltage.size(); i++) {
+  for (size_t i = 0; i < peakvoltage.size(); i++) {
     bpapheight.push_back(peakvoltage[i] - vb_dend[0]);
     // printf("peak voltage: %f, voltage base: %f, height: %f", peakvoltage[i],
     // vb_dend[0], peakvoltage[0] - vb_dend[0]);
@@ -1721,7 +1721,7 @@ int LibV5::BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
 
   vector<double> bpapamplitude;
 
-  for (unsigned i = 0; i < peakvoltage.size(); i++) {
+  for (size_t i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 
@@ -1760,7 +1760,7 @@ int LibV5::BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
 
   vector<double> bpapamplitude;
 
-  for (unsigned i = 0; i < peakvoltage.size(); i++) {
+  for (size_t i = 0; i < peakvoltage.size(); i++) {
     bpapamplitude.push_back(peakvoltage[i] - ap_begin_voltage_dend[i]);
   }
 
@@ -1799,7 +1799,7 @@ int LibV5::BPAPHeightLoc2(mapStr2intVec& IntFeatureData,
 
   // bpapheight.push_back(*max_element(v_dend.begin(), v_dend.end()) -
   // vb_dend[0]);
-  for (unsigned i = 0; i < peakvoltage.size(); i++) {
+  for (size_t i = 0; i < peakvoltage.size(); i++) {
     bpapheight.push_back(peakvoltage[i] - vb_dend[0]);
     // printf("peak voltage: %f, voltage base: %f, height: %f", peakvoltage[i],
     // vb_dend[0], peakvoltage[0] - vb_dend[0]);
@@ -1849,7 +1849,7 @@ int LibV5::check_AISInitiation(mapStr2intVec& IntFeatureData,
   }
 
   // Testing if no spike in the soma start earlier than in the dendrites
-  for (unsigned i = 0; i < apBeginSoma.size(); i++) {
+  for (size_t i = 0; i < apBeginSoma.size(); i++) {
     /// printf("%f, %f\n", apBeginSoma[i], apBeginAIS[i]); fflush(stdout);
     if (apBeginSoma[i] < apBeginAIS[i]) {
       GErrorStr =
@@ -1881,7 +1881,7 @@ static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  for (unsigned i = 0; i < apbi.size(); i++) {
+  for (size_t i = 0; i < apbi.size(); i++) {
     apbegin_index = apbi[i];
     range_min_index = apbegin_index - int(range);
     range_max_index = apbegin_index + int(range);
@@ -2024,7 +2024,7 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
     GErrorStr += "\n Two spikes required for calculation of all_ISI_values.\n";
     return -1;
   }
-  for (unsigned i = 1; i < pvTime.size(); i++) {
+  for (size_t i = 1; i < pvTime.size(); i++) {
     VecISI.push_back(pvTime[i] - pvTime[i - 1]);
   }
   setDoubleVec(DoubleFeatureData, StringData, "all_ISI_values", VecISI);
@@ -2062,7 +2062,7 @@ int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
 
   vector<double> apamplitude;
   apamplitude.resize(peakvoltage.size());
-  for (unsigned i = 0; i < apamplitude.size(); i++) {
+  for (size_t i = 0; i < apamplitude.size(); i++) {
     apamplitude[i] = peakvoltage[i] - voltage_base;
   }
   setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase",
@@ -2099,7 +2099,7 @@ int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  for (unsigned i = 0; i < peak_indices.size() - 1; i++) {
+  for (size_t i = 0; i < peak_indices.size() - 1; i++) {
     min_voltage_between_spikes.push_back(*min_element(
         v.begin() + peak_indices[i], v.begin() + peak_indices[i + 1]));
   }
@@ -2170,18 +2170,18 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
 
   double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
-  unsigned start_index =
+  size_t start_index =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), start_time)));
-  unsigned stop_index =
+  size_t stop_index =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), stimEnd[0])));
 
-  unsigned mean_size = 0;
+  size_t mean_size = 0;
   double mean = 0.0;
-  for (unsigned i = start_index; i < stop_index; i++) {
+  for (size_t i = start_index; i < stop_index; i++) {
     mean += v[i];
     mean_size++;
   }
@@ -2242,7 +2242,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   int nCount = 0;
   double vSum = 0;
   // calculte the mean of voltage between startTime and endTime
-  for (unsigned i = 0; i < t.size(); i++) {
+  for (size_t i = 0; i < t.size(); i++) {
     if (t[i] > endTime) break;
 
     if (t[i] >= startTime) {
@@ -2535,9 +2535,10 @@ static int __peak_indices(double threshold, vector<double>& V,
                           double stim_end) {
   vector<int> upVec, dnVec;
   double dtmp;
-  int itmp;
+  size_t itmp = 0;
+  bool itmp_set = false;
 
-  for (unsigned i = 1; i < V.size(); i++) {
+  for (size_t i = 1; i < V.size(); i++) {
     if (V[i] > threshold && V[i - 1] < threshold) {
       upVec.push_back(i);
     } else if (V[i] < threshold && V[i - 1] > threshold) {
@@ -2551,25 +2552,27 @@ static int __peak_indices(double threshold, vector<double>& V,
   }
 
   if (upVec.size() > dnVec.size()) {
-    unsigned size_diff = upVec.size() - dnVec.size();
-    for (unsigned i = 0; i < size_diff; i++) {
+    size_t size_diff = upVec.size() - dnVec.size();
+    for (size_t i = 0; i < size_diff; i++) {
       upVec.pop_back();
     }
   }
 
   PeakIndex.clear();
   int j = 0;
-  for (unsigned i = 0; i < upVec.size(); i++) {
+  for (size_t i = 0; i < upVec.size(); i++) {
     dtmp = -1e9;
-    itmp = -1;
+    itmp = 0;
+    itmp_set = false;
     EFEL_ASSERT(i < dnVec.size(), "dnVec array too small");
     for (j = upVec[i]; j <= dnVec[i]; j++) {
       if (dtmp < V[j]) {
         dtmp = V[j];
         itmp = j;
+        itmp_set = true;
       }
     }
-    if (itmp != -1) {
+    if (itmp_set) {
       if (strict_stiminterval) {
         EFEL_ASSERT(itmp < t.size(), "peak_time falls outside of time array");
         EFEL_ASSERT(itmp >= 0, "peak_time is negative");

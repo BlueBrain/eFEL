@@ -55,7 +55,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
       t.begin(),
       find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
   minima.push_back(stimbeginindex);
-  for (unsigned i = 0; i < ahpi.size(); i++) {
+  for (size_t i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
     }
@@ -71,7 +71,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                                     bind2nd(greater_equal<double>(), stimend)));
     minima.push_back(stimendindex);
   }
-  for (unsigned i = 0; i < minima.size() - 1; i++) {
+  for (size_t i = 0; i < minima.size() - 1; i++) {
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i];
     int begin = minima[i];
@@ -146,7 +146,7 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   apei.resize(pi.size());
   vector<int> picopy(pi.begin(), pi.end());
   picopy.push_back(v.size() - 1);
-  for (unsigned i = 0; i < apei.size(); i++) {
+  for (size_t i = 0; i < apei.size(); i++) {
     // assure that the width of the slope is bigger than 4
     apei[i] = distance(
         dvdt.begin(),
@@ -187,7 +187,7 @@ int LibV2::AP_end_indices(mapStr2intVec& IntFeatureData,
 static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& pi, vector<int>& apri) {
   apri.resize(std::min(apbi.size(), pi.size()));
-  for (unsigned i = 0; i < apri.size(); i++) {
+  for (size_t i = 0; i < apri.size(); i++) {
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak;
     if (pi[i] < apbi[i]) {
@@ -239,7 +239,7 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
                              const vector<int>& apei, const vector<int>& pi,
                              vector<int>& apfi) {
   apfi.resize(std::min(apbi.size(), pi.size()));
-  for (unsigned i = 0; i < apfi.size(); i++) {
+  for (size_t i = 0; i < apfi.size(); i++) {
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
@@ -288,7 +288,7 @@ static int __AP_duration(const vector<double>& t,
                          const vector<int>& endindices,
                          vector<double>& apduration) {
   apduration.resize(std::min(apbeginindices.size(), endindices.size()));
-  for (unsigned i = 0; i < apduration.size(); i++) {
+  for (size_t i = 0; i < apduration.size(); i++) {
     // printf("%d, %d, %d\n", t.size(), apbeginindices.size(),
     // endindices.size())
     apduration[i] = t[endindices[i]] - t[apbeginindices[i]];
@@ -331,7 +331,7 @@ static int __AP_duration_half_width(const vector<double>& t,
                                     const vector<int>& apfallindices,
                                     vector<double>& apdurationhalfwidth) {
   apdurationhalfwidth.resize(apriseindices.size());
-  for (unsigned i = 0; i < apdurationhalfwidth.size(); i++) {
+  for (size_t i = 0; i < apdurationhalfwidth.size(); i++) {
     apdurationhalfwidth[i] = t[apfallindices[i]] - t[apriseindices[i]];
   }
   return apdurationhalfwidth.size();
@@ -374,7 +374,7 @@ static int __AP_rise_time(const vector<double>& t,
                           const vector<int>& peakindices,
                           vector<double>& aprisetime) {
   aprisetime.resize(std::min(apbeginindices.size(), peakindices.size()));
-  for (unsigned i = 0; i < aprisetime.size(); i++) {
+  for (size_t i = 0; i < aprisetime.size(); i++) {
     aprisetime[i] = t[peakindices[i]] - t[apbeginindices[i]];
   }
   return aprisetime.size();
@@ -415,7 +415,7 @@ static int __AP_fall_time(const vector<double>& t,
                           const vector<int>& apendindices,
                           vector<double>& apfalltime) {
   apfalltime.resize(std::min(peakindices.size(), apendindices.size()));
-  for (unsigned i = 0; i < apfalltime.size(); i++) {
+  for (size_t i = 0; i < apfalltime.size(); i++) {
     apfalltime[i] = t[apendindices[i]] - t[peakindices[i]];
   }
   return apfalltime.size();
@@ -456,7 +456,7 @@ static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peakindices,
                           vector<double>& apriserate) {
   apriserate.resize(std::min(peakindices.size(), apbeginindices.size()));
-  for (unsigned i = 0; i < apriserate.size(); i++) {
+  for (size_t i = 0; i < apriserate.size(); i++) {
     apriserate[i] = (v[peakindices[i]] - v[apbeginindices[i]]) /
                     (t[peakindices[i]] - t[apbeginindices[i]]);
   }
@@ -501,7 +501,7 @@ static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& apendindices,
                           vector<double>& apfallrate) {
   apfallrate.resize(std::min(apendindices.size(), peakindices.size()));
-  for (unsigned i = 0; i < apfallrate.size(); i++) {
+  for (size_t i = 0; i < apfallrate.size(); i++) {
     apfallrate[i] = (v[apendindices[i]] - v[peakindices[i]]) /
                     (t[apendindices[i]] - t[peakindices[i]]);
   }
@@ -548,7 +548,7 @@ static int __fast_AHP(const vector<double>& v,
     return -1;
   }
   fastahp.resize(apbeginindices.size() - 1);
-  for (unsigned i = 0; i < fastahp.size(); i++) {
+  for (size_t i = 0; i < fastahp.size(); i++) {
     fastahp[i] = v[apbeginindices[i]] - v[minahpindices[i]];
   }
   return fastahp.size();
@@ -589,7 +589,7 @@ static int __AP_amplitude_change(const vector<double>& apamplitude,
     return -1;
   }
   apamplitudechange.resize(apamplitude.size() - 1);
-  for (unsigned i = 0; i < apamplitudechange.size(); i++) {
+  for (size_t i = 0; i < apamplitudechange.size(); i++) {
     apamplitudechange[i] =
         (apamplitude[i + 1] - apamplitude[0]) / apamplitude[0];
   }
@@ -626,7 +626,7 @@ static int __AP_duration_change(const vector<double>& apduration,
     return -1;
   }
   apdurationchange.resize(apduration.size() - 1);
-  for (unsigned i = 0; i < apdurationchange.size(); i++) {
+  for (size_t i = 0; i < apdurationchange.size(); i++) {
     apdurationchange[i] = (apduration[i + 1] - apduration[0]) / apduration[0];
   }
   return apdurationchange.size();
@@ -663,7 +663,7 @@ static int __AP_duration_half_width_change(
     return -1;
   }
   apdurationhalfwidthchange.resize(apdurationhalfwidth.size() - 1);
-  for (unsigned i = 0; i < apdurationhalfwidthchange.size(); i++) {
+  for (size_t i = 0; i < apdurationhalfwidthchange.size(); i++) {
     apdurationhalfwidthchange[i] =
         (apdurationhalfwidth[i + 1] - apdurationhalfwidth[0]) /
         apdurationhalfwidth[0];
@@ -702,7 +702,8 @@ static int __AP_rise_rate_change(const vector<double>& apriserate,
     return -1;
   }
   apriseratechange.resize(apriserate.size() - 1);
-  for (unsigned i = 0; i < apriseratechange.size(); i++) {
+  
+  for (size_t i = 0; i < apriseratechange.size(); i++) {
     apriseratechange[i] = (apriserate[i + 1] - apriserate[0]) / apriserate[0];
   }
   return apriseratechange.size();
@@ -738,7 +739,7 @@ static int __AP_fall_rate_change(const vector<double>& apfallrate,
     return -1;
   }
   apfallratechange.resize(apfallrate.size() - 1);
-  for (unsigned i = 0; i < apfallratechange.size(); i++) {
+  for (size_t i = 0; i < apfallratechange.size(); i++) {
     apfallratechange[i] = (apfallrate[i + 1] - apfallrate[0]) / apfallrate[0];
   }
   return apfallratechange.size();
@@ -774,7 +775,7 @@ static int __fast_AHP_change(const vector<double>& fastahp,
     return -1;
   }
   fastahpchange.resize(fastahp.size() - 1);
-  for (unsigned i = 0; i < fastahpchange.size(); i++) {
+  for (size_t i = 0; i < fastahpchange.size(); i++) {
     fastahpchange[i] = (fastahp[i + 1] - fastahp[0]) / fastahp[0];
   }
   return fastahpchange.size();
@@ -949,7 +950,7 @@ int LibV2::E39(mapStr2intVec& IntFeatureData,
     vector<double> current(stim_params.size());
     vector<double> frequency(stim_params.size());
     // iterate over these traces:
-    for (unsigned i = 0; i < stim_params.size(); i++) {
+    for (size_t i = 0; i < stim_params.size(); i++) {
       vector<double> stimulus_current;
       // retrieve the trace data
       // note that we call getDoubleParam with suffix appended,
@@ -1158,7 +1159,7 @@ static int __max_amp_difference(const vector<double>& peakvoltage,
     return -1;
   }
   diff_peak_voltage.resize(peakvoltage.size() - 1);
-  for (unsigned i = 0; i < diff_peak_voltage.size(); i++) {
+  for (size_t i = 0; i < diff_peak_voltage.size(); i++) {
     diff_peak_voltage[i] = peakvoltage[i] - peakvoltage[i + 1];
   }
   maxampdifference.push_back(
