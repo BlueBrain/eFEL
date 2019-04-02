@@ -7,7 +7,7 @@ matrix:
         - python: 3.7
           dist: xenial
           sudo: required
-script: make test
+script: tox -e "$(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-style"
 notifications:
   webhooks:
     urls:

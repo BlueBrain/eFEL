@@ -7,3 +7,5 @@
 /build.sh
 /pyenv
 /.python-version
+/.tox
+/.coverage
