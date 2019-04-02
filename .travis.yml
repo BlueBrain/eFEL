@@ -29,6 +29,8 @@ deploy:
   on:
     condition: $TRAVIS_EVENT_TYPE != cron && $TRAVIS_PYTHON_VERSION == 2.7
 before_install:
+- pip install pip --upgrade
+- pip install tox --upgrade
 - pip install codecov
 after_success:
 - codecov
