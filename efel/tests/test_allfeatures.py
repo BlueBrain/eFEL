@@ -51,6 +51,10 @@ def get_allfeature_values():
     soma_time = soma_data[:, 0]
     soma_voltage = soma_data[:, 1]
 
+    db_data = numpy.loadtxt(os.path.join(testdata_dir, 'testdbdata.txt'))
+    db_time = db_data[:, 0]
+    db_voltage = db_data[:, 1]
+
     bac_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbacdata.txt'))
     bac_time = bac_data[:, 0]
     bac_voltage = bac_data[:, 1]
@@ -64,6 +68,7 @@ def get_allfeature_values():
     bap2_voltage = bap2_data[:, 1]
 
     trace = {}
+    trace_db = {}
 
     trace['T'] = soma_time
     trace['V'] = soma_voltage
@@ -86,6 +91,11 @@ def get_allfeature_values():
     trace['stim_start;location_dend2'] = [295]
     trace['stim_end;location_dend2'] = [500]
 
+    trace_db['T'] = db_time
+    trace_db['V'] = db_voltage
+    trace_db['stim_start'] = [419.995]
+    trace_db['stim_end'] = [1419.995]
+
     bpap_featurenames = [
         'BPAPHeightLoc1',
         'BPAPHeightLoc2',
@@ -95,6 +105,9 @@ def get_allfeature_values():
     bac_featurenames = [
         'BAC_width']
 
+    db_featurenames = [
+        'depol_block']
+
     soma_featurenames = all_featurenames[:]
 
     for feature_name in bpap_featurenames:
@@ -103,10 +116,21 @@ def get_allfeature_values():
     for feature_name in bac_featurenames:
         soma_featurenames.remove(feature_name)
 
+    for feature_name in db_featurenames:
+        soma_featurenames.remove(feature_name)
+
     import warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         feature_values = efel.getFeatureValues([trace], soma_featurenames)[0]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        feature_values = dict(
+            list(feature_values.items()) +
+            list(efel.getFeatureValues(
+                [trace_db],
+                db_featurenames)[0].items()))
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")

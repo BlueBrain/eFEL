@@ -87,6 +87,42 @@ traces_data = {
         'v_col': 2,
         'stim_start': 800,
         'stim_end': 1600},
+    'depol_block_subthresh': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'allfeatures',
+            'testdb2data.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'stim_start': 419.995,
+        'stim_end': 1419.995},
+    'depol_block_subthresh_hyperpol': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'allfeatures',
+            'testdb1data.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'stim_start': 419.995,
+        'stim_end': 1419.995},
+    'depol_block_spiking': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'allfeatures',
+            'testdb3data.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'stim_start': 419.995,
+        'stim_end': 1419.995},
+    'depol_block_db': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'allfeatures',
+            'testdbdata.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'stim_start': 419.995,
+        'stim_end': 1419.995},
 }
 
 
@@ -192,6 +228,17 @@ def test_ISIs():
             1.0,
             1.0),
         64.25000000001484)
+
+
+def test_depol_block():
+    """pyfeatures: Test depolarization block feature"""
+    feature_name = 'depol_block'
+    expected_values = {
+        'depol_block_subthresh': [1], 'depol_block_subthresh_hyperpol': [1],
+        'depol_block_spiking': [1],
+        'depol_block_db': None}
+
+    _test_expected_value(feature_name, expected_values)
 
 
 def test_pydistance():

@@ -158,5 +158,6 @@
     "ISIs",
     "initburst_sahp",
     "initburst_sahp_vb",
-    "initburst_sahp_ssse"
+    "initburst_sahp_ssse",
+    "depol_block"
 ]
