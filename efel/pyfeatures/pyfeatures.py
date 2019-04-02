@@ -202,23 +202,31 @@ def depol_block():
         down_indexes = numpy.append(down_indexes, [stim_end_idx])
 
     if len(up_indexes) == 0:
-        # if it never gets high enough, that's not a good sign (meaning no spikes)
+        # if it never gets high enough, that's not a good sign (meaning no
+        # spikes)
         return None
     else:
-        # if it stays in the depolarization block more than min_duration, flag as depolarization block
-        max_depol_duration = numpy.max([time[down_indexes[k]] - time[up_idx] for k, up_idx in enumerate(up_indexes)])
+        # if it stays in the depolarization block more than min_duration, flag
+        # as depolarization block
+        max_depol_duration = numpy.max(
+            [time[down_indexes[k]] - time[up_idx] for k,
+             up_idx in enumerate(up_indexes)])
         if max_depol_duration > block_min_duration:
             return None
 
     bool_voltage = numpy.array(voltage > long_hyperpol_threshold, dtype=int)
     up_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == 1)
     down_indexes = numpy.flatnonzero(numpy.diff(bool_voltage) == -1)
-    down_indexes = down_indexes[(down_indexes > stim_start_idx) & (down_indexes < stim_end_idx)]
+    down_indexes = down_indexes[(down_indexes > stim_start_idx) & (
+        down_indexes < stim_end_idx)]
     if len(down_indexes) != 0:
-        up_indexes = up_indexes[(up_indexes > stim_start_idx) & (up_indexes < stim_end_idx) & (up_indexes > down_indexes[0])]
+        up_indexes = up_indexes[(up_indexes > stim_start_idx) & (
+            up_indexes < stim_end_idx) & (up_indexes > down_indexes[0])]
         if len(up_indexes) < len(down_indexes):
             up_indexes = numpy.append(up_indexes, [stim_end_idx])
-        max_hyperpol_duration = numpy.max([time[up_indexes[k]] - time[down_idx] for k, down_idx in enumerate(down_indexes)])
+        max_hyperpol_duration = numpy.max(
+            [time[up_indexes[k]] - time[down_idx] for k,
+             down_idx in enumerate(down_indexes)])
 
         # if it stays in hyperpolarzed stage for more than min_duration,
         # flag as depolarization block
