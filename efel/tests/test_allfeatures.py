@@ -173,6 +173,7 @@ def test_allfeatures():
 
     import numpy
     nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
+    failed_feature = False
     for feature_name, feature_value in feature_values.items():
         expected_value = expected_results[feature_name]
         if feature_name is None:
@@ -188,4 +189,6 @@ def test_allfeatures():
         if not equal:
             print("Difference in feature %s: value=%s expected=%s" %
                   (feature_name, feature_value, expected_value))
-        nt.assert_true(equal)
+            failed_feature = True
+
+    nt.assert_true(failed_feature is False)
