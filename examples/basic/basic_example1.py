@@ -1,5 +1,7 @@
+from __future__ import print_function
 """Basic example 1 for eFEL"""
 
+import os
 import efel
 
 import numpy
@@ -9,7 +11,7 @@ def main():
     """Main"""
 
     # Use numpy to read the trace data from the txt file
-    data = numpy.loadtxt('example_trace1.txt')
+    data = numpy.loadtxt(os.path.join(os.path.dirname(__file__), 'example_trace1.txt'))
 
     # Time is the first column
     time = data[:, 0]
@@ -50,8 +52,8 @@ def main():
     for trace_results in traces_results:
         # trace_result is a dictionary, with as keys the requested features
         for feature_name, feature_values in trace_results.items():
-            print "Feature %s has the following values: %s" % \
-                (feature_name, ', '.join([str(x) for x in feature_values]))
+            print("Feature %s has the following values: %s" % \
+                (feature_name, ', '.join([str(x) for x in feature_values])))
 
 
 if __name__ == '__main__':
