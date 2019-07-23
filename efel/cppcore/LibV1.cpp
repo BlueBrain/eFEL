@@ -1535,12 +1535,8 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     return -1;
   }
 
-  if (stimEnd > t[t.size() - 1]) {
-    GErrorStr += "\nStimulus end larger than max time in trace. [stim_end: " + 
-        to_string(stimEnd) + ", max time: " + 
-        to_string(t[t.size() - 1]) + "]\n";
-    return -1;
-  }
+  if (stimEnd > t[t.size() - 1])
+      stimEnd = t.back();
 
   size_t stimstartindex = 0;
   while(t[stimstartindex] < stimStart && stimstartindex <= t.size())
