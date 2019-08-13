@@ -25,7 +25,7 @@ deploy:
   user: wvangeit
   password:
     secure: c9fJz1IliA0Scg4MS1HBAFbyGHnTOViYbF0I0WhrspqeNyyF4WKBx2kQzvMguc6JVm8MrcqdrM2P/me7WiD9vO4geqO/kXsjeg8kE2JnlGtAgX8PpOaR0P/IFdVcmfIc//05QS8PyovVZMxqlOrya1CN9cO4NMDRM9LS2dAaih0=
-  distributions: sdist
+  distributions: sdist bdist_wheel
   on:
     condition: $TRAVIS_EVENT_TYPE != cron && $TRAVIS_PYTHON_VERSION == 2.7
 before_install:
