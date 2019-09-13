@@ -1057,7 +1057,7 @@ int LibV5::APlast_width(mapStr2intVec& IntFeatureData,
   if (retVal) return nSize;
   vector<double> spike_half_width, APlast_width;
 
-  size_t spike_half_width_size = 
+  int spike_half_width_size = 
       getDoubleVec(DoubleFeatureData, StringData, "spike_half_width",
                         spike_half_width);
   
