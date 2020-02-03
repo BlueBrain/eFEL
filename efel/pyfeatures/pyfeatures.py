@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy
 import efel.cppcore
+from scipy.integrate import simps
 
 
 all_pyfeatures = [
@@ -37,7 +38,8 @@ all_pyfeatures = [
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',
-    'depol_block']
+    'depol_block',
+    'ADP_area']
 
 
 def voltage():
@@ -234,6 +236,52 @@ def depol_block():
             return None
 
     return numpy.array([1])
+
+
+def ADP_area():
+    """Compute the area of the ADP in mV.ms"""
+
+    # Constant
+    AP_delay = 0.5  # time after an AP after which to start looking for the end of the AP (in ms)
+    threshold = -10.  # Threshold used to find the end of an AP (mV/ms)
+    end_time = 50.  # use as an upper limit after the last AP (ms)
+
+    # Required cpp features
+    voltage = _get_cpp_feature("voltage")
+    t = _get_cpp_feature("time")
+    AP_begin_indices = _get_cpp_feature("AP_begin_indices")
+    peak_indices = _get_cpp_feature("peak_indices")
+
+    dt = t[1] - t[0]
+    AP_delay = int(AP_delay / dt)
+    end_time = int(end_time / dt)
+    dvdt = numpy.gradient(voltage, dt)
+    areas = []
+    for i in range(len(AP_begin_indices) - 1):
+        _ = dvdt[peak_indices[i] + AP_delay:peak_indices[i + 1]] > threshold
+        if sum(_):
+            # Define the end of the AP as the first index for which dV/dt > threshold
+            AP_end = peak_indices[i] + AP_delay + numpy.argmax(_)
+            # Offset the voltage between the end of the current spike and beginning of next spike to
+            # zero and compute its integral
+            v = numpy.copy(voltage[AP_end:AP_begin_indices[i + 1]])
+            v -= numpy.min(v)
+            areas.append(simps(v, dx=0.1))
+        else:
+            areas.append(None)
+
+    #  Handle the last AP by using a 50ms after AHP limit
+    end_time = peak_indices[-1] + end_time
+    _ = dvdt[peak_indices[-1] + AP_delay:end_time] > threshold
+    if sum(_):
+        AP_end = peak_indices[-1] + AP_delay + numpy.argmax(_)
+        v = numpy.copy(voltage[AP_end:end_time])
+        v -= numpy.min(v)
+        areas.append(simps(v, dx=0.1))
+    else:
+        areas.append(None)
+
+    return numpy.array(areas)
 
 
 def _get_cpp_feature(feature_name):
