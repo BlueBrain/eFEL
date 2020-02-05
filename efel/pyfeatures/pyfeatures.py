@@ -247,26 +247,34 @@ def ADP_area():
     end_time = 50.  # use as an upper limit after the last AP (ms)
 
     # Required cpp features
-    voltage = _get_cpp_feature("voltage")
+    volt = _get_cpp_feature("voltage")
     t = _get_cpp_feature("time")
     AP_begin_indices = _get_cpp_feature("AP_begin_indices")
     peak_indices = _get_cpp_feature("peak_indices")
+    print(len(AP_begin_indices), len(peak_indices))
 
     dt = t[1] - t[0]
     AP_delay = int(AP_delay / dt)
     end_time = int(end_time / dt)
-    dvdt = numpy.gradient(voltage, dt)
+    dvdt = numpy.gradient(volt, dt)
     areas = []
     for i in range(len(AP_begin_indices) - 1):
-        _ = dvdt[peak_indices[i] + AP_delay:peak_indices[i + 1]] > threshold
-        if sum(_):
-            # Define the end of the AP as the first index for which dV/dt > threshold
-            AP_end = peak_indices[i] + AP_delay + numpy.argmax(_)
-            # Offset the voltage between the end of the current spike and beginning of next spike to
-            # zero and compute its integral
-            v = numpy.copy(voltage[AP_end:AP_begin_indices[i + 1]])
-            v -= numpy.min(v)
-            areas.append(simps(v, dx=0.1))
+
+        # Make sure that the next AP is not too close
+        if peak_indices[i+1] - peak_indices[i] > 10*AP_delay:
+
+            _ = dvdt[peak_indices[i] + AP_delay:peak_indices[i + 1]] > threshold
+            if sum(_):
+                # Define the end of the AP as the first index for which dV/dt > threshold
+                AP_end = peak_indices[i] + AP_delay + numpy.argmax(_)
+                # Offset the voltage between the end of the current spike and
+                # beginning of next spike to zero and compute its integral
+                v = numpy.copy(volt[AP_end:AP_begin_indices[i + 1]])
+                v -= numpy.min(v)
+                areas.append(simps(v, dx=0.1))
+            else:
+                areas.append(None)
+
         else:
             areas.append(None)
 
@@ -275,7 +283,7 @@ def ADP_area():
     _ = dvdt[peak_indices[-1] + AP_delay:end_time] > threshold
     if sum(_):
         AP_end = peak_indices[-1] + AP_delay + numpy.argmax(_)
-        v = numpy.copy(voltage[AP_end:end_time])
+        v = numpy.copy(volt[AP_end:end_time])
         v -= numpy.min(v)
         areas.append(simps(v, dx=0.1))
     else:
