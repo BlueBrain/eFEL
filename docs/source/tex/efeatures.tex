@@ -81,7 +81,7 @@ Note that a successful calculation of a feature can also result in an empty vect
   {peak\_indices}
   {(index)}
   {none}
-  {V\\&T}
+  {V}
   {min spike height\\&threshold}
   {The voltage trace indices at the voltage maxima of the peaks, noise save}
   {
@@ -96,8 +96,8 @@ Note that a successful calculation of a feature can also result in an empty vect
   min$_0$, \ldots, min$_{n-1} =$ minima \\
   FOR $i = 0, \dots, n - 2$ DO \+ \\
     max$_i = j$ WITH v$_j$ maximal AND min$_i \le j < $ min$_{i+1}$ \\
-    h1 = V[max$_i$] - min$_i$ \\
-    h2 = V[max$_i$] - min$_{i+1}$ \\
+    h1 = V[max$_i$] - V[min$_i$] \\
+    h2 = V[max$_i$] - V[min$_{i+1}$] \\
     IF h1 > min\_spike\_height AND h2 > min\_spike\_height \\
     OR \\
     V[max$_i$] > threshold AND (h1 > min\_spike\_height OR h2 > min\_spike\_height) THEN \+ \\
