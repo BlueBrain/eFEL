@@ -195,6 +195,9 @@ int min_voltage_between_spikes(mapStr2intVec& intfeaturedata,
 int voltage(mapStr2intVec& intfeaturedata,
                                   mapStr2doubleVec& doublefeaturedata,
                                   mapStr2Str& StringData);
+int current(mapStr2intVec& intfeaturedata,
+                                  mapStr2doubleVec& doublefeaturedata,
+                                  mapStr2Str& StringData);
 int time(mapStr2intVec& intfeaturedata,
                                   mapStr2doubleVec& doublefeaturedata,
                                   mapStr2Str& StringData);

@@ -146,6 +146,7 @@ LibV5:all_ISI_values #LibV1:peak_time #LibV1:interpolate
 LibV5:AP_amplitude_from_voltagebase #LibV5:voltage_base #LibV1:peak_voltage    #LibV1:interpolate 
 LibV5:min_voltage_between_spikes #LibV5:peak_indices #LibV1:interpolate 
 LibV5:voltage #LibV1:interpolate 
+LibV5:current #LibV1:interpolate 
 LibV5:time #LibV1:interpolate 
 LibV5:steady_state_voltage_stimend #LibV1:interpolate 
 LibV5:voltage_base #LibV1:interpolate 

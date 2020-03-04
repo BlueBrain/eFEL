@@ -2127,6 +2127,25 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
   return v.size();
 }
 
+// return (possibly interpolate) current trace
+int LibV5::current(mapStr2intVec& IntFeatureData,
+                   mapStr2doubleVec& DoubleFeatureData,
+                   mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "current", nSize);
+  if (retVal > 0) return nSize;
+
+  vector<double> i;
+  retVal = getDoubleVec(DoubleFeatureData, StringData, "I", i);
+  if (retVal < 0) {
+    GErrorStr += "Error getting I for current";
+    return -1;
+  }
+
+  setDoubleVec(DoubleFeatureData, StringData, "current", i);
+  return i.size();
+}
+
 // return (possibly interpolate) time trace
 int LibV5::time(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
