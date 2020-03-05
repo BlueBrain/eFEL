@@ -328,6 +328,6 @@ def test_current():
     current = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
                                          'basic',
                                          'current.txt'))
-    expected_values = {'current': current[:,1]}
+    expected_values = {'current': current[:, 1]}
 
     _test_expected_value(feature_name, expected_values)
