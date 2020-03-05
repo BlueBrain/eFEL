@@ -33,6 +33,7 @@ import efel.cppcore
 all_pyfeatures = [
     'voltage',
     'time',
+    'current',
     'ISIs',
     'initburst_sahp',
     'initburst_sahp_vb',
@@ -48,6 +49,11 @@ def voltage():
 def time():
     """Get time trace"""
     return _get_cpp_feature("time")
+
+
+def current():
+    """Get current trace"""
+    return _get_cpp_feature("current")
 
 
 def ISIs():

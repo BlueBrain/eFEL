@@ -123,6 +123,16 @@ traces_data = {
         'v_col': 2,
         'stim_start': 419.995,
         'stim_end': 1419.995},
+    'current': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'basic',
+            'current.txt'),
+        't_col': 1,
+        'i_col': 2,
+        'v_col': 3,
+        'stim_start': 700.0,
+        'stim_end': 2700.0},
 }
 
 
@@ -143,6 +153,10 @@ def _load_trace(trace_name):
         'stim_start': [trace_data['stim_start']],
         'stim_end': [trace_data['stim_end']],
     }
+
+    if 'i_col' in trace_data:
+        trace['I'] = efel.io.load_fragment('%s#col=%d' %
+                                           (url, trace_data['i_col']))
 
     return trace
 
@@ -305,3 +319,15 @@ def test_pydistance_featurefail():
         mean,
         std,
         trace_check=True), 250.0)
+
+
+def test_current():
+    """pyfeatures: Test current feature"""
+
+    feature_name = 'current'
+    current = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
+                                         'basic',
+                                         'current.txt'))
+    expected_values = {'current': current[:,1]}
+
+    _test_expected_value(feature_name, expected_values)
