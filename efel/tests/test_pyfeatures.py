@@ -326,8 +326,8 @@ def test_current():
 
     feature_name = 'current'
     data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                         'basic',
-                                         'current.txt'))
+                                      'basic',
+                                      'current.txt'))
     current = data[:, 1]
     expected_values = {'current': current}
     _test_expected_value(feature_name, expected_values)
@@ -335,7 +335,7 @@ def test_current():
 
 def test_interpolate_current():
     """pyfeatures: Test interpolation of current"""
-    
+
     def interpolate(time, voltage, new_dt):
         """Interpolate voltage to new dt"""
 
