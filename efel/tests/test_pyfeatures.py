@@ -123,6 +123,16 @@ traces_data = {
         'v_col': 2,
         'stim_start': 419.995,
         'stim_end': 1419.995},
+    'current': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'basic',
+            'current.txt'),
+        't_col': 1,
+        'i_col': 2,
+        'v_col': 3,
+        'stim_start': 700.0,
+        'stim_end': 2700.0},
 }
 
 
@@ -143,6 +153,10 @@ def _load_trace(trace_name):
         'stim_start': [trace_data['stim_start']],
         'stim_end': [trace_data['stim_end']],
     }
+
+    if 'i_col' in trace_data:
+        trace['I'] = efel.io.load_fragment('%s#col=%d' %
+                                           (url, trace_data['i_col']))
 
     return trace
 
@@ -305,3 +319,44 @@ def test_pydistance_featurefail():
         mean,
         std,
         trace_check=True), 250.0)
+
+
+def test_current():
+    """pyfeatures: Test current feature"""
+
+    feature_name = 'current'
+    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
+                                      'basic',
+                                      'current.txt'))
+    current = data[:, 1]
+    expected_values = {'current': current}
+    _test_expected_value(feature_name, expected_values)
+
+
+def test_interpolate_current():
+    """pyfeatures: Test interpolation of current"""
+
+    def interpolate(time, voltage, new_dt):
+        """Interpolate voltage to new dt"""
+
+        interp_time = numpy.arange(time[0], time[-1] + new_dt, new_dt)
+        interp_voltage = numpy.interp(interp_time, time, voltage)
+
+        return interp_time, interp_voltage
+
+    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
+                                      'basic',
+                                      'current.txt'))
+    time = data[:, 0]
+    current = data[:, 1]
+    voltage = data[:, 2]
+
+    feature_name = ['time', 'current', 'voltage']
+    trace = _load_trace('current')
+    feature_values = efel.getFeatureValues([trace], ['current'])
+    interp_time, interp_current = interpolate(time, current, new_dt=0.00025)
+
+    nt.assert_equal(len(interp_time), len(time))
+    nt.assert_equal(len(interp_current), len(current))
+    nt.assert_equal(len(voltage), len(current))
+    nt.assert_true(numpy.allclose(interp_current, current))
