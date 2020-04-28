@@ -54,38 +54,35 @@ def current():
     """Get voltage trace"""
     return _get_cpp_feature("current")
 
+
 def time():
     """Get time trace"""
     return _get_cpp_feature("time")
 
-def impedance():
-    volta=_get_cpp_feature("voltage")
-    volt_hold=numpy.median(volta[0:10])
-    volt=volta-volt_hold 
-    curr=_get_cpp_feature("current")
-    cur_hold=numpy.median(curr[0:10])
-    cur=curr-cur_hold
-    if max(volta)<0: #if there is no spikes in ZAP
-        fft_volt = numpy.fft.fft(volt*1e3)
-        fft_cur = numpy.fft.fft(cur*1e12)
-        freq = numpy.fft.fftfreq(len(volt), d=0.0001)
-        Z=((fft_volt)/(fft_cur))
-        signalPhase = numpy.angle(fft_volt)
-           
-        norm_Z=abs(Z[1:150])/max(abs(Z[1:150]))
-        smooth_Z = gaussian_filter1d(norm_Z, 10)
 
-        ind_max=numpy.argmax(smooth_Z)
+def impedance():
+    volta = _get_cpp_feature("voltage")
+    volt_hold = numpy.median(volta[0:10])
+    volt = volta - volt_hold
+    curr = _get_cpp_feature("current")
+    cur_hold = numpy.median(curr[0:10])
+    cur = curr - cur_hold
+    if max(volta) < 0:  # if there is no spikes in ZAP
+        fft_volt = numpy.fft.fft(volt * 1e3)
+        fft_cur = numpy.fft.fft(cur * 1e12)
+        freq = numpy.fft.fftfreq(len(volt), d = 0.0001)
+        Z = ((fft_volt) / (fft_cur))
+        signalPhase = numpy.angle(fft_volt)
+        norm_Z = abs(Z[1:150]) / max(abs(Z[1:150]))
+        smooth_Z = gaussian_filter1d(norm_Z, 10)
+        ind_max = numpy.argmax(smooth_Z)
         return(freq[ind_max])
     else:
-        return None 
-
-
+        return None
 
 def current():
     """Get current trace"""
     return _get_cpp_feature("current")
-
 
 def ISIs():
     """Get all ISIs"""
