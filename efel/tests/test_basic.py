@@ -1574,7 +1574,7 @@ def test_getFeatureNames():
     test_data_path = os.path.join(testdata_dir, '..', 'featurenames.json')
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
-    nt.assert_equal(efel.getFeatureNames(), expected_featurenames)
+    nt.assert_equal(set(efel.getFeatureNames()), set(expected_featurenames))
 
 
 def test_getFeatureNameExists():
