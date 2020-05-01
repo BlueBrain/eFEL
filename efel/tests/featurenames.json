@@ -158,6 +158,7 @@
     "time",
     "current",
     "ISIs",
+    "impedance",
     "initburst_sahp",
     "initburst_sahp_vb",
     "initburst_sahp_ssse",
