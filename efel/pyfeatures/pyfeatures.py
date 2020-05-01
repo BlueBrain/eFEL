@@ -48,6 +48,7 @@ def voltage():
     """Get voltage trace"""
     return _get_cpp_feature("voltage")
 
+
 def time():
     """Get time trace"""
     return _get_cpp_feature("time")
@@ -73,9 +74,11 @@ def impedance():
     else:
         return None
 
+
 def current():
     """Get current trace"""
     return _get_cpp_feature("current")
+
 
 def ISIs():
     """Get all ISIs"""
