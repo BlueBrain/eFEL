@@ -97,7 +97,7 @@ class TestCppcore(object):
         test_data_path = os.path.join(testdata_dir, '../featurenames.json')
         with open(test_data_path, 'r') as featurenames_json:
             expected_featurenames = json.load(featurenames_json)
-        nt.assert_equal(feature_names, expected_featurenames)
+        nt.assert_equal(set(feature_names), set(expected_featurenames))
 
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
