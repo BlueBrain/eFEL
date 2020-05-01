@@ -133,6 +133,16 @@ traces_data = {
         'v_col': 3,
         'stim_start': 700.0,
         'stim_end': 2700.0},
+    'impedance': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'basic',
+            'impedance.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'i_col': 3,
+        'stim_start': 1000.0,
+        'stim_end': 51000.0}
 }
 
 
@@ -360,3 +370,11 @@ def test_interpolate_current():
     nt.assert_equal(len(interp_current), len(current))
     nt.assert_equal(len(voltage), len(current))
     nt.assert_true(numpy.allclose(interp_current, current))
+
+def test_impedance():
+    """pyfeatures: Test impedance feature"""
+
+    feature_name = "impedance"
+
+    expected_values = {feature_name: 4.615384615384615}
+    _test_expected_value(feature_name, expected_values)
