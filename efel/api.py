@@ -131,7 +131,7 @@ def getDependencyFileLocation():
 
 
 def setThreshold(newThreshold):
-    """Set the spike detection threshold in the eFEL
+    """Set the spike detection threshold in the eFEL, default -20.0
 
     Parameters
     ==========
