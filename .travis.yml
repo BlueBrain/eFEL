@@ -8,7 +8,7 @@ matrix:
         - python: 3.8
           dist: xenial
           sudo: required
-script: tox -e "$(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-style"
+script: tox -e "$(echo py$TRAVIS_PYTHON_VERSION | tr -d .)-style-test"
 notifications:
   webhooks:
     urls:
