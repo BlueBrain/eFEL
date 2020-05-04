@@ -371,6 +371,7 @@ def test_interpolate_current():
     nt.assert_equal(len(voltage), len(current))
     nt.assert_true(numpy.allclose(interp_current, current))
 
+
 def test_impedance():
     """pyfeatures: Test impedance feature"""
 
