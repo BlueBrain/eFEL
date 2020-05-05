@@ -55,10 +55,10 @@ def time():
 
 
 def impedance():
-    voltage_trace = _get_cpp_feature("voltage")
+    voltage_trace = voltage()
     voltage_hold = numpy.median(voltage_trace[0:10])
     normalized_voltage = voltage_trace - voltage_hold
-    current_trace = _get_cpp_feature("current")
+    current_trace = current()
     current_hold = numpy.median(current_trace[0:10])
     normalized_current = current_trace - current_hold
     if max(voltage_trace) < 0:  # if there is no spikes in ZAP
