@@ -69,7 +69,7 @@ def impedance():
         norm_Z = abs(Z[1:150]) / max(abs(Z[1:150]))
         smooth_Z = gaussian_filter1d(norm_Z, 10)
         ind_max = numpy.argmax(smooth_Z)
-        return(freq[ind_max])
+        return freq[ind_max]
     else:
         return None
 
