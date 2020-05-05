@@ -55,18 +55,18 @@ def time():
 
 
 def impedance():
-    volta = _get_cpp_feature("voltage")
-    volt_hold = numpy.median(volta[0:10])
-    volt = volta - volt_hold
-    curr = _get_cpp_feature("current")
-    cur_hold = numpy.median(curr[0:10])
-    cur = curr - cur_hold
-    if max(volta) < 0:  # if there is no spikes in ZAP
-        fft_volt = numpy.fft.fft(volt * 1e3)
-        fft_cur = numpy.fft.fft(cur * 1e12)
-        freq = numpy.fft.fftfreq(len(volt), d=0.0001)
+    voltage_trace = _get_cpp_feature("voltage")
+    voltage_hold = numpy.median(voltage_trace[0:10])
+    normalized_voltage = voltage_trace - voltage_hold
+    current_trace = _get_cpp_feature("current")
+    current_hold = numpy.median(current_trace[0:10])
+    normalized_current = current_trace - current_hold
+    if max(voltage_trace) < 0:  # if there is no spikes in ZAP
+        fft_volt = numpy.fft.fft(normalized_voltage * 1e3)
+        fft_cur = numpy.fft.fft(normalized_current * 1e12)
+        freq = numpy.fft.fftfreq(len(normalized_voltage), d=0.0001)
         Z = ((fft_volt) / (fft_cur))
-        signalPhase = numpy.angle(fft_volt)
+        signal_phase = numpy.angle(fft_volt)
         norm_Z = abs(Z[1:150]) / max(abs(Z[1:150]))
         smooth_Z = gaussian_filter1d(norm_Z, 10)
         ind_max = numpy.argmax(smooth_Z)
