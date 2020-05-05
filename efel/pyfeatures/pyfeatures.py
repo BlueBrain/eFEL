@@ -56,8 +56,8 @@ def time():
 
 def impedance():
     voltage_trace = voltage()
-    voltage_hold = numpy.median(voltage_trace[0:10])
-    normalized_voltage = voltage_trace - voltage_hold
+    voltage_base = _get_cpp_feature("voltage_base")
+    normalized_voltage = voltage_trace - voltage_base
     current_trace = current()
     current_hold = numpy.median(current_trace[0:10])
     normalized_current = current_trace - current_hold
