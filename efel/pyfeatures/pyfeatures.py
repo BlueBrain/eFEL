@@ -59,8 +59,8 @@ def impedance():
     voltage_base = _get_cpp_feature("voltage_base")
     normalized_voltage = voltage_trace - voltage_base
     current_trace = current()
-    current_hold = numpy.median(current_trace[0:10])
-    normalized_current = current_trace - current_hold
+    current_base = numpy.median(current_trace[0:10])
+    normalized_current = current_trace - current_base
     if max(voltage_trace) < 0:  # if there is no spikes in ZAP
         fft_volt = numpy.fft.fft(normalized_voltage * 1e3)
         fft_cur = numpy.fft.fft(normalized_current * 1e12)
