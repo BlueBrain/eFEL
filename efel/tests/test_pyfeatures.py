@@ -141,7 +141,7 @@ traces_data = {
         't_col': 1,
         'v_col': 2,
         'i_col': 3,
-        'stim_start': 1000.0,
+        'stim_start': 100.0,
         'stim_end': 51000.0}
 }
 
@@ -377,5 +377,5 @@ def test_impedance():
 
     feature_name = "impedance"
 
-    expected_values = {feature_name: 4.615384615384615}
+    expected_values = {feature_name: 4.23076923076923}
     _test_expected_value(feature_name, expected_values)
