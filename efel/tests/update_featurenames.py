@@ -41,6 +41,7 @@ if __name__ == '__main__':
 
     with open('featurenames.json', 'w') as featurenames_json:
         feature_names = efel.getFeatureNames()
+        feature_names = sorted(set(feature_names))
         json.dump(
             feature_names,
             featurenames_json,
