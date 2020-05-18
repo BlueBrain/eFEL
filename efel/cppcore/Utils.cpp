@@ -164,3 +164,39 @@ slope_straight_line_fit(const vector<double>& x,
 
   return result;
 }
+
+template<class T>
+double vec_mean(const vector<T> &v) {
+  /*
+   * Computes the mean of input vector v
+   * Does not modify the reference v
+   * Returns the mean value
+   * */
+
+    double sum = accumulate( v.begin(), v.end(), 0.0);
+    size_t v_size = v.size();
+    double mean = sum / v_size;
+    return mean;
+}
+
+template<class T>
+double vec_median(vector<T> v) {
+    /*
+     * param v: the input vector
+     * param v is called by value since std::sort modifies the container
+     * Returns the median value of the vector
+     * */
+
+    // sort using the default operator<
+    std::sort(v.begin(), v.end());
+
+    size_t n = v.size();
+    if (n % 2 != 0) // odd
+        return (double)v[n/2];
+    return (double)(v[(n-1)/2] + v[n/2])/2.0; // even
+
+}
+
+
+template double vec_mean(const vector<double> &v);
+template double vec_median(vector<double> v);

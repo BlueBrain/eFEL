@@ -22,7 +22,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <algorithm>
+#include <numeric>
 #include <vector>
 
 using std::vector;
@@ -44,6 +45,11 @@ int getCentralDifferenceDerivative(double dx, const vector<double>& v,
 void getfivepointstencilderivative(const vector<double>& v, vector<double>& dv);
 linear_fit_result slope_straight_line_fit(const vector<double>& x,
                                           const vector<double>& y);
+
+template <class T>
+double vec_median(vector<T> v);
+template <class T>
+double vec_mean(const vector<T> &v);
 
 template <class ForwardIterator>
 ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
