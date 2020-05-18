@@ -63,20 +63,13 @@ int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
   return 1;
 }
 
-void setIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-               string key, const vector<int>& value) {
+template <class T>
+void setVec(std::map<std::string, std::vector<T>>& featureData, mapStr2Str& StringData,
+               string key, const vector<T>& value){
   string params;
   getStrParam(StringData, "params", params);
   key += params;
-  IntFeatureData[key] = value;
-}
-
-void setDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                  string key, const vector<double>& value) {
-  string params;
-  getStrParam(StringData, "params", params);
-  key += params;
-  DoubleFeatureData[key] = value;
+  featureData[key] = value;
 }
 
 /*
@@ -249,3 +242,9 @@ int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
     return -1;
   }
 }
+
+template void setVec(std::map<std::string, std::vector<double>>& featureData, mapStr2Str& StringData,
+               string key, const vector<double>& value);
+template void setVec(std::map<std::string, std::vector<int>>& featureData, mapStr2Str& StringData,
+               string key, const vector<int>& value);
+               

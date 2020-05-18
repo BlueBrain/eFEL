@@ -126,7 +126,7 @@ int LibV2::AP_begin_indices(mapStr2intVec& IntFeatureData,
   vector<int> apbi;
   retVal = __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+    setVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   }
   return retVal;
 }
@@ -177,7 +177,7 @@ int LibV2::AP_end_indices(mapStr2intVec& IntFeatureData,
   vector<int> apei;
   retVal = __AP_end_indices(t, v, pi, apei);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_end_indices", apei);
+    setVec(IntFeatureData, StringData, "AP_end_indices", apei);
   }
   return retVal;
 }
@@ -228,7 +228,7 @@ int LibV2::AP_rise_indices(mapStr2intVec& IntFeatureData,
   vector<int> apri;
   retVal = __AP_rise_indices(v, apbi, pi, apri);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_rise_indices", apri);
+    setVec(IntFeatureData, StringData, "AP_rise_indices", apri);
   }
   return retVal;
 }
@@ -276,7 +276,7 @@ int LibV2::AP_fall_indices(mapStr2intVec& IntFeatureData,
   vector<int> apfi;
   retVal = __AP_fall_indices(v, apbi, apei, pi, apfi);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_fall_indices", apfi);
+    setVec(IntFeatureData, StringData, "AP_fall_indices", apfi);
   }
   return retVal;
 }
@@ -319,7 +319,7 @@ int LibV2::AP_duration(mapStr2intVec& IntFeatureData,
   vector<double> apduration;
   retval = __AP_duration(t, apbeginindices, endindices, apduration);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_duration", apduration);
+    setVec(DoubleFeatureData, StringData, "AP_duration", apduration);
   }
   return retval;
 }
@@ -361,7 +361,7 @@ int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
   retval = __AP_duration_half_width(t, apriseindices, apfallindices,
                                     apdurationhalfwidth);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_duration_half_width",
+    setVec(DoubleFeatureData, StringData, "AP_duration_half_width",
                  apdurationhalfwidth);
   }
   return retval;
@@ -403,7 +403,7 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
   vector<double> aprisetime;
   retval = __AP_rise_time(t, apbeginindices, peakindices, aprisetime);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_rise_time", aprisetime);
+    setVec(DoubleFeatureData, StringData, "AP_rise_time", aprisetime);
   }
   return retval;
 }
@@ -444,7 +444,7 @@ int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
   vector<double> apfalltime;
   retval = __AP_fall_time(t, peakindices, apendindices, apfalltime);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_fall_time", apfalltime);
+    setVec(DoubleFeatureData, StringData, "AP_fall_time", apfalltime);
   }
   return retval;
 }
@@ -489,7 +489,7 @@ int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
   vector<double> apriserate;
   retval = __AP_rise_rate(t, v, apbeginindices, peakindices, apriserate);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_rise_rate", apriserate);
+    setVec(DoubleFeatureData, StringData, "AP_rise_rate", apriserate);
   }
   return retval;
 }
@@ -533,7 +533,7 @@ int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
   vector<double> apfallrate;
   retval = __AP_fall_rate(t, v, peakindices, apendindices, apfallrate);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_fall_rate", apfallrate);
+    setVec(DoubleFeatureData, StringData, "AP_fall_rate", apfallrate);
   }
   return retval;
 }
@@ -576,7 +576,7 @@ int LibV2::fast_AHP(mapStr2intVec& IntFeatureData,
   vector<double> fastahp;
   retval = __fast_AHP(v, apbeginindices, minahpindices, fastahp);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
+    setVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
   }
   return retval;
 }
@@ -612,7 +612,7 @@ int LibV2::AP_amplitude_change(mapStr2intVec& IntFeatureData,
   vector<double> apamplitudechange;
   retval = __AP_amplitude_change(apamplitude, apamplitudechange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_change",
+    setVec(DoubleFeatureData, StringData, "AP_amplitude_change",
                  apamplitudechange);
   }
   return retval;
@@ -648,7 +648,7 @@ int LibV2::AP_duration_change(mapStr2intVec& IntFeatureData,
   vector<double> apdurationchange;
   retval = __AP_duration_change(apduration, apdurationchange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_duration_change",
+    setVec(DoubleFeatureData, StringData, "AP_duration_change",
                  apdurationchange);
   }
   return retval;
@@ -688,7 +688,7 @@ int LibV2::AP_duration_half_width_change(mapStr2intVec& IntFeatureData,
   retval = __AP_duration_half_width_change(apdurationhalfwidth,
                                            apdurationhalfwidthchange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_duration_half_width_change",
+    setVec(DoubleFeatureData, StringData, "AP_duration_half_width_change",
                  apdurationhalfwidthchange);
   }
   return retval;
@@ -725,7 +725,7 @@ int LibV2::AP_rise_rate_change(mapStr2intVec& IntFeatureData,
   vector<double> apriseratechange;
   retval = __AP_rise_rate_change(apriserate, apriseratechange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_rise_rate_change",
+    setVec(DoubleFeatureData, StringData, "AP_rise_rate_change",
                  apriseratechange);
   }
   return retval;
@@ -761,7 +761,7 @@ int LibV2::AP_fall_rate_change(mapStr2intVec& IntFeatureData,
   vector<double> apfallratechange;
   retval = __AP_fall_rate_change(apfallrate, apfallratechange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_fall_rate_change",
+    setVec(DoubleFeatureData, StringData, "AP_fall_rate_change",
                  apfallratechange);
   }
   return retval;
@@ -796,7 +796,7 @@ int LibV2::fast_AHP_change(mapStr2intVec& IntFeatureData,
   vector<double> fastahpchange;
   retval = __fast_AHP_change(fastahp, fastahpchange);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "fast_AHP_change",
+    setVec(DoubleFeatureData, StringData, "fast_AHP_change",
                  fastahpchange);
   }
   return retval;
@@ -817,7 +817,7 @@ int LibV2::E6(mapStr2intVec& IntFeatureData,
                               0, e6);
   if (retval >= 0) {
     e6.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E6", e6);
+    setVec(DoubleFeatureData, StringData, "E6", e6);
   }
   return retval;
 }
@@ -837,7 +837,7 @@ int LibV2::E7(mapStr2intVec& IntFeatureData,
       mean_traces_double(DoubleFeatureData, "AP_duration", "APWaveForm", 0, e7);
   if (retval >= 0) {
     e7.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E7", e7);
+    setVec(DoubleFeatureData, StringData, "E7", e7);
   }
   return retval;
 }
@@ -882,7 +882,7 @@ int LibV2::BPAPatt2(mapStr2intVec& IntFeatureData,
   // action potential:
   // the height of the dendritic spike
   bpapatt.push_back(*max_element(v_dend.begin(), v_dend.end()) - vb_dend[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "BPAPatt2", bpapatt);
+  setVec(DoubleFeatureData, StringData, "BPAPatt2", bpapatt);
   return retval;
 }
 // end of BPAPatt2
@@ -926,7 +926,7 @@ int LibV2::BPAPatt3(mapStr2intVec& IntFeatureData,
   // action potential:
   // the height of the dendritic spike
   bpapatt.push_back(*max_element(v_dend.begin(), v_dend.end()) - vb_dend[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "BPAPatt3", bpapatt);
+  setVec(DoubleFeatureData, StringData, "BPAPatt3", bpapatt);
   return retval;
 }
 // end of BPAPatt3
@@ -967,8 +967,8 @@ int LibV2::E39(mapStr2intVec& IntFeatureData,
     fit = slope_straight_line_fit(current, frequency);
     vector<double> e39(1, fit.slope);
     vector<double> e39_cod(1, fit.r_square);
-    setDoubleVec(DoubleFeatureData, StringData, "E39", e39);
-    setDoubleVec(DoubleFeatureData, StringData, "E39_cod", e39_cod);
+    setVec(DoubleFeatureData, StringData, "E39", e39);
+    setVec(DoubleFeatureData, StringData, "E39_cod", e39_cod);
     return e39.size();
   }
   GErrorStr += "\nMore than 1 trace required for calculation of E39";
@@ -1016,7 +1016,7 @@ int LibV2::amp_drop_first_second(mapStr2intVec& IntFeatureData,
   vector<double> ampdropfirstsecond;
   retval = __amp_drop_first_second(peakvoltage, ampdropfirstsecond);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "amp_drop_first_second",
+    setVec(DoubleFeatureData, StringData, "amp_drop_first_second",
                  ampdropfirstsecond);
   }
   return retval;
@@ -1036,7 +1036,7 @@ int LibV2::E2(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "amp_drop_first_second",
                               "APDrop", 0, e2);
   if (retval > 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E2", e2);
+    setVec(DoubleFeatureData, StringData, "E2", e2);
     return 1;
   }
   return retval;
@@ -1070,7 +1070,7 @@ int LibV2::amp_drop_first_last(mapStr2intVec& IntFeatureData,
   vector<double> ampdropfirstlast;
   retval = __amp_drop_first_last(peakvoltage, ampdropfirstlast);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "amp_drop_first_last",
+    setVec(DoubleFeatureData, StringData, "amp_drop_first_last",
                  ampdropfirstlast);
   }
   return retval;
@@ -1090,7 +1090,7 @@ int LibV2::E3(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "amp_drop_first_last",
                               "APDrop", 0, e3);
   if (retval > 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E3", e3);
+    setVec(DoubleFeatureData, StringData, "E3", e3);
     return 1;
   }
   return retval;
@@ -1124,7 +1124,7 @@ int LibV2::amp_drop_second_last(mapStr2intVec& IntFeatureData,
   vector<double> ampdropsecondlast;
   retval = __amp_drop_second_last(peakvoltage, ampdropsecondlast);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "amp_drop_second_last",
+    setVec(DoubleFeatureData, StringData, "amp_drop_second_last",
                  ampdropsecondlast);
   }
   return retval;
@@ -1144,7 +1144,7 @@ int LibV2::E4(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "amp_drop_second_last",
                               "APDrop", 0, e4);
   if (retval > 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E4", e4);
+    setVec(DoubleFeatureData, StringData, "E4", e4);
     return 1;
   }
   return retval;
@@ -1188,7 +1188,7 @@ int LibV2::max_amp_difference(mapStr2intVec& IntFeatureData,
   vector<double> maxampdifference;
   retval = __max_amp_difference(peakvoltage, maxampdifference);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "max_amp_difference",
+    setVec(DoubleFeatureData, StringData, "max_amp_difference",
                  maxampdifference);
   }
   return retval;
@@ -1208,7 +1208,7 @@ int LibV2::E5(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "max_amp_difference", "APDrop",
                               0, e5);
   if (retval > 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E5", e5);
+    setVec(DoubleFeatureData, StringData, "E5", e5);
     return 1;
   }
   return retval;
@@ -1229,7 +1229,7 @@ int LibV2::E8(mapStr2intVec& IntFeatureData,
                               "APWaveForm", 0, e8);
   if (retval >= 0) {
     e8.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E8", e8);
+    setVec(DoubleFeatureData, StringData, "E8", e8);
   }
   return retval;
 }
@@ -1249,7 +1249,7 @@ int LibV2::E9(mapStr2intVec& IntFeatureData,
                               0, e9);
   if (retval >= 0) {
     e9.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E9", e9);
+    setVec(DoubleFeatureData, StringData, "E9", e9);
   }
   return retval;
 }
@@ -1270,7 +1270,7 @@ int LibV2::E10(mapStr2intVec& IntFeatureData,
                               0, e10);
   if (retval >= 0) {
     e10.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E10", e10);
+    setVec(DoubleFeatureData, StringData, "E10", e10);
   }
   return retval;
 }
@@ -1291,7 +1291,7 @@ int LibV2::E11(mapStr2intVec& IntFeatureData,
                               0, e11);
   if (retval >= 0) {
     e11.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E11", e11);
+    setVec(DoubleFeatureData, StringData, "E11", e11);
   }
   return retval;
 }
@@ -1312,7 +1312,7 @@ int LibV2::E12(mapStr2intVec& IntFeatureData,
                               0, e12);
   if (retval >= 0) {
     e12.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E12", e12);
+    setVec(DoubleFeatureData, StringData, "E12", e12);
   }
   return retval;
 }
@@ -1333,7 +1333,7 @@ int LibV2::E13(mapStr2intVec& IntFeatureData,
       mean_traces_double(DoubleFeatureData, "fast_AHP", "APWaveForm", 0, e13);
   if (retval >= 0) {
     e13.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E13", e13);
+    setVec(DoubleFeatureData, StringData, "E13", e13);
   }
   return retval;
 }
@@ -1355,7 +1355,7 @@ int LibV2::E14(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e14[0] = e14[1];
     e14.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E14", e14);
+    setVec(DoubleFeatureData, StringData, "E14", e14);
   }
   return retval;
 }
@@ -1377,7 +1377,7 @@ int LibV2::E15(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e15[0] = e15[1];
     e15.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E15", e15);
+    setVec(DoubleFeatureData, StringData, "E15", e15);
   }
   return retval;
 }
@@ -1399,7 +1399,7 @@ int LibV2::E16(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e16[0] = e16[1];
     e16.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E16", e16);
+    setVec(DoubleFeatureData, StringData, "E16", e16);
   }
   return retval;
 }
@@ -1421,7 +1421,7 @@ int LibV2::E17(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e17[0] = e17[1];
     e17.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E17", e17);
+    setVec(DoubleFeatureData, StringData, "E17", e17);
   }
   return retval;
 }
@@ -1443,7 +1443,7 @@ int LibV2::E18(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e18[0] = e18[1];
     e18.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E18", e18);
+    setVec(DoubleFeatureData, StringData, "E18", e18);
   }
   return retval;
 }
@@ -1465,7 +1465,7 @@ int LibV2::E19(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e19[0] = e19[1];
     e19.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E19", e19);
+    setVec(DoubleFeatureData, StringData, "E19", e19);
   }
   return retval;
 }
@@ -1487,7 +1487,7 @@ int LibV2::E20(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e20[0] = e20[1];
     e20.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E20", e20);
+    setVec(DoubleFeatureData, StringData, "E20", e20);
   }
   return retval;
 }
@@ -1509,7 +1509,7 @@ int LibV2::E21(mapStr2intVec& IntFeatureData,
   if (retval >= 0) {
     e21[0] = e21[1];
     e21.resize(1);
-    setDoubleVec(DoubleFeatureData, StringData, "E21", e21);
+    setVec(DoubleFeatureData, StringData, "E21", e21);
   }
   return retval;
 }
@@ -1529,7 +1529,7 @@ int LibV2::E22(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "AP_amplitude_change",
                               "APWaveForm", 0, e22);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E22", e22);
+    setVec(DoubleFeatureData, StringData, "E22", e22);
   }
   return retval;
 }
@@ -1549,7 +1549,7 @@ int LibV2::E23(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "AP_duration_change",
                               "APWaveForm", 0, e23);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E23", e23);
+    setVec(DoubleFeatureData, StringData, "E23", e23);
   }
   return retval;
 }
@@ -1569,7 +1569,7 @@ int LibV2::E24(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(
       DoubleFeatureData, "AP_duration_half_width_change", "APWaveForm", 0, e24);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E24", e24);
+    setVec(DoubleFeatureData, StringData, "E24", e24);
   }
   return retval;
 }
@@ -1589,7 +1589,7 @@ int LibV2::E25(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "AP_rise_rate_change",
                               "APWaveForm", 0, e25);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E25", e25);
+    setVec(DoubleFeatureData, StringData, "E25", e25);
   }
   return retval;
 }
@@ -1609,7 +1609,7 @@ int LibV2::E26(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "AP_fall_rate_change",
                               "APWaveForm", 0, e26);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E26", e26);
+    setVec(DoubleFeatureData, StringData, "E26", e26);
   }
   return retval;
 }
@@ -1629,7 +1629,7 @@ int LibV2::E27(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "fast_AHP_change",
                               "APWaveForm", 0, e27);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E27", e27);
+    setVec(DoubleFeatureData, StringData, "E27", e27);
   }
   return retval;
 }
@@ -1686,7 +1686,7 @@ int LibV2::steady_state_hyper(mapStr2intVec& IntFeatureData,
   vector<double> steady_state_hyper;
   retval = __steady_state_hyper(v, t, stimend[0], steady_state_hyper);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "steady_state_hyper",
+    setVec(DoubleFeatureData, StringData, "steady_state_hyper",
                  steady_state_hyper);
   }
   return retval;
@@ -1706,7 +1706,7 @@ int LibV2::E40(mapStr2intVec& IntFeatureData,
   retval = mean_traces_double(DoubleFeatureData, "time_to_first_spike",
                               "IDrest", 0, e40);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "E40", e40);
+    setVec(DoubleFeatureData, StringData, "E40", e40);
   }
   return retval;
 }

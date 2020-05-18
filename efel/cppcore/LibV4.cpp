@@ -89,7 +89,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
 
   int retval = __peak_indices(v, min_spike_height[0], threshold[0], peakindices);
   if (retval >= 0) {
-    setIntVec(IntFeatureData, StringData, "peak_indices", peakindices);
+    setVec(IntFeatureData, StringData, "peak_indices", peakindices);
     return peakindices.size();
   }
 

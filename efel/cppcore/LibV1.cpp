@@ -70,9 +70,9 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
 
   LinearInterpolation(InterpStep, T, V, TIntrpol, VIntrpol);
 
-  setDoubleVec(DoubleFeatureData, StringData, "V", VIntrpol);
-  setDoubleVec(DoubleFeatureData, StringData, "T", TIntrpol);
-  setIntVec(IntFeatureData, StringData, "interpolate", intrpolte);
+  setVec(DoubleFeatureData, StringData, "V", VIntrpol);
+  setVec(DoubleFeatureData, StringData, "T", TIntrpol);
+  setVec(IntFeatureData, StringData, "interpolate", intrpolte);
   return retVal;
 }
 
@@ -132,7 +132,7 @@ int LibV1::peak_indices(mapStr2intVec& IntFeatureData,
   if (retVal <= 0) return -1;
   int retval = __peak_indices(Th[0], v, PeakIndex);
   if (retval >= 0)
-    setIntVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
+    setVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
   return retval;
 }
 
@@ -160,7 +160,7 @@ int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
   }
   vector<int> spikecount(1, spikecount_value);
   if (retval >= 0) {
-    setIntVec(IntFeatureData, StringData, "Spikecount", spikecount);
+    setVec(IntFeatureData, StringData, "Spikecount", spikecount);
   }
   return retval;
 }
@@ -184,7 +184,7 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
   }
   for (size_t i = 2; i < pvTime.size(); i++)
     VecISI.push_back(pvTime[i] - pvTime[i - 1]);
-  setDoubleVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
+  setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
   return VecISI.size();
 }
 
@@ -224,7 +224,7 @@ int LibV1::ISI_CV(mapStr2intVec& IntFeatureData,
   vector<double> isicv;
   retval = __ISI_CV(isivalues, isicv);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "ISI_CV", isicv);
+    setVec(DoubleFeatureData, StringData, "ISI_CV", isicv);
   }
   return retval;
 }
@@ -254,7 +254,7 @@ int LibV1::peak_voltage(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < PeakI.size(); i++) {
     peakV.push_back(V[PeakI[i]]);
   }
-  setDoubleVec(DoubleFeatureData, StringData, "peak_voltage", peakV);
+  setVec(DoubleFeatureData, StringData, "peak_voltage", peakV);
   return peakV.size();
 }
 
@@ -289,7 +289,7 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
     return -1;
   }
   firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
-  setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
+  setVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
   return firing_rate.size();
 }
 
@@ -311,7 +311,7 @@ int LibV1::peak_time(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < PeakI.size(); i++) {
     pvTime.push_back(T[PeakI[i]]);
   }
-  setDoubleVec(DoubleFeatureData, StringData, "peak_time", pvTime);
+  setVec(DoubleFeatureData, StringData, "peak_time", pvTime);
   return pvTime.size();
 }
 
@@ -336,7 +336,7 @@ int LibV1::first_spike_time(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "stim_start", stimstart);
   if (retVal <= 0) return -1;
   first_spike.push_back(peaktime[0] - stimstart[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "time_to_first_spike",
+  setVec(DoubleFeatureData, StringData, "time_to_first_spike",
                first_spike);
   return first_spike.size();
 }
@@ -387,8 +387,8 @@ int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
     min_ahp_indices.push_back(ahpindex);
     min_ahp_values.push_back(v[ahpindex]);
   }
-  setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-  setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
+  setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+  setVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
   return min_ahp_indices.size();
 }
 
@@ -413,7 +413,7 @@ int LibV1::AP_height(mapStr2intVec& IntFeatureData,
   vector<double> vPeak;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage", vPeak);
   if (retVal <= 0) return -1;
-  setDoubleVec(DoubleFeatureData, StringData, "AP_height", vPeak);
+  setVec(DoubleFeatureData, StringData, "AP_height", vPeak);
 
   return vPeak.size();
 }
@@ -496,7 +496,7 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < apamplitude.size(); i++) {
     apamplitude[i] = peakvoltage_duringstim[i] - v[apbeginindices[i]];
   }
-  setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
+  setVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
   return apamplitude.size();
 }
 
@@ -519,7 +519,7 @@ int LibV1::AHP_depth_abs(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData,
                         "min_AHP_values", vAHP);
   if (retVal <= 0) return -1;
-  setDoubleVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
+  setVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
   return vAHP.size();
 }
 
@@ -582,9 +582,9 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                      (t[peakindices[i + 2]] - t[peakindices[i + 1]]);
   }
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
+    setVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
                  ahpdepthabsslow);
-    setDoubleVec(DoubleFeatureData, StringData, "AHP_slow_time", ahpslowtime);
+    setVec(DoubleFeatureData, StringData, "AHP_slow_time", ahpslowtime);
   }
   return retval;
 }
@@ -633,7 +633,7 @@ int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
     if (t[i] > endTime) break;
   }
   vRest.push_back(vSum / nCount);
-  setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);
+  setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
   return 1;
 }
 
@@ -693,7 +693,7 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
 
   retVal = __burst_ISI_indices(BurstFactor, PeakIndex, ISIValues, BurstIndex);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "burst_ISI_indices", BurstIndex);
+    setVec(IntFeatureData, StringData, "burst_ISI_indices", BurstIndex);
   }
   return retVal;
 }
@@ -742,7 +742,7 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
 
   retVal = __burst_mean_freq(PVTime, BurstIndex, BurstMeanFreq);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "burst_mean_freq",
+    setVec(DoubleFeatureData, StringData, "burst_mean_freq",
                  BurstMeanFreq);
   }
   return retVal;
@@ -764,7 +764,7 @@ int LibV1::burst_number(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
 
   BurstNum.push_back(BurstMeanFreq.size());
-  setIntVec(IntFeatureData, StringData, "burst_number", BurstNum);
+  setVec(IntFeatureData, StringData, "burst_number", BurstNum);
   return (BurstNum.size());
 }
 
@@ -822,7 +822,7 @@ int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
 
   retVal = __interburst_voltage(BurstIndex, PeakIndex, T, V, IBV);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "interburst_voltage", IBV);
+    setVec(DoubleFeatureData, StringData, "interburst_voltage", IBV);
   }
   return retVal;
 }
@@ -918,7 +918,7 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
   retVal = __adaptation_index(spikeSkipf[0], maxnSpike[0], stimStart[0],
                               stimEnd[0], Offset, peakVTime, adaptation_index);
   if (retVal >= 0)
-    setDoubleVec(DoubleFeatureData, StringData, "adaptation_index",
+    setVec(DoubleFeatureData, StringData, "adaptation_index",
                  adaptation_index);
   return retVal;
 }
@@ -1008,7 +1008,7 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
   retval = __adaptation_index2(stimStart[0], stimEnd[0], Offset,
                                peakvoltagetime, adaptationindex2);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "adaptation_index2",
+    setVec(DoubleFeatureData, StringData, "adaptation_index2",
                  adaptationindex2);
   }
   return retval;
@@ -1044,7 +1044,7 @@ int LibV1::trace_check(mapStr2intVec& IntFeatureData,
   }
   if (sane) {
     tc.push_back(0);
-    setIntVec(IntFeatureData, StringData, "trace_check", tc);
+    setVec(IntFeatureData, StringData, "trace_check", tc);
     return tc.size();
   } else {
     GErrorStr +=
@@ -1165,7 +1165,7 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
   // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
   retVal = __spike_width2(t, V, PeakIndex, minAHPIndex, spike_width2);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "spike_width2", spike_width2);
+    setVec(DoubleFeatureData, StringData, "spike_width2", spike_width2);
   }
   return retVal;
 }
@@ -1246,7 +1246,7 @@ int LibV1::spike_width1(mapStr2intVec& IntFeatureData,
   retVal = __spike_width1(t, V, PeakIndex, minAHPIndex, stim_start[0],
                           spike_width1);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "spike_half_width",
+    setVec(DoubleFeatureData, StringData, "spike_half_width",
                  spike_width1);
   }
   return retVal;
@@ -1420,7 +1420,7 @@ int LibV1::time_constant(mapStr2intVec& IntFeatureData,
   vector<double> tc;
   retVal = __time_constant(v, t, stimStart[0], stimEnd[0], tc);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "time_constant", tc);
+    setVec(DoubleFeatureData, StringData, "time_constant", tc);
   }
   return retVal;
 }
@@ -1486,7 +1486,7 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
   vector<double> vd;
   retVal = __voltage_deflection(v, t, stimStart[0], stimEnd[0], vd);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "voltage_deflection", vd);
+    setVec(DoubleFeatureData, StringData, "voltage_deflection", vd);
   }
   return retVal;
 }
@@ -1522,7 +1522,7 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
   retVal = __ohmic_input_resistance(voltage_deflection[0],
                                     stimulus_current[0], oir);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "ohmic_input_resistance", oir);
+    setVec(DoubleFeatureData, StringData, "ohmic_input_resistance", oir);
   }
   return retVal;
 }
@@ -1589,7 +1589,7 @@ int LibV1::maximum_voltage(mapStr2intVec& IntFeatureData,
   vector<double> maxV, minV;
   retVal = __maxmin_voltage(v, t, stimStart[0], stimEnd[0], maxV, minV);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "maximum_voltage", maxV);
+    setVec(DoubleFeatureData, StringData, "maximum_voltage", maxV);
   }
   return retVal;
 }
@@ -1621,7 +1621,7 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
   vector<double> maxV, minV;
   retVal = __maxmin_voltage(v, t, stimStart[0], stimEnd[0], maxV, minV);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "minimum_voltage", minV);
+    setVec(DoubleFeatureData, StringData, "minimum_voltage", minV);
   }
   return retVal;
 }
@@ -1664,7 +1664,7 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
   vector<double> ssv;
   retVal = __steady_state_voltage(v, t, stimEnd[0], ssv);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "steady_state_voltage", ssv);
+    setVec(DoubleFeatureData, StringData, "steady_state_voltage", ssv);
   }
   return retVal;
 }
@@ -1705,7 +1705,7 @@ int LibV1::single_burst_ratio(mapStr2intVec& IntFeatureData,
 
   retval = __single_burst_ratio(isivalues, singleburstratio);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "single_burst_ratio",
+    setVec(DoubleFeatureData, StringData, "single_burst_ratio",
                  singleburstratio);
   }
   return retval;
@@ -1848,7 +1848,7 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,
                       minahpindices, apwidth);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_width", apwidth);
+    setVec(DoubleFeatureData, StringData, "AP_width", apwidth);
   }
   return retval;
 }
@@ -1875,7 +1875,7 @@ int LibV1::doublet_ISI(mapStr2intVec& IntFeatureData,
   }
 
   vector<double> doubletisi(1, pvt[1] - pvt[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "doublet_ISI", doubletisi);
+  setVec(DoubleFeatureData, StringData, "doublet_ISI", doubletisi);
   return retval;
 }
 // end of doublet_ISI
@@ -1911,7 +1911,7 @@ int LibV1::AHP_depth(mapStr2intVec& IntFeatureData,
   vector<double> ahpdepth;
   retval = __AHP_depth(voltagebase, minahpvalues, ahpdepth);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AHP_depth", ahpdepth);
+    setVec(DoubleFeatureData, StringData, "AHP_depth", ahpdepth);
   }
   return retval;
 }
@@ -1947,7 +1947,7 @@ int LibV1::AP_amplitude_diff(mapStr2intVec& IntFeatureData,
   vector<double> apamplitudediff;
   retval = __AP_amplitude_diff(apamplitude, apamplitudediff);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude_diff",
+    setVec(DoubleFeatureData, StringData, "AP_amplitude_diff",
                  apamplitudediff);
   }
   return retval;
@@ -1983,7 +1983,7 @@ int LibV1::AHP_depth_diff(mapStr2intVec& IntFeatureData,
   vector<double> ahpdepthdiff;
   retval = __AHP_depth_diff(ahpdepth, ahpdepthdiff);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AHP_depth_diff", ahpdepthdiff);
+    setVec(DoubleFeatureData, StringData, "AHP_depth_diff", ahpdepthdiff);
   }
   return retval;
 }

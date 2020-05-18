@@ -36,10 +36,9 @@ int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
                    vector<double>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 
-void setIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-               string key, const vector<int>& value);
-void setDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                  string key, const vector<double>& value);
+template <class T>
+void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+               string key, const vector<T>& value);
 
 int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
                  string strFeature, vector<double>& v);

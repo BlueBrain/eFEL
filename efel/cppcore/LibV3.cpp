@@ -56,9 +56,9 @@ int LibV3::interpolate(mapStr2intVec& IntFeatureData,
 
   LinearInterpolation(InterpStep, T, V, TIntrpol, VIntrpol);
 
-  setDoubleVec(DoubleFeatureData, StringData, "V", VIntrpol);
-  setDoubleVec(DoubleFeatureData, StringData, "T", TIntrpol);
-  setIntVec(IntFeatureData, StringData, "interpolate", intrpolte);
+  setVec(DoubleFeatureData, StringData, "V", VIntrpol);
+  setVec(DoubleFeatureData, StringData, "T", TIntrpol);
+  setVec(IntFeatureData, StringData, "interpolate", intrpolte);
   return retVal;
 }
 
@@ -92,7 +92,7 @@ int LibV3::trace_check(mapStr2intVec& IntFeatureData,
 
   if (sane) {
     tc.push_back(0);
-    setIntVec(IntFeatureData, StringData, "trace_check", tc);
+    setVec(IntFeatureData, StringData, "trace_check", tc);
     return tc.size();
   } else {
     GErrorStr +=
@@ -153,7 +153,7 @@ int LibV3::peak_indices(mapStr2intVec& IntFeatureData,
 
   int retval = __peak_indices(Th[0], v, PeakIndex);
   if (retval >= 0)
-    setIntVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
+    setVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
   return retval;
 }
 
@@ -176,7 +176,7 @@ int LibV3::ISI_values(mapStr2intVec& IntFeatureData,
   for (size_t i = 2; i < pvTime.size(); i++) {
     VecISI.push_back(pvTime[i] - pvTime[i - 1]);
   }
-  setDoubleVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
+  setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
   return VecISI.size();
 }
 
@@ -216,7 +216,7 @@ int LibV3::ISI_CV(mapStr2intVec& IntFeatureData,
   vector<double> isicv;
   retval = __ISI_CV(isivalues, isicv);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "ISI_CV", isicv);
+    setVec(DoubleFeatureData, StringData, "ISI_CV", isicv);
   }
   return retval;
 }
@@ -243,7 +243,7 @@ int LibV3::peak_voltage(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < PeakI.size(); i++) {
     peakV.push_back(V[PeakI[i]]);
   }
-  setDoubleVec(DoubleFeatureData, StringData, "peak_voltage", peakV);
+  setVec(DoubleFeatureData, StringData, "peak_voltage", peakV);
   return peakV.size();
 }
 
@@ -279,7 +279,7 @@ int LibV3::firing_rate(mapStr2intVec& IntFeatureData,
   }
   firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
   firing_rate.push_back(nCount * 1000 / (lastAPTime - stimStart[0]));
-  setDoubleVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
+  setVec(DoubleFeatureData, StringData, "mean_frequency", firing_rate);
   return firing_rate.size();
 }
 
@@ -302,7 +302,7 @@ int LibV3::peak_time(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < PeakI.size(); i++) {
     pvTime.push_back(T[PeakI[i]]);
   }
-  setDoubleVec(DoubleFeatureData, StringData, "peak_time", pvTime);
+  setVec(DoubleFeatureData, StringData, "peak_time", pvTime);
   return pvTime.size();
 }
 
@@ -328,7 +328,7 @@ int LibV3::first_spike_time(mapStr2intVec& IntFeatureData,
   if (retVal <= 0) return -1;
 
   first_spike.push_back(peaktime[0] - stimstart[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "time_to_first_spike",
+  setVec(DoubleFeatureData, StringData, "time_to_first_spike",
                first_spike);
   return first_spike.size();
 }
@@ -410,7 +410,7 @@ int LibV3::spike_width1(mapStr2intVec& IntFeatureData,
   retVal = __spike_width1(t, V, PeakIndex, minAHPIndex, stim_start[0],
                           spike_width1);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "spike_half_width",
+    setVec(DoubleFeatureData, StringData, "spike_half_width",
                  spike_width1);
   }
   return retVal;
@@ -464,8 +464,8 @@ int LibV3::min_AHP_indices(mapStr2intVec& IntFeatureData,
     min_ahp_indices.push_back(ahpindex);
     min_ahp_values.push_back(v[ahpindex]);
   }
-  setIntVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-  setDoubleVec(DoubleFeatureData, StringData, "min_AHP_values",
+  setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
+  setVec(DoubleFeatureData, StringData, "min_AHP_values",
                min_ahp_values);
   return min_ahp_indices.size();
 }
@@ -499,7 +499,7 @@ int LibV3::AHP_depth_abs(mapStr2intVec& IntFeatureData,
   retVal = getDoubleVec(DoubleFeatureData, StringData, "min_AHP_values", vAHP);
   if (retVal <= 0) return -1;
 
-  setDoubleVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
+  setVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
   return vAHP.size();
 }
 
@@ -538,7 +538,7 @@ int LibV3::rest_voltage_value(mapStr2intVec& IntFeatureData,
     }
   }
   vRest.push_back(vSum / nCount);
-  setDoubleVec(DoubleFeatureData, StringData, "voltage_base", vRest);
+  setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
   return 1;
 }
 
@@ -628,7 +628,7 @@ int LibV3::adaptation_index2(mapStr2intVec& IntFeatureData,
   retval = __adaptation_index2(stimStart[0], stimEnd[0], Offset,
                                peakvoltagetime, adaptationindex2);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "adaptation_index2",
+    setVec(DoubleFeatureData, StringData, "adaptation_index2",
                  adaptationindex2);
   }
   return retval;
@@ -647,7 +647,7 @@ int LibV3::AP_height(mapStr2intVec& IntFeatureData,
   vector<double> vPeak;
   retVal = getDoubleVec(DoubleFeatureData, StringData, "peak_voltage", vPeak);
   if (retVal <= 0) return -1;
-  setDoubleVec(DoubleFeatureData, StringData, "AP_height", vPeak);
+  setVec(DoubleFeatureData, StringData, "AP_height", vPeak);
   return vPeak.size();
 }
 
@@ -678,7 +678,7 @@ int LibV3::AP_amplitude(mapStr2intVec& IntFeatureData,
   for (size_t i = 0; i < apamplitude.size(); i++) {
     apamplitude[i] = peakvoltage[i] - v[apbeginindices[i]];
   }
-  setDoubleVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
+  setVec(DoubleFeatureData, StringData, "AP_amplitude", apamplitude);
   return apamplitude.size();
 }
 
@@ -764,7 +764,7 @@ int LibV3::AP_width(mapStr2intVec& IntFeatureData,
   retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,
                       minahpindices, apwidth);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_width", apwidth);
+    setVec(DoubleFeatureData, StringData, "AP_width", apwidth);
   }
   return retval;
 }
@@ -789,7 +789,7 @@ int LibV3::doublet_ISI(mapStr2intVec& IntFeatureData,
     return -1;
   }
   vector<double> doubletisi(1, pvt[1] - pvt[0]);
-  setDoubleVec(DoubleFeatureData, StringData, "doublet_ISI", doubletisi);
+  setVec(DoubleFeatureData, StringData, "doublet_ISI", doubletisi);
   return retval;
 }
 // end of doublet_ISI
@@ -888,7 +888,7 @@ int LibV3::AP_begin_indices(mapStr2intVec& IntFeatureData,
   vector<int> apbi;
   retVal = __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+    setVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
   }
   return retVal;
 }
@@ -940,7 +940,7 @@ int LibV3::AP_end_indices(mapStr2intVec& IntFeatureData,
   vector<int> apei;
   retVal = __AP_end_indices(t, v, pi, apei);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_end_indices", apei);
+    setVec(IntFeatureData, StringData, "AP_end_indices", apei);
   }
   return retVal;
 }
@@ -986,7 +986,7 @@ int LibV3::AP_rise_indices(mapStr2intVec& IntFeatureData,
   vector<int> apri;
   retVal = __AP_rise_indices(v, apbi, pi, apri);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_rise_indices", apri);
+    setVec(IntFeatureData, StringData, "AP_rise_indices", apri);
   }
   return retVal;
 }
@@ -1034,7 +1034,7 @@ int LibV3::AP_fall_indices(mapStr2intVec& IntFeatureData,
   vector<int> apfi;
   retVal = __AP_fall_indices(v, apbi, apei, pi, apfi);
   if (retVal >= 0) {
-    setIntVec(IntFeatureData, StringData, "AP_fall_indices", apfi);
+    setVec(IntFeatureData, StringData, "AP_fall_indices", apfi);
   }
   return retVal;
 }
@@ -1075,7 +1075,7 @@ int LibV3::AP_duration(mapStr2intVec& IntFeatureData,
   vector<double> apduration;
   retval = __AP_duration(t, apbeginindices, endindices, apduration);
   if (retval >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "AP_duration", apduration);
+    setVec(DoubleFeatureData, StringData, "AP_duration", apduration);
   }
   return retval;
 }
@@ -1148,7 +1148,7 @@ int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
   retVal = __depolarized_base(t, v, stimstart[0], stimend[0], apbi, apendi,
                               dep_base);
   if (retVal >= 0) {
-    setDoubleVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
+    setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
   }
   return retVal;
 }
