@@ -68,7 +68,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
   int size;
-  if (CheckInIntmap(IntFeatureData, StringData, "peak_indices", size)) {
+  if (CheckInMap(IntFeatureData, StringData, "peak_indices", size)) {
     return size;
   }
 
@@ -76,7 +76,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
   vector<double> v;
   vector<double> min_spike_height;
   vector<double> threshold;
-  if (getDoubleVec(DoubleFeatureData, StringData, "V", v) <= 0) {
+  if (getVec(DoubleFeatureData, StringData, "V", v) <= 0) {
     return -1;
   }
   if (getDoubleParam(DoubleFeatureData, "min_spike_height", min_spike_height) <=
@@ -89,7 +89,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
 
   int retval = __peak_indices(v, min_spike_height[0], threshold[0], peakindices);
   if (retval >= 0) {
-    setIntVec(IntFeatureData, StringData, "peak_indices", peakindices);
+    setVec(IntFeatureData, StringData, "peak_indices", peakindices);
     return peakindices.size();
   }
 

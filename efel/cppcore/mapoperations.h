@@ -35,21 +35,15 @@ int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
 int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
                    vector<double>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
-
-void setIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-               string key, const vector<int>& value);
-void setDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                  string key, const vector<double>& value);
-
-int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<double>& v);
-int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-              string strFeature, vector<int>& v);
-int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
+template <class T>
+void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
+               string key, const vector<T>& value);
+template <class T>
+int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
+                 string strFeature, vector<T>& v);
+template <class T>
+int CheckInMap(std::map<std::string, std::vector<T> >& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);
-int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-                  string strFeature, int& nSize);
-
 // eCode feature convenience function
 int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
                        const string& feature, const string& stimulus_name,
