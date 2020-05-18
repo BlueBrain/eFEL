@@ -100,29 +100,17 @@ int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& Strin
   return (v.size());
 }
 
-int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-                  string strFeature, int& nSize) {
+template <class T>
+int CheckInMap(std::map<std::string, std::vector<T>>& FeatureData,
+                     mapStr2Str& StringData, string strFeature, int& nSize){
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
-  mapStr2intVec::const_iterator mapstr2IntItr(IntFeatureData.find(strFeature));
-  if (mapstr2IntItr != IntFeatureData.end()) {
-    nSize = mapstr2IntItr->second.size();
-    return 1;
-  }
-  nSize = -1;
-  return 0;
-}
+  typename std::map<std::string, std::vector<T>>::const_iterator
+   mapstr2VecItr(FeatureData.find(strFeature));
 
-int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
-                     mapStr2Str& StringData, string strFeature, int& nSize) {
-  string params;
-  getStrParam(StringData, "params", params);
-  strFeature += params;
-  mapStr2doubleVec::const_iterator mapstr2DoubleItr(
-      DoubleFeatureData.find(strFeature));
-  if (mapstr2DoubleItr != DoubleFeatureData.end()) {
-    nSize = mapstr2DoubleItr->second.size();
+  if (mapstr2VecItr != FeatureData.end()) {
+    nSize = mapstr2VecItr->second.size();
     return 1;
   }
   nSize = -1;
@@ -240,3 +228,7 @@ template int getVec(std::map<std::string, std::vector<double>>& FeatureData, map
                  string strFeature, vector<double>& v);
 template int getVec(std::map<std::string, std::vector<int>>& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<int>& v);
+template int CheckInMap(std::map<std::string, std::vector<double>>& FeatureData,
+                     mapStr2Str& StringData, string strFeature, int& nSize);
+template int CheckInMap(std::map<std::string, std::vector<int>>& FeatureData,
+                     mapStr2Str& StringData, string strFeature, int& nSize);

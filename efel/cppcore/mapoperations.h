@@ -44,10 +44,9 @@ template <class T>
 int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v);
 
-int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
+template <class T>
+int CheckInMap(std::map<std::string, std::vector<T>>& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);
-int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-                  string strFeature, int& nSize);
 
 // eCode feature convenience function
 int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,

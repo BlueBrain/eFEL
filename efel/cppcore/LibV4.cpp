@@ -68,7 +68,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
   int size;
-  if (CheckInIntmap(IntFeatureData, StringData, "peak_indices", size)) {
+  if (CheckInMap(IntFeatureData, StringData, "peak_indices", size)) {
     return size;
   }
 

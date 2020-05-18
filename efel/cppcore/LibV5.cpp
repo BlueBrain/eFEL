@@ -77,7 +77,7 @@ int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
   int size;
-  if (CheckInDoublemap(DoubleFeatureData, StringData, "ISI_log_slope", size)) {
+  if (CheckInMap(DoubleFeatureData, StringData, "ISI_log_slope", size)) {
     return size;
   }
   vector<double> isivalues;
@@ -100,7 +100,7 @@ int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int size;
-  if (CheckInDoublemap(DoubleFeatureData, StringData, "ISI_semilog_slope",
+  if (CheckInMap(DoubleFeatureData, StringData, "ISI_semilog_slope",
                        size)) {
     return size;
   }
@@ -127,7 +127,7 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
   vector<int> maxnSpike;
   vector<double> spikeSkipf;
 
-  if (CheckInDoublemap(DoubleFeatureData, StringData, "ISI_log_slope_skip",
+  if (CheckInMap(DoubleFeatureData, StringData, "ISI_log_slope_skip",
                        size)) {
     return size;
   }
@@ -167,7 +167,7 @@ int LibV5::time_to_second_spike(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "time_to_second_spike", nSize);
   if (retVal) return nSize;
 
@@ -194,7 +194,7 @@ int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   int retVal, nSize;
 
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "time_to_last_spike",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "time_to_last_spike",
                             nSize);
   if (retVal) return nSize;
 
@@ -226,7 +226,7 @@ int LibV5::inv_first_ISI(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_first_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_first_ISI", nSize);
   if (retVal) return nSize;
 
   vector<double> all_isi_values_vec;
@@ -251,7 +251,7 @@ int LibV5::inv_second_ISI(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_second_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_second_ISI", nSize);
   if (retVal) return nSize;
 
   vector<double> all_isi_values_vec;
@@ -276,7 +276,7 @@ int LibV5::inv_third_ISI(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_third_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_third_ISI", nSize);
   if (retVal) return nSize;
 
   vector<double> all_isi_values_vec;
@@ -301,7 +301,7 @@ int LibV5::inv_fourth_ISI(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_fourth_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_fourth_ISI", nSize);
   if (retVal) return nSize;
 
   vector<double> all_isi_values_vec;
@@ -326,7 +326,7 @@ int LibV5::inv_fifth_ISI(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_fifth_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_fifth_ISI", nSize);
   if (retVal) return nSize;
 
   vector<double> all_isi_values_vec;
@@ -351,7 +351,7 @@ int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "inv_last_ISI", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "inv_last_ISI", nSize);
   if (retVal) return nSize;
   vector<double> all_isi_values_vec;
   double inv_last_ISI;
@@ -373,7 +373,7 @@ int LibV5::inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "inv_time_to_first_spike", nSize);
   if (retVal) return nSize;
 
@@ -440,7 +440,7 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retVal, nSize;
 
-  retVal = CheckInIntmap(IntFeatureData, StringData, "min_AHP_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "min_AHP_indices", nSize);
   if (retVal) return nSize;
 
   double stim_start, stim_end;
@@ -509,7 +509,7 @@ int LibV5::min_AHP_values(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "min_AHP_values", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "min_AHP_values", nSize);
   if (retVal) return nSize;
   return -1;
 }
@@ -521,7 +521,7 @@ int LibV5::AHP_depth_abs(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AHP_depth_abs", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AHP_depth_abs", nSize);
   if (retVal) return nSize;
 
   vector<double> vAHP;
@@ -579,7 +579,7 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "spike_half_width",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "spike_half_width",
                             nSize);
   if (retVal) return nSize;
 
@@ -701,7 +701,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   int nSize;
 
   // Check if calculated already
-  retVal = CheckInIntmap(IntFeatureData, StringData, "AP_begin_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_begin_indices", nSize);
   if (retVal) {
     return nSize;
   }
@@ -771,7 +771,7 @@ int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "irregularity_index",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "irregularity_index",
                             nSize);
   if (retVal) return nSize;
 
@@ -810,7 +810,7 @@ int LibV5::number_initial_spikes(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "number_initial_spikes", nSize);
   if (retVal) return nSize;
 
@@ -847,7 +847,7 @@ int LibV5::AP1_amp(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP1_amp", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP1_amp", nSize);
   if (retVal) return nSize;
 
   vector<double> AP_amplitudes, AP1_amp;
@@ -869,7 +869,7 @@ int LibV5::APlast_amp(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "APlast_amp", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "APlast_amp", nSize);
   if (retVal) return nSize;
   vector<double> AP_amplitudes, APlast_amp;
   int AP_amplitude_size;
@@ -892,7 +892,7 @@ int LibV5::AP1_peak(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP1_peak", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP1_peak", nSize);
   if (retVal) return nSize;
 
   vector<double> peak_voltage, AP1_peak;
@@ -914,7 +914,7 @@ int LibV5::AP2_amp(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP2_amp", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP2_amp", nSize);
   if (retVal) return nSize;
 
   vector<double> AP_amplitudes, AP2_amp;
@@ -937,7 +937,7 @@ int LibV5::AP2_peak(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP2_peak", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP2_peak", nSize);
   if (retVal) return nSize;
 
   vector<double> peak_voltage, AP2_peak;
@@ -960,7 +960,7 @@ int LibV5::AP2_AP1_diff(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP2_AP1_diff", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP2_AP1_diff", nSize);
   if (retVal) return nSize;
 
   vector<double> AP_amplitudes, AP2_AP1_diff;
@@ -983,7 +983,7 @@ int LibV5::AP2_AP1_peak_diff(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
                             nSize);
   if (retVal) return nSize;
   vector<double> peak_voltage, AP2_AP1_peak_diff;
@@ -1008,7 +1008,7 @@ int LibV5::AP1_width(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP1_width", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP1_width", nSize);
   if (retVal) return nSize;
   vector<double> spike_half_width, AP1_width;
   retVal = getVec(DoubleFeatureData, StringData, "spike_half_width",
@@ -1030,7 +1030,7 @@ int LibV5::AP2_width(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP2_width", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP2_width", nSize);
   if (retVal) return nSize;
 
   vector<double> spike_half_width, AP2_width;
@@ -1053,7 +1053,7 @@ int LibV5::APlast_width(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "APlast_width", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "APlast_width", nSize);
   if (retVal) return nSize;
   vector<double> spike_half_width, APlast_width;
 
@@ -1090,7 +1090,7 @@ int LibV5::AHP_time_from_peak(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "AHP_time_from_peak",
+  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_time_from_peak",
                             nsize);
   if (retval) {
     return nsize;
@@ -1134,7 +1134,7 @@ int LibV5::AHP_depth_from_peak(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AHP_depth_from_peak", nsize);
 
   if (retval) {
@@ -1169,7 +1169,7 @@ int LibV5::AHP1_depth_from_peak(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "AHP1_depth_from_peak", nSize);
   if (retVal) return nSize;
 
@@ -1195,7 +1195,7 @@ int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "AHP2_depth_from_peak", nSize);
   if (retVal) return nSize;
 
@@ -1251,7 +1251,7 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP_begin_width", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP_begin_width", nSize);
   if (retVal) return nSize;
 
   vector<int> AP_begin_indices, minAHPIndex;
@@ -1297,7 +1297,7 @@ int LibV5::AP_begin_time(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP_begin_time", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP_begin_time", nSize);
   if (retVal) return nSize;
 
   vector<int> AP_begin_indices;
@@ -1330,7 +1330,7 @@ int LibV5::AP_begin_voltage(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP_begin_voltage",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP_begin_voltage",
                             nSize);
   if (retVal) return nSize;
 
@@ -1356,7 +1356,7 @@ int LibV5::AP1_begin_voltage(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP1_begin_voltage",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP1_begin_voltage",
                             nSize);
   if (retVal) return nSize;
 
@@ -1379,7 +1379,7 @@ int LibV5::AP2_begin_voltage(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP2_begin_voltage",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP2_begin_voltage",
                             nSize);
   if (retVal) return nSize;
 
@@ -1403,7 +1403,7 @@ int LibV5::AP1_begin_width(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP1_begin_width", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP1_begin_width", nSize);
   if (retVal) return nSize;
 
   vector<double> AP_begin_width, AP1_begin_width;
@@ -1426,7 +1426,7 @@ int LibV5::AP2_begin_width(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP2_begin_width", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP2_begin_width", nSize);
   if (retVal) return nSize;
 
   vector<double> AP_begin_width, AP2_begin_width;
@@ -1449,7 +1449,7 @@ int LibV5::AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
                                     mapStr2doubleVec& DoubleFeatureData,
                                     mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "AP2_AP1_begin_width_diff", nSize);
   if (retVal) return nSize;
 
@@ -1511,7 +1511,7 @@ int LibV5::voltage_deflection_begin(mapStr2intVec& IntFeatureData,
                                     mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "voltage_deflection_begin", nSize);
   if (retVal) return nSize;
 
@@ -1545,7 +1545,7 @@ int LibV5::is_not_stuck(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retval;
   int size;
-  retval = CheckInIntmap(IntFeatureData, StringData, "is_not_stuck", size);
+  retval = CheckInMap(IntFeatureData, StringData, "is_not_stuck", size);
   if (retval) return size;
 
   vector<double> peak_time;
@@ -1582,7 +1582,7 @@ int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "voltage_after_stim",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "voltage_after_stim",
                             nSize);
   if (retVal) return nSize;
 
@@ -1617,7 +1617,7 @@ int LibV5::mean_AP_amplitude(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "mean_AP_amplitude",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "mean_AP_amplitude",
                             nSize);
   if (retVal > 0) return nSize;
 
@@ -1659,7 +1659,7 @@ int LibV5::BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "BPAPHeightLoc1", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "BPAPHeightLoc1", nsize);
   if (retval) return nsize;
 
   vector<double> peakvoltage;
@@ -1698,7 +1698,7 @@ int LibV5::BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
                              mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "BPAPAmplitudeLoc1",
+  retval = CheckInMap(DoubleFeatureData, StringData, "BPAPAmplitudeLoc1",
                             nsize);
   if (retval) return nsize;
 
@@ -1737,7 +1737,7 @@ int LibV5::BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
                              mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "BPAPAmplitudeLoc2",
+  retval = CheckInMap(DoubleFeatureData, StringData, "BPAPAmplitudeLoc2",
                             nsize);
   if (retval) return nsize;
 
@@ -1777,7 +1777,7 @@ int LibV5::BPAPHeightLoc2(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "BPAPHeightLoc2", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "BPAPHeightLoc2", nsize);
   if (retval) return nsize;
 
   vector<double> peakvoltage;
@@ -1817,7 +1817,7 @@ int LibV5::check_AISInitiation(mapStr2intVec& IntFeatureData,
   int nsize;
   // printf("Started check_AISInitation\n");
 
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "check_AISInitiation", nsize);
   if (retval) return nsize;
 
@@ -1908,7 +1908,7 @@ int LibV5::AP_phaseslope(mapStr2intVec& IntFeatureData,
   int retVal;
   int nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "AP_phaseslope", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "AP_phaseslope", nSize);
   if (retVal) return nSize;
 
   vector<double> v;
@@ -1953,7 +1953,7 @@ int LibV5::AP_phaseslope_AIS(mapStr2intVec& IntFeatureData,
                              mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "AP_phaseslope_AIS",
+  retVal = CheckInMap(DoubleFeatureData, StringData, "AP_phaseslope_AIS",
                             nSize);
   if (retVal) return nSize;
 
@@ -1971,7 +1971,7 @@ int LibV5::BAC_width(mapStr2intVec& IntFeatureData,
                      mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "BAC_width", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "BAC_width", nSize);
   if (retVal) return nSize;
 
   vector<double> ap_width;
@@ -1996,7 +1996,7 @@ int LibV5::BAC_maximum_voltage(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "BAC_maximum_voltage", nSize);
   if (retVal) return nSize;
 
@@ -2015,7 +2015,7 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "all_ISI_values", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "all_ISI_values", nSize);
   if (retVal) return nSize;
 
   vector<double> VecISI, pvTime;
@@ -2036,7 +2036,7 @@ int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
                                          mapStr2doubleVec& DoubleFeatureData,
                                          mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "AP_amplitude_from_voltagebase", nSize);
   if (retVal > 0) return nSize;
 
@@ -2075,7 +2075,7 @@ int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "min_voltage_between_spikes", nSize);
   if (retVal > 0) return nSize;
 
@@ -2113,7 +2113,7 @@ int LibV5::voltage(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "voltage", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "voltage", nSize);
   if (retVal > 0) return nSize;
 
   vector<double> v;
@@ -2132,7 +2132,7 @@ int LibV5::current(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "current", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "current", nSize);
   if (retVal > 0) return nSize;
 
   vector<double> i;
@@ -2151,7 +2151,7 @@ int LibV5::time(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
   int retVal, nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData, "time", nSize);
+  retVal = CheckInMap(DoubleFeatureData, StringData, "time", nSize);
   if (retVal > 0) return nSize;
 
   vector<double> t;
@@ -2173,7 +2173,7 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   int nSize;
   vector<double> t, v, stimEnd, stimStart, ssv;
 
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "steady_state_voltage_stimend", nSize);
   if (retVal) {
     return nSize;
@@ -2224,7 +2224,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInDoublemap(DoubleFeatureData, StringData, "voltage_base", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "voltage_base", nSize);
   if (retVal) return nSize;
 
   vector<double> v, t, stimStart, vRest, vb_start_perc_vec, vb_end_perc_vec;
@@ -2332,7 +2332,7 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
   int retVal;
   int nSize;
 
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "decay_time_constant_after_stim", nSize);
   if (retVal) {
     return nSize;
@@ -2398,7 +2398,7 @@ int LibV5::voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
                                       mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "voltage_deflection_vb_ssse", nSize);
   if (retVal) return nSize;
 
@@ -2432,7 +2432,7 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                                           mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "ohmic_input_resistance_vb_ssse", nSize);
   if (retVal) return nSize;
 
@@ -2463,7 +2463,7 @@ int LibV5::maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
                                             mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "maximum_voltage_from_voltagebase", nSize);
   if (retVal) return nSize;
 
@@ -2507,7 +2507,7 @@ int LibV5::Spikecount_stimint(mapStr2intVec& IntFeatureData,
   int nsize;
   int spikecount_stimint_value;
   retval =
-      CheckInIntmap(IntFeatureData, StringData, "Spikecount_stimint", nsize);
+      CheckInMap(IntFeatureData, StringData, "Spikecount_stimint", nsize);
   if (retval) {
     return nsize;
   }
@@ -2611,7 +2611,7 @@ int LibV5::peak_indices(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retVal, nSize;
 
-  retVal = CheckInIntmap(IntFeatureData, StringData, "peak_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "peak_indices", nSize);
   if (retVal) return nSize;
 
   vector<int> PeakIndex, strict_stiminterval_vec;
@@ -2672,7 +2672,7 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
                                           mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "sag_amplitude", nSize);
   if (retVal) return nSize;
 
@@ -2726,7 +2726,7 @@ int LibV5::sag_ratio1(mapStr2intVec& IntFeatureData,
                                           mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "sag_ratio1", nSize);
   if (retVal) return nSize;
 
@@ -2774,7 +2774,7 @@ int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
                                           mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInDoublemap(DoubleFeatureData, StringData,
+  retVal = CheckInMap(DoubleFeatureData, StringData,
                             "sag_ratio2", nSize);
   if (retVal) return nSize;
 

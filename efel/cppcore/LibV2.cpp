@@ -103,7 +103,7 @@ int LibV2::AP_begin_indices(mapStr2intVec& IntFeatureData,
                             mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInIntmap(IntFeatureData, StringData, "AP_begin_indices",
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_begin_indices",
                          nSize);
   if (retVal) {
     return nSize;
@@ -160,7 +160,7 @@ int LibV2::AP_end_indices(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInIntmap(IntFeatureData, StringData, "AP_end_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_end_indices", nSize);
   if (retVal) {
     return nSize;
   }
@@ -210,7 +210,7 @@ int LibV2::AP_rise_indices(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInIntmap(IntFeatureData, StringData, "AP_rise_indices",
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_rise_indices",
                          nSize);
   if (retVal) {
     return nSize;
@@ -256,7 +256,7 @@ int LibV2::AP_fall_indices(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retVal;
   int nSize;
-  retVal = CheckInIntmap(IntFeatureData, StringData, "AP_fall_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_fall_indices", nSize);
   if (retVal) {
     return nSize;
   }
@@ -300,7 +300,7 @@ int LibV2::AP_duration(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_duration", nsize);
   if (retval) {
     return nsize;
@@ -341,7 +341,7 @@ int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
                                   mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_duration_half_width", nsize);
   if (retval) {
     return nsize;
@@ -384,7 +384,7 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_rise_time", nsize);
   if (retval) {
     return nsize;
@@ -425,7 +425,7 @@ int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_fall_time", nsize);
   if (retval) {
     return nsize;
@@ -467,7 +467,7 @@ int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_rise_rate", nsize);
   if (retval) {
     return nsize;
@@ -512,7 +512,7 @@ int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
                         mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_fall_rate", nsize);
   if (retval) {
     return nsize;
@@ -558,7 +558,7 @@ int LibV2::fast_AHP(mapStr2intVec& IntFeatureData,
                     mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "fast_AHP", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "fast_AHP", nsize);
   if (retval) {
     return nsize;
   }
@@ -600,7 +600,7 @@ int LibV2::AP_amplitude_change(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_amplitude_change", nsize);
   if (retval) {
     return nsize;
@@ -636,7 +636,7 @@ int LibV2::AP_duration_change(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_duration_change", nsize);
   if (retval) {
     return nsize;
@@ -675,7 +675,7 @@ int LibV2::AP_duration_half_width_change(mapStr2intVec& IntFeatureData,
                                          mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_duration_half_width_change", nsize);
   if (retval) {
     return nsize;
@@ -713,7 +713,7 @@ int LibV2::AP_rise_rate_change(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_rise_rate_change", nsize);
   if (retval) {
     return nsize;
@@ -749,7 +749,7 @@ int LibV2::AP_fall_rate_change(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "AP_fall_rate_change", nsize);
   if (retval) {
     return nsize;
@@ -785,7 +785,7 @@ int LibV2::fast_AHP_change(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "fast_AHP_change", nsize);
   if (retval) {
     return nsize;
@@ -808,7 +808,7 @@ int LibV2::E6(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E6", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E6", nsize);
   if (retval) {
     return nsize;
   }
@@ -828,7 +828,7 @@ int LibV2::E7(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E7", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E7", nsize);
   if (retval) {
     return nsize;
   }
@@ -849,7 +849,7 @@ int LibV2::BPAPatt2(mapStr2intVec& IntFeatureData,
                     mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "BPAPatt2",
+  retval = CheckInMap(DoubleFeatureData, StringData, "BPAPatt2",
                             nsize);
   if (retval) {
     return nsize;
@@ -893,7 +893,7 @@ int LibV2::BPAPatt3(mapStr2intVec& IntFeatureData,
                     mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "BPAPatt3",
+  retval = CheckInMap(DoubleFeatureData, StringData, "BPAPatt3",
                             nsize);
   if (retval) {
     return nsize;
@@ -938,7 +938,7 @@ int LibV2::E39(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E39", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E39", nsize);
   if (retval) {
     return nsize;
   }
@@ -984,7 +984,7 @@ int LibV2::E39_cod(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E39_cod", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E39_cod", nsize);
   return retval;
 }
 // end of E39_cod
@@ -1000,7 +1000,7 @@ int LibV2::amp_drop_first_second(mapStr2intVec& IntFeatureData,
                                  mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "amp_drop_first_second", nsize);
   if (retval) {
     return nsize;
@@ -1028,7 +1028,7 @@ int LibV2::E2(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E2", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E2", nsize);
   if (retval) {
     return nsize;
   }
@@ -1054,7 +1054,7 @@ int LibV2::amp_drop_first_last(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "amp_drop_first_last", nsize);
   if (retval) {
     return nsize;
@@ -1082,7 +1082,7 @@ int LibV2::E3(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E3", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E3", nsize);
   if (retval) {
     return nsize;
   }
@@ -1108,7 +1108,7 @@ int LibV2::amp_drop_second_last(mapStr2intVec& IntFeatureData,
                                 mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "amp_drop_second_last", nsize);
   if (retval) {
     return nsize;
@@ -1136,7 +1136,7 @@ int LibV2::E4(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E4", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E4", nsize);
   if (retval) {
     return nsize;
   }
@@ -1172,7 +1172,7 @@ int LibV2::max_amp_difference(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData,
+  retval = CheckInMap(DoubleFeatureData, StringData,
                             "max_amp_difference", nsize);
   if (retval) {
     return nsize;
@@ -1200,7 +1200,7 @@ int LibV2::E5(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E5", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E5", nsize);
   if (retval) {
     return nsize;
   }
@@ -1220,7 +1220,7 @@ int LibV2::E8(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E8", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E8", nsize);
   if (retval) {
     return nsize;
   }
@@ -1240,7 +1240,7 @@ int LibV2::E9(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "E9", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "E9", nsize);
   if (retval) {
     return nsize;
   }
@@ -1261,7 +1261,7 @@ int LibV2::E10(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E10", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E10", nsize);
   if (retval) {
     return nsize;
   }
@@ -1282,7 +1282,7 @@ int LibV2::E11(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E11", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E11", nsize);
   if (retval) {
     return nsize;
   }
@@ -1303,7 +1303,7 @@ int LibV2::E12(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E12", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E12", nsize);
   if (retval) {
     return nsize;
   }
@@ -1324,7 +1324,7 @@ int LibV2::E13(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E13", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E13", nsize);
   if (retval) {
     return nsize;
   }
@@ -1345,7 +1345,7 @@ int LibV2::E14(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E14", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E14", nsize);
   if (retval) {
     return nsize;
   }
@@ -1367,7 +1367,7 @@ int LibV2::E15(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E15", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E15", nsize);
   if (retval) {
     return nsize;
   }
@@ -1389,7 +1389,7 @@ int LibV2::E16(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E16", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E16", nsize);
   if (retval) {
     return nsize;
   }
@@ -1411,7 +1411,7 @@ int LibV2::E17(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E17", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E17", nsize);
   if (retval) {
     return nsize;
   }
@@ -1433,7 +1433,7 @@ int LibV2::E18(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E18", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E18", nsize);
   if (retval) {
     return nsize;
   }
@@ -1455,7 +1455,7 @@ int LibV2::E19(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E19", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E19", nsize);
   if (retval) {
     return nsize;
   }
@@ -1477,7 +1477,7 @@ int LibV2::E20(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E20", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E20", nsize);
   if (retval) {
     return nsize;
   }
@@ -1499,7 +1499,7 @@ int LibV2::E21(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E21", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E21", nsize);
   if (retval) {
     return nsize;
   }
@@ -1521,7 +1521,7 @@ int LibV2::E22(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E22", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E22", nsize);
   if (retval) {
     return nsize;
   }
@@ -1541,7 +1541,7 @@ int LibV2::E23(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E23", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E23", nsize);
   if (retval) {
     return nsize;
   }
@@ -1561,7 +1561,7 @@ int LibV2::E24(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E24", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E24", nsize);
   if (retval) {
     return nsize;
   }
@@ -1581,7 +1581,7 @@ int LibV2::E25(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E25", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E25", nsize);
   if (retval) {
     return nsize;
   }
@@ -1601,7 +1601,7 @@ int LibV2::E26(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E26", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E26", nsize);
   if (retval) {
     return nsize;
   }
@@ -1621,7 +1621,7 @@ int LibV2::E27(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E27", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E27", nsize);
   if (retval) {
     return nsize;
   }
@@ -1669,7 +1669,7 @@ int LibV2::steady_state_hyper(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInDoublemap(DoubleFeatureData, StringData, "steady_state_hyper",
+  retval = CheckInMap(DoubleFeatureData, StringData, "steady_state_hyper",
                             nsize);
   if (retval) {
     return nsize;
@@ -1698,7 +1698,7 @@ int LibV2::E40(mapStr2intVec& IntFeatureData,
   int retval;
   int nsize;
   retval =
-      CheckInDoublemap(DoubleFeatureData, StringData, "E40", nsize);
+      CheckInMap(DoubleFeatureData, StringData, "E40", nsize);
   if (retval) {
     return nsize;
   }
