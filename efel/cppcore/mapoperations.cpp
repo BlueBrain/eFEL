@@ -64,7 +64,7 @@ int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
 }
 
 template <class T>
-void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value){
   string params;
   getStrParam(StringData, "params", params);
@@ -82,13 +82,13 @@ void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& Stri
  */
 
 template <class T>
-int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v){
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
 
-  typename std::map<std::string, std::vector<T>>::iterator
+  typename std::map<std::string, std::vector<T> >::iterator
     mapstr2VecItr(FeatureData.find(strFeature));
 
   if (mapstr2VecItr == FeatureData.end()) {
@@ -101,12 +101,12 @@ int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& Strin
 }
 
 template <class T>
-int CheckInMap(std::map<std::string, std::vector<T>>& FeatureData,
+int CheckInMap(std::map<std::string, std::vector<T> >& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize){
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
-  typename std::map<std::string, std::vector<T>>::const_iterator
+  typename std::map<std::string, std::vector<T> >::const_iterator
    mapstr2VecItr(FeatureData.find(strFeature));
 
   if (mapstr2VecItr != FeatureData.end()) {
@@ -220,15 +220,15 @@ int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
   }
 }
 
-template void setVec(std::map<std::string, std::vector<double>>& FeatureData, mapStr2Str& StringData,
+template void setVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<double>& value);
-template void setVec(std::map<std::string, std::vector<int>>& FeatureData, mapStr2Str& StringData,
+template void setVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<int>& value);
-template int getVec(std::map<std::string, std::vector<double>>& FeatureData, mapStr2Str& StringData,
+template int getVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<double>& v);
-template int getVec(std::map<std::string, std::vector<int>>& FeatureData, mapStr2Str& StringData,
+template int getVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<int>& v);
-template int CheckInMap(std::map<std::string, std::vector<double>>& FeatureData,
+template int CheckInMap(std::map<std::string, std::vector<double> >& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);
-template int CheckInMap(std::map<std::string, std::vector<int>>& FeatureData,
+template int CheckInMap(std::map<std::string, std::vector<int> >& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);

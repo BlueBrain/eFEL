@@ -36,13 +36,13 @@ int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
                    vector<double>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 template <class T>
-void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value);
 template <class T>
-int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v);
 template <class T>
-int CheckInMap(std::map<std::string, std::vector<T>>& FeatureData,
+int CheckInMap(std::map<std::string, std::vector<T> >& FeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);
 // eCode feature convenience function
 int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
