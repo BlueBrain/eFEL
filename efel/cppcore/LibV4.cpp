@@ -76,7 +76,7 @@ int LibV4::peak_indices(mapStr2intVec& IntFeatureData,
   vector<double> v;
   vector<double> min_spike_height;
   vector<double> threshold;
-  if (getDoubleVec(DoubleFeatureData, StringData, "V", v) <= 0) {
+  if (getVec(DoubleFeatureData, StringData, "V", v) <= 0) {
     return -1;
   }
   if (getDoubleParam(DoubleFeatureData, "min_spike_height", min_spike_height) <=

@@ -64,12 +64,12 @@ int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
 }
 
 template <class T>
-void setVec(std::map<std::string, std::vector<T>>& featureData, mapStr2Str& StringData,
+void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value){
   string params;
   getStrParam(StringData, "params", params);
   key += params;
-  featureData[key] = value;
+  FeatureData[key] = value;
 }
 
 /*
@@ -80,33 +80,22 @@ void setVec(std::map<std::string, std::vector<T>>& featureData, mapStr2Str& Stri
  * For handling multiple traces the trace parameters are passed on to elementary
  * features in that way.
  */
-int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-              string strFeature, vector<int>& v) {
+
+template <class T>
+int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+                 string strFeature, vector<T>& v){
   string params;
   getStrParam(StringData, "params", params);
   strFeature += params;
-  mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(strFeature));
-  if (mapstr2IntItr == IntFeatureData.end()) {
+
+  typename std::map<std::string, std::vector<T>>::iterator
+    mapstr2VecItr(FeatureData.find(strFeature));
+
+  if (mapstr2VecItr == FeatureData.end()) {
     GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
     return -1;
   }
-  v = mapstr2IntItr->second;
-
-  return (v.size());
-}
-
-int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<double>& v) {
-  string params;
-  getStrParam(StringData, "params", params);
-  strFeature += params;
-  mapStr2doubleVec::iterator mapstr2DoubleItr(
-      DoubleFeatureData.find(strFeature));
-  if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
-    return -1;
-  }
-  v = mapstr2DoubleItr->second;
+  v = mapstr2VecItr->second;
 
   return (v.size());
 }
@@ -243,8 +232,11 @@ int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
   }
 }
 
-template void setVec(std::map<std::string, std::vector<double>>& featureData, mapStr2Str& StringData,
+template void setVec(std::map<std::string, std::vector<double>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<double>& value);
-template void setVec(std::map<std::string, std::vector<int>>& featureData, mapStr2Str& StringData,
+template void setVec(std::map<std::string, std::vector<int>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<int>& value);
-               
+template int getVec(std::map<std::string, std::vector<double>>& FeatureData, mapStr2Str& StringData,
+                 string strFeature, vector<double>& v);
+template int getVec(std::map<std::string, std::vector<int>>& FeatureData, mapStr2Str& StringData,
+                 string strFeature, vector<int>& v);

@@ -40,10 +40,10 @@ template <class T>
 void setVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value);
 
-int getDoubleVec(mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<double>& v);
-int getIntVec(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
-              string strFeature, vector<int>& v);
+template <class T>
+int getVec(std::map<std::string, std::vector<T>>& FeatureData, mapStr2Str& StringData,
+                 string strFeature, vector<T>& v);
+
 int CheckInDoublemap(mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData, string strFeature, int& nSize);
 int CheckInIntmap(mapStr2intVec& IntFeatureData, mapStr2Str& StringData,
