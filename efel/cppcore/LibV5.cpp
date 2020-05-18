@@ -2258,25 +2258,39 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  int nCount = 0;
-  double vSum = 0;
-  // calculte the mean of voltage between startTime and endTime
-  for (size_t i = 0; i < t.size(); i++) {
-    if (t[i] > endTime) break;
+  size_t startIndex = 0;
+  size_t endIndex = t.size();
 
-    if (t[i] >= startTime) {
-      vSum = vSum + v[i];
-      nCount++;
+  for (size_t i = 0; i < t.size(); i++){
+    if (t[i] >= startTime)
+    {
+      startIndex = i;
+      break;
     }
   }
 
-  if (nCount == 0) {
-    GErrorStr +=
-        "\nvoltage_base: no data points between startTime and endTime\n";
-    return -1;
+  for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
+    if (t[i] < endTime)
+    {
+      endIndex = i+1;
+      break;
+    }
   }
 
-  vRest.push_back(vSum / nCount);
+  vector<double> subVector(v.begin()+startIndex, v.begin()+endIndex);
+
+  double vBase;
+
+  try{
+    vBase = vec_mean(subVector);
+  }
+  catch(std::exception &e) {
+    GErrorStr +=
+    "\nvoltage_base error:" + std::string(e.what()) + "\n";
+    return -1;
+    }
+
+  vRest.push_back(vBase);
   setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
   return 1;
 }
