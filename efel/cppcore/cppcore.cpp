@@ -224,6 +224,21 @@ static PyObject* getfeaturedouble(PyObject* self, PyObject* args) {
   return _getfeature(self, args, type);
 }
 
+static PyObject* setfeaturestring(PyObject* self, PyObject* args){
+  char* feature_name;
+  PyObject* py_values;
+  string str_value;
+  int return_value;
+  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
+    return NULL;
+  }
+
+  str_value = PyString_AsString(py_values);
+  return_value = pFeature->setFeatureString(string(feature_name), str_value);
+
+  return Py_BuildValue("s", return_value);
+
+}
 
 static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
   vector<string> feature_names;
@@ -297,6 +312,8 @@ static PyMethodDef CppCoreMethods[] = {
       "Set a integer feature."},
     {"setFeatureDouble", setfeaturedouble, METH_VARARGS,
       "Set a double feature."},
+    {"setFeatureString", setfeaturestring, METH_VARARGS,
+      "Set a string feature."},
 
     {"featuretype", featuretype, METH_VARARGS,
       "Get the type of a feature"},
