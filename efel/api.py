@@ -349,6 +349,7 @@ def _initialise():
     for setting_name, str_setting in list(_string_settings.items()):
         cppcore.setFeatureString(setting_name, str_setting)
 
+
 def setIntSetting(setting_name, new_value):
     """Set a certain integer setting to a new value"""
 
@@ -360,10 +361,12 @@ def setDoubleSetting(setting_name, new_value):
 
     _double_settings[setting_name] = new_value
 
+
 def setStrSetting(setting_name, new_value):
     """Set a certain string setting to a new value"""
 
     _string_settings[setting_name] = new_value
+
 
 def getFeatureValues(
         traces,
