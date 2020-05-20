@@ -226,17 +226,16 @@ static PyObject* getfeaturedouble(PyObject* self, PyObject* args) {
 
 static PyObject* setfeaturestring(PyObject* self, PyObject* args){
   char* feature_name;
-  PyObject* py_values;
-  string str_value;
+  char* py_value;
+
   int return_value;
-  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyString_Type, &py_values)) {
+  if (!PyArg_ParseTuple(args, "ss", &feature_name, &py_value)) {
     return NULL;
   }
 
-  str_value = PyString_AsString(py_values);
-  return_value = pFeature->setFeatureString(string(feature_name), str_value);
+  return_value = pFeature->setFeatureString(string(feature_name), py_value);
 
-  return Py_BuildValue("s", return_value);
+  return Py_BuildValue("i", return_value);
 
 }
 
