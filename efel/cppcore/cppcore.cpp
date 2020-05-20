@@ -229,7 +229,7 @@ static PyObject* setfeaturestring(PyObject* self, PyObject* args){
   PyObject* py_values;
   string str_value;
   int return_value;
-  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
+  if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyString_Type, &py_values)) {
     return NULL;
   }
 
