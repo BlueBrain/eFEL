@@ -2280,9 +2280,20 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   vector<double> subVector(v.begin()+startIndex, v.begin()+endIndex);
 
   double vBase;
+  std::string computation_mode;
+
+  retVal = getStrParam(StringData, "voltage_base_mode", computation_mode);
+  if (retVal < 0) return -1;
+
 
   try{
-    vBase = vec_mean(subVector);
+    if (computation_mode == "mean")
+      vBase = vec_mean(subVector);
+    else if (computation_mode == "median")
+      vBase = vec_median(subVector);
+    else
+      throw std::invalid_argument(
+        "Undefined computational mode. Only mean and median are enabled");
   }
   catch(std::exception &e) {
     GErrorStr +=
