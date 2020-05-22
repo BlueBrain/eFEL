@@ -81,6 +81,8 @@ def reset():
     setDoubleSetting('burst_factor', 1.5)
     setDoubleSetting('voltage_base_start_perc', 0.9)
     setDoubleSetting('voltage_base_end_perc', 1.0)
+    setDoubleSetting('current_base_start_perc', 0.9)
+    setDoubleSetting('current_base_end_perc', 1.0)
     setDoubleSetting("initial_perc", 0.1)
     setDoubleSetting("min_spike_height", 20.0)
     setIntSetting("strict_stiminterval", 0)
@@ -89,6 +91,7 @@ def reset():
     setDoubleSetting("initburst_sahp_end", 100)
     setIntSetting("DerivativeWindow", 3)
     setStrSetting("voltage_base_mode", "mean")
+    setStrSetting("current_base_mode", "mean")
 
     _initialise()
 

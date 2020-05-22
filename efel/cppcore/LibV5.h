@@ -207,6 +207,9 @@ int steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
 int voltage_base(mapStr2intVec& IntFeatureData,           
                  mapStr2doubleVec& DoubleFeatureData,             
                  mapStr2Str& StringData);
+int current_base(mapStr2intVec& IntFeatureData,           
+                 mapStr2doubleVec& DoubleFeatureData,             
+                 mapStr2Str& StringData);
 int decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);

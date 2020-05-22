@@ -2306,6 +2306,95 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
+int LibV5::current_base(mapStr2intVec& IntFeatureData,
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "current_base", nSize);
+  if (retVal) return nSize;                      
+
+  vector<double> i, t, stimStart, iRest, cb_start_perc_vec, cb_end_perc_vec;
+  double startTime, endTime, cb_start_perc, cb_end_perc;
+  retVal = getVec(DoubleFeatureData, StringData, "I", i);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "current_base_start_perc", cb_start_perc_vec);
+  if (retVal == 1) {
+    cb_start_perc = cb_start_perc_vec[0];
+  } else {
+    cb_start_perc = 0.9;
+  }
+  retVal = getVec(DoubleFeatureData, StringData, "current_base_end_perc",
+                        cb_end_perc_vec);
+  if (retVal == 1) {
+    cb_end_perc = cb_end_perc_vec[0];
+  } else {
+    cb_end_perc = 1.0;
+  }
+
+  startTime = stimStart[0] * cb_start_perc;
+  endTime = stimStart[0] * cb_end_perc;
+
+  if (startTime >= endTime) {
+    GErrorStr += "\ncurrent_base: startTime >= endTime\n";
+    return -1;
+  }
+
+  size_t startIndex = 0;
+  size_t endIndex = t.size();
+
+  for (size_t i = 0; i < t.size(); i++){
+    if (t[i] >= startTime)
+    {
+      startIndex = i;
+      break;
+    }
+  }
+
+  for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
+    if (t[i] < endTime)
+    {
+      endIndex = i+1;
+      break;
+    }
+  }
+
+  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex);
+
+  double iBase;
+  std::string computation_mode;
+
+  retVal = getStrParam(StringData, "current_base_mode", computation_mode);
+  if (retVal < 0) return -1;
+
+
+  try{
+    if (computation_mode == "mean")
+      iBase = vec_mean(subVector);
+    else if (computation_mode == "median")
+      iBase = vec_median(subVector);
+    else
+      throw std::invalid_argument(
+        "Undefined computational mode. Only mean and median are enabled");
+  }
+  catch(std::exception &e) {
+    GErrorStr +=
+    "\ncurrent_base error:" + std::string(e.what()) + "\n";
+    return -1;
+    }
+
+  iRest.push_back(iBase);
+  setVec(DoubleFeatureData, StringData, "current_base", iRest);
+  return 1;
+
+}
+
 size_t get_index(const vector<double>& times, double t) {
   return distance(times.begin(),
                   find_if(times.begin(), times.end(),
