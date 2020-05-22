@@ -908,6 +908,31 @@ def test_voltagebase1():
     nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
                            places=5)
 
+def test_voltagebase_median():
+    """basic: Test voltagebase computation with median option"""
+
+    import efel
+    efel.reset()
+    efel.setStrSetting("voltage_base_mode", "median")
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ['voltage_base']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+    voltage_base = numpy.median(interp_voltage[numpy.where(
+(interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
+
+    nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
+                           places=5)
+
 
 def test_getDistance1():
     """basic: Test getDistance 1"""
