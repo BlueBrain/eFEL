@@ -2365,7 +2365,7 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
     }
   }
 
-  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex);
+  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex+1);
 
   double iBase;
   std::string computation_mode;
