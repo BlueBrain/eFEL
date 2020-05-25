@@ -935,6 +935,62 @@ def test_voltagebase_median():
                            places=5)
 
 
+def test_currentbase():
+    """basic: Test currentbase"""
+
+    import efel
+    efel.reset()
+
+    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
+                                    'basic',
+                                    'current.txt'))
+    current = data[:, 1]
+    time = data[:, 0]
+    stim_start = 2.0
+    stim_end = 900.0 # not to be used
+
+    trace = {'T':time, 'I': current,
+        'stim_start':[stim_start], 'stim_end':[stim_end]}
+
+    feature_values = efel.getFeatureValues([trace], ['current_base'])
+
+    current_base = numpy.mean(current[numpy.where(
+        (time >= 0.9 * stim_start) & (time <= stim_start))])
+
+    # nt.set_trace()
+    nt.assert_almost_equal(current_base, feature_values[0]['current_base'][0],
+                           places=8)
+
+
+def test_currentbase_median():
+    """basic: Test currentbase with median"""
+
+    import efel
+    efel.reset()
+    efel.setStrSetting("current_base_mode", "median")
+
+    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
+                                    'basic',
+                                    'current.txt'))
+    current = data[:, 1]
+    time = data[:, 0]
+    stim_start = 2.0
+    stim_end = 900.0 # not to be used
+
+    trace = {'T':time, 'I': current,
+        'stim_start':[stim_start], 'stim_end':[stim_end]}
+
+    feature_values = efel.getFeatureValues([trace], ['current_base'])
+
+    current_base = numpy.median(current[numpy.where(
+        (time >= 0.9 * stim_start) & (time <= stim_start))])
+
+
+    nt.assert_almost_equal(current_base, feature_values[0]['current_base'][0],
+                           places=8)
+
+
+
 def test_getDistance1():
     """basic: Test getDistance 1"""
 
