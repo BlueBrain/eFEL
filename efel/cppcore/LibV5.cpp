@@ -2258,11 +2258,15 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
+  vector<double> precisionThreshold;
+  retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
+                          precisionThreshold);
+
   int nCount = 0;
   double vSum = 0;
   // calculte the mean of voltage between startTime and endTime
   for (size_t i = 0; i < t.size(); i++) {
-    if (t[i] > endTime) break;
+    if ((t[i] - endTime) > precisionThreshold[0]) break;
 
     if (t[i] >= startTime) {
       vSum = vSum + v[i];
