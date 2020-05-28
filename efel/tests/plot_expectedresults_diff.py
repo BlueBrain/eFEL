@@ -80,7 +80,7 @@ df_diff = pd.DataFrame(changed_results, index=["distance"])
 
 
 ax = df_diff.plot.bar(figsize=(16, 8),
-                      title="Difference in the expected results (Euclidean distance)")
+                      title="Difference in expected results (Euclidean)")
 for i in ax.patches:
     ax.text(i.get_x() + .025, i.get_height() + .0002,
             str(round((i.get_height()), 4)), color='dimgrey', rotation=0)
