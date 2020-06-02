@@ -33,6 +33,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import os
+import numpy as np
+import json
+
+
+class NpEncoder(json.JSONEncoder):
+    """Class to encode np.integer as python int"""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        else:
+            return super(NpEncoder, self).default(obj)
+
 
 if __name__ == '__main__':
     print('Update expected results of allfeatures test ...', end=' ')
@@ -43,7 +55,7 @@ if __name__ == '__main__':
         os.path.dirname(
             os.path.abspath(__file__)),
         'testdata/allfeatures')
-    import json
+
     with open(os.path.join(testdata_dir, 'expectedresults.json'), 'w') \
             as expected_json:
         json.dump(
@@ -52,5 +64,5 @@ if __name__ == '__main__':
             indent=4,
             separators=(
                 ',',
-                ': '))
+                ': '), cls=NpEncoder)
     print('done')
