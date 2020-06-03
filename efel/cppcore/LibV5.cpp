@@ -2355,6 +2355,11 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
   size_t startIndex = 0;
   size_t endIndex = t.size();
 
+  vector<double> precisionThreshold;
+  retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
+                          precisionThreshold);
+  if (retVal < 0) return -1;
+
   for (size_t i = 0; i < t.size(); i++){
     if (t[i] >= startTime)
     {
@@ -2364,14 +2369,14 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
   }
 
   for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
-    if (t[i] < endTime)
+    if (t[i] - endTime < precisionThreshold[0])
     {
       endIndex = i+1;
       break;
     }
   }
 
-  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex+1);
+  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex);
 
   double iBase;
   std::string computation_mode;
