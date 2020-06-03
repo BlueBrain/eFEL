@@ -2258,32 +2258,17 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  size_t startIndex = 0;
-  size_t endIndex = t.size();
 
   vector<double> precisionThreshold;
   retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
                           precisionThreshold);
   if (retVal < 0) return -1;
 
+  std::pair<size_t, size_t> time_index = get_time_index(t, startTime, endTime,
+                                                        precisionThreshold[0]);
 
-  for (size_t i = 0; i < t.size(); i++){
-    if (t[i] >= startTime)
-    {
-      startIndex = i;
-      break;
-    }
-  }
-
-  for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
-    if (t[i] - endTime < precisionThreshold[0])
-    {
-      endIndex = i+1;
-      break;
-    }
-  }
-
-  vector<double> subVector(v.begin()+startIndex, v.begin()+endIndex);
+  vector<double> subVector(v.begin()+time_index.first,
+                           v.begin()+time_index.second);
 
   double vBase;
   std::string computation_mode;
@@ -2352,31 +2337,19 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  size_t startIndex = 0;
-  size_t endIndex = t.size();
 
   vector<double> precisionThreshold;
   retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
                           precisionThreshold);
   if (retVal < 0) return -1;
 
-  for (size_t i = 0; i < t.size(); i++){
-    if (t[i] >= startTime)
-    {
-      startIndex = i;
-      break;
-    }
-  }
 
-  for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
-    if (t[i] - endTime < precisionThreshold[0])
-    {
-      endIndex = i+1;
-      break;
-    }
-  }
+  std::pair<size_t, size_t> time_index = get_time_index(t, startTime, endTime,
+                                                        precisionThreshold[0]);
 
-  vector<double> subVector(i.begin()+startIndex, i.begin()+endIndex);
+
+  vector<double> subVector(i.begin()+time_index.first,
+                           i.begin()+time_index.second);
 
   double iBase;
   std::string computation_mode;
