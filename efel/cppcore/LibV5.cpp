@@ -2261,6 +2261,11 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   size_t startIndex = 0;
   size_t endIndex = t.size();
 
+  vector<double> precisionThreshold;
+  retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
+                          precisionThreshold);
+
+
   for (size_t i = 0; i < t.size(); i++){
     if (t[i] >= startTime)
     {
@@ -2270,7 +2275,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   }
 
   for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
-    if (t[i] < endTime)
+    if (t[i] - endTime < precisionThreshold[0])
     {
       endIndex = i+1;
       break;

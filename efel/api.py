@@ -92,6 +92,7 @@ def reset():
     setIntSetting("DerivativeWindow", 3)
     setStrSetting("voltage_base_mode", "mean")
     setStrSetting("current_base_mode", "mean")
+    setDoubleSetting("precision_threshold", 1e-10)
 
     _initialise()
 
