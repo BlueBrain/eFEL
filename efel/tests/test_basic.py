@@ -932,7 +932,7 @@ def test_voltagebase_median():
         (interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
 
     nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
-                           places=5)
+                           places=8)
 
 
 def test_currentbase():
