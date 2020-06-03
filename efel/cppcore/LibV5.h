@@ -23,6 +23,7 @@
 #include "Utils.h"
 
 #include <vector>
+#include <stdexcept>
 
 using std::vector;
 
