@@ -165,6 +165,36 @@ slope_straight_line_fit(const vector<double>& x,
   return result;
 }
 
+std::pair<size_t, size_t> get_time_index(std::vector<double> &t, double startTime,
+                                     double endTime, double precisionThreshold) {
+  /*
+   * Returns the start and end index of the time array 
+   * Uses a threshold to tolerate the precision loss
+   * */                                    
+
+  size_t startIndex = 0;
+  size_t endIndex = t.size();
+
+  for (size_t i = 0; i < t.size(); i++){
+    if (t[i] >= startTime)
+    {
+      startIndex = i;
+      break;
+    }
+  }
+
+  for (size_t i = t.size() - 1; i > 0; i--){ // backward iterator using indices
+    if (t[i] - endTime < precisionThreshold)
+    {
+      endIndex = i+1;
+      break;
+    }
+  }
+
+  return std::pair<size_t, size_t>(startIndex, endIndex);
+                                      
+}
+
 template<class T>
 double vec_mean(const vector<T> &v) {
   /*
