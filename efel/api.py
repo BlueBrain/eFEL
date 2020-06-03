@@ -56,6 +56,7 @@ except ImportError:
 _settings = efel.Settings()
 _int_settings = {}
 _double_settings = {}
+_string_settings = {}
 
 
 def reset():
@@ -66,10 +67,11 @@ def reset():
     original state.
     """
 
-    global _settings, _int_settings, _double_settings
+    global _settings, _int_settings, _double_settings, _string_settings
     _settings = efel.Settings()
     _int_settings = {}
     _double_settings = {}
+    _string_settings = {}
 
     setDoubleSetting('spike_skipf', 0.1)
     setIntSetting('max_spike_skip', 2)
@@ -79,6 +81,8 @@ def reset():
     setDoubleSetting('burst_factor', 1.5)
     setDoubleSetting('voltage_base_start_perc', 0.9)
     setDoubleSetting('voltage_base_end_perc', 1.0)
+    setDoubleSetting('current_base_start_perc', 0.9)
+    setDoubleSetting('current_base_end_perc', 1.0)
     setDoubleSetting("initial_perc", 0.1)
     setDoubleSetting("min_spike_height", 20.0)
     setIntSetting("strict_stiminterval", 0)
@@ -86,6 +90,8 @@ def reset():
     setDoubleSetting("initburst_sahp_start", 5)
     setDoubleSetting("initburst_sahp_end", 100)
     setIntSetting("DerivativeWindow", 3)
+    setStrSetting("voltage_base_mode", "mean")
+    setStrSetting("current_base_mode", "mean")
     setDoubleSetting("precision_threshold", 1e-10)
 
     _initialise()
@@ -344,6 +350,9 @@ def _initialise():
     for setting_name, double_setting in list(_double_settings.items()):
         cppcore.setFeatureDouble(setting_name, [double_setting])
 
+    for setting_name, str_setting in list(_string_settings.items()):
+        cppcore.setFeatureString(setting_name, str_setting)
+
 
 def setIntSetting(setting_name, new_value):
     """Set a certain integer setting to a new value"""
@@ -355,6 +364,12 @@ def setDoubleSetting(setting_name, new_value):
     """Set a certain double setting to a new value"""
 
     _double_settings[setting_name] = new_value
+
+
+def setStrSetting(setting_name, new_value):
+    """Set a certain string setting to a new value"""
+
+    _string_settings[setting_name] = new_value
 
 
 def getFeatureValues(
