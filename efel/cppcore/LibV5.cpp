@@ -2264,6 +2264,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   vector<double> precisionThreshold;
   retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
                           precisionThreshold);
+  if (retVal < 0) return -1;
 
 
   for (size_t i = 0; i < t.size(); i++){
