@@ -119,8 +119,8 @@ def get_allfeature_values():
     for feature_name in db_featurenames:
         soma_featurenames.remove(feature_name)
 
-    soma_featurenames = [
-        x for x in soma_featurenames if x not in ['current', 'impedance']]
+    soma_featurenames = [x for x in soma_featurenames
+                         if x not in ['current', 'current_base', 'impedance']]
 
     import warnings
     with warnings.catch_warnings():

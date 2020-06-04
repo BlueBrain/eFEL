@@ -104,6 +104,7 @@
     "burst_number",
     "check_AISInitiation",
     "current",
+    "current_base",
     "decay_time_constant_after_stim",
     "depol_block",
     "depolarized_base",
