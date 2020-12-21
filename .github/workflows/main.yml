@@ -34,14 +34,19 @@ jobs:
   wheels:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     needs: test
-    name: ${{ matrix.os }}
+    name: Build wheels for ${{ matrix.python }} ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        python: [cp27, cp36, cp37, cp38, cp39]
+        arch: [x86_64, i686]
+        exclude:
+          - os: macos-latest
+            arch: i686
     env:
-      CIBW_SKIP: 'pp* cp35-*'
+      CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
       CIBW_TEST_REQUIRES: nose neo[neomatlabio]>=0.5.1
       CIBW_TEST_COMMAND: nosetests -s -v -x -w {project}/efel/tests
     steps:
@@ -58,7 +63,7 @@ jobs:
         run: cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v2
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.arch }}
           path: ./wheelhouse/*.whl
   
   tarball:
@@ -97,21 +102,15 @@ jobs:
         with:
           python-version: 3.6
 
-      - name: Download tarball
+      - name: Download all artifacts
         uses: actions/download-artifact@v2
         with:
-          name: tarball
-          path: dist
-      - name: Download linux wheel
-        uses: actions/download-artifact@v2
-        with:
-          name: wheels-ubuntu-latest
-          path: dist
-      - name: Download macos wheel
-        uses: actions/download-artifact@v2
-        with:
-          name: wheels-macos-latest
-          path: dist
+          path: artifacts
+
+      - name: Put artifacts into dist directory
+        run: |
+          mkdir -p dist
+          find artifacts -type f \( -iname \*.whl -o -iname \*.tar.gz \) -exec mv {} dist \;
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@master
