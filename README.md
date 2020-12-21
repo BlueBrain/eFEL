@@ -28,8 +28,8 @@
 <tr>
   <td>Build Status</td>
   <td>
-    <a href="https://travis-ci.com/BlueBrain/eFEL">
-    <img src="https://travis-ci.com/BlueBrain/eFEL.svg?branch=master" alt="travis build status" />
+    <a href="https://github.com/BlueBrain/eFEL/actions">
+    <img src="https://github.com/BlueBrain/eFEL/workflows/Build/badge.svg?branch=master" alt="actions build status" />
     </a>
   </td>
 </tr>
