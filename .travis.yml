@@ -21,3 +21,12 @@ git:
 cache:
   directories:
   - $HOME/.cache/pip
+before_install:
+- pip install pip --upgrade
+- pip install tox --upgrade
+- pip install codecov
+after_success:
+- codecov
+addons:
+  code_climate:
+    repo_token: 93198de899a0c9fdd2352396517f526f168656dcbec8aa51129c6689445276f5
