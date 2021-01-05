@@ -419,6 +419,29 @@ The voltage deflection between voltage base and steady-state voltage at stimend
 
     voltage_deflection_vb_ssse = steady_state_voltage_stimend - voltage_base
 
+LibV1: minimum_voltage
+~~~~~~~~~~~~~~~~~~~~~~
+
+The minimum of the voltage during the stimulus
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    minimum_voltage = min(voltage[numpy.where((t >= stim_start) & (t <= stim_end))])
+
+LibV1: maximum_voltage
+~~~~~~~~~~~~~~~~~~~~~~
+
+The maximum of the voltage during the stimulus
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    maximum_voltage = max(voltage[numpy.where((t >= stim_start) & (t <= stim_end))])
+
+
 
 Requested eFeatures
 ===================
@@ -458,16 +481,6 @@ The average voltage during the last 90% of the stimulus duration realtive to vol
     steady_state_voltage_stimend_from_voltage_base = steady_state_voltage_stimend - voltage_base
 
 
-**LibV5 : min_duringstim**
-The minimum voltage during stimulus
-
-- **Required features**:
-- **Units**: mV
-- **Pseudocode**: ::
-
-    min_duringstim = [numpy.min(voltage[numpy.where((t <= stim_end[0]) & (t >= stim_start[0]))])]
-
-
 **LibV5 : min_duringstim_from_voltage_base**
 The minimum voltage during stimulus
 
@@ -475,17 +488,7 @@ The minimum voltage during stimulus
 - **Units**: mV
 - **Pseudocode**: ::
 
-    min_duringstim_from_voltage_base = min_duringstim - voltage_base
-
-
-**LibV5 : max_duringstim**
-The minimum voltage during stimulus
-
-- **Required features**:
-- **Units**: mV
-- **Pseudocode**: ::
-
-    min_duringstim = [numpy.max(voltage[numpy.where((t <= stim_end[0]) & (t >= stim_start[0]))])]
+    min_duringstim_from_voltage_base = minimum_voltage - voltage_base
 
 
 **LibV5 : max_duringstim_from_voltage_base**
@@ -495,7 +498,7 @@ The minimum voltage during stimulus
 - **Units**: mV
 - **Pseudocode**: ::
 
-    max_duringstim_from_voltage_base = max_duringstim - voltage_base
+    max_duringstim_from_voltage_base = maximum_voltage - voltage_base
 
 **LibV5 : diff_max_duringstim**
 Difference between maximum and steady state during stimulation
