@@ -832,7 +832,9 @@ def test_AP_end_indices():
             raise_warnings=False)
 
     updated_end_indices = feature_values[0]["AP_end_indices"]
-    nt.assert_not_equal(updated_end_indices, end_indices)
+
+    for end_index, updated_end_index in zip(end_indices, updated_end_indices):
+        nt.assert_true(end_index != updated_end_index)
 
 
 def test_mean_frequency1():
