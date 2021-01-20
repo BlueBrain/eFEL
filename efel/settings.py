@@ -38,6 +38,7 @@ class Settings(object):
     def __init__(self):
         self.threshold = -20.0
         self.derivative_threshold = 10.0
+        self.down_derivative_threshold = -10.0
         self.dependencyfile_path = os.path.join(
             _get_script_path(),
             'DependencyV5.txt')

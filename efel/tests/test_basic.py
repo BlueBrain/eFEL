@@ -778,6 +778,63 @@ def test_AP_begin_indices1():
         len(feature_values[0]['AP_duration_half_width']))
 
 
+def test_AP_end_indices():
+    """basic: Test AP end indices."""
+    import efel
+    efel.reset()
+
+    stim_start = 31.2
+    stim_end = 431.2
+
+    test_data_path = os.path.join(
+        testdata_dir,
+        'basic',
+        'AP_begin_indices_95810005.abf.csv')
+    voltage = numpy.loadtxt(test_data_path)
+
+    time = numpy.arange(len(voltage)) * 0.1
+
+    trace = {}
+
+    trace['V'] = voltage
+    trace['T'] = time
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'AP_begin_indices',
+        'peak_indices',
+        'AP_end_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
+
+    begin_indices = feature_values[0]["AP_begin_indices"]
+    peak_indices = feature_values[0]["peak_indices"]
+    end_indices = feature_values[0]["AP_end_indices"]
+
+    for begin, peak, end in zip(begin_indices, peak_indices, end_indices):
+        # the voltage value for the end index should be closer than that of begin index than the peak
+        nt.assert_true(abs(voltage[begin] - voltage[end]) < abs(voltage[peak] - voltage[end]))
+        nt.assert_true(end > begin)
+
+
+    efel.reset()
+
+    efel.setDoubleSetting("DownDerivativeThreshold", -24)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
+
+    updated_end_indices = feature_values[0]["AP_end_indices"]
+    nt.assert_not_equal(updated_end_indices, end_indices)
+
+
 def test_mean_frequency1():
     """basic: Test mean_frequency 1"""
 
