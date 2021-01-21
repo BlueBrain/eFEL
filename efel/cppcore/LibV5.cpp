@@ -754,7 +754,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
 
 static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
                             const vector<int>& pi, vector<int>& apei,
-                            double derivativethreshold, int derivativewindow) {
+                            double derivativethreshold) {
 
   vector<double> dvdt(v.size());
   vector<double> dv;
@@ -764,38 +764,16 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
+  apei.resize(pi.size());
   vector<int> picopy(pi.begin(), pi.end());
   picopy.push_back(v.size() - 1);
 
-  for (size_t i = 0; i < picopy.size() - 1; i++) {
+  for (size_t i = 0; i < apei.size(); i++) {
     // assure that the width of the slope is bigger than 4
-    int newendindex = picopy[i];
-    int endindex = 0;
-    int width = derivativewindow;
-    bool skip = false;
-
-    // Detect where the derivate crosses derivativethreshold, and make sure
-    // this happens in a window of 'width' sampling point
-    do {
-      endindex = distance(
-          dvdt.begin(),
-          find_if(
-              dvdt.begin() + newendindex, dvdt.begin() + picopy[i + 1],
-              std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
-
-      if (endindex == picopy[i + 1]) {
-        // could not find an end index in between these peaks
-        skip = true;
-        break;
-      }
-      newendindex = endindex + 1;
-    } while (find_if(dvdt.begin() + endindex, dvdt.begin() + endindex + width,
-                     std::bind2nd(std::less<double>(), derivativethreshold)) !=
-             dvdt.begin() + endindex + width);
-    if (skip) {
-      continue;
-    }
-    apei.push_back(endindex);
+    apei[i] = std::distance(
+        dvdt.begin(),
+        std::find_if(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1],
+                std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
   }
   return apei.size();
 }
@@ -830,16 +808,8 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
     dTh.push_back(-12.0);
   }
 
-  // Get DerivativeWindow
-  vector<int> derivative_window;
-  retVal = getIntParam(IntFeatureData, "DerivativeWindow", derivative_window);
-  if (retVal <= 0) {
-    GErrorStr += "\nDerivativeWindow not set\n";
-    return -1;
-  }
-
   vector<int> apei;
-  retVal = __AP_end_indices(t, v, pi, apei, dTh[0], derivative_window[0]);
+  retVal = __AP_end_indices(t, v, pi, apei, dTh[0]);
   if (retVal >= 0) {
     setVec(IntFeatureData, StringData, "AP_end_indices", apei);
   }
