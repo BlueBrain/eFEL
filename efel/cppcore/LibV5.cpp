@@ -751,6 +751,72 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   }
   return retVal;
 }
+
+static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
+                            const vector<int>& pi, vector<int>& apei,
+                            double derivativethreshold) {
+
+  vector<double> dvdt(v.size());
+  vector<double> dv;
+  vector<double> dt;
+  getCentralDifferenceDerivative(1., v, dv);
+  getCentralDifferenceDerivative(1., t, dt);
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
+            std::divides<double>());
+
+  apei.resize(pi.size());
+  vector<int> picopy(pi.begin(), pi.end());
+  picopy.push_back(v.size() - 1);
+
+  for (size_t i = 0; i < apei.size(); i++) {
+    // assure that the width of the slope is bigger than 4
+    apei[i] = std::distance(
+        dvdt.begin(),
+        std::find_if(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1],
+                std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
+  }
+  return apei.size();
+}
+
+
+int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
+                          mapStr2doubleVec& DoubleFeatureData,
+                          mapStr2Str& StringData) {
+
+  int retVal;
+  int nSize;
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_end_indices", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  vector<double> t;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal < 0) return -1;
+  vector<double> v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal < 0) return -1;
+  vector<int> pi;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
+  if (retVal < 0) return -1;
+
+  // Get DerivativeThreshold
+  vector<double> dTh;
+  retVal = getDoubleParam(DoubleFeatureData, "DownDerivativeThreshold", dTh);
+  if (retVal <= 0) {
+    // derivative at peak end
+    dTh.push_back(-12.0);
+  }
+
+  vector<int> apei;
+  retVal = __AP_end_indices(t, v, pi, apei, dTh[0]);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "AP_end_indices", apei);
+  }
+  return retVal;
+}
+
+
 static int __irregularity_index(vector<double>& isiValues,
                                 vector<double>& irregularity_index) {
   double ISISub, iRI;
