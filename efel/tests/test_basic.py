@@ -817,10 +817,11 @@ def test_AP_end_indices():
     end_indices = feature_values[0]["AP_end_indices"]
 
     for begin, peak, end in zip(begin_indices, peak_indices, end_indices):
-        # the voltage value for the end index should be closer than that of begin index than the peak
-        nt.assert_true(abs(voltage[begin] - voltage[end]) < abs(voltage[peak] - voltage[end]))
+        # the voltage value for the end index should be closer than that of
+        # begin index than the peak
+        nt.assert_true(abs(voltage[begin] - voltage[end])
+                       < abs(voltage[peak] - voltage[end]))
         nt.assert_true(end > begin)
-
 
     efel.reset()
 

@@ -77,7 +77,9 @@ def reset():
     setIntSetting('max_spike_skip', 2)
     setDoubleSetting('Threshold', _settings.threshold)
     setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
-    setDoubleSetting('DownDerivativeThreshold', _settings.down_derivative_threshold)
+    setDoubleSetting(
+        'DownDerivativeThreshold',
+        _settings.down_derivative_threshold)
     setDoubleSetting('interp_step', 0.1)
     setDoubleSetting('burst_factor', 1.5)
     setDoubleSetting('voltage_base_start_perc', 0.9)
