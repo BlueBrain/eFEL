@@ -1,0 +1,119 @@
+name: Build
+
+on:
+  schedule:
+    # Runs every sunday at 3 a.m.
+    - cron: '0 3 * * SUN'
+  push:
+    branches:
+      - master
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install tox tox-gh-actions
+    - name: Run tox
+      run: tox
+
+  wheels:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: test
+    name: Build wheels for ${{ matrix.python }} ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: [cp27, cp36, cp37, cp38, cp39]
+        arch: [x86_64, i686]
+        exclude:
+          - os: macos-latest
+            arch: i686
+    env:
+      CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
+      CIBW_TEST_REQUIRES: nose neo[neomatlabio]>=0.5.1
+      CIBW_TEST_COMMAND: nosetests -s -v -x -w {project}/efel/tests
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel
+      - name: Build wheels
+        run: cibuildwheel --output-dir wheelhouse
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.arch }}
+          path: ./wheelhouse/*.whl
+  
+  tarball:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    name: Build tarball
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Build a source tarball
+        run:
+            python setup.py sdist
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tarball
+          path: dist
+
+
+  publish:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    name: Publish on PyPI
+    runs-on: ubuntu-latest
+    needs: [test, wheels, tarball]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Put artifacts into dist directory
+        run: |
+          mkdir -p dist
+          find artifacts -type f \( -iname \*.whl -o -iname \*.tar.gz \) -exec mv {} dist \;
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
