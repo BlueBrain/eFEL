@@ -86,6 +86,8 @@ def reset():
     setDoubleSetting('voltage_base_end_perc', 1.0)
     setDoubleSetting('current_base_start_perc', 0.9)
     setDoubleSetting('current_base_end_perc', 1.0)
+    setDoubleSetting('rise_start_perc', 0.0)
+    setDoubleSetting('rise_end_perc', 1.0)
     setDoubleSetting("initial_perc", 0.1)
     setDoubleSetting("min_spike_height", 20.0)
     setIntSetting("strict_stiminterval", 0)

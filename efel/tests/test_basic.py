@@ -1963,3 +1963,62 @@ def test_unfinished_peak():
     spikecount = traces_results[0]['Spikecount'][0]
 
     nt.assert_equal(spikecount, 3)
+
+
+def rise_time_perc(
+    time, voltage,
+    AP_begin_indices,
+    peak_indices,
+    rise_start_perc,
+    rise_end_perc
+):
+    """AP_rise_time numpy implementation with percentages"""
+    rise_times = []
+    AP_amp = voltage[peak_indices] - voltage[AP_begin_indices]
+    begin_voltages = AP_amp * rise_start_perc + voltage[AP_begin_indices]
+    end_voltages = AP_amp * rise_end_perc + voltage[AP_begin_indices]
+
+    for AP_begin_indice, peak_indice, begin_v, end_v in zip(
+        AP_begin_indices, peak_indices, begin_voltages, end_voltages
+    ):
+        voltage_window = voltage[AP_begin_indice:peak_indice]
+
+        new_begin_indice = AP_begin_indice + numpy.min(
+            numpy.where(voltage_window >= begin_v)[0]
+        )
+        new_end_indice = AP_begin_indice + numpy.max(
+            numpy.where(voltage_window <= end_v)[0]
+        )
+
+        rise_times.append(time[new_end_indice] - time[new_begin_indice])
+
+    return numpy.array(rise_times)
+
+
+def test_rise_time_perc():
+    """basic: Test AP rise time percentage"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    trace['rise_start_perc'] = [0.2]
+    trace['rise_end_perc'] = [0.8]
+
+    features = ['AP_rise_time', 'AP_begin_indices', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    ap_rise_time = feature_values[0]['AP_rise_time']
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    expected = rise_time_perc(
+        time, voltage, AP_begin_indices, peak_indices, 0.2, 0.8
+    )
+
+    for exp, rise_time in zip(expected, ap_rise_time):
+        nt.assert_almost_equal(exp, rise_time)

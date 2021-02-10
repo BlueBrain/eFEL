@@ -369,13 +369,42 @@ int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
 // end of AP_duration_half_width
 
 // *** AP_rise_time according to E9 and E17 ***
-static int __AP_rise_time(const vector<double>& t,
+static int __AP_rise_time(const vector<double>& t, 
+                          const vector<double>& v,
                           const vector<int>& apbeginindices,
                           const vector<int>& peakindices,
+                          const vector<double>& apamplitude,
+                          double beginperc,
+                          double endperc,
                           vector<double>& aprisetime) {
   aprisetime.resize(std::min(apbeginindices.size(), peakindices.size()));
+  double begin_v;
+  double end_v;
+  double begin_indice;
+  double end_indice;
   for (size_t i = 0; i < aprisetime.size(); i++) {
-    aprisetime[i] = t[peakindices[i]] - t[apbeginindices[i]];
+    begin_v = v[apbeginindices[i]] + beginperc * apamplitude[i];
+    end_v = v[apbeginindices[i]] + endperc * apamplitude[i];
+
+    // Get begin indice
+    size_t j=apbeginindices[i];
+    // change slightly begin_v for almost equal case
+    // truncature error can change begin_v even when beginperc == 0.0
+    while (j<peakindices[i] && v[j] < begin_v - 0.0000000000001){
+      j++;
+    }
+    begin_indice = j;
+
+    // Get end indice
+    j=peakindices[i];
+    // change slightly end_v for almost equal case
+    // truncature error can change end_v even when beginperc == 0.0
+    while (j>apbeginindices[i] && v[j] > end_v + 0.0000000000001){
+      j--;
+    }
+    end_indice = j;
+    
+    aprisetime[i] = t[end_indice] - t[begin_indice];
   }
   return aprisetime.size();
 }
@@ -400,8 +429,36 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
   retval = getVec(IntFeatureData, StringData, "peak_indices",
                      peakindices);
   if (retval < 0) return -1;
+  vector<double> v;
+  retval = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retval < 0) return -1;
+  vector<double> AP_amplitude;
+  retval =
+      getVec(DoubleFeatureData, StringData, "AP_amplitude", AP_amplitude);
+  if (retval < 0) {
+    GErrorStr += "Error calculating AP_amplitude for mean_AP_amplitude";
+    return -1;
+  } else if (retval == 0) {
+    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
+    return -1;
+  } else if (AP_amplitude.size() == 0) {
+    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
+    return -1;
+  }
+  // Get rise begin percentage
+  vector<double> risebeginperc;
+  retval = getVec(DoubleFeatureData, StringData, "rise_start_perc", risebeginperc);
+  if (retval <= 0) {
+    risebeginperc.push_back(0.0);
+  }
+  // Get rise end percentage
+  vector<double> riseendperc;
+  retval = getVec(DoubleFeatureData, StringData, "rise_end_perc", riseendperc);
+  if (retval <= 0) {
+    riseendperc.push_back(1.0);
+  }
   vector<double> aprisetime;
-  retval = __AP_rise_time(t, apbeginindices, peakindices, aprisetime);
+  retval = __AP_rise_time(t, v, apbeginindices, peakindices, AP_amplitude, risebeginperc[0], riseendperc[0], aprisetime);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_rise_time", aprisetime);
   }
