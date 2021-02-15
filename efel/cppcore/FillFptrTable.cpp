@@ -265,6 +265,8 @@ int FillFptrTable() {
   FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;
   FptrTableV5["sag_ratio1"] = &LibV5::sag_ratio1;
   FptrTableV5["sag_ratio2"] = &LibV5::sag_ratio2;
+  FptrTableV5["AP_peak_upstroke"] = &LibV5::AP_peak_upstroke;
+  FptrTableV5["AP_peak_downstroke"] = &LibV5::AP_peak_downstroke;
   
   //****************** end of FptrTableV5 *****************************
 

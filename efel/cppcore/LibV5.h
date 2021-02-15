@@ -241,6 +241,12 @@ int sag_ratio1(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData); 
 int sag_ratio2(mapStr2intVec& IntFeatureData,                                    
                        mapStr2doubleVec& DoubleFeatureData, 
-                       mapStr2Str& StringData); 
+                       mapStr2Str& StringData);
+int AP_peak_upstroke(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData);
+int AP_peak_downstroke(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif

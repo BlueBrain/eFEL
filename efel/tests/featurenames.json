@@ -39,6 +39,8 @@
     "AP_fall_rate_change",
     "AP_fall_time",
     "AP_height",
+    "AP_peak_downstroke",
+    "AP_peak_upstroke",
     "AP_phaseslope",
     "AP_phaseslope_AIS",
     "AP_rise_indices",
