@@ -98,6 +98,7 @@ def reset():
     setStrSetting("voltage_base_mode", "mean")
     setStrSetting("current_base_mode", "mean")
     setDoubleSetting("precision_threshold", 1e-10)
+    setDoubleSetting("sahp_start", 5.0)
 
     _initialise()
 
