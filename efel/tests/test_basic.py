@@ -2022,3 +2022,32 @@ def test_rise_time_perc():
 
     for exp, rise_time in zip(expected, ap_rise_time):
         nt.assert_almost_equal(exp, rise_time)
+
+
+def test_slow_ahp_start():
+    """basic: Test AHP_depth_abs_slow with a custom after spike start time"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    trace['sahp_start'] = [12.0]
+
+    features = ['AHP_depth_abs_slow', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    ahp_depth_abs_slow = feature_values[0]['AHP_depth_abs_slow']
+
+    expected = []
+    for i in range(1, len(peak_indices) - 1):
+        new_start_time = time[peak_indices[i]] + trace['sahp_start'][0]
+        new_idx = numpy.min(numpy.where(time >= new_start_time)[0])
+        expected.append(numpy.min(voltage[new_idx:peak_indices[i + 1]]))
+
+    for exp, ahp_slow in zip(expected, ahp_depth_abs_slow):
+        nt.assert_almost_equal(exp, ahp_slow)
