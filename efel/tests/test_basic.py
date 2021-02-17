@@ -633,12 +633,13 @@ def test_min_AHP_indices_single_peak():
     trace_values = numpy.loadtxt(trace_file)
 
     trace = {}
-    trace["T"] = trace_values[:,0]
-    trace["V"] = trace_values[:,1]
+    trace["T"] = trace_values[:, 0]
+    trace["V"] = trace_values[:, 1]
     trace["stim_start"] = [1950]
     trace["stim_end"] = [2050]
 
-    feats = efel.getFeatureValues([trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
+    feats = efel.getFeatureValues(
+        [trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
 
     assert len(feats[0]["peak_indices"]) == 1
     assert feats[0]["min_AHP_indices"] is None
