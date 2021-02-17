@@ -199,8 +199,8 @@ Absolute voltage values at the first after-hyperpolarization
 
 **LibV1 : AHP_depth_abs_slow**
 
-Absolute voltage values at the first after-hyperpolarization starting 5 ms after
-the peak
+Absolute voltage values at the first after-hyperpolarization starting 
+a given number of ms (default: 5) after the peak
 
 - **Required features**: LibV1:peak_indices
 - **Units**: mV
@@ -264,6 +264,60 @@ Width of spike at threshold
         onset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] > threshold)[0]]
         offset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] < threshold && t > onset_time)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
+
+
+**LibV5 : AP_peak_upstroke**
+
+Maximum of rise rate of spike
+
+- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    ap_peak_upstroke = []
+    for apbi, pi in zip(ap_begin_indices, peak_indices):
+        ap_peak_upstroke.append(numpy.max(dvdt[apbi:pi]))
+
+
+**LibV5 : AP_peak_downstroke**
+
+Minimum of fall rate from spike
+
+- **Required features**: LibV5: min_AHP_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    ap_peak_downstroke = []
+    for ahpi, pi in zip(min_ahp_indices, peak_indices):
+        ap_peak_downstroke.append(numpy.min(dvdt[pi:ahpi]))
+
+**LibV2 : AP_rise_time**
+
+Time between the AP threshold and the peak, given a window
+(default: from 0% to 100% of the AP amplitude)
+
+- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices, LibV1: AP_amplitude
+- **Units**: ms
+- **Pseudocode**: ::
+
+    rise_times = []
+    begin_voltages = AP_amps * rise_start_perc + voltage[AP_begin_indices]
+    end_voltages = AP_amps * rise_end_perc + voltage[AP_begin_indices]
+
+    for AP_begin_indice, peak_indice, begin_v, end_v in zip(
+        AP_begin_indices, peak_indices, begin_voltages, end_voltages
+    ):
+        voltage_window = voltage[AP_begin_indice:peak_indice]
+
+        new_begin_indice = AP_begin_indice + numpy.min(
+            numpy.where(voltage_window >= begin_v)[0]
+        )
+        new_end_indice = AP_begin_indice + numpy.max(
+            numpy.where(voltage_window <= end_v)[0]
+        )
+
+        rise_times.append(time[new_end_indice] - time[new_begin_indice])
+
 
 
 Voltage features

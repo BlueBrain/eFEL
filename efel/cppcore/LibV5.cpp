@@ -2981,3 +2981,126 @@ int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
+
+//
+// *** Action potential peak upstroke ***
+//
+static int __AP_peak_upstroke(const vector<double>& t, const vector<double>& v,
+                              const vector<int>& pi, // peak indices
+                              const vector<int>& apbi, // AP begin indices
+                              vector<double>& pus) { // AP peak upstroke
+  vector<double> dvdt(v.size());
+  vector<double> dv;
+  vector<double> dt;
+  getCentralDifferenceDerivative(1., v, dv);
+  getCentralDifferenceDerivative(1., t, dt);
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
+            std::divides<double>());
+
+  for (size_t i=0; i < std::min(apbi.size(), pi.size()); i++){
+    pus.push_back(*std::max_element(dvdt.begin()+apbi[i], dvdt.begin()+pi[i]));
+  }
+
+  return pus.size();
+}
+
+int LibV5::AP_peak_upstroke(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+
+  // Check if calculated already
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_peak_upstroke", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  // Get input parameters
+  vector<double> t;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal < 0) return -1;
+  vector<double> v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal < 0) return -1;
+  vector<int> apbi;
+  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
+  if (retVal < 0) return -1;
+  vector<int> pi;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
+  if (retVal < 0) return -1;
+  vector<double> pus;
+
+  
+  // Calculate feature
+  retVal =
+      __AP_peak_upstroke(t, v, pi, apbi, pus);
+
+  // Save feature value
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "AP_peak_upstroke", pus);
+  }
+  return retVal;
+}
+
+
+//
+// *** Action potential peak downstroke ***
+//
+static int __AP_peak_downstroke(const vector<double>& t, const vector<double>& v,
+                              const vector<int>& pi, // peak indices
+                              const vector<int>& ahpi, // min AHP indices
+                              vector<double>& pds) { // AP peak downstroke
+  vector<double> dvdt(v.size());
+  vector<double> dv;
+  vector<double> dt;
+  getCentralDifferenceDerivative(1., v, dv);
+  getCentralDifferenceDerivative(1., t, dt);
+  transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
+            std::divides<double>());
+
+  for (size_t i=0; i < std::min(ahpi.size(), pi.size()); i++){
+    pds.push_back(*std::min_element(dvdt.begin()+pi[i], dvdt.begin()+ahpi[i]));
+  }
+
+  return pds.size();
+}
+
+int LibV5::AP_peak_downstroke(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+
+  // Check if calculated already
+  retVal = CheckInMap(IntFeatureData, StringData, "AP_peak_downstroke", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  // Get input parameters
+  vector<double> t;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal < 0) return -1;
+  vector<double> v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal < 0) return -1;
+  vector<int> ahpi;
+  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
+  if (retVal < 0) return -1;
+  vector<int> pi;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
+  if (retVal < 0) return -1;
+  vector<double> pds;
+
+  
+  // Calculate feature
+  retVal =
+      __AP_peak_downstroke(t, v, pi, ahpi, pds);
+
+  // Save feature value
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "AP_peak_downstroke", pds);
+  }
+  return retVal;
+}
