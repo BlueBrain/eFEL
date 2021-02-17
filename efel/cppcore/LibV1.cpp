@@ -524,16 +524,18 @@ int LibV1::AHP_depth_abs(mapStr2intVec& IntFeatureData,
 }
 
 // *** AHP_depth_abs_slow ***
-// same as AHP_depth_abs but the minimum search starts 5 ms after the spike,
+// same as AHP_depth_abs but the minimum search starts 
+// 5 ms (or custom duration) after the spike,
 // first ISI is ignored
 static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                                         const vector<double>& v,
                                         const vector<int>& peakindices,
+                                        double sahp_start,
                                         vector<int>& adas_indices) {
   adas_indices.resize(peakindices.size() - 2);
   for (size_t i = 0; i < adas_indices.size(); i++) {
-    // start 5 ms after last spike
-    double t_start = t[peakindices[i + 1]] + 5;
+    // start 5 ms (or custom duration) after last spike
+    double t_start = t[peakindices[i + 1]] + sahp_start;
     adas_indices[i] = distance(
         v.begin(),
         min_element(
@@ -571,9 +573,15 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
         "AHP_slow_time.\n";
     return -1;
   }
+  // time after the spike in ms after which to start searching for minimum
+  vector<double> sahp_start;
+  retval = getVec(DoubleFeatureData, StringData, "sahp_start", sahp_start);
+  if (retval < 0){
+    sahp_start.push_back(5);
+  };
 
   vector<int> adas_indices;
-  retval = __AHP_depth_abs_slow_indices(t, v, peakindices, adas_indices);
+  retval = __AHP_depth_abs_slow_indices(t, v, peakindices, sahp_start[0], adas_indices);
   vector<double> ahpdepthabsslow(adas_indices.size());
   vector<double> ahpslowtime(adas_indices.size());
   for (size_t i = 0; i < adas_indices.size(); i++) {

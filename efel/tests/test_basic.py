@@ -2047,3 +2047,110 @@ def test_rise_time_perc():
 
     for exp, rise_time in zip(expected, ap_rise_time):
         nt.assert_almost_equal(exp, rise_time)
+
+
+def test_slow_ahp_start():
+    """basic: Test AHP_depth_abs_slow with a custom after spike start time"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    trace['sahp_start'] = [12.0]
+
+    features = ['AHP_depth_abs_slow', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    ahp_depth_abs_slow = feature_values[0]['AHP_depth_abs_slow']
+
+    expected = []
+    for i in range(1, len(peak_indices) - 1):
+        new_start_time = time[peak_indices[i]] + trace['sahp_start'][0]
+        new_idx = numpy.min(numpy.where(time >= new_start_time)[0])
+        expected.append(numpy.min(voltage[new_idx:peak_indices[i + 1]]))
+
+    for exp, ahp_slow in zip(expected, ahp_depth_abs_slow):
+        nt.assert_almost_equal(exp, ahp_slow)
+
+
+def test_AP_peak_upstroke():
+    """basic: Test AP_peak_upstroke (maximum peak rise rate)"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_peak_upstroke', 'peak_indices', 'AP_begin_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    ap_begin_indices = feature_values[0]['AP_begin_indices']
+    ap_peak_upstroke = feature_values[0]['AP_peak_upstroke']
+
+    expected = []
+    # compute dv/dt  omit dx and /2 that cancel out in division
+    dv = (
+        [voltage[1] - voltage[0]]
+        + list(voltage[2:] - voltage[:-2])
+        + [voltage[-1] - voltage[-2]]
+    )
+    dt = (
+        [time[1] - time[0]]
+        + list(time[2:] - time[:-2])
+        + [time[-1] - time[-2]]
+    )
+    dvdt = numpy.array(dv) / numpy.array(dt)
+    # compute ap peak upstroke
+    for apbi, pi in zip(ap_begin_indices, peak_indices):
+        expected.append(numpy.max(dvdt[apbi:pi]))
+
+    for exp, pus in zip(expected, ap_peak_upstroke):
+        nt.assert_almost_equal(exp, pus, places=6)
+
+
+def test_AP_peak_downstroke():
+    """basic: Test AP_peak_downstroke (minimum peak fall rate)"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_peak_downstroke', 'peak_indices', 'min_AHP_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    min_ahp_indices = feature_values[0]['min_AHP_indices']
+    ap_peak_downstroke = feature_values[0]['AP_peak_downstroke']
+
+    expected = []
+    # compute dv/dt  omit dx and /2 that cancel out in division
+    dv = (
+        [voltage[1] - voltage[0]]
+        + list(voltage[2:] - voltage[:-2])
+        + [voltage[-1] - voltage[-2]]
+    )
+    dt = (
+        [time[1] - time[0]]
+        + list(time[2:] - time[:-2])
+        + [time[-1] - time[-2]]
+    )
+    dvdt = numpy.array(dv) / numpy.array(dt)
+    # compute ap peak downstroke
+    for ahpi, pi in zip(min_ahp_indices, peak_indices):
+        expected.append(numpy.min(dvdt[pi:ahpi]))
+
+    for exp, pds in zip(expected, ap_peak_downstroke):
+        nt.assert_almost_equal(exp, pds, places=6)

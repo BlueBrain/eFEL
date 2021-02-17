@@ -244,6 +244,8 @@ void cFeature::fillfeaturetypes() {
   featuretypes["sag_amplitude"] = "double";
   featuretypes["sag_ratio1"] = "double";
   featuretypes["sag_ratio2"] = "double";
+  featuretypes["AP_peak_upstroke"] = "double";
+  featuretypes["AP_peak_downstroke"] = "double";
 
   // end of feature types
 }
