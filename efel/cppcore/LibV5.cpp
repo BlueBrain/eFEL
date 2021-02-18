@@ -420,13 +420,11 @@ static int __min_AHP_indices(const vector<double>& t, const vector<double>& v,
         v.begin(), first_min_element(v.begin() + peak_indices_plus[i],
                                      v.begin() + peak_indices_plus[i + 1]));
 
-    if (ahpindex != end_index - 1) {
       min_ahp_indices.push_back(ahpindex);
 
       EFEL_ASSERT(ahpindex < v.size(),
                   "AHP index falls outside of voltage array");
       min_ahp_values.push_back(v[ahpindex]);
-    }
   }
 
   return min_ahp_indices.size();

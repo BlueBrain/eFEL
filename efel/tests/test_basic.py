@@ -590,7 +590,7 @@ def test_min_AHP_indices_strict():
 
     import efel
 
-    for strict, n_of_ahp in [(False, 17), (True, 16)]:
+    for strict, n_of_ahp in [(False, 17), (True, 17)]:
         efel.reset()
         efel.setIntSetting('strict_stiminterval', strict)
 
@@ -642,8 +642,10 @@ def test_min_AHP_indices_single_peak():
         [trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
 
     assert len(feats[0]["peak_indices"]) == 1
-    assert feats[0]["min_AHP_indices"] is None
-    assert feats[0]["min_AHP_values"] is None
+    assert len(feats[0]["min_AHP_indices"]) == 1
+    assert len(feats[0]["min_AHP_values"]) == 1
+    assert feats[0]["min_AHP_indices"][0] == 499
+    assert abs(feats[0]["min_AHP_values"][0] - (-77.5954895)) < 1e-5
 
 
 def test_strict_stiminterval():
