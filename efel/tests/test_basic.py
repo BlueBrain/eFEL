@@ -621,6 +621,31 @@ def test_min_AHP_indices_strict():
         nt.assert_equal(len(AHP_time_from_peak), n_of_ahp)
 
 
+def test_min_AHP_indices_single_peak():
+    """basic: Test min_AHP_indices with a single peak."""
+
+    import efel
+
+    trace_file = os.path.join(
+        testdata_dir,
+        'basic',
+        'min_AHP_values_single_peak.txt')
+    trace_values = numpy.loadtxt(trace_file)
+
+    trace = {}
+    trace["T"] = trace_values[:, 0]
+    trace["V"] = trace_values[:, 1]
+    trace["stim_start"] = [1950]
+    trace["stim_end"] = [2050]
+
+    feats = efel.getFeatureValues(
+        [trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
+
+    assert len(feats[0]["peak_indices"]) == 1
+    assert feats[0]["min_AHP_indices"] is None
+    assert feats[0]["min_AHP_values"] is None
+
+
 def test_strict_stiminterval():
     """basic: Test strict_stiminterval"""
 

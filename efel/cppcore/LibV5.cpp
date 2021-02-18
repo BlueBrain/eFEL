@@ -496,6 +496,8 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
       __min_AHP_indices(t, v, peak_indices, stim_start, stim_end,
                         strict_stiminterval, min_ahp_indices, min_ahp_values);
 
+  if (retVal == 0)
+    return -1;
   if (retVal > 0) {
     setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
     setVec(DoubleFeatureData, StringData, "min_AHP_values",
