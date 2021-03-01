@@ -39,11 +39,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python: [cp27, cp36, cp37, cp38, cp39]
-        arch: [x86_64, i686]
+        arch: [x86_64, i686, amd64, 32]
         exclude:
           - os: macos-latest
+            arch: i686
+          - os: macos-latest
+            arch: amd64
+          - os: macos-latest
+            arch: 32
+          - os: ubuntu-latest
+            arch: amd64
+          - os: ubuntu-latest
+            arch: 32
+          - os: windows-latest
+            arch: x86_64
+          - os: windows-latest
             arch: i686
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
@@ -59,8 +71,29 @@ jobs:
           python-version: 3.6
       - name: Install cibuildwheel
         run: pip install cibuildwheel
+
+      # set the compiler for py27 on windows.
+      # see https://cibuildwheel.readthedocs.io/en/stable/cpp_standards/ for details.
+      - name: set up VS build environment for windows 64 with py27
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' && matrix.arch == 'amd64' }}
+      - name: set up VS build environment for windows 32 with py27
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' && matrix.arch == 32 }}
+
       - name: Build wheels
         run: cibuildwheel --output-dir wheelhouse
+        if: ${{ matrix.os != 'windows-latest' || matrix.python != 'cp27' }}
+      # use MSVC 9 if py27 on windows
+      - name: Build wheels for windows with py27
+        run: cibuildwheel --output-dir wheelhouse
+        env:
+          DISTUTILS_USE_SDK: 1
+          MSSdk: 1
+        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' }}
+
       - uses: actions/upload-artifact@v2
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.arch }}
@@ -112,8 +145,9 @@ jobs:
           mkdir -p dist
           find artifacts -type f \( -iname \*.whl -o -iname \*.tar.gz \) -exec mv {} dist \;
 
-      - name: Publish package to PyPI
+      - name: Publish package to TestPyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
-          password: ${{ secrets.PYPI_PASSWORD }}
+          password: ${{ secrets.TEST_PYPI_PASSWORD }}
+          repository_url: https://test.pypi.org/legacy/
