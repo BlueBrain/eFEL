@@ -18,7 +18,32 @@ Spike event features
 
 .. image:: _static/figures/inv_ISI.png
 
-**LibV5 : inv_time_to_first_spike**
+LibV1 : time_to_first_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time from the start of the stimulus to the maximum of the first peak
+
+- **Required features**: peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_first_spike = peaktime[0] - stimstart
+
+
+LibV5 : time_to_second_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time from the start of the stimulus to the maximum of the second peak
+
+- **Required features**: peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_second_spike = peaktime[1] - stimstart
+
+
+LibV5 : inv_time_to_first_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over time to first spike; returns 0 when no spike
 
@@ -32,7 +57,8 @@ Spike event features
         inv_time_to_first_spike = 0
 
 
-**LibV5 : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fith_ISI, inv_last_ISI**
+LibV5 : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
 
@@ -77,7 +103,8 @@ Spike event features
         inv_last_ISI = 0
 
 
-**LibV5 : time_to_last_spike**
+LibV5 : time_to_last_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 time from stimulus start to last spike
 
@@ -90,7 +117,8 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-**LibV1 : Spikecount**
+LibV1 : Spikecount
+~~~~~~~~~~~~~~~~~~
 
 number of spikes in the trace, including outside of stimulus interval
 
@@ -100,7 +128,8 @@ number of spikes in the trace, including outside of stimulus interval
 
     Spikecount = len(peak_indices)
 
-**LibV5 : Spikecount_stimint**
+LibV5 : Spikecount_stimint
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes inside the stimulus interval
 
@@ -111,7 +140,8 @@ number of spikes inside the stimulus interval
     peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
     Spikecount_stimint = len(peaktimes_stimint)
 
-**LibV5 : number_initial_spikes**
+LibV5 : number_initial_spikes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes at the beginning of the stimulus
 
@@ -125,7 +155,22 @@ number of spikes at the beginning of the stimulus
         (peak_time >= stimstart) & \
         (peak_time <= stimstart + initial_length)))
 
-**LibV5 : ISI_semilog_slope**
+LibV1 : mean_frequency
+~~~~~~~~~~~~~~~~~~~~~~
+
+The mean frequency of the firing rate
+
+- **Required features**: stim_start, stim_end, LibV1:peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    condition = np.all((stim_start < peak_time, peak_time < stim_end), axis=0)
+    spikecount = len(peak_time[condition])
+    last_spike_time = peak_time[peak_time < stim_end][-1]
+    mean_frequency = 1000 * spikecount / (last_spike_time - stim_start)
+
+LibV5 : ISI_semilog_slope
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a semilog plot of the ISI values
 
@@ -139,7 +184,8 @@ The slope of a linear fit to a semilog plot of the ISI values
 
     ISI_semilog_slope = slope
 
-**LibV5 : ISI_log_slope**
+LibV5 : ISI_log_slope
+~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values
 
@@ -153,7 +199,22 @@ The slope of a linear fit to a loglog plot of the ISI values
 
     ISI_log_slope = slope
 
-**LibV5 : check_AISInitiation**
+LibV1 : ISI_CV
+~~~~~~~~~~~~~~
+
+The coefficient of variation of the ISIs
+
+- **Required features**: ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    ISI_mean = numpy.mean(ISI_values)
+    ISI_variance = numpy.sum(numpy.square(ISI_values-ISI_mean)) / (len(ISI_values)-1)
+    ISI_std = math.sqrt(ISI_variance)
+    ISI_CV = ISI_std / ISI_mean
+
+LibV5 : check_AISInitiation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Check initiation of AP in AIS
 
@@ -166,8 +227,18 @@ Check initiation of AP in AIS
     for soma_time, ais_time in zip(AP_begin_time, AP_begin_time;location_AIS):
         if soma_time < ais_time:
             return None
-    return [1]        
+    return [1]
 
+LibV1 : burst_number
+~~~~~~~~~~~~~~~~~~~~
+
+The number of bursts
+
+- **Required features**: burst_mean_freq
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_number = len(burst_mean_freq)
 
 
 Spike shape features
@@ -175,7 +246,8 @@ Spike shape features
 
 .. image:: _static/figures/AP_Amplitude.png
 
-**LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp**
+LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from spike onset
 
@@ -190,14 +262,16 @@ The relative height of the action potential from spike onset
 
 .. image:: _static/figures/AHP.png
 
-**LibV1 : AHP_depth_abs**
+LibV1 : AHP_depth_abs
+~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization
 
 - **Required features**: LibV5:min_AHP_values (mV)
 - **Units**: mV
 
-**LibV1 : AHP_depth_abs_slow**
+LibV1 : AHP_depth_abs_slow
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization starting 
 a given number of ms (default: 5) after the peak
@@ -205,7 +279,8 @@ a given number of ms (default: 5) after the peak
 - **Required features**: LibV1:peak_indices
 - **Units**: mV
 
-**LibV1 : AHP_slow_time**
+LibV1 : AHP_slow_time
+~~~~~~~~~~~~~~~~~~~~~
 
 Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
 interspike interval 
@@ -213,7 +288,8 @@ interspike interval
 - **Required features**: LibV1:AHP_depth_abs_slow
 - **Units**: constant
   
-**LibV1 : AHP_depth**
+LibV1 : AHP_depth
+~~~~~~~~~~~~~~~~~
 
 Relative voltage values at the first after-hyperpolarization
 
@@ -224,7 +300,8 @@ Relative voltage values at the first after-hyperpolarization
     min_AHP_values = first_min_element(voltage, peak_indices)
     AHP_depth = min_AHP_values[:] - voltage_base
 
-**LibV5 : AHP_time_from_peak**
+LibV5 : AHP_time_from_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between AP peaks and first AHP depths
 
@@ -239,7 +316,8 @@ Time between AP peaks and first AHP depths
 .. image:: _static/figures/AP_duration_half_width.png
 
 
-**LibV2 : AP_duration_half_width**
+LibV2 : AP_duration_half_width
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at half spike amplitude
 
@@ -251,7 +329,8 @@ Width of spike at half spike amplitude
     AP_fall_indices = index_after_peak((v(peak_indices) - v(AP_begin_indices)) / 2)
     AP_duration_half_width = t(AP_fall_indices) - t(AP_rise_indices)
 
-**LibV1 : AP_width**
+LibV1 : AP_width
+~~~~~~~~~~~~~~~~
 
 Width of spike at threshold
 
@@ -266,7 +345,8 @@ Width of spike at threshold
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
 
 
-**LibV5 : AP_peak_upstroke**
+LibV5 : AP_peak_upstroke
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Maximum of rise rate of spike
 
@@ -279,7 +359,8 @@ Maximum of rise rate of spike
         ap_peak_upstroke.append(numpy.max(dvdt[apbi:pi]))
 
 
-**LibV5 : AP_peak_downstroke**
+LibV5 : AP_peak_downstroke
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Minimum of fall rate from spike
 
@@ -291,7 +372,8 @@ Minimum of fall rate from spike
     for ahpi, pi in zip(min_ahp_indices, peak_indices):
         ap_peak_downstroke.append(numpy.min(dvdt[pi:ahpi]))
 
-**LibV2 : AP_rise_time**
+LibV2 : AP_rise_time
+~~~~~~~~~~~~~~~~~~~~
 
 Time between the AP threshold and the peak, given a window
 (default: from 0% to 100% of the AP amplitude)
@@ -467,11 +549,69 @@ LibV5 : voltage_deflection_vb_ssse
 
 The voltage deflection between voltage base and steady-state voltage at stimend
 
+The voltage base used is the average voltage during the last 10% of time before the stimulus
+and the steady state voltage at stimend used is
+the average voltage during the last 10% of the stimulus duration.
+
 - **Required features**: t, V, stim_start, stim_end, voltage_base, steady_state_voltage_stimend
 - **Units**: mV
 - **Pseudocode**: ::
 
     voltage_deflection_vb_ssse = steady_state_voltage_stimend - voltage_base
+
+LibV1 : voltage_deflection
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+The voltage deflection between voltage base and steady-state voltage at stimend
+
+The voltage base used is the average voltage during all of the time before the stimulus
+and the steady state voltage at stimend used is
+the average voltage of the five values before the last five values
+before the end of the stimulus duration.
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    voltage_base = numpy.mean(V[t < stim_start])
+    stim_end_idx = numpy.where(t >= stim_end)[0][0]
+    steady_state_voltage_stimend = numpy.mean(V[stim_end_idx-10:stim_end_idx-5])
+    voltage_deflection = steady_state_voltage_stimend - voltage_base
+
+LibV5 : voltage_deflection_begin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+The voltage deflection between voltage base and steady-state voltage soon after stimulation start
+
+The voltage base used is the average voltage during all of the time before the stimulus
+and the steady state voltage used is
+the average voltage taken from 5% to 15% of the stimulus duration.
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    voltage_base = numpy.mean(V[t < stim_start])
+    tstart = stim_start + 0.05 * (stim_end - stim_start)
+    tend = stim_start + 0.15 * (stim_end - stim_start)
+    condition = numpy.all((tstart < t, t < tend), axis=0)
+    steady_state_voltage_stimend = numpy.mean(V[condition])
+    voltage_deflection = steady_state_voltage_stimend - voltage_base
+
+LibV5 : voltage_after_stim
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+The mean voltage after the stimulus in
+(stim_end + 25%*end_period, stim_end + 75%*end_period)
+
+- **Required features**: t, V, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    tstart = stim_end + (t[-1] - stimEnd) * 0.25
+    tend = stim_end + (t[-1] - stimEnd) * 0.75
+    condition = numpy.all((tstart < t, t < tend), axis=0)
+    voltage_after_stim = numpy.mean(V[condition])
 
 LibV1: minimum_voltage
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -495,12 +635,24 @@ The maximum of the voltage during the stimulus
 
     maximum_voltage = max(voltage[numpy.where((t >= stim_start) & (t <= stim_end))])
 
+LibV5: maximum_voltage_from_voltagebase
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference between maximum voltage during stimulus and voltage base
+
+- **Required features**: maximum_voltage, voltage_base
+- **Units**: mV
+- **Pseudocode**: ::
+
+    maximum_voltage_from_voltagebase = maximum_voltage - voltage_base
+
 
 
 Requested eFeatures
 ===================
 
-**LibV1 : AHP_depth_last**
+LibV1 : AHP_depth_last
+~~~~~~~~~~~~~~~~~~~~~~
 
 Relative voltage values at the last after-hyperpolarization
 
@@ -512,7 +664,8 @@ Relative voltage values at the last after-hyperpolarization
     AHP_depth = last_AHP_values[:] - voltage_base
 
 
-**LibV5 : AHP_time_from_peak_last**
+LibV5 : AHP_time_from_peak_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between AP peaks and last AHP depths
 
@@ -524,7 +677,8 @@ Time between AP peaks and last AHP depths
     AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
 
 
-**LibV5 : steady_state_voltage_stimend_from_voltage_base**
+LibV5 : steady_state_voltage_stimend_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage during the last 90% of the stimulus duration realtive to voltage_base
 
@@ -535,7 +689,9 @@ The average voltage during the last 90% of the stimulus duration realtive to vol
     steady_state_voltage_stimend_from_voltage_base = steady_state_voltage_stimend - voltage_base
 
 
-**LibV5 : min_duringstim_from_voltage_base**
+LibV5 : min_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The minimum voltage during stimulus
 
 - **Required features**: LibV5: min_duringstim (mV), LibV5: voltage_base (mV)
@@ -545,7 +701,9 @@ The minimum voltage during stimulus
     min_duringstim_from_voltage_base = minimum_voltage - voltage_base
 
 
-**LibV5 : max_duringstim_from_voltage_base**
+LibV5 : max_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The minimum voltage during stimulus
 
 - **Required features**: LibV5: max_duringstim (mV), LibV5: voltage_base (mV)
@@ -554,7 +712,9 @@ The minimum voltage during stimulus
 
     max_duringstim_from_voltage_base = maximum_voltage - voltage_base
 
-**LibV5 : diff_max_duringstim**
+LibV5 : diff_max_duringstim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Difference between maximum and steady state during stimulation
 
 - **Required features**: LibV5: max_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
@@ -563,7 +723,9 @@ Difference between maximum and steady state during stimulation
 
     diff_max_duringstim: max_duringstim - steady_state_voltage_stimend
 
-**LibV5 : diff_min_duringstim**
+LibV5 : diff_min_duringstim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Difference between minimum and steady state during stimulation
 
 - **Required features**: LibV5: min_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
