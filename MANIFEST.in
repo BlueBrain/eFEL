@@ -1,5 +1,6 @@
 include versioneer.py
 include efel/_version.py
 include LICENSE.txt
-include LGPL.txt
+include COPYING
+include COPYING.lesser
 include AUTHORS.txt
