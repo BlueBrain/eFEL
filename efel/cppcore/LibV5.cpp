@@ -2999,8 +2999,22 @@ static int __AP_peak_upstroke(const vector<double>& t, const vector<double>& v,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  for (size_t i=0; i < std::min(apbi.size(), pi.size()); i++){
-    pus.push_back(*std::max_element(dvdt.begin()+apbi[i], dvdt.begin()+pi[i]));
+  // Make sure that each value of pi is greater than its apbi counterpart
+  vector<int> new_pi;
+  size_t j=0;
+  for (size_t i=0; i < apbi.size(); i++){
+    while (j < pi.size() && pi[j] < apbi[i]){
+      j++;
+    }
+
+    if (j < pi.size() && pi[j] >= apbi[i]){
+      new_pi.push_back(pi[j]);
+      j++;
+    }
+  }
+
+  for (size_t i=0; i < std::min(apbi.size(), new_pi.size()); i++){
+    pus.push_back(*std::max_element(dvdt.begin()+apbi[i], dvdt.begin()+new_pi[i]));
   }
 
   return pus.size();
