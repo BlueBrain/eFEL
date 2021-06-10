@@ -34,6 +34,8 @@ struct linear_fit_result
   double slope;
   // average residual sum squares
   double average_rss;
+  // normalized standard deviation
+  double normalized_std;
   // coefficient of determination R^2
   double r_square;
 };
