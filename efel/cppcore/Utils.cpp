@@ -156,7 +156,7 @@ slope_straight_line_fit(const vector<double>& x,
   // calculate the normalized standard deviation
   // the normalisation helps comparing between dataset with different ranges
   double range = *max_element(y.begin(), y.end()) - *min_element(y.begin(), y.end());
-  result.normalized_std = residuals * x.size() / (range * range);
+  result.normalized_std = residuals / (range * range);
 
   // calculate the coefficient of determination R^2
   double y_av = sum_y / x.size();
