@@ -472,6 +472,40 @@ The decay time constant of the voltage right after the stimulus
 
     decay_time_constant_after_stim = -1. / slope
 
+LibV5 : sag_time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The decay time constant of the exponential of the voltage decay from the bottom of the sag to the steady-state.
+
+The start of the decay is taken at the minimum voltage (the bottom of the sag).
+The end of the decay is taken when the voltage crosses the steady state voltage minus 10% of the sag amplitude.
+The time constant is the slope of the linear fit to the log of the voltage.
+The golden search algorithm is not used, since the data is expected to be noisy and adding a parameter in the log
+( log(voltage + x) ) is likely to increase errors on the fit.
+
+- **Required features**: t, V, stim_start, stim_end, minimum_voltage, steady_state_voltage_stimend, sag_amplitude
+- **Units**: ms
+- **Pseudocode**: ::
+
+    # get start decay
+    start_decay = numpy.argmin(vinterval)
+
+    # get end decay
+    v90 = steady_state_v - 0.1 * sag_ampl
+    end_decay = numpy.where((tinterval > tinterval[start_decay]) & (vinterval >= v90))[0][0]
+
+    v_reference = vinterval[end_decay]
+
+    # select t, v in decay interval
+    interval_indices = numpy.arange(start_decay, end_decay)
+    interval_time = tinterval[interval_indices]
+    interval_voltage = abs(vinterval[interval_indices] - v_reference)
+
+    # get tau
+    log_interval_voltage = numpy.log(interval_voltage)
+    slope, _ = numpy.polyfit(interval_time, log_interval_voltage, 1)
+    tau = abs(1. / slope)
+
 .. image:: _static/figures/sag.png
 
 LibV5 : sag_amplitude

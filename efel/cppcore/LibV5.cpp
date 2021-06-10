@@ -25,6 +25,7 @@
 #include <deque>
 #include <functional>
 #include <iterator>
+#include <iostream>
 
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
@@ -2555,6 +2556,129 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                dtcas);
 
   return 1;
+}
+
+// compute time constant for the decay from the sag to the steady_state_voltage
+// noisy data is expected, so no golden section search is used
+// because with noisy data, x>0 often gives a worse logarithmic fit
+static int __sag_time_constant(const vector<double>& times,
+                            const vector<double>& voltage,
+                            const double minimum_voltage,
+                            const double steady_state_v,
+                            const double sag_amplitude,
+                            const double stimStart,
+                            const double stimEnd,
+                            vector<double>& sagtc) {
+  // minimal required length of each decay (indices)
+  size_t min_length = 10;
+
+  // get start index
+  const size_t decayStartIdx =
+      distance(voltage.begin(),
+          find_if(voltage.begin(), voltage.end(),
+                  std::bind2nd(std::less_equal<double>(), minimum_voltage)));
+
+
+  // voltage at which 90% of the sag amplitude has decayed
+  double steady_state_90 = steady_state_v - sag_amplitude * 0.1;
+  // get end index
+  const size_t decayEndIdx =
+      distance(voltage.begin(),
+          find_if(voltage.begin() + decayStartIdx, voltage.end(),
+                  std::bind2nd(std::greater_equal<double>(), steady_state_90)));
+
+  // voltage reference by which the voltage (i the decay interval)
+  // is going to be substracted
+  // there should be no '0' in (decay_v - v_reference), 
+  // so no problem when the log is taken
+  double v_reference = voltage[decayEndIdx];
+
+  // decay interval
+  vector<double> VInterval(&voltage[decayStartIdx], &voltage[decayEndIdx]);
+  vector<double> TInterval(&times[decayStartIdx], &times[decayEndIdx]);
+
+  // compute time constant
+  vector<double> decayValues(decayEndIdx - decayStartIdx);
+  for (size_t i=0; i < VInterval.size(); ++i){
+    const double u0 = std::abs(VInterval[i] - v_reference);
+    decayValues[i] = log(u0);
+  }
+  if (decayValues.size() < min_length){
+    GErrorStr +=
+        "\nsag time constant: Not enough data points to compute time constant.\n";
+    return -1;
+  }
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(TInterval, decayValues);
+
+  // append tau
+  sagtc.push_back(std::abs(1.0 / fit.slope));
+
+  return 1;
+}
+
+// *** Decay time constant measured from minimum voltage to steady-state voltage***
+int LibV5::sag_time_constant(mapStr2intVec& IntFeatureData,
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "sag_time_constant", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  vector<double> voltages;
+  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
+  if (retVal < 0) return -1;
+
+  vector<double> times;
+  retVal = getVec(DoubleFeatureData, StringData, "T", times);
+  if (retVal < 0) return -1;
+
+  vector<double> vect;
+
+  retVal = getVec(DoubleFeatureData, StringData, "stim_end", vect);
+  if (retVal != 1) return -1;
+  const double stimEnd = vect[0];
+
+  retVal = getVec(DoubleFeatureData, StringData, "stim_start", vect);
+  if (retVal != 1) return -1;
+  const double stimStart = vect[0];
+
+  vector<double> minimum_voltage;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "minimum_voltage",
+                        minimum_voltage);
+  if (retVal <= 0) return -1;
+
+  vector<double> steady_state_v;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "steady_state_voltage_stimend",
+                        steady_state_v);
+  if (retVal <= 0) return -1;
+
+  vector<double> sag_amplitude;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "sag_amplitude",
+                        sag_amplitude);
+  if (retVal <= 0) return -1;
+
+  vector<double> sagtc;
+  retVal = __sag_time_constant(
+      times, voltages, 
+      minimum_voltage[0], 
+      steady_state_v[0],
+      sag_amplitude[0],
+      stimStart, stimEnd, sagtc);
+
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "sag_time_constant",
+               sagtc);
+  }
+  return retVal;
 }
 
 /// *** Voltage deflection between voltage_base and steady_state_voltage_stimend

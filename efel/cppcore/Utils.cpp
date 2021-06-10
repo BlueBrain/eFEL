@@ -151,7 +151,8 @@ slope_straight_line_fit(const vector<double>& x,
     double res = y[i] - yintercept - result.slope * x[i];
     residuals += res * res;
   }
-  result.average_rss = residuals / x.size();
+  double diff=*max_element(y.begin(), y.end()) - *min_element(y.begin(), y.end());
+  result.average_rss = residuals / x.size() / diff / diff;
 
   // calculate the coefficient of determination R^2
   double y_av = sum_y / x.size();
