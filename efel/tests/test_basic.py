@@ -1897,6 +1897,85 @@ def test_decay_time_constant_after_stim2():
         feature_values['decay_time_constant_after_stim'][0], places=1)
 
 
+def sag_time_constant(
+        time, voltage, min_v, steady_state_v, sag_ampl, stim_start, stim_end):
+    """sag_time_constant numpy implementation"""
+    # select t, v in stimulus interval
+    start_idx = numpy.where(time == stim_start)[0][0]
+    end_idx = numpy.where(time == stim_end)[0][0]
+    vinterval = voltage[start_idx:end_idx]
+    tinterval = time[start_idx:end_idx]
+
+    # get start decay
+    start_decay = numpy.argmin(vinterval)
+
+    # get end decay
+    v90 = steady_state_v - 0.1 * sag_ampl
+    end_decay = numpy.where(
+        (tinterval > tinterval[start_decay]) & (vinterval >= v90)
+    )[0][0]
+
+    v_reference = vinterval[end_decay]
+
+    # select t, v in decay interval
+    interval_indices = numpy.arange(start_decay, end_decay)
+    interval_time = tinterval[interval_indices]
+    interval_voltage = abs(vinterval[interval_indices] - v_reference)
+
+    # get tau
+    log_interval_voltage = numpy.log(interval_voltage)
+    slope, _ = numpy.polyfit(interval_time, log_interval_voltage, 1)
+    tau = abs(1. / slope)
+
+    return tau
+
+
+def test_sag_time_constant():
+    """basic: Test sag_time_constant"""
+
+    import efel
+    efel.reset()
+
+    interp_dt = 0.1
+
+    stim_start = 800.0
+    stim_end = 3800.0
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = interpolate(time, voltage, interp_dt)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'minimum_voltage',
+        'steady_state_voltage_stimend',
+        'sag_time_constant',
+        'sag_amplitude'
+    ]
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+    min_v = feature_values['minimum_voltage'][0]
+    steady_state_v = feature_values['steady_state_voltage_stimend'][0]
+    sag_ampl = feature_values['sag_amplitude'][0]
+
+    expected = sag_time_constant(
+        time,
+        voltage,
+        min_v,
+        steady_state_v,
+        sag_ampl,
+        stim_start,
+        stim_end)
+
+    nt.assert_almost_equal(
+        expected,
+        feature_values['sag_time_constant'][0])
+
+
 def test_getmeanfeaturevalues():
     """basic: Test getMeanFeatureValues"""
 
