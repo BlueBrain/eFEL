@@ -1279,6 +1279,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   size_t stimstartindex;
   for (stimstartindex = 0; t[stimstartindex] < stimStart; stimstartindex++)
     ;
+  // increment stimstartindex to skip a possible transient
   stimstartindex += 10;
   // int stimendindex;
   // for(stimendindex = 0; t[stimendindex] < stimEnd; stimendindex++) ;
@@ -1366,7 +1367,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
 
   linear_fit_result fit;
   fit = slope_straight_line_fit(t_decay, log_v);
-  double residuum = fit.average_rss;
+  double residuum = fit.normalized_std;
   bool right = true;
   double newx;
   while (x[2] - x[0] > .01) {
@@ -1382,7 +1383,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
     }
     fit = slope_straight_line_fit(t_decay, log_v);
 
-    if (fit.average_rss < residuum) {
+    if (fit.normalized_std < residuum) {
       if (right) {
         x[0] = x[1];
         x[1] = newx;
@@ -1390,7 +1391,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
         x[2] = x[1];
         x[1] = newx;
       }
-      residuum = fit.average_rss;
+      residuum = fit.normalized_std;
     } else {
       if (right) {
         x[2] = newx;
