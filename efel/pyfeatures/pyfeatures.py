@@ -28,17 +28,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy
 import efel.cppcore
+from numpy.fft import *
 
 
 all_pyfeatures = [
     'voltage',
     'time',
-    'current',
     'ISIs',
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',
-    'depol_block']
+    'depol_block',
+    'current',
+    'impedance']
 
 
 def voltage():
@@ -51,6 +53,35 @@ def time():
     return _get_cpp_feature("time")
 
 
+def impedance():
+    from scipy.ndimage.filters import gaussian_filter1d
+    voltage_trace = voltage()
+    holding_voltage = _get_cpp_feature("voltage_base")
+    normalized_voltage = voltage_trace - holding_voltage
+    current_trace = current()
+    if current_trace is not None:
+        current_base = numpy.median(current_trace[0:10])
+        normalized_current = current_trace - current_base
+        spike_count = _get_cpp_feature("Spikecount")
+        if spike_count < 1:  # if there is no spikes in ZAP
+            fft_volt = numpy.fft.fft(normalized_voltage)
+            fft_cur = numpy.fft.fft(normalized_current)
+            freq = numpy.fft.fftfreq(len(normalized_voltage), d=0.0001)
+            if any(fft_cur) == 0:
+                return None
+            else:
+                Z = fft_volt / fft_cur
+                norm_Z = abs(Z) / max(abs(Z))
+                # physiological range of frequencies range [0,100]
+                smooth_Z = gaussian_filter1d(norm_Z[0:100], 10)
+                ind_max = numpy.argmax(smooth_Z)
+                return freq[ind_max]
+        else:
+            return None
+    else:
+        return None
+
+
 def current():
     """Get current trace"""
     return _get_cpp_feature("current")
@@ -60,7 +91,6 @@ def ISIs():
     """Get all ISIs"""
 
     peak_times = _get_cpp_feature("peak_time")
-
     return numpy.diff(peak_times)
 
 
