@@ -571,7 +571,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
     delta_v = v[fall_index] - v[fall_index - 1];
     delta_t = t[fall_index] - t[fall_index - 1];
     t_dev_fall = delta_t * v_dev / delta_v;
-    spike_width1.push_back(t[fall_index] + t_dev_rise - t[rise_index] +
+    spike_width1.push_back(t[fall_index] - t_dev_rise - t[rise_index] +
                            t_dev_fall);
   }
   return spike_width1.size();
