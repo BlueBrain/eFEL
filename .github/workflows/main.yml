@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python: [cp27, cp36, cp37, cp38, cp39]
+        python: [cp36, cp37, cp38, cp39]
         arch: [x86_64, i686, amd64, 32]
         exclude:
           - os: macos-latest
@@ -72,29 +72,8 @@ jobs:
           python-version: 3.6
       - name: Install cibuildwheel
         run: pip install cibuildwheel
-
-      # set the compiler for py27 on windows.
-      # see https://cibuildwheel.readthedocs.io/en/stable/cpp_standards/ for details.
-      - name: set up VS build environment for windows 64 with py27
-        uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' && matrix.arch == 'amd64' }}
-      - name: set up VS build environment for windows 32 with py27
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x86
-        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' && matrix.arch == 32 }}
-
       - name: Build wheels
         run: cibuildwheel --output-dir wheelhouse
-        if: ${{ matrix.os != 'windows-latest' || matrix.python != 'cp27' }}
-      # use MSVC 9 if py27 on windows
-      - name: Build wheels for windows with py27
-        run: cibuildwheel --output-dir wheelhouse
-        env:
-          DISTUTILS_USE_SDK: 1
-          MSSdk: 1
-        if: ${{ matrix.os == 'windows-latest' && matrix.python == 'cp27' }}
-
       - uses: actions/upload-artifact@v2
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.arch }}

@@ -21,15 +21,11 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 import os
 
-# Python 2 has urlparse module, Python 3 has urllib.parse
-try:
-    import urlparse as up
-    import urllib2 as ur
-except ImportError:
-    # pylint:disable=E0611, F0401
-    import urllib.parse as up
-    import urllib.request as ur
-    # pylint:enable=E0611,F0401
+# pylint:disable=E0611, F0401
+import urllib.parse as up
+import urllib.request as ur
+
+# pylint:enable=E0611,F0401
 
 import mimetypes
 

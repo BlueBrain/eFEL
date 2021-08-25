@@ -71,6 +71,8 @@ library can be found [here](http://efel.readthedocs.io/en/latest/installation.ht
 News
 ====
 
+* 2021/08/25: We dropped support for Python 2.7. The eFEL code isn't automatically tested on 2.7 anymore.
+
 * 2016/01/17: We dropped support for Python 2.6. We're following the numpy and coverage module who also dropped support recently.
 For the moment eFEL still works with Python 2.6, you will just have to install the right (older) versions of the dependencies.
 The eFEL code isn't automatically tested on 2.6 anymore.
@@ -78,7 +80,7 @@ The eFEL code isn't automatically tested on 2.6 anymore.
 Requirements
 ============
 
-* [Python 2.7+](https://www.python.org/download/releases/2.7/) or [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
+* [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
