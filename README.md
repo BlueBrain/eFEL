@@ -210,7 +210,7 @@ Results are in mV.
 
 Full documentation
 ==================
-The full documentation can be found [here](http://efel.readthedocs.io)
+The full documentation can be found [here](http://efel.readthedocs.io) 
 
 Funding
 =======
