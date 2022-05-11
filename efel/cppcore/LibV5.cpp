@@ -635,11 +635,6 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  /*for (size_t i = 0; i < dvdt.size(); i++) {
-      printf("%d %f %f\n", i, dvdt[i]);
-  }
-  printf("\n");*/
-
   // restrict to time interval where stimulus is applied
   vector<int> minima;
   int stimbeginindex =
