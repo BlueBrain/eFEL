@@ -162,5 +162,8 @@
     "voltage_base",
     "voltage_deflection",
     "voltage_deflection_begin",
-    "voltage_deflection_vb_ssse"
+    "voltage_deflection_vb_ssse",
+    "min_between_peaks_indices",
+    "min_between_peaks_values",
+    "AP_width_between_threshold"
 ]
