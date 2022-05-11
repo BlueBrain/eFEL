@@ -269,6 +269,9 @@ int FillFptrTable() {
   FptrTableV5["sag_ratio2"] = &LibV5::sag_ratio2;
   FptrTableV5["AP_peak_upstroke"] = &LibV5::AP_peak_upstroke;
   FptrTableV5["AP_peak_downstroke"] = &LibV5::AP_peak_downstroke;
+  FptrTableV5["min_between_peaks_indices"] = &LibV5::min_between_peaks_indices;
+  FptrTableV5["min_between_peaks_values"] = &LibV5::min_between_peaks_values;
+  FptrTableV5["AP_width_between_threshold"] = &LibV5::AP_width_between_threshold;
   
   //****************** end of FptrTableV5 *****************************
 
