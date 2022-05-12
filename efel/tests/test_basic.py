@@ -75,8 +75,8 @@ derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                               'derivwindow.txt')
 
 dendriticAP_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                              'basic',
-                                              'dendritic_AP.txt')
+                                             'basic',
+                                             'dendritic_AP.txt')
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -2270,7 +2270,6 @@ def test_min_between_peaks_indices():
     nt.assert_true(min_AHP_indices < min_btw_peaks_indices)
 
 
-
 def test_min_between_peaks_values():
     """basic: Test min_between_peaks_values"""
 
@@ -2326,7 +2325,11 @@ def test_AP_width_between_threshold():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['AP_width_between_threshold', 'peak_indices', 'min_between_peaks_indices']
+    features = [
+        'AP_width_between_threshold',
+        'peak_indices',
+        'min_between_peaks_indices'
+    ]
 
     feature_values = \
         efel.getFeatureValues(
@@ -2338,7 +2341,9 @@ def test_AP_width_between_threshold():
     min_after_peak_idx = feature_values[0]['min_between_peaks_indices'][0]
 
     t0 = time[:peak_idx][voltage[:peak_idx] > threshold][0]
-    t1 = time[peak_idx:min_after_peak_idx][voltage[peak_idx:min_after_peak_idx] < threshold][0]
+    t1 = time[peak_idx:min_after_peak_idx][
+        voltage[peak_idx:min_after_peak_idx] < threshold
+    ][0]
 
     nt.assert_almost_equal(AP_width, t1 - t0)
 

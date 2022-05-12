@@ -3271,13 +3271,11 @@ static int __min_between_peaks_indices(const vector<double>& t, const vector<dou
         v.begin(), std::min_element(v.begin() + peak_indices_plus[i],
                                      v.begin() + peak_indices_plus[i + 1]));
 
-    if (minindex != end_index - 1) {
-      min_btw_peaks_indices.push_back(minindex);
+    min_btw_peaks_indices.push_back(minindex);
 
-      EFEL_ASSERT(minindex < v.size(),
-                  "min index falls outside of voltage array");
-      min_btw_peaks_values.push_back(v[minindex]);
-    }
+    EFEL_ASSERT(minindex < v.size(),
+                "min index falls outside of voltage array");
+    min_btw_peaks_values.push_back(v[minindex]);
   }
 
   return min_btw_peaks_indices.size();
