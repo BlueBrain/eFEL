@@ -247,6 +247,9 @@ void cFeature::fillfeaturetypes() {
   featuretypes["sag_ratio2"] = "double";
   featuretypes["AP_peak_upstroke"] = "double";
   featuretypes["AP_peak_downstroke"] = "double";
+  featuretypes["min_between_peaks_indices"] = "int";
+  featuretypes["min_between_peaks_values"] = "double";
+  featuretypes["AP_width_between_threshold"] = "double";
 
   // end of feature types
 }

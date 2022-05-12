@@ -404,6 +404,22 @@ Minimal voltage between consecutive spikes
     for peak1, peak2 in zip(peak_indices[:-1], peak_indices[1:]):
         min_voltage_between_spikes.append(numpy.min(voltage[peak1:peak2]))
 
+LibV5 : min_between_peaks_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Minimal voltage between consecutive spikes
+
+The last value is the minimum between last spike and stimulus end
+if strict stiminterval is True, and minimum between last spike and last value
+if strict stiminterval is False
+
+
+- **Required features**: LibV5:min_between_peaks_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    min_between_peaks_values = v[min_between_peaks_indices]
+
 
 .. image:: _static/figures/AP_duration_half_width.png
 
@@ -424,16 +440,37 @@ Width of spike at half spike amplitude
 LibV1 : AP_width
 ~~~~~~~~~~~~~~~~
 
-Width of spike at threshold
+Width of spike at threshold, bounded by minimum AHP
+
+Can use strict_stiminterval to not use minimum after stimulus end.
 
 - **Required features**: LibV1: peak_indices, LibV5: min_AHP_indices, threshold
 - **Units**: ms
 - **Pseudocode**: ::
 
-    min_AHP_indices.append(stim_start_index)
+    min_AHP_indices = numpy.concatenate([[stim_start], min_AHP_indices])
     for i in range(len(min_AHP_indices)-1):
-        onset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] > threshold)[0]]
-        offset_time[i] = t[numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] < threshold && t > onset_time)[0]]
+        onset_index = numpy.where(v[min_AHP_indices[i]:min_AHP_indices[i+1]] > threshold)[0]
+        onset_time[i] = t[onset_index]
+        offset_time[i] = t[numpy.where(v[onset_index:min_AHP_indices[i+1]] < threshold)[0]]
+        AP_width[i] = t(offset_time[i]) - t(onset_time[i])
+
+LibV5 : AP_width_between_threshold
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Width of spike at threshold, bounded by minimum between peaks
+
+Can use strict_stiminterval to not use minimum after stimulus end.
+
+- **Required features**: LibV1: peak_indices, LibV5: min_between_peaks_indices, threshold
+- **Units**: ms
+- **Pseudocode**: ::
+
+    min_between_peaks_indices = numpy.concatenate([[stim_start], min_between_peaks_indices])
+    for i in range(len(min_between_peaks_indices)-1):
+        onset_index = numpy.where(v[min_between_peaks_indices[i]:min_between_peaks_indices[i+1]] > threshold)[0]
+        onset_time[i] = t[onset_index]
+        offset_time[i] = t[numpy.where(v[onset_index:min_between_peaks_indices[i+1]] < threshold)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
 
 LibV5 : spike_half_width, AP1_width, AP2_width, APlast_width
@@ -445,7 +482,7 @@ Width of spike at half-width
 - **Units**: ms
 - **Pseudocode**: ::
 
-    min_AHP_indices.append(stim_start_index)
+    min_AHP_indices = numpy.concatenate([[stim_start], min_AHP_indices])
     for i in range(1, len(min_AHP_indices)):
         v_half_width = (v[peak_indices[i-1]] + v[min_AHP_indices[i]]) / 2.
         rise_idx = t[numpy.where(v[min_AHP_indices[i-1]:peak_indices[i-1]] > v_half_width)[0]]

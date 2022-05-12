@@ -3243,3 +3243,196 @@ int LibV5::AP_peak_downstroke(mapStr2intVec& IntFeatureData,
   }
   return retVal;
 }
+
+static int __min_between_peaks_indices(const vector<double>& t, const vector<double>& v,
+                             const vector<int>& peak_indices,
+                             const double stim_start, const double stim_end,
+                             const bool strict_stiminterval,
+                             vector<int>& min_btw_peaks_indices,
+                             vector<double>& min_btw_peaks_values) {
+  vector<int> peak_indices_plus = peak_indices;
+  unsigned end_index = 0;
+
+  if (strict_stiminterval) {
+    end_index =
+        distance(t.begin(),
+                 find_if(t.begin(), t.end(),
+                         std::bind2nd(std::greater_equal<double>(), stim_end)));
+  } else {
+    end_index = distance(t.begin(), t.end());
+  }
+
+  size_t minindex = 0;
+
+  peak_indices_plus.push_back(end_index);
+
+  for (size_t i = 0; i < peak_indices_plus.size() - 1; i++) {
+    minindex = distance(
+        v.begin(), std::min_element(v.begin() + peak_indices_plus[i],
+                                     v.begin() + peak_indices_plus[i + 1]));
+
+    min_btw_peaks_indices.push_back(minindex);
+
+    EFEL_ASSERT(minindex < v.size(),
+                "min index falls outside of voltage array");
+    min_btw_peaks_values.push_back(v[minindex]);
+  }
+
+  return min_btw_peaks_indices.size();
+}
+
+// min_between_peaks_indices
+// find the minimum between two spikes,
+// and the minimum between the last spike and the time the stimulus ends.
+// This is different from min_AHP_indices, for traces that have broad peaks
+// with local minima and maxima in it (e.g. dendritic AP)
+int LibV5::min_between_peaks_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+
+  retVal = CheckInMap(IntFeatureData, StringData, "min_between_peaks_indices", nSize);
+  if (retVal) return nSize;
+
+  double stim_start, stim_end;
+  vector<int> min_btw_peaks_indices, strict_stiminterval_vec, peak_indices;
+  vector<double> v, t, stim_start_vec, stim_end_vec, min_btw_peaks_values;
+  bool strict_stiminterval;
+
+  // Get voltage
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+
+  // Get time
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+
+  // Get peak_indices
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", peak_indices);
+  if (retVal < 1) {
+    GErrorStr +=
+        "\n At least one spike required for calculation of "
+        "min_between_peaks_indices.\n";
+    return -1;
+  }
+
+  // Get strict_stiminterval
+  retVal = getIntParam(IntFeatureData, "strict_stiminterval",
+                       strict_stiminterval_vec);
+  if (retVal <= 0) {
+    strict_stiminterval = false;
+  } else {
+    strict_stiminterval = bool(strict_stiminterval_vec[0]);
+  }
+
+  // Get stim_start
+  retVal =
+      getVec(DoubleFeatureData, StringData, "stim_start", stim_start_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_start = stim_start_vec[0];
+  }
+
+  /// Get stim_end
+  retVal =
+      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_end = stim_end_vec[0];
+  }
+
+  retVal =
+      __min_between_peaks_indices(t, v, peak_indices, stim_start, stim_end,
+                        strict_stiminterval, min_btw_peaks_indices, min_btw_peaks_values);
+
+  if (retVal == 0)
+    return -1;
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "min_between_peaks_indices", min_btw_peaks_indices);
+    setVec(DoubleFeatureData, StringData, "min_between_peaks_values",
+                 min_btw_peaks_values);
+  }
+  return retVal;
+}
+
+
+int LibV5::min_between_peaks_values(mapStr2intVec& IntFeatureData,
+                          mapStr2doubleVec& DoubleFeatureData,
+                          mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "min_between_peaks_values", nSize);
+  if (retVal) return nSize;
+  return -1;
+}
+
+
+// AP_width_between_threshold
+// spike width calculation according to threshold value.
+// min_between_peaks_indices are used to split the different APs
+// do not add width if threshold crossing has not been found
+static int __AP_width_between_threshold(const vector<double>& t, const vector<double>& v,
+                      double stimstart, double threshold,
+                      const vector<int>& min_between_peaks_indices,
+                      vector<double>& ap_width_threshold) {
+  vector<int> indices(min_between_peaks_indices.size() + 1);
+  int start_index = distance(
+      t.begin(),
+      find_if(t.begin(), t.end(), bind2nd(std::greater_equal<double>(), stimstart)));
+  indices[0] = start_index;
+  copy(min_between_peaks_indices.begin(), min_between_peaks_indices.end(), indices.begin() + 1);
+
+  for (size_t i = 0; i < indices.size() - 1; i++) {
+    int onset_index = distance(
+        v.begin(), find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
+                           bind2nd(std::greater_equal<double>(), threshold)));
+    int end_index = distance(
+        v.begin(), find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
+                           bind2nd(std::less_equal<double>(), threshold)));
+    if (end_index != indices[i + 1]){
+      ap_width_threshold.push_back(t[end_index] - t[onset_index]);
+    }
+  }
+
+  return ap_width_threshold.size();
+}
+
+int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData) {
+  int retval;
+  int nsize;
+  retval = CheckInMap(DoubleFeatureData, StringData, "AP_width_between_threshold",
+                            nsize);
+  if (retval) {
+    return nsize;
+  }
+
+  vector<double> t;
+  retval = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retval < 0) return -1;
+  vector<double> v;
+  retval = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retval < 0) return -1;
+  vector<double> threshold;
+  retval = getDoubleParam(DoubleFeatureData, "Threshold", threshold);
+  if (retval < 0) return -1;
+  vector<double> stimstart;
+  retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+  if (retval < 0) return -1;
+
+  vector<int> min_between_peaks_indices;
+  retval = getVec(IntFeatureData, StringData, "min_between_peaks_indices", min_between_peaks_indices);
+  if (retval < 0) return -1;
+  vector<double> ap_width_threshold;
+  retval = __AP_width_between_threshold(t, v, stimstart[0], threshold[0],
+                      min_between_peaks_indices, ap_width_threshold);
+  if (retval == 0)
+    return -1;
+  else if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_width_between_threshold", ap_width_threshold);
+  }
+  return retval;
+}

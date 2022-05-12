@@ -74,6 +74,10 @@ derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                               'basic',
                                               'derivwindow.txt')
 
+dendriticAP_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                             'basic',
+                                             'dendritic_AP.txt')
+
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -2233,3 +2237,146 @@ def test_AP_peak_downstroke():
 
     for exp, pds in zip(expected, ap_peak_downstroke):
         nt.assert_almost_equal(exp, pds, places=6)
+
+
+def test_min_between_peaks_indices():
+    """basic: Test min_between_peaks_indices"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['min_AHP_indices', 'min_between_peaks_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    min_AHP_indices = feature_values[0]['min_AHP_indices'][0]
+    min_btw_peaks_indices = feature_values[0]['min_between_peaks_indices'][0]
+
+    nt.assert_true(min_AHP_indices < min_btw_peaks_indices)
+
+
+def test_min_between_peaks_values():
+    """basic: Test min_between_peaks_values"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['min_between_peaks_values', 'peak_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    min_btw_peaks_value = feature_values[0]['min_between_peaks_values'][0]
+    peak_idx = feature_values[0]['peak_indices'][0]
+
+    expected = numpy.min(voltage[peak_idx:])
+
+    nt.assert_almost_equal(min_btw_peaks_value, expected)
+
+
+def test_AP_width_between_threshold():
+    """basic: Test AP_width_between_threshold"""
+
+    import efel
+    efel.reset()
+
+    threshold = -48
+    efel.setDoubleSetting("Threshold", threshold)
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'AP_width_between_threshold',
+        'peak_indices',
+        'min_between_peaks_indices'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_width = feature_values[0]['AP_width_between_threshold'][0]
+    peak_idx = feature_values[0]['peak_indices'][0]
+    min_after_peak_idx = feature_values[0]['min_between_peaks_indices'][0]
+
+    t0 = time[:peak_idx][voltage[:peak_idx] > threshold][0]
+    t1 = time[peak_idx:min_after_peak_idx][
+        voltage[peak_idx:min_after_peak_idx] < threshold
+    ][0]
+
+    nt.assert_almost_equal(AP_width, t1 - t0)
+
+
+def test_AP_width_between_threshold_strict():
+    """basic: Test AP_width_between_threshold with strict interval"""
+
+    import efel
+    efel.reset()
+    efel.setIntSetting('strict_stiminterval', True)
+
+    threshold = -48
+    efel.setDoubleSetting("Threshold", threshold)
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_width_between_threshold']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_width = feature_values[0]['AP_width_between_threshold']
+
+    assert AP_width is None
