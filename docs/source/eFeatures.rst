@@ -410,7 +410,7 @@ LibV5 : min_between_peaks_values
 Minimal voltage between consecutive spikes
 
 The last value is the minimum between last spike and stimulus end
-if strict stiminterval is True, and mimumu between last spike and last value
+if strict stiminterval is True, and minimum between last spike and last value
 if strict stiminterval is False
 
 
