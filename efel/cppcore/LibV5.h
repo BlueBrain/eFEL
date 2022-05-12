@@ -74,6 +74,10 @@ int AP_begin_indices(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData);
 
+int AP_end_indices(mapStr2intVec& IntFeatureData,
+                   mapStr2doubleVec& DoubleFeatureData,
+                   mapStr2Str& StringData);
+
 int irregularity_index(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
@@ -214,6 +218,9 @@ int current_base(mapStr2intVec& IntFeatureData,
 int decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
+int sag_time_constant(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 int voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
@@ -237,6 +244,21 @@ int sag_ratio1(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData); 
 int sag_ratio2(mapStr2intVec& IntFeatureData,                                    
                        mapStr2doubleVec& DoubleFeatureData, 
-                       mapStr2Str& StringData); 
+                       mapStr2Str& StringData);
+int AP_peak_upstroke(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData);
+int AP_peak_downstroke(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int min_between_peaks_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int min_between_peaks_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int AP_width_between_threshold(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif

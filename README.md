@@ -28,8 +28,8 @@
 <tr>
   <td>Build Status</td>
   <td>
-    <a href="https://travis-ci.com/BlueBrain/eFEL">
-    <img src="https://travis-ci.com/BlueBrain/eFEL.svg?branch=master" alt="travis build status" />
+    <a href="https://github.com/BlueBrain/eFEL/actions">
+    <img src="https://github.com/BlueBrain/eFEL/workflows/Build/badge.svg?branch=master" alt="actions build status" />
     </a>
   </td>
 </tr>
@@ -71,6 +71,8 @@ library can be found [here](http://efel.readthedocs.io/en/latest/installation.ht
 News
 ====
 
+* 2021/08/25: We dropped support for Python 2.7. The eFEL code isn't automatically tested on 2.7 anymore.
+
 * 2016/01/17: We dropped support for Python 2.6. We're following the numpy and coverage module who also dropped support recently.
 For the moment eFEL still works with Python 2.6, you will just have to install the right (older) versions of the dependencies.
 The eFEL code isn't automatically tested on 2.6 anymore.
@@ -78,7 +80,7 @@ The eFEL code isn't automatically tested on 2.6 anymore.
 Requirements
 ============
 
-* [Python 2.7+](https://www.python.org/download/releases/2.7/) or [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
+* [Python 3.4+](https://www.python.org/download/releases/3.4.3/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
@@ -208,8 +210,16 @@ Results are in mV.
 
 Full documentation
 ==================
-The full documentation can be found [here](http://efel.readthedocs.io)
+The full documentation can be found [here](http://efel.readthedocs.io) 
 
 Funding
 =======
-This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP), the European Union’s Horizon 2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 720270, 785907 (Human Brain Project SGA1/SGA2) and by the EBRAINS research infrastructure, funded from the European Union’s Horizon 2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3).
+This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP), 
+the European Union’s Horizon 2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 720270, 785907 
+(Human Brain Project SGA1/SGA2) and by the EBRAINS research infrastructure, funded from the European Union’s Horizon 2020 Framework 
+Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3). 
+This project/research was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de 
+Lausanne (EPFL), from the Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
+
+Copyright (c) 2009-2022 Blue Brain Project/EPFL
+

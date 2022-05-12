@@ -33,15 +33,15 @@ LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate
 LibV1:Spikecount	#LibV5:peak_indices #LibV1:interpolate 
 LibV5:Spikecount_stimint	#LibV1:peak_time #LibV1:interpolate 
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values #LibV1:interpolate 
-LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices #LibV1:interpolate 
-LibV2:AP_end_indices        #LibV5:peak_indices #LibV1:interpolate 
-LibV2:AP_fall_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices     #LibV2:AP_end_indices #LibV1:interpolate 
-LibV2:AP_duration	        #LibV5:AP_begin_indices #LibV2:AP_end_indices #LibV1:interpolate 
+LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices #LibV1:interpolate
+LibV5:AP_end_indices        #LibV5:peak_indices #LibV1:interpolate
+LibV2:AP_fall_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices     #LibV5:AP_end_indices #LibV1:interpolate 
+LibV2:AP_duration	        #LibV5:AP_begin_indices #LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:AP_duration_half_width	#LibV2:AP_rise_indices	#LibV2:AP_fall_indices #LibV1:interpolate 
-LibV2:AP_rise_time	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV2:AP_fall_time	#LibV5:peak_indices	#LibV2:AP_end_indices #LibV1:interpolate 
+LibV2:AP_rise_time	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:AP_amplitude #LibV1:interpolate 
+LibV2:AP_fall_time	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:AP_rise_rate	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV2:AP_fall_rate	#LibV5:peak_indices	#LibV2:AP_end_indices #LibV1:interpolate 
+LibV2:AP_fall_rate	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:fast_AHP	#LibV5:AP_begin_indices	#LibV5:min_AHP_indices #LibV1:interpolate 
 LibV2:AP_amplitude_change	#LibV1:AP_amplitude #LibV1:interpolate 
 LibV2:AP_duration_change	#LibV2:AP_duration #LibV1:interpolate 
@@ -119,7 +119,7 @@ LibV5:inv_fifth_ISI   #LibV5:all_ISI_values #LibV1:interpolate
 LibV5:inv_last_ISI   #LibV5:all_ISI_values #LibV1:interpolate 
 LibV5:inv_time_to_first_spike   #LibV1:time_to_first_spike #LibV1:interpolate 
 LibV5:spike_half_width 	    #LibV5:min_AHP_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV5:AP_begin_indices      #LibV5:min_AHP_indices #LibV1:interpolate 
+LibV5:AP_begin_indices      #LibV5:min_AHP_indices #LibV1:interpolate
 LibV5:AHP_depth_abs         #LibV5:min_AHP_values #LibV1:interpolate 
 LibV5:AP_begin_width 	    #LibV5:min_AHP_indices	#LibV5:AP_begin_indices #LibV1:interpolate 
 LibV5:AP_begin_voltage  #LibV5:AP_begin_indices #LibV1:interpolate 
@@ -152,7 +152,13 @@ LibV5:steady_state_voltage_stimend #LibV1:interpolate
 LibV5:voltage_base #LibV1:interpolate
 LibV5:current_base 
 LibV5:decay_time_constant_after_stim #LibV1:interpolate 
+LibV5:sag_time_constant #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:sag_amplitude #LibV1:interpolate
 LibV5:maximum_voltage_from_voltagebase #LibV5:voltage_base #LibV1:maximum_voltage #LibV1:interpolate 
 LibV5:sag_amplitude #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:voltage_deflection_vb_ssse #LibV1:interpolate 
 LibV5:sag_ratio1 #LibV1:minimum_voltage #LibV5:sag_amplitude #LibV5:voltage_base #LibV1:interpolate 
 LibV5:sag_ratio2 #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:voltage_base #LibV1:interpolate 
+LibV5:AP_peak_upstroke     #LibV5:AP_begin_indices #LibV5:peak_indices #LibV1:interpolate
+LibV5:AP_peak_downstroke   #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:interpolate
+LibV5:min_between_peaks_indices 	    #LibV5:peak_indices #LibV1:interpolate 
+LibV5:min_between_peaks_values 	    #LibV5:min_between_peaks_indices #LibV1:interpolate 
+LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:interpolate 

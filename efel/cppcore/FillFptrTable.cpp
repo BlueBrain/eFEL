@@ -191,6 +191,7 @@ int FillFptrTable() {
   FptrTableV5["AHP_depth_abs"] = &LibV5::AHP_depth_abs;
   FptrTableV5["spike_half_width"] = &LibV5::spike_width1;
   FptrTableV5["AP_begin_indices"] = &LibV5::AP_begin_indices;
+  FptrTableV5["AP_end_indices"] = &LibV5::AP_end_indices;
   FptrTableV5["irregularity_index"] = &LibV5::irregularity_index;
   FptrTableV5["number_initial_spikes"] = &LibV5::number_initial_spikes;
   FptrTableV5["AP1_amp"] = &LibV5::AP1_amp;
@@ -251,6 +252,8 @@ int FillFptrTable() {
   FptrTableV5["current_base"] = &LibV5::current_base;
   FptrTableV5["decay_time_constant_after_stim"] =
       &LibV5::decay_time_constant_after_stim;
+  FptrTableV5["sag_time_constant"] =
+      &LibV5::sag_time_constant;
 
   FptrTableV5["ohmic_input_resistance_vb_ssse"] =
       &LibV5::ohmic_input_resistance_vb_ssse;
@@ -264,6 +267,11 @@ int FillFptrTable() {
   FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;
   FptrTableV5["sag_ratio1"] = &LibV5::sag_ratio1;
   FptrTableV5["sag_ratio2"] = &LibV5::sag_ratio2;
+  FptrTableV5["AP_peak_upstroke"] = &LibV5::AP_peak_upstroke;
+  FptrTableV5["AP_peak_downstroke"] = &LibV5::AP_peak_downstroke;
+  FptrTableV5["min_between_peaks_indices"] = &LibV5::min_between_peaks_indices;
+  FptrTableV5["min_between_peaks_values"] = &LibV5::min_between_peaks_values;
+  FptrTableV5["AP_width_between_threshold"] = &LibV5::AP_width_between_threshold;
   
   //****************** end of FptrTableV5 *****************************
 

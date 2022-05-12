@@ -77,12 +77,17 @@ def reset():
     setIntSetting('max_spike_skip', 2)
     setDoubleSetting('Threshold', _settings.threshold)
     setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
+    setDoubleSetting(
+        'DownDerivativeThreshold',
+        _settings.down_derivative_threshold)
     setDoubleSetting('interp_step', 0.1)
     setDoubleSetting('burst_factor', 1.5)
     setDoubleSetting('voltage_base_start_perc', 0.9)
     setDoubleSetting('voltage_base_end_perc', 1.0)
     setDoubleSetting('current_base_start_perc', 0.9)
     setDoubleSetting('current_base_end_perc', 1.0)
+    setDoubleSetting('rise_start_perc', 0.0)
+    setDoubleSetting('rise_end_perc', 1.0)
     setDoubleSetting("initial_perc", 0.1)
     setDoubleSetting("min_spike_height", 20.0)
     setIntSetting("strict_stiminterval", 0)
@@ -93,6 +98,7 @@ def reset():
     setStrSetting("voltage_base_mode", "mean")
     setStrSetting("current_base_mode", "mean")
     setDoubleSetting("precision_threshold", 1e-10)
+    setDoubleSetting("sahp_start", 5.0)
 
     _initialise()
 

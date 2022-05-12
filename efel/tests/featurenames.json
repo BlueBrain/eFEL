@@ -39,6 +39,8 @@
     "AP_fall_rate_change",
     "AP_fall_time",
     "AP_height",
+    "AP_peak_downstroke",
+    "AP_peak_upstroke",
     "AP_phaseslope",
     "AP_phaseslope_AIS",
     "AP_rise_indices",
@@ -143,6 +145,7 @@
     "sag_amplitude",
     "sag_ratio1",
     "sag_ratio2",
+    "sag_time_constant",
     "single_burst_ratio",
     "spike_half_width",
     "spike_width2",
@@ -160,5 +163,8 @@
     "voltage_base",
     "voltage_deflection",
     "voltage_deflection_begin",
-    "voltage_deflection_vb_ssse"
+    "voltage_deflection_vb_ssse",
+    "min_between_peaks_indices",
+    "min_between_peaks_values",
+    "AP_width_between_threshold"
 ]

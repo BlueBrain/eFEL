@@ -9,3 +9,6 @@
 /.python-version
 /.tox
 /.coverage
+.vscode
+*.so
+coverage.xml

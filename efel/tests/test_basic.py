@@ -74,6 +74,10 @@ derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                               'basic',
                                               'derivwindow.txt')
 
+dendriticAP_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                             'basic',
+                                             'dendritic_AP.txt')
+
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -621,6 +625,31 @@ def test_min_AHP_indices_strict():
         nt.assert_equal(len(AHP_time_from_peak), n_of_ahp)
 
 
+def test_min_AHP_indices_single_peak():
+    """basic: Test min_AHP_indices with a single peak."""
+
+    import efel
+
+    trace_file = os.path.join(
+        testdata_dir,
+        'basic',
+        'min_AHP_values_single_peak.txt')
+    trace_values = numpy.loadtxt(trace_file)
+
+    trace = {}
+    trace["T"] = trace_values[:, 0]
+    trace["V"] = trace_values[:, 1]
+    trace["stim_start"] = [1950]
+    trace["stim_end"] = [2050]
+
+    feats = efel.getFeatureValues(
+        [trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
+
+    assert len(feats[0]["peak_indices"]) == 1
+    assert feats[0]["min_AHP_indices"] is None
+    assert feats[0]["min_AHP_values"] is None
+
+
 def test_strict_stiminterval():
     """basic: Test strict_stiminterval"""
 
@@ -776,6 +805,66 @@ def test_AP_begin_indices1():
     nt.assert_equal(
         len(feature_values[0]['AP_begin_indices']),
         len(feature_values[0]['AP_duration_half_width']))
+
+
+def test_AP_end_indices():
+    """basic: Test AP end indices."""
+    import efel
+    efel.reset()
+
+    stim_start = 31.2
+    stim_end = 431.2
+
+    test_data_path = os.path.join(
+        testdata_dir,
+        'basic',
+        'AP_begin_indices_95810005.abf.csv')
+    voltage = numpy.loadtxt(test_data_path)
+
+    time = numpy.arange(len(voltage)) * 0.1
+
+    trace = {}
+
+    trace['V'] = voltage
+    trace['T'] = time
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'AP_begin_indices',
+        'peak_indices',
+        'AP_end_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
+
+    begin_indices = feature_values[0]["AP_begin_indices"]
+    peak_indices = feature_values[0]["peak_indices"]
+    end_indices = feature_values[0]["AP_end_indices"]
+
+    for begin, peak, end in zip(begin_indices, peak_indices, end_indices):
+        # the voltage value for the end index should be closer than that of
+        # begin index than the peak
+        nt.assert_true(abs(voltage[begin] - voltage[end])
+                       < abs(voltage[peak] - voltage[end]))
+        nt.assert_true(end > begin)
+
+    efel.reset()
+
+    efel.setDoubleSetting("DownDerivativeThreshold", -24)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False)
+
+    updated_end_indices = feature_values[0]["AP_end_indices"]
+
+    for end_index, updated_end_index in zip(end_indices, updated_end_indices):
+        nt.assert_true(end_index != updated_end_index)
 
 
 def test_mean_frequency1():
@@ -1812,6 +1901,85 @@ def test_decay_time_constant_after_stim2():
         feature_values['decay_time_constant_after_stim'][0], places=1)
 
 
+def sag_time_constant(
+        time, voltage, min_v, steady_state_v, sag_ampl, stim_start, stim_end):
+    """sag_time_constant numpy implementation"""
+    # select t, v in stimulus interval
+    start_idx = numpy.where(time == stim_start)[0][0]
+    end_idx = numpy.where(time == stim_end)[0][0]
+    vinterval = voltage[start_idx:end_idx]
+    tinterval = time[start_idx:end_idx]
+
+    # get start decay
+    start_decay = numpy.argmin(vinterval)
+
+    # get end decay
+    v90 = steady_state_v - 0.1 * sag_ampl
+    end_decay = numpy.where(
+        (tinterval > tinterval[start_decay]) & (vinterval >= v90)
+    )[0][0]
+
+    v_reference = vinterval[end_decay]
+
+    # select t, v in decay interval
+    interval_indices = numpy.arange(start_decay, end_decay)
+    interval_time = tinterval[interval_indices]
+    interval_voltage = abs(vinterval[interval_indices] - v_reference)
+
+    # get tau
+    log_interval_voltage = numpy.log(interval_voltage)
+    slope, _ = numpy.polyfit(interval_time, log_interval_voltage, 1)
+    tau = abs(1. / slope)
+
+    return tau
+
+
+def test_sag_time_constant():
+    """basic: Test sag_time_constant"""
+
+    import efel
+    efel.reset()
+
+    interp_dt = 0.1
+
+    stim_start = 800.0
+    stim_end = 3800.0
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = interpolate(time, voltage, interp_dt)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'minimum_voltage',
+        'steady_state_voltage_stimend',
+        'sag_time_constant',
+        'sag_amplitude'
+    ]
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+    min_v = feature_values['minimum_voltage'][0]
+    steady_state_v = feature_values['steady_state_voltage_stimend'][0]
+    sag_ampl = feature_values['sag_amplitude'][0]
+
+    expected = sag_time_constant(
+        time,
+        voltage,
+        min_v,
+        steady_state_v,
+        sag_ampl,
+        stim_start,
+        stim_end)
+
+    nt.assert_almost_equal(
+        expected,
+        feature_values['sag_time_constant'][0])
+
+
 def test_getmeanfeaturevalues():
     """basic: Test getMeanFeatureValues"""
 
@@ -1903,3 +2071,312 @@ def test_unfinished_peak():
     spikecount = traces_results[0]['Spikecount'][0]
 
     nt.assert_equal(spikecount, 3)
+
+
+def rise_time_perc(
+    time, voltage,
+    AP_begin_indices,
+    peak_indices,
+    rise_start_perc,
+    rise_end_perc
+):
+    """AP_rise_time numpy implementation with percentages"""
+    rise_times = []
+    AP_amp = voltage[peak_indices] - voltage[AP_begin_indices]
+    begin_voltages = AP_amp * rise_start_perc + voltage[AP_begin_indices]
+    end_voltages = AP_amp * rise_end_perc + voltage[AP_begin_indices]
+
+    for AP_begin_indice, peak_indice, begin_v, end_v in zip(
+        AP_begin_indices, peak_indices, begin_voltages, end_voltages
+    ):
+        voltage_window = voltage[AP_begin_indice:peak_indice]
+
+        new_begin_indice = AP_begin_indice + numpy.min(
+            numpy.where(voltage_window >= begin_v)[0]
+        )
+        new_end_indice = AP_begin_indice + numpy.max(
+            numpy.where(voltage_window <= end_v)[0]
+        )
+
+        rise_times.append(time[new_end_indice] - time[new_begin_indice])
+
+    return numpy.array(rise_times)
+
+
+def test_rise_time_perc():
+    """basic: Test AP rise time percentage"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    trace['rise_start_perc'] = [0.2]
+    trace['rise_end_perc'] = [0.8]
+
+    features = ['AP_rise_time', 'AP_begin_indices', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    ap_rise_time = feature_values[0]['AP_rise_time']
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    expected = rise_time_perc(
+        time, voltage, AP_begin_indices, peak_indices, 0.2, 0.8
+    )
+
+    for exp, rise_time in zip(expected, ap_rise_time):
+        nt.assert_almost_equal(exp, rise_time)
+
+
+def test_slow_ahp_start():
+    """basic: Test AHP_depth_abs_slow with a custom after spike start time"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    trace['sahp_start'] = [12.0]
+
+    features = ['AHP_depth_abs_slow', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    ahp_depth_abs_slow = feature_values[0]['AHP_depth_abs_slow']
+
+    expected = []
+    for i in range(1, len(peak_indices) - 1):
+        new_start_time = time[peak_indices[i]] + trace['sahp_start'][0]
+        new_idx = numpy.min(numpy.where(time >= new_start_time)[0])
+        expected.append(numpy.min(voltage[new_idx:peak_indices[i + 1]]))
+
+    for exp, ahp_slow in zip(expected, ahp_depth_abs_slow):
+        nt.assert_almost_equal(exp, ahp_slow)
+
+
+def test_AP_peak_upstroke():
+    """basic: Test AP_peak_upstroke (maximum peak rise rate)"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_peak_upstroke', 'peak_indices', 'AP_begin_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    ap_begin_indices = feature_values[0]['AP_begin_indices']
+    ap_peak_upstroke = feature_values[0]['AP_peak_upstroke']
+
+    expected = []
+    # compute dv/dt  omit dx and /2 that cancel out in division
+    dv = (
+        [voltage[1] - voltage[0]]
+        + list(voltage[2:] - voltage[:-2])
+        + [voltage[-1] - voltage[-2]]
+    )
+    dt = (
+        [time[1] - time[0]]
+        + list(time[2:] - time[:-2])
+        + [time[-1] - time[-2]]
+    )
+    dvdt = numpy.array(dv) / numpy.array(dt)
+    # compute ap peak upstroke
+    for apbi, pi in zip(ap_begin_indices, peak_indices):
+        expected.append(numpy.max(dvdt[apbi:pi]))
+
+    for exp, pus in zip(expected, ap_peak_upstroke):
+        nt.assert_almost_equal(exp, pus, places=6)
+
+
+def test_AP_peak_downstroke():
+    """basic: Test AP_peak_downstroke (minimum peak fall rate)"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_peak_downstroke', 'peak_indices', 'min_AHP_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    peak_indices = feature_values[0]['peak_indices']
+    min_ahp_indices = feature_values[0]['min_AHP_indices']
+    ap_peak_downstroke = feature_values[0]['AP_peak_downstroke']
+
+    expected = []
+    # compute dv/dt  omit dx and /2 that cancel out in division
+    dv = (
+        [voltage[1] - voltage[0]]
+        + list(voltage[2:] - voltage[:-2])
+        + [voltage[-1] - voltage[-2]]
+    )
+    dt = (
+        [time[1] - time[0]]
+        + list(time[2:] - time[:-2])
+        + [time[-1] - time[-2]]
+    )
+    dvdt = numpy.array(dv) / numpy.array(dt)
+    # compute ap peak downstroke
+    for ahpi, pi in zip(min_ahp_indices, peak_indices):
+        expected.append(numpy.min(dvdt[pi:ahpi]))
+
+    for exp, pds in zip(expected, ap_peak_downstroke):
+        nt.assert_almost_equal(exp, pds, places=6)
+
+
+def test_min_between_peaks_indices():
+    """basic: Test min_between_peaks_indices"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['min_AHP_indices', 'min_between_peaks_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    min_AHP_indices = feature_values[0]['min_AHP_indices'][0]
+    min_btw_peaks_indices = feature_values[0]['min_between_peaks_indices'][0]
+
+    nt.assert_true(min_AHP_indices < min_btw_peaks_indices)
+
+
+def test_min_between_peaks_values():
+    """basic: Test min_between_peaks_values"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['min_between_peaks_values', 'peak_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    min_btw_peaks_value = feature_values[0]['min_between_peaks_values'][0]
+    peak_idx = feature_values[0]['peak_indices'][0]
+
+    expected = numpy.min(voltage[peak_idx:])
+
+    nt.assert_almost_equal(min_btw_peaks_value, expected)
+
+
+def test_AP_width_between_threshold():
+    """basic: Test AP_width_between_threshold"""
+
+    import efel
+    efel.reset()
+
+    threshold = -48
+    efel.setDoubleSetting("Threshold", threshold)
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        'AP_width_between_threshold',
+        'peak_indices',
+        'min_between_peaks_indices'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_width = feature_values[0]['AP_width_between_threshold'][0]
+    peak_idx = feature_values[0]['peak_indices'][0]
+    min_after_peak_idx = feature_values[0]['min_between_peaks_indices'][0]
+
+    t0 = time[:peak_idx][voltage[:peak_idx] > threshold][0]
+    t1 = time[peak_idx:min_after_peak_idx][
+        voltage[peak_idx:min_after_peak_idx] < threshold
+    ][0]
+
+    nt.assert_almost_equal(AP_width, t1 - t0)
+
+
+def test_AP_width_between_threshold_strict():
+    """basic: Test AP_width_between_threshold with strict interval"""
+
+    import efel
+    efel.reset()
+    efel.setIntSetting('strict_stiminterval', True)
+
+    threshold = -48
+    efel.setDoubleSetting("Threshold", threshold)
+    stim_start = 200.0
+    stim_end = 1200.0
+
+    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
+    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_width_between_threshold']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_width = feature_values[0]['AP_width_between_threshold']
+
+    assert AP_width is None

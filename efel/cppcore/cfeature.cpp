@@ -240,10 +240,16 @@ void cFeature::fillfeaturetypes() {
   featuretypes["voltage_base"] = "double";
   featuretypes["current_base"] = "double";
   featuretypes["decay_time_constant_after_stim"] = "double";
+  featuretypes["sag_time_constant"] = "double";
   featuretypes["maximum_voltage_from_voltagebase"] = "double";
   featuretypes["sag_amplitude"] = "double";
   featuretypes["sag_ratio1"] = "double";
   featuretypes["sag_ratio2"] = "double";
+  featuretypes["AP_peak_upstroke"] = "double";
+  featuretypes["AP_peak_downstroke"] = "double";
+  featuretypes["min_between_peaks_indices"] = "int";
+  featuretypes["min_between_peaks_values"] = "double";
+  featuretypes["AP_width_between_threshold"] = "double";
 
   // end of feature types
 }
@@ -262,6 +268,9 @@ vector<int>& cFeature::getmapIntData(string strName) {
   mapstr2IntItr = mapIntData.find(strName);
   if (mapstr2IntItr == mapIntData.end()) {
     GErrorStr += "Feature [" + strName + "] data is missing\n";
+    vector<int> empty_vec;
+    mapIntData[strName] = empty_vec;
+    return mapIntData[strName];
   }
   return mapstr2IntItr->second;
 }
@@ -270,6 +279,9 @@ vector<double>& cFeature::getmapDoubleData(string strName) {
   mapstr2DoubleItr = mapDoubleData.find(strName);
   if (mapstr2DoubleItr == mapDoubleData.end()) {
     GErrorStr += "Feature [" + strName + "] data is missing\n";
+    vector<double> empty_vec;
+    mapDoubleData[strName] = empty_vec;
+    return mapDoubleData[strName];
   }
   return mapstr2DoubleItr->second;
 }

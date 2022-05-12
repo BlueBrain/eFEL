@@ -180,5 +180,9 @@ class TestCppcore(object):
                 nt.ok_('Initializing' in contents)
                 # test vector working (if more than 10 elements, prints ...
                 nt.ok_('...' in contents)
+            # re-call efel's Initialize with current dir
+            # to remove pointer to tempdir.
+            # this pointer was preventing the deletion of tempdir on windows.
+            efel.cppcore.Initialize(efel.getDependencyFileLocation(), '.')
         finally:
             shutil.rmtree(tempdir)

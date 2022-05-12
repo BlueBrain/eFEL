@@ -21,15 +21,29 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 import os
 
-# Python 2 has urlparse module, Python 3 has urllib.parse
-try:
-    import urlparse as up
-except ImportError:
-    # pylint:disable=E0611, F0401
-    import urllib.parse as up
-    # pylint:enable=E0611,F0401
+# pylint:disable=E0611, F0401
+import urllib.parse as up
+import urllib.request as ur
+
+# pylint:enable=E0611,F0401
 
 import mimetypes
+
+
+def windows_compatible(func):
+    """Decorator allowing to use urlparse with windows."""
+
+    def inner(fragment_url):
+        """Change windows path part to url."""
+        # if system is windows
+        if os.name == "nt":
+            fragment_url.replace("\\", "/")
+
+        parsed_url = func(fragment_url)
+
+        return parsed_url
+
+    return inner
 
 
 def load_fragment(fragment_url, mime_type=None):
@@ -37,13 +51,16 @@ def load_fragment(fragment_url, mime_type=None):
 
     Load a fragment (e.g. time series data) from a given URL
     """
-
-    parsed_url = up.urlparse(fragment_url)
+    parsed_url = windows_compatible(up.urlparse)(fragment_url)
 
     scheme = parsed_url.scheme
     server_loc = parsed_url.netloc
     path = parsed_url.path
     fragment_string = parsed_url.fragment
+
+    # reform path for windows files
+    if scheme == "file" and os.name == "nt":
+        path = ur.url2pathname(r"\\" + server_loc + path)
 
     if mime_type is None:
         mimetypes.init()
@@ -53,15 +70,19 @@ def load_fragment(fragment_url, mime_type=None):
                 'load_fragment: impossible to guess MIME type from url, '
                 'please specify the type manually as argument: %s' % path)
 
-    if scheme == 'file':
+    if scheme == 'file' and os.name == 'nt':
+        file_handle = open(path, 'r')
+    elif scheme == 'file':
         file_handle = open(os.path.join(server_loc, path), 'r')
 
     if 'text/' in mime_type:
         import numpy
+
         if fragment_string == '':
             cols = None
         else:
             import re
+
             match = re.match("col=([0-9]+)", fragment_string)
             if match is None or len(match.groups()) != 1:
                 raise TypeError(
@@ -162,9 +183,12 @@ def extract_stim_times_from_neo_data(blocks, stim_start, stim_end):
                             event_start_rescaled = True
 
                     # Test event stim_end
-                    elif event.name in ("stim_end", "stimulus_end",
-                                        "stimulation_end",
-                                        "current_injection_end"):
+                    elif event.name in (
+                        "stim_end",
+                        "stimulus_end",
+                        "stimulation_end",
+                        "current_injection_end",
+                    ):
                         # tests if not already found once
                         if event_end_rescaled:
                             raise ValueError(
@@ -201,11 +225,11 @@ def load_neo_file(file_name, stim_start=None, stim_end=None, **kwargs):
         file_name : string
                     path to the location of a Dependency file
         stim_start : numerical value (ms)
-                     Optional if there is an Epoch or two Events in the file
+                    Optional if there is an Epoch or two Events in the file
         stim_end : numerical value (ms)
-                   Optional if there is an Epoch or two Events in the file
+                Optional if there is an Epoch or two Events in the file
         kwargs : keyword arguments to be passed to the read() method of the
-                 Neo IO class
+                Neo IO class
 
         Epoch.name should be one of "stim", "stimulus", "stimulation",
         "current_injection"
