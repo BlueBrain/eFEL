@@ -159,3 +159,6 @@ LibV5:sag_ratio1 #LibV1:minimum_voltage #LibV5:sag_amplitude #LibV5:voltage_base
 LibV5:sag_ratio2 #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:voltage_base #LibV1:interpolate 
 LibV5:AP_peak_upstroke     #LibV5:AP_begin_indices #LibV5:peak_indices #LibV1:interpolate
 LibV5:AP_peak_downstroke   #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:interpolate
+LibV5:min_between_peaks_indices 	    #LibV5:peak_indices #LibV1:interpolate 
+LibV5:min_between_peaks_values 	    #LibV5:min_between_peaks_indices #LibV1:interpolate 
+LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:interpolate 

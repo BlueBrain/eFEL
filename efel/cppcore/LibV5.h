@@ -251,5 +251,14 @@ int AP_peak_upstroke(mapStr2intVec& IntFeatureData,
 int AP_peak_downstroke(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
+int min_between_peaks_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int min_between_peaks_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int AP_width_between_threshold(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif
