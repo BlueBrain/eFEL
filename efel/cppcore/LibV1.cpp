@@ -169,7 +169,6 @@ int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
 int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  //  printf("\n  LibV1  This is inside ISI_values()");
   int retVal, nSize;
   retVal = CheckInMap(DoubleFeatureData, StringData, "ISI_values",
                             nSize);
@@ -233,7 +232,6 @@ int LibV1::ISI_CV(mapStr2intVec& IntFeatureData,
 int LibV1::peak_voltage(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  // printf("\n  LibV1  Inside PeakVoltage ... LibV1");
   int retVal, nSize;
   retVal = CheckInMap(DoubleFeatureData, StringData,
                             "peak_voltage", nSize);
@@ -296,7 +294,6 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
 int LibV1::peak_time(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
-  // printf("\n  LibV1  This is inside peak_time()");
   int retVal, nSize;
   retVal = CheckInMap(DoubleFeatureData, StringData, "peak_time", nSize);
   if (retVal)
@@ -842,7 +839,7 @@ static int __adaptation_index(double spikeSkipf, int maxnSpike,
   list<double> SpikeTime;
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
-  // considet Offset also if it is given as input
+  // consider Offset also if it is given as input
   for (size_t i = 0; i < peakVTime.size(); i++) {
     if ((peakVTime[i] >= (StimStart - Offset)) &&
         (peakVTime[i] <= (StimEnd + Offset))) {

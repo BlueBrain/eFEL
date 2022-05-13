@@ -57,6 +57,31 @@ LibV5 : inv_time_to_first_spike
         inv_time_to_first_spike = 0
 
 
+LibV1 : ISI_values
+~~~~~~~~~~~~~~~~~~
+
+The interspike intervals (i.e. time intervals) between adjacent peaks, starting at the second peak.
+The 1st spike is not taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
+
+- **Required features**: peak_time (ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    isi_values = numpy.diff(peak_time)[1:]
+
+
+LibV1 : doublet_ISI
+~~~~~~~~~~~~~~~~~~~
+
+The time interval between the first too peaks
+
+- **Required features**: peak_time (ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    doublet_ISI = peak_time[1] - peak_time[0]
+
+
 LibV5 : all_ISI_values, inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -172,7 +197,9 @@ The mean frequency of the firing rate
 LibV5 : ISI_semilog_slope
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The slope of a linear fit to a semilog plot of the ISI values
+The slope of a linear fit to a semilog plot of the ISI values.
+
+Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -187,7 +214,9 @@ The slope of a linear fit to a semilog plot of the ISI values
 LibV5 : ISI_log_slope
 ~~~~~~~~~~~~~~~~~~~~~
 
-The slope of a linear fit to a loglog plot of the ISI values
+The slope of a linear fit to a loglog plot of the ISI values.
+
+Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -212,7 +241,7 @@ However, if this number of ISI values to skip is higher than max_spike_skip, the
 - **Units**: ms
 - **Pseudocode**: ::
 
-    start_idx = min([max_spike_skip, (len(ISI_values) + 1) * spike_skipf])
+    start_idx = min([max_spike_skip, round((len(ISI_values) + 1) * spike_skipf)])
     ISI_values = ISI_values[start_idx:]
     log_x = numpy.log(range(1, len(ISI_values)+1))
     log_ISI_values = numpy.log(ISI_values)
@@ -223,7 +252,9 @@ However, if this number of ISI values to skip is higher than max_spike_skip, the
 LibV1 : ISI_CV
 ~~~~~~~~~~~~~~
 
-The coefficient of variation of the ISIs
+The coefficient of variation of the ISIs.
+
+Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
 
 - **Required features**: ISI_values
 - **Units**: constant
@@ -234,13 +265,79 @@ The coefficient of variation of the ISIs
     ISI_std = math.sqrt(ISI_variance)
     ISI_CV = ISI_std / ISI_mean
 
+LibV5 : irregularity_index
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mean of the absolute difference of all ISIs, except the first one (see LibV1: ISI_values feature for more details.)
+
+- **Required features**: ISI_values
+- **Units**: ms
+- **Pseudocode**: ::
+
+    irregularity_index = numpy.mean(numpy.absolute(ISI_values[1:] - ISI_values[:-1]))
+
+
+LibV5 : adaptation_index
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Normalized average difference of two consecutive ISIs, skipping the first ISIs
+
+The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1). 
+However, if this number of ISI values to skip is higher than max_spike_skip, then max_spike_skip is taken instead.
+
+The adaptation index is zero for a constant firing rate and bigger than zero for a decreasing firing rate
+
+- **Required features**: stim_start, stim_end, peak_time
+- **Parameters**: offset (default=0), spike_skipf (default=0.1), max_spike_skip (default=2)
+- **Units**: constant
+- **Pseudocode**: ::
+
+    # skip the first ISIs
+    peak_selection = [peak_time >= stim_start - offset, peak_time <= stim_end - offset]
+    spike_time = peak_time[numpy.all(peak_selection, axis=0)]
+
+    start_idx = min([max_spike_skip, round(len(spike_time) * spike_skipf)])
+    spike_time = spike_time[start_idx:]
+
+    # compute the adaptation index
+    ISI_values = spike_time[1:] - spike_time[:-1]
+    ISI_sum = ISI_values[1:] + ISI_values[:-1]
+    ISI_sub = ISI_values[1:] - ISI_values[:-1]
+    adaptation_index = numpy.mean(ISI_sum / ISI_sub)
+
+
+LibV5 : adaptation_index_2
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Normalized average difference of two consecutive ISIs, starting at the second ISI
+
+The adaptation index is zero for a constant firing rate and bigger than zero for a decreasing firing rate
+
+- **Required features**: stim_start, stim_end, peak_time
+- **Parameters**: offset (default=0)
+- **Units**: constant
+- **Pseudocode**: ::
+
+    # skip the first ISI
+    peak_selection = [peak_time >= stim_start - offset, peak_time <= stim_end - offset]
+    spike_time = peak_time[numpy.all(peak_selection, axis=0)]
+
+    spike_time = spike_time[1:]
+
+    # compute the adaptation index
+    ISI_values = spike_time[1:] - spike_time[:-1]
+    ISI_sum = ISI_values[1:] + ISI_values[:-1]
+    ISI_sub = ISI_values[1:] - ISI_values[:-1]
+    adaptation_index = numpy.mean(ISI_sum / ISI_sub)
+
+
 LibV5 : check_AISInitiation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Check initiation of AP in AIS
 
 - **Required features**: t, V, stim_start, stim_end, AP_begin_time, AP_begin_time;location_AIS
-- **Units**: ms
+- **Units**: constant
 - **Pseudocode**: ::
 
     if len(AP_begin_time) != len(AP_begin_time;location_AIS):
@@ -262,10 +359,47 @@ The number of bursts
     burst_number = len(burst_mean_freq)
 
 
+LibV1 : single_burst_ratio
+~~~~~~~~~~~~~~~~~~~~
+
+Length of the second isi over the median of the rest of the isis. The first isi is not taken into account, because it could bias the feature.
+See LibV1: ISI_values feature for more details.
+
+- **Required features**: ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    single_burst_ratio = ISI_values[0] / numpy.mean(ISI_values)
+
+
 Spike shape features
 --------------------
 
 .. image:: _static/figures/AP_Amplitude.png
+
+LibV1 : peak_time
+~~~~~~~~~~~~~~~~~
+
+The times of the maxima of the peaks
+
+- **Required features**: LibV5:peak_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    peak_time = time[peak_indices]
+
+
+LibV1 : peak_voltage
+~~~~~~~~~~~~~~~~~~~~
+
+The voltages at the maxima of the peaks
+
+- **Required features**: LibV5:peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    peak_voltage = voltage[peak_indices]
+
 
 LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -281,7 +415,7 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_Amplitude[1]
     APlast_amp = AP_Amplitude[-1]
 
-LibV1 : AP_Amplitude_from_voltagebase
+LibV5 : AP_Amplitude_from_voltagebase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from voltage base
@@ -328,7 +462,7 @@ Difference peak voltage of the second to first spike
 
 .. image:: _static/figures/AHP.png
 
-LibV1 : AHP_depth_abs
+LibV5 : AHP_depth_abs
 ~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization
@@ -371,7 +505,7 @@ LibV5 : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
 
 Voltage difference between AP peaks and first AHP depths
 
-- **Required features**: LibV1:peak_indices, LibV5:min_AHP_indices (mV)
+- **Required features**: LibV1:peak_indices, LibV5:min_AHP_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -427,7 +561,7 @@ if strict stiminterval is False
 LibV2 : AP_duration_half_width
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Width of spike at half spike amplitude
+Width of spike at half spike amplitude, with spike onset as described in LibV5: AP_begin_time
 
 - **Required features**: LibV2: AP_rise_indices, LibV2: AP_fall_indices
 - **Units**: ms
@@ -476,7 +610,8 @@ Can use strict_stiminterval to not use minimum after stimulus end.
 LibV5 : spike_half_width, AP1_width, AP2_width, APlast_width
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Width of spike at half-width
+Width of spike at half spike amplitude, 
+with the spike amplitude taken as the difference between the minimum between two peaks and the next peak
 
 - **Required features**: LibV5: peak_indices, LibV5: min_AHP_indices
 - **Units**: ms
@@ -485,13 +620,13 @@ Width of spike at half-width
     min_AHP_indices = numpy.concatenate([[stim_start], min_AHP_indices])
     for i in range(1, len(min_AHP_indices)):
         v_half_width = (v[peak_indices[i-1]] + v[min_AHP_indices[i]]) / 2.
-        rise_idx = t[numpy.where(v[min_AHP_indices[i-1]:peak_indices[i-1]] > v_half_width)[0]]
+        rise_idx = numpy.where(v[min_AHP_indices[i-1]:peak_indices[i-1]] > v_half_width)[0]
         v_dev = v_half_width - v[rise_idx]
         delta_v = v[rise_idx] - v[rise_idx - 1]
         delta_t = t[rise_idx] - t[rise_idx - 1]
         t_dev_rise = delta_t * v_dev / delta_v
         
-        fall_idx = t[numpy.where(v[peak_indices[i-1]:min_AHP_indices[i]] < v_half_width)[0]]
+        fall_idx = numpy.where(v[peak_indices[i-1]:min_AHP_indices[i]] < v_half_width)[0]
         v_dev = v_half_width - v[fall_idx]
         delta_v = v[fall_idx] - v[fall_idx - 1]
         delta_t = t[fall_idx] - t[fall_idx - 1]
@@ -501,6 +636,36 @@ Width of spike at half-width
     AP1_width = spike_half_width[0]
     AP2_width = spike_half_width[1]
     APlast_width = spike_half_width[-1]
+
+
+LibV1 : spike_width2
+~~~~~~~~~~~~~~~~~~~~
+
+Width of spike at half spike amplitude, with the spike onset taken as the maximum of the second derivative of the voltage in the range between
+the minimum between two peaks and the next peak
+
+- **Required features**: LibV5: peak_indices, LibV5: min_AHP_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    for i in range(len(min_AHP_indices)):
+        dv2 = CentralDiffDerivative(CentralDiffDerivative(v[min_AHP_indices[i]:peak_indices[i + 1]]))
+        peak_onset_idx = numpy.argmax(dv2) + min_AHP_indices[i]
+        v_half_width = (v[peak_indices[i + 1]] + v[peak_onset_idx]) / 2.
+
+        rise_idx = numpy.where(v[peak_onset_idx:peak_indices[i + 1]] > v_half_width)[0]
+        v_dev = v_half_width - v[rise_idx]
+        delta_v = v[rise_idx] - v[rise_idx - 1]
+        delta_t = t[rise_idx] - t[rise_idx - 1]
+        t_dev_rise = delta_t * v_dev / delta_v
+        
+        fall_idx = numpy.where(v[peak_indices[i + 1]:] < v_half_width)[0]
+        v_dev = v_half_width - v[fall_idx]
+        delta_v = v[fall_idx] - v[fall_idx - 1]
+        delta_t = t[fall_idx] - t[fall_idx - 1]
+        t_dev_fall = delta_t * v_dev / delta_v
+        spike_width2[i] = t[fall_idx] + t_dev_fall - t[rise_idx] - t_dev_rise
+
 
 LibV5 : AP_begin_width, AP1_begin_width, AP2_begin_width
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -546,7 +711,7 @@ Voltage at spike start
 LibV5 : AP_begin_time
 ~~~~~~~~~~~~~~~~~~~~~
 
-Time at spike start
+Time at spike start. Spike start is defined as where the first derivative of the voltage trace is higher than 10 V/s , for at least 5 points
 
 - **Required features**:  LibV5: AP_begin_indices
 - **Units**: ms
@@ -632,8 +797,7 @@ Same as AP_phaseslope, but for AIS location
 
 Please, notice that you have to provide t, v, stim_start and stim_end for location.
 
-- **Required features**: T;location_AIS, V;location_AIS, stim_start;location_AIS, stim_end;location_AIS, 
-                        LibV5:AP_begin_indices;location_AIS
+- **Required features**: T;location_AIS, V;location_AIS, stim_start;location_AIS, stim_end;location_AIS, LibV5:AP_begin_indices;location_AIS
 - **Parameters**: AP_phaseslope_range
 - **Units**: 1/(ms)
 - **Pseudocode**: ::
