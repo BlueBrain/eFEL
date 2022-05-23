@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python: [cp36, cp37, cp38, cp39]
+        python: [cp36, cp37, cp38, cp39, cp310]
         arch: [x86_64, amd64, 32]
         exclude:
           - os: macos-latest
