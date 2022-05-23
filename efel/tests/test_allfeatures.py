@@ -28,7 +28,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-import nose.tools as nt
 import os
 
 # pylint: disable=R0914
@@ -172,7 +171,7 @@ def test_allfeatures():
         expected_results = json.load(expected_json)
 
     import numpy
-    nt.assert_equal(set(feature_values.keys()), set(expected_results.keys()))
+    assert set(feature_values.keys()) == set(expected_results.keys())
     failed_feature = False
     for feature_name, feature_value in feature_values.items():
         expected_value = expected_results[feature_name]
@@ -191,4 +190,4 @@ def test_allfeatures():
                   (feature_name, feature_value, expected_value))
             failed_feature = True
 
-    nt.assert_true(failed_feature is False)
+    assert not failed_feature

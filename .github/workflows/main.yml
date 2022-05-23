@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -30,6 +30,10 @@ jobs:
         pip install tox tox-gh-actions
     - name: Run tox
       run: tox
+    - name: "Upload coverage to Codecov"
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: false
 
   wheels:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'

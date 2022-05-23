@@ -31,8 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
 import numpy
-import nose.tools as nt
-from nose.plugins.attrib import attr  # NOQA
 
 import efel
 
@@ -170,12 +168,12 @@ def _test_expected_value(feature_name, expected_values):
         feature_values = efel.getFeatureValues([trace], [feature_name])
 
         if expected_value is None:
-            nt.assert_true(feature_values[0][feature_name] is None)
+            assert feature_values[0][feature_name] is None
         else:
-            nt.assert_true(
-                numpy.allclose(
-                    feature_values[0][feature_name],
-                    expected_value))
+            assert numpy.allclose(
+                feature_values[0][feature_name],
+                expected_value
+            )
 
 
 def test_initburst_sahp():
@@ -231,11 +229,11 @@ def test_ISIs():
 
     feature_values = efel.getFeatureValues([mf1_trace], ['ISI_values', 'ISIs'])
 
-    nt.assert_true(numpy.allclose(
+    assert numpy.allclose(
         feature_values[0]['ISIs'][1:],
-        feature_values[0]['ISI_values']))
+        feature_values[0]['ISI_values'])
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         efel.getDistance(
             mf1_trace,
             'ISIs',
@@ -280,14 +278,14 @@ def test_pydistance():
     ]:
         efel.reset()
         mf1_trace['stim_end'] = [stim_end]
-        nt.assert_equal(
-            efel.getDistance(*args), efel.api._getDistance_cpp(*args))
+        assert (
+            efel.getDistance(*args) == efel.api._getDistance_cpp(*args))
 
     # Extra sanity checks for trace_check
     mf1_trace['stim_end'] = [600]
 
     efel.reset()
-    nt.assert_almost_equal(efel.getDistance(
+    numpy.testing.assert_allclose(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
@@ -295,7 +293,7 @@ def test_pydistance():
         trace_check=False), 30.422218394481284)
 
     efel.reset()
-    nt.assert_almost_equal(efel.api._getDistance_cpp(
+    numpy.testing.assert_allclose(efel.api._getDistance_cpp(
         mf1_trace,
         feature_name,
         mean,
@@ -313,7 +311,7 @@ def test_pydistance_featurefail():
     std = 1.0
 
     efel.reset()
-    nt.assert_almost_equal(efel.getDistance(
+    numpy.testing.assert_allclose(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
@@ -356,7 +354,7 @@ def test_interpolate_current():
     feature_values = efel.getFeatureValues([trace], ['current'])
     interp_time, interp_current = interpolate(time, current, new_dt=0.00025)
 
-    nt.assert_equal(len(interp_time), len(time))
-    nt.assert_equal(len(interp_current), len(current))
-    nt.assert_equal(len(voltage), len(current))
-    nt.assert_true(numpy.allclose(interp_current, current))
+    assert len(interp_time) == len(time)
+    assert len(interp_current) == len(current)
+    assert len(voltage) == len(current)
+    assert numpy.allclose(interp_current, current)

@@ -3,7 +3,8 @@
 # pylint: disable=F0401
 
 import os
-import nose.tools as nt
+
+import pytest
 
 testdata_dir = os.path.join(
     os.path.dirname(
@@ -59,7 +60,7 @@ def test_import_without_urlparse():
         urllibparse_import_fails = True
 
     if urllibparse_import_fails:
-        nt.assert_raises(ImportError, __builtin__.__import__, 'efel.io')
+        pytest.raises(ImportError, __builtin__.__import__, 'efel.io')
     else:
         import efel.io  # NOQA
 
@@ -84,7 +85,7 @@ def test_load_fragment_strange_mimetype():
 
     import efel
 
-    nt.assert_raises(
+    pytest.raises(
         TypeError,
         efel.io.load_fragment, 'file://strange.mimetype')
 
@@ -94,7 +95,7 @@ def test_load_fragment_wrong_fragment_format():
 
     import efel
 
-    nt.assert_raises(
+    pytest.raises(
         TypeError,
         efel.io.load_fragment,
         '%s#co=1' %
@@ -106,7 +107,7 @@ def test_load_fragment_wrong_mimetype():
 
     import efel
 
-    nt.assert_raises(
+    pytest.raises(
         TypeError,
         efel.io.load_fragment,
         '%s#col=1' % meanfrequency1_url, mime_type='application/json')
@@ -130,25 +131,25 @@ def test_load_neo_file_stim_time_arg():
     file_name = os.path.join(neo_test_files_dir, "neo_test_file_no_times.mat")
 
     # test load_neo_file without stim time
-    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)
+    pytest.raises(ValueError, efel.io.load_neo_file, file_name)
     # test load_neo_file with stim time arguments
     result = efel.io.load_neo_file(file_name, stim_start=0, stim_end=20)
     # test load_neo_file with stim time incomplete arguments
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.load_neo_file,
         file_name,
         stim_start=0)
-    nt.assert_equal(
-        True, all(
+    assert (
+        all(
             result[0][0][0]['T'] == [
                 0., 1., 2., 3., 4., 5., 6., 7., 8., 9.]))
-    nt.assert_equal(
-        True, all(
+    assert (
+        all(
             result[0][0][0]['V'] == [
                 [0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]))
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
+    assert result[0][0][0]['stim_start'] == [0.0]
+    assert result[0][0][0]['stim_end'] == [20.0]
 
 
 def test_extract_stim_times_from_neo_data_two_epochs():
@@ -174,7 +175,7 @@ def test_extract_stim_times_from_neo_data_two_epochs():
             name="stim"))
     bl.segments.append(seg)
 
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.extract_stim_times_from_neo_data,
         [bl],
@@ -205,7 +206,7 @@ def test_extract_stim_times_from_neo_data_two_events_start():
             name="stim_start"))
     bl.segments.append(seg)
 
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.extract_stim_times_from_neo_data,
         [bl],
@@ -236,7 +237,7 @@ def test_extract_stim_times_from_neo_data_two_events_end():
             name="stim_end"))
     bl.segments.append(seg)
 
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.extract_stim_times_from_neo_data,
         [bl],
@@ -267,7 +268,7 @@ def test_extract_stim_times_from_neo_data_start_in_epoch_event():
             name="stim_start"))
     bl.segments.append(seg)
 
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.extract_stim_times_from_neo_data,
         [bl],
@@ -298,7 +299,7 @@ def test_extract_stim_times_from_neo_data_end_in_epoch_event():
             name="stim_end"))
     bl.segments.append(seg)
 
-    nt.assert_raises(
+    pytest.raises(
         ValueError,
         efel.io.extract_stim_times_from_neo_data,
         [bl],
@@ -333,8 +334,8 @@ def test_extract_stim_times_from_neo_data_event_time_list():
             name="stim_end"))
     bl.segments.append(seg)
 
-    nt.assert_equal(
-        (0.0, 20.0), efel.io.extract_stim_times_from_neo_data(
+    assert (
+        (0.0, 20.0) == efel.io.extract_stim_times_from_neo_data(
             [bl], None, None))
 
 
@@ -345,8 +346,8 @@ def test_load_neo_file_stim_time_epoch():
         "neo_test_file_epoch_times.mat")
 
     result = efel.io.load_neo_file(file_name)
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
+    assert result[0][0][0]['stim_start'] == [0.0]
+    assert result[0][0][0]['stim_end'] == [20.0]
 
 
 def test_load_neo_file_stim_time_events():
@@ -356,8 +357,8 @@ def test_load_neo_file_stim_time_events():
         "neo_test_file_events_time.mat")
 
     result = efel.io.load_neo_file(file_name)
-    nt.assert_equal(result[0][0][0]['stim_start'], [0.0])
-    nt.assert_equal(result[0][0][0]['stim_end'], [20.0])
+    assert result[0][0][0]['stim_start'] == [0.0]
+    assert result[0][0][0]['stim_end'] == [20.0]
 
 
 def test_load_neo_file_stim_time_events_incomplete():
@@ -365,4 +366,4 @@ def test_load_neo_file_stim_time_events_incomplete():
     file_name = os.path.join(neo_test_files_dir,
                              "neo_test_file_events_time_incomplete.mat")
 
-    nt.assert_raises(ValueError, efel.io.load_neo_file, file_name)
+    pytest.raises(ValueError, efel.io.load_neo_file, file_name)
