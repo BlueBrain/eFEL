@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
 
     steps:
     - uses: actions/checkout@v2
@@ -41,10 +41,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python: [cp36, cp37, cp38, cp39]
-        arch: [x86_64, i686, amd64, 32]
+        arch: [x86_64, amd64, 32]
         exclude:
-          - os: macos-latest
-            arch: i686
           - os: macos-latest
             arch: amd64
           - os: macos-latest
@@ -55,12 +53,11 @@ jobs:
             arch: 32
           - os: windows-latest
             arch: x86_64
-          - os: windows-latest
-            arch: i686
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
       CIBW_TEST_REQUIRES: nose neo[neomatlabio]>=0.5.1
       CIBW_TEST_COMMAND: nosetests -s -v -x -w {project}/efel/tests
+      CIBW_SKIP: "*-musllinux_*"
       
     steps:
       - uses: actions/checkout@v2
