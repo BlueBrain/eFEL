@@ -57,10 +57,14 @@ jobs:
             arch: 32
           - os: windows-latest
             arch: x86_64
+          # dropping support for windows 32bit for python >=3.10
+          - os: windows-latest
+            arch: 32
+            python: cp310
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
-      CIBW_TEST_REQUIRES: nose neo[neomatlabio]>=0.5.1
-      CIBW_TEST_COMMAND: nosetests -s -v -x -w {project}/efel/tests
+      CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1
+      CIBW_TEST_COMMAND: pytest -sx {project}/efel/tests
       CIBW_SKIP: "*-musllinux_*"
       
     steps:
