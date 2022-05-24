@@ -33,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
 import numpy
-import nose.tools as nt
-from nose.plugins.attrib import attr  # NOQA
+
+import pytest
 
 _multiprocess_can_split_ = True
 
@@ -129,7 +129,7 @@ def test_version():
     import efel
     efel.reset()
 
-    nt.assert_true(efel.__version__ is not None)
+    assert efel.__version__ is not None
 
 
 def test_setDependencyFileLocation_wrongpath():
@@ -137,7 +137,7 @@ def test_setDependencyFileLocation_wrongpath():
 
     import efel
     efel.reset()
-    nt.assert_raises(
+    pytest.raises(
         Exception,
         efel.setDependencyFileLocation, "thisfiledoesntexist")
 
@@ -154,7 +154,7 @@ def test_nonexisting_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
-    nt.assert_raises(
+    pytest.raises(
         TypeError,
         efel.getFeatureValues,
         [trace],
@@ -177,7 +177,7 @@ def test_failing_double_feature():
         [trace],
         ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
 
-    nt.assert_equal(feature_value, None)
+    assert feature_value is None
 
 
 def test_raise_warnings():
@@ -200,11 +200,10 @@ def test_raise_warnings():
             [trace],
             ['AP_amplitude'])[0]['AP_amplitude']
 
-        nt.assert_equal(feature_value, None)
-        nt.assert_equal(len(warning), 1)
-        nt.assert_true(
-            "Error while calculating feature AP_amplitude" in
-            str(warning[0].message))
+        assert feature_value is None
+        assert len(warning) == 1
+        assert ("Error while calculating feature AP_amplitude" in
+                str(warning[0].message))
 
     with warnings.catch_warnings(record=True) as warning:
         warnings.simplefilter("always")
@@ -212,8 +211,8 @@ def test_raise_warnings():
             [trace],
             ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
 
-        nt.assert_equal(feature_value, None)
-        nt.assert_equal(len(warning), 0)
+        assert feature_value is None
+        assert len(warning) == 0
 
 
 def test_failing_int_feature():
@@ -232,7 +231,7 @@ def test_failing_int_feature():
         [trace],
         ['burst_number'], raise_warnings=False)[0]['burst_number']
 
-    nt.assert_equal(feature_value, None)
+    assert feature_value is None
 
 
 def test_empty_trace():
@@ -271,7 +270,7 @@ def test_empty_trace():
     for feature, value in \
             efel.getFeatureValues([trace], features)[0].items():
 
-        nt.assert_equal(value[0], 0.0)
+        assert value[0] == 0.0
 
 
 def test_multiprocessing_traces():
@@ -322,19 +321,19 @@ def test_multiprocessing_traces():
         [trace1, trace2],
         [feature_name], parallel_map=pool.map, raise_warnings=False)
 
-    nt.assert_equal(
-        list(feature_values_serial[0]['peak_time']),
+    assert (
+        list(feature_values_serial[0]['peak_time']) ==
         list(feature_values_parallel[0]['peak_time']))
-    nt.assert_equal(
-        list(feature_values_serial[1]['peak_time']),
+    assert (
+        list(feature_values_serial[1]['peak_time']) ==
         list(feature_values_parallel[1]['peak_time']))
 
     feature_values_async = efel.getFeatureValues(
         [trace1, trace2], [feature_name], parallel_map=pool.map_async,
         return_list=False, raise_warnings=False)
-    nt.assert_true(isinstance(
+    assert isinstance(
         feature_values_async,
-        multiprocessing.pool.MapResult))
+        multiprocessing.pool.MapResult)
 
 
 def test_consecutive_traces():
@@ -384,8 +383,8 @@ def test_consecutive_traces():
             [trace2],
             [feature_name], raise_warnings=False)
 
-    nt.assert_not_equal(
-        len(feature_values1[0][feature_name]),
+    assert (
+        len(feature_values1[0][feature_name]) !=
         len(feature_values2[0][feature_name]))
 
 
@@ -410,27 +409,27 @@ def test_stimstart_stimend():
 
     features = ['AP_begin_voltage']
 
-    nt.assert_raises(
+    pytest.raises(
         Exception,
         efel.getFeatureValues, [trace], features)
 
     trace['stim_start'] = [stim_end]
     trace['stim_end'] = [stim_start]
 
-    nt.assert_raises(
+    pytest.raises(
         Exception,
         efel.getFeatureValues, [trace], features)
 
     trace['stim_start'] = [stim_start, stim_end]
     trace['stim_end'] = [stim_end]
 
-    nt.assert_raises(
+    pytest.raises(
         Exception,
         efel.getFeatureValues, [trace], features)
 
     del trace['stim_start']
 
-    nt.assert_raises(
+    pytest.raises(
         Exception,
         efel.getFeatureValues, [trace], features)
 
@@ -468,8 +467,8 @@ def test_setDerivativeThreshold():
             [trace],
             features)
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][1]
-    nt.assert_almost_equal(AP_begin_voltage, -51.6400489995987)
-    nt.assert_not_equal(AP_begin_voltage, AP_begin_voltage_orig)
+    numpy.testing.assert_allclose(AP_begin_voltage, -51.6400489995987)
+    assert AP_begin_voltage != AP_begin_voltage_orig
 
 
 def interpolate(time, voltage, new_dt):
@@ -497,9 +496,9 @@ def test_interpolate():
             features, raise_warnings=False)
     interp_time = feature_values[0]['time']
     interp_voltage = feature_values[0]['voltage']
-    nt.assert_equal(len(interp_time), len(time))
-    nt.assert_equal(len(interp_voltage), len(voltage))
-    nt.assert_true(numpy.allclose(interp_voltage, voltage))
+    assert len(interp_time) == len(time)
+    assert len(interp_voltage) == len(voltage)
+    assert numpy.allclose(interp_voltage, voltage)
 
 
 def test_zero_ISI_log_slope_skip():
@@ -526,7 +525,7 @@ def test_zero_ISI_log_slope_skip():
         efel.getFeatureValues(
             [trace],
             features, raise_warnings=False)
-    nt.assert_equal(feature_values[0]['ISI_log_slope_skip'], None)
+    assert feature_values[0]['ISI_log_slope_skip'] is None
 
 
 def test_peak_indices():
@@ -556,7 +555,7 @@ def test_peak_indices():
 
     peak_indices = feature_values[0]['peak_indices']
 
-    nt.assert_equal(len(peak_indices), 5)
+    assert len(peak_indices) == 5
 
 
 def test_min_AHP_indices():
@@ -586,7 +585,7 @@ def test_min_AHP_indices():
 
     min_AHP_indices = feature_values[0]['min_AHP_indices']
 
-    nt.assert_equal(len(min_AHP_indices), 5)
+    assert len(min_AHP_indices) == 5
 
 
 def test_min_AHP_indices_strict():
@@ -621,8 +620,8 @@ def test_min_AHP_indices_strict():
         min_AHP_indices = feature_values[0]['min_AHP_indices']
         AHP_time_from_peak = feature_values[0]['AHP_time_from_peak']
 
-        nt.assert_equal(len(min_AHP_indices), n_of_ahp)
-        nt.assert_equal(len(AHP_time_from_peak), n_of_ahp)
+        assert len(min_AHP_indices) == n_of_ahp
+        assert len(AHP_time_from_peak) == n_of_ahp
 
 
 def test_min_AHP_indices_single_peak():
@@ -682,9 +681,9 @@ def test_strict_stiminterval():
         peak_time = feature_values[0]['peak_time']
         spikecount = feature_values[0]['Spikecount']
 
-        nt.assert_equal(len(peak_indices), n_of_spikes)
-        nt.assert_equal(len(peak_time), n_of_spikes)
-        nt.assert_equal(spikecount, n_of_spikes)
+        assert len(peak_indices) == n_of_spikes
+        assert len(peak_time) == n_of_spikes
+        assert spikecount == n_of_spikes
 
 
 def test_ISI_log_slope():
@@ -719,7 +718,7 @@ def test_ISI_log_slope():
     log_isi_values = numpy.log(isi_values)
     slope, _ = numpy.polyfit(log_x_values, log_isi_values, 1)
 
-    nt.assert_almost_equal(feature_values[0]['ISI_log_slope'][0], slope)
+    numpy.testing.assert_allclose(feature_values[0]['ISI_log_slope'][0], slope)
 
 
 def test_ISI_semilog_slope():
@@ -754,7 +753,9 @@ def test_ISI_semilog_slope():
     log_isi_values = numpy.log(isi_values)
     slope, _ = numpy.polyfit(x_values, log_isi_values, 1)
 
-    nt.assert_almost_equal(feature_values[0]['ISI_semilog_slope'][0], slope)
+    numpy.testing.assert_allclose(
+        feature_values[0]['ISI_semilog_slope'][0], slope
+    )
 
 
 def test_AP_begin_indices1():
@@ -796,14 +797,14 @@ def test_AP_begin_indices1():
     # the same in this trace
     # There was originally an issue in this case due to the 'width' value
     # in AP_begin_indices, which caused a segmentation fault
-    nt.assert_equal(
-        len(feature_values[0]['AP_begin_indices']),
+    assert (
+        len(feature_values[0]['AP_begin_indices']) ==
         len(feature_values[0]['AP_amplitude']))
-    nt.assert_equal(
-        len(feature_values[0]['AP_begin_indices']),
+    assert (
+        len(feature_values[0]['AP_begin_indices']) ==
         len(feature_values[0]['peak_time']))
-    nt.assert_equal(
-        len(feature_values[0]['AP_begin_indices']),
+    assert (
+        len(feature_values[0]['AP_begin_indices']) ==
         len(feature_values[0]['AP_duration_half_width']))
 
 
@@ -848,9 +849,9 @@ def test_AP_end_indices():
     for begin, peak, end in zip(begin_indices, peak_indices, end_indices):
         # the voltage value for the end index should be closer than that of
         # begin index than the peak
-        nt.assert_true(abs(voltage[begin] - voltage[end])
-                       < abs(voltage[peak] - voltage[end]))
-        nt.assert_true(end > begin)
+        assert (abs(voltage[begin] - voltage[end])
+                < abs(voltage[peak] - voltage[end]))
+        assert end > begin
 
     efel.reset()
 
@@ -864,7 +865,7 @@ def test_AP_end_indices():
     updated_end_indices = feature_values[0]["AP_end_indices"]
 
     for end_index, updated_end_index in zip(end_indices, updated_end_indices):
-        nt.assert_true(end_index != updated_end_index)
+        assert end_index != updated_end_index
 
 
 def test_mean_frequency1():
@@ -892,7 +893,7 @@ def test_mean_frequency1():
     mean_frequency = float(n_of_spikes) * 1000 / \
         (stim_spikes[-1] - stim_start)
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         feature_values[0]['mean_frequency'][0],
         mean_frequency)
 
@@ -933,8 +934,8 @@ def test_ap_amplitude_outside_stim():
     # Make sure AP_amplitude doesn't pick up the two spikes outside of
     # the stimulus
     # (which are present in peak_time)
-    nt.assert_equal(
-        len(feature_values[0]['AP_amplitude']) + 2,
+    assert (
+        len(feature_values[0]['AP_amplitude']) + 2 ==
         len(feature_values[0]['peak_time']))
 
 
@@ -969,8 +970,8 @@ def test_ap_amplitude_from_voltagebase1():
     for peak_voltage, ap_amplitude_from_voltagebase in zip(
             feature_values[0]['peak_voltage'],
             feature_values[0]['AP_amplitude_from_voltagebase']):
-        nt.assert_almost_equal(peak_voltage - voltage_base,
-                               ap_amplitude_from_voltagebase)
+        numpy.testing.assert_allclose(peak_voltage - voltage_base,
+                                      ap_amplitude_from_voltagebase)
 
 
 def test_voltagebase1():
@@ -994,8 +995,9 @@ def test_voltagebase1():
     voltage_base = numpy.mean(interp_voltage[numpy.where(
         (interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
 
-    nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
-                           places=8)
+    numpy.testing.assert_allclose(voltage_base,
+                                  feature_values[0]['voltage_base'][0],
+                                  rtol=0, atol=1e-8)
 
 
 def test_voltagebase_median():
@@ -1020,8 +1022,9 @@ def test_voltagebase_median():
     voltage_base = numpy.median(interp_voltage[numpy.where(
         (interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
 
-    nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
-                           places=8)
+    numpy.testing.assert_allclose(voltage_base,
+                                  feature_values[0]['voltage_base'][0],
+                                  rtol=0, atol=1e-8)
 
 
 def test_currentbase():
@@ -1047,8 +1050,9 @@ def test_currentbase():
         (time >= 0.9 * stim_start) & (time <= stim_start))])
 
     # nt.set_trace()
-    nt.assert_almost_equal(current_base, feature_values[0]['current_base'][0],
-                           places=8)
+    numpy.testing.assert_allclose(current_base,
+                                  feature_values[0]['current_base'][0],
+                                  rtol=0, atol=1e-8)
 
 
 def test_currentbase_median():
@@ -1074,8 +1078,9 @@ def test_currentbase_median():
     current_base = numpy.median(current[numpy.where(
         (time >= 0.9 * stim_start) & (time <= stim_start))])
 
-    nt.assert_almost_equal(current_base, feature_values[0]['current_base'][0],
-                           places=8)
+    numpy.testing.assert_allclose(current_base,
+                                  feature_values[0]['current_base'][0],
+                                  rtol=0, atol=1e-8)
 
 
 def test_getDistance1():
@@ -1097,7 +1102,7 @@ def test_getDistance1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         3.09045815935,
         efel.getDistance(
             trace,
@@ -1137,8 +1142,8 @@ def test_getDistance_error_dist():
         10,
         error_dist=150)
 
-    nt.assert_almost_equal(score_normal, 250)
-    nt.assert_almost_equal(score_150, 150)
+    numpy.testing.assert_allclose(score_normal, 250)
+    numpy.testing.assert_allclose(score_150, 150)
 
 
 def test_getDistance_trace_check():
@@ -1165,12 +1170,14 @@ def test_getDistance_trace_check():
     trace['stim_end'] = [70]
     traces.append(trace)
 
-    nt.assert_almost_equal(efel.getDistance(trace, 'Spikecount', 0, 1), 3.0)
+    numpy.testing.assert_allclose(
+        efel.getDistance(trace, 'Spikecount', 0, 1), 3.0
+    )
 
     trace['stim_end'] = [50]
 
     efel.reset()
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         efel.getDistance(
             trace,
             'Spikecount',
@@ -1180,7 +1187,9 @@ def test_getDistance_trace_check():
         3.0)
 
     efel.reset()
-    nt.assert_almost_equal(efel.getDistance(trace, 'Spikecount', 0, 1), 250.0)
+    numpy.testing.assert_allclose(
+        efel.getDistance(trace, 'Spikecount', 0, 1), 250.0
+    )
 
 
 def test_APlast_amp():
@@ -1211,7 +1220,7 @@ def test_APlast_amp():
 
     APlast_amp = feature_values[0]['APlast_amp'][0]
     AP_amplitude = feature_values[0]['APlast_amp']
-    nt.assert_equal(APlast_amp, AP_amplitude[-1])
+    assert APlast_amp == AP_amplitude[-1]
 
 
 def test_APlast_width():
@@ -1242,7 +1251,7 @@ def test_APlast_width():
 
     APlast_width = feature_values[0]['APlast_width'][0]
     spike_half_width = feature_values[0]['spike_half_width']
-    nt.assert_equal(APlast_width, spike_half_width[-1])
+    assert APlast_width == spike_half_width[-1]
 
 
 def test_derivwindow1():
@@ -1272,7 +1281,7 @@ def test_derivwindow1():
             features)
 
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
-    nt.assert_almost_equal(AP_begin_voltage, -45.03627393790836)
+    numpy.testing.assert_allclose(AP_begin_voltage, -45.03627393790836)
 
     efel.reset()
     efel.setDoubleSetting('interp_step', 0.01)
@@ -1282,7 +1291,7 @@ def test_derivwindow1():
             features)
 
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
-    nt.assert_almost_equal(AP_begin_voltage, -83.57661997973835)
+    numpy.testing.assert_allclose(AP_begin_voltage, -83.57661997973835)
 
     efel.reset()
     efel.setDoubleSetting('interp_step', 0.01)
@@ -1293,7 +1302,7 @@ def test_derivwindow1():
             features)
 
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
-    nt.assert_almost_equal(AP_begin_voltage, -45.505521563640386)
+    numpy.testing.assert_allclose(AP_begin_voltage, -45.505521563640386)
 
 
 def test_spikecount1():
@@ -1324,7 +1333,7 @@ def test_spikecount1():
 
     peak_indices = feature_values[0]['peak_indices']
     spikecount = feature_values[0]['Spikecount'][0]
-    nt.assert_equal(len(peak_indices), spikecount)
+    assert len(peak_indices) == spikecount
 
 
 def test_spikecount_stimint1():
@@ -1360,12 +1369,12 @@ def test_spikecount_stimint1():
     interval_peaktimes, = \
         numpy.where((peak_times >= stim_start) & (peak_times <= stim_end))
 
-    nt.assert_equal(
-        len(interval_peaktimes),
+    assert (
+        len(interval_peaktimes) ==
         spikecount_stimint)
 
-    nt.assert_equal(
-        spikecount,
+    assert (
+        spikecount ==
         spikecount_stimint + 2)
 
 
@@ -1401,8 +1410,8 @@ def test_spikecount_libv4peakindices():
 
     peak_indices = feature_values[0]['peak_indices']
     spikecount = feature_values[0]['Spikecount'][0]
-    nt.assert_equal(len(peak_indices), 5)
-    nt.assert_equal(len(peak_indices), spikecount)
+    assert len(peak_indices) == 5
+    assert len(peak_indices) == spikecount
 
 
 def test_ohmic_inputresistance():
@@ -1435,8 +1444,8 @@ def test_ohmic_inputresistance():
 
     voltage_deflection = feature_values[0]['voltage_deflection'][0]
     ohmic_input_resistance = feature_values[0]['ohmic_input_resistance'][0]
-    nt.assert_equal(
-        ohmic_input_resistance,
+    assert (
+        ohmic_input_resistance ==
         voltage_deflection /
         stimulus_current)
 
@@ -1474,8 +1483,8 @@ def test_sag_amplitude():
         0]['steady_state_voltage_stimend'][0]
     minimum_voltage = feature_values[0]['minimum_voltage'][0]
     sag_amplitude = feature_values[0]['sag_amplitude'][0]
-    nt.assert_equal(
-        sag_amplitude,
+    assert (
+        sag_amplitude ==
         steady_state_voltage_stimend - minimum_voltage)
 
 
@@ -1506,9 +1515,7 @@ def test_sag_amplitude_pos_deflect():
             features,
             raise_warnings=False)
 
-    nt.assert_equal(
-        feature_values[0]['sag_amplitude'],
-        None)
+    assert (feature_values[0]['sag_amplitude'] is None)
 
 
 def test_sag_ratio1():
@@ -1545,8 +1552,8 @@ def test_sag_ratio1():
     minimum_voltage = feature_values[0]['minimum_voltage'][0]
     voltage_base = feature_values[0]['voltage_base'][0]
     sag_ratio1 = feature_values[0]['sag_ratio1'][0]
-    nt.assert_equal(
-        sag_ratio1,
+    assert (
+        sag_ratio1 ==
         sag_amplitude / (voltage_base - minimum_voltage))
 
 
@@ -1579,7 +1586,7 @@ def test_sag_ratio1_empty():
             features,
             raise_warnings=False)
 
-    nt.assert_equal(feature_values[0]['sag_ratio1'], None)
+    assert feature_values[0]['sag_ratio1'] is None
 
 
 def test_sag_ratio2():
@@ -1617,8 +1624,8 @@ def test_sag_ratio2():
     minimum_voltage = feature_values[0]['minimum_voltage'][0]
     voltage_base = feature_values[0]['voltage_base'][0]
     sag_ratio2 = feature_values[0]['sag_ratio2'][0]
-    nt.assert_equal(
-        sag_ratio2,
+    assert (
+        sag_ratio2 ==
         (voltage_base - steady_state_voltage_stimend) /
         (voltage_base - minimum_voltage))
 
@@ -1654,8 +1661,8 @@ def test_ohmic_input_resistance_vb_ssse():
     voltage_deflection = feature_values[0]['voltage_deflection_vb_ssse'][0]
     ohmic_input_resistance = \
         feature_values[0]['ohmic_input_resistance_vb_ssse'][0]
-    nt.assert_equal(
-        ohmic_input_resistance,
+    assert (
+        ohmic_input_resistance ==
         voltage_deflection /
         stimulus_current)
 
@@ -1687,7 +1694,7 @@ def test_spikecount2():
             features)
 
     spikecount = feature_values[0]['Spikecount'][0]
-    nt.assert_equal(spikecount, 0)
+    assert spikecount == 0
 
 
 def test_min_voltage_between_spikes1():
@@ -1724,7 +1731,7 @@ def test_min_voltage_between_spikes1():
     for index, min_voltage_between_spikes_value in zip(
             list(range(len(peak_indices[:-1]))),
             min_voltage_between_spikes):
-        nt.assert_almost_equal(
+        numpy.testing.assert_allclose(
             numpy.min(
                 fel_voltage[
                     peak_indices[index]:peak_indices[
@@ -1743,7 +1750,7 @@ def test_getFeatureNames():
     test_data_path = os.path.join(testdata_dir, '..', 'featurenames.json')
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
-    nt.assert_equal(set(efel.getFeatureNames()), set(expected_featurenames))
+    assert set(efel.getFeatureNames()) == set(expected_featurenames)
 
 
 def test_getFeatureNameExists():
@@ -1751,8 +1758,8 @@ def test_getFeatureNameExists():
 
     import efel
     efel.reset()
-    nt.assert_true(efel.FeatureNameExists('voltage_base'))
-    nt.assert_false(efel.FeatureNameExists('voltage_base_wrong'))
+    assert efel.FeatureNameExists('voltage_base')
+    assert not efel.FeatureNameExists('voltage_base_wrong')
 
 
 def test_steady_state_voltage1():
@@ -1773,8 +1780,8 @@ def test_steady_state_voltage1():
 
     steady_state_voltage = numpy.mean(voltage[numpy.where(time >= stim_end)])
 
-    nt.assert_almost_equal(steady_state_voltage,
-                           feature_values['steady_state_voltage'][0])
+    numpy.testing.assert_allclose(steady_state_voltage,
+                                  feature_values['steady_state_voltage'][0])
 
 
 def test_steady_state_voltage_stimend():
@@ -1800,8 +1807,10 @@ def test_steady_state_voltage_stimend():
         (time < end_time) & (time >= begin_time)
     )])
 
-    nt.assert_almost_equal(steady_state_voltage_stimend,
-                           feature_values['steady_state_voltage_stimend'][0])
+    numpy.testing.assert_allclose(
+        steady_state_voltage_stimend,
+        feature_values['steady_state_voltage_stimend'][0]
+    )
 
 
 def test_maximum_voltage_from_voltagebase():
@@ -1828,7 +1837,7 @@ def test_maximum_voltage_from_voltagebase():
 
     maximum_voltage_from_voltagebase = maximum_voltage - voltage_base
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         maximum_voltage_from_voltagebase,
         feature_values['maximum_voltage_from_voltagebase'][0])
 
@@ -1878,7 +1887,7 @@ def test_decay_time_constant_after_stim1():
         stim_start,
         stim_end)
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         expected,
         feature_values['decay_time_constant_after_stim'][0])
 
@@ -1896,9 +1905,9 @@ def test_decay_time_constant_after_stim2():
 
     feature_values = efel.getFeatureValues([trace], features)[0]
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         19.9,
-        feature_values['decay_time_constant_after_stim'][0], places=1)
+        feature_values['decay_time_constant_after_stim'][0], rtol=0, atol=1e-1)
 
 
 def sag_time_constant(
@@ -1975,7 +1984,7 @@ def test_sag_time_constant():
         stim_start,
         stim_end)
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         expected,
         feature_values['sag_time_constant'][0])
 
@@ -2008,8 +2017,8 @@ def test_getmeanfeaturevalues():
         [trace], [
             'AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
 
-    nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
-                    mean_feature_values[0]['AP_amplitude'])
+    assert (numpy.mean(feature_values[0]['AP_amplitude']) ==
+            mean_feature_values[0]['AP_amplitude'])
 
 
 def test_mean_AP_amplitude():
@@ -2036,8 +2045,8 @@ def test_mean_AP_amplitude():
             [trace],
             ['AP_amplitude', 'mean_AP_amplitude'], raise_warnings=False)
 
-    nt.assert_equal(numpy.mean(feature_values[0]['AP_amplitude']),
-                    feature_values[0]['mean_AP_amplitude'])
+    assert (numpy.mean(feature_values[0]['AP_amplitude']) ==
+            feature_values[0]['mean_AP_amplitude'])
 
 
 def test_unfinished_peak():
@@ -2061,7 +2070,7 @@ def test_unfinished_peak():
     traces_results = efel.getFeatureValues([trace], ['Spikecount'])
     spikecount = traces_results[0]['Spikecount'][0]
 
-    nt.assert_equal(spikecount, 3)
+    assert spikecount == 3
 
     # When the signal at the end of the trace is larger than the threshold,
     # Spikecount and possibly other features cannont be estimated.
@@ -2070,7 +2079,7 @@ def test_unfinished_peak():
     traces_results = efel.getFeatureValues([trace], ['Spikecount'])
     spikecount = traces_results[0]['Spikecount'][0]
 
-    nt.assert_equal(spikecount, 3)
+    assert spikecount == 3
 
 
 def rise_time_perc(
@@ -2129,7 +2138,7 @@ def test_rise_time_perc():
     )
 
     for exp, rise_time in zip(expected, ap_rise_time):
-        nt.assert_almost_equal(exp, rise_time)
+        numpy.testing.assert_allclose(exp, rise_time)
 
 
 def test_slow_ahp_start():
@@ -2158,7 +2167,7 @@ def test_slow_ahp_start():
         expected.append(numpy.min(voltage[new_idx:peak_indices[i + 1]]))
 
     for exp, ahp_slow in zip(expected, ahp_depth_abs_slow):
-        nt.assert_almost_equal(exp, ahp_slow)
+        numpy.testing.assert_allclose(exp, ahp_slow)
 
 
 def test_AP_peak_upstroke():
@@ -2197,7 +2206,7 @@ def test_AP_peak_upstroke():
         expected.append(numpy.max(dvdt[apbi:pi]))
 
     for exp, pus in zip(expected, ap_peak_upstroke):
-        nt.assert_almost_equal(exp, pus, places=6)
+        numpy.testing.assert_allclose(exp, pus, rtol=0, atol=1e-6)
 
 
 def test_AP_peak_downstroke():
@@ -2236,7 +2245,7 @@ def test_AP_peak_downstroke():
         expected.append(numpy.min(dvdt[pi:ahpi]))
 
     for exp, pds in zip(expected, ap_peak_downstroke):
-        nt.assert_almost_equal(exp, pds, places=6)
+        numpy.testing.assert_allclose(exp, pds, rtol=0, atol=1e-6)
 
 
 def test_min_between_peaks_indices():
@@ -2267,7 +2276,7 @@ def test_min_between_peaks_indices():
     min_AHP_indices = feature_values[0]['min_AHP_indices'][0]
     min_btw_peaks_indices = feature_values[0]['min_between_peaks_indices'][0]
 
-    nt.assert_true(min_AHP_indices < min_btw_peaks_indices)
+    assert min_AHP_indices < min_btw_peaks_indices
 
 
 def test_min_between_peaks_values():
@@ -2301,7 +2310,7 @@ def test_min_between_peaks_values():
 
     expected = numpy.min(voltage[peak_idx:])
 
-    nt.assert_almost_equal(min_btw_peaks_value, expected)
+    numpy.testing.assert_allclose(min_btw_peaks_value, expected)
 
 
 def test_AP_width_between_threshold():
@@ -2345,7 +2354,7 @@ def test_AP_width_between_threshold():
         voltage[peak_idx:min_after_peak_idx] < threshold
     ][0]
 
-    nt.assert_almost_equal(AP_width, t1 - t0)
+    numpy.testing.assert_allclose(AP_width, t1 - t0)
 
 
 def test_AP_width_between_threshold_strict():
