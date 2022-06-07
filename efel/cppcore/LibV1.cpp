@@ -181,7 +181,16 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
     GErrorStr += "\n Three spikes required for calculation of ISI_values.\n";
     return -1;
   }
-  for (size_t i = 2; i < pvTime.size(); i++)
+
+  int IgnoreFirstSpike;
+  vector<int> retIgnore;
+  retVal = getIntParam(IntFeatureData, "ignore_first_spike", retIgnore);
+  if ((retVal < 0) || (retIgnore[0] > 1) || (retIgnore[0] < 0))
+    IgnoreFirstSpike = 1;
+  else
+    IgnoreFirstSpike = retIgnore[0];
+
+  for (size_t i = IgnoreFirstSpike + 1; i < pvTime.size(); i++)
     VecISI.push_back(pvTime[i] - pvTime[i - 1]);
   setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
   return VecISI.size();

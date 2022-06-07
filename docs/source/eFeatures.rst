@@ -60,8 +60,8 @@ LibV5 : inv_time_to_first_spike
 LibV1 : ISI_values
 ~~~~~~~~~~~~~~~~~~
 
-The interspike intervals (i.e. time intervals) between adjacent peaks, starting at the second peak.
-The 1st spike is not taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
+The interspike intervals (i.e. time intervals) between adjacent peaks.
+If ignore_first_spike is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
