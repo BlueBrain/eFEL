@@ -1281,6 +1281,7 @@ int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
 
 // spike width at spike start
 static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
+                            double stimstart,
                             const vector<int>& AP_begin_indices,
                             const vector<int>& min_ahp_indices,
                             vector<double>& AP_begin_width) {
@@ -1289,15 +1290,32 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   /// vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   // copy(min_ahp_indices.begin(), min_ahp_indices.end(),
   // min_ahp_indices_plus.begin());
-  if (AP_begin_indices.size() < min_ahp_indices.size()) return -1;
+
+  // keep only min_ahp_indices values that are after stim start
+  // because AP_begin_indices are all after stim start
+  // if not done, could cause cases where AP_begin_indices[i] > min_ahp_indices[i]
+  // leading to segmentation faults
+  int stimbeginindex =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), stimstart)));
+
+  vector<int> strict_min_ahp_indices;
   for (size_t i = 0; i < min_ahp_indices.size(); i++) {
+    if (min_ahp_indices[i] > stimbeginindex) {
+      strict_min_ahp_indices.push_back(min_ahp_indices[i]);
+    }
+  }
+
+  if (AP_begin_indices.size() < strict_min_ahp_indices.size()) return -1;
+  for (size_t i = 0; i < strict_min_ahp_indices.size(); i++) {
     double v_start = v[AP_begin_indices[i]];
     // interpolate this one time step where the voltage is close to v_start in
     // the falling edge
     int rise_index = AP_begin_indices[i];
     int fall_index = distance(
         v.begin(),
-        find_if(v.begin() + rise_index + 1, v.begin() + min_ahp_indices[i],
+        find_if(v.begin() + rise_index + 1, v.begin() + strict_min_ahp_indices[i],
                 std::bind2nd(std::less_equal<double>(), v_start)));
     // v_dev = v_start - v[fall_index];
     // delta_v = v[fall_index] - v[fall_index - 1];
@@ -1324,6 +1342,9 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
   retVal = getVec(DoubleFeatureData, StringData, "T", t);
   if (retVal < 0) return -1;
+  vector<double> stimstart;
+  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+  if (retVal < 0) return -1;
   retVal =
       getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndex);
   if (retVal < 0) return -1;
@@ -1338,7 +1359,7 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
   // Take derivative of voltage from 1st AHPmin to the peak of the spike
   // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
   retVal =
-      __AP_begin_width(t, V, AP_begin_indices, minAHPIndex, AP_begin_width);
+      __AP_begin_width(t, V, stimstart[0], AP_begin_indices, minAHPIndex, AP_begin_width);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_begin_width",
                  AP_begin_width);
