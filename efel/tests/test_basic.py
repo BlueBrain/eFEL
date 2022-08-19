@@ -2421,6 +2421,6 @@ def test_segfault_in_AP_begin_width():
             features, raise_warnings=False)
 
     expected_values = [
-        4.2,  7.4,  3.3, 10.8,  4.5,  5.6,  7.2,  3.4,  3.5,  3.6,  3.6]
+        4.2, 7.4, 3.3, 10.8, 4.5, 5.6, 7.2, 3.4, 3.5, 3.6, 3.6]
     numpy.testing.assert_allclose(
         feature_values[0]['AP_begin_width'], expected_values)
