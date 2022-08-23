@@ -2874,7 +2874,17 @@ static int __peak_indices(double threshold, vector<double>& V,
         "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
+  if (upVec.size() == 0) {
+    GErrorStr +=
+        "\nVoltage never goes above threshold in spike detection.\n";
+    return 0;
+  }
 
+  // case where voltage starts above threshold: remove 1st dnVec
+  while (dnVec.size() > 0 && dnVec[0] < upVec[0]) {
+    dnVec.erase(dnVec.begin());
+  }
+  
   if (upVec.size() > dnVec.size()) {
     size_t size_diff = upVec.size() - dnVec.size();
     for (size_t i = 0; i < size_diff; i++) {
