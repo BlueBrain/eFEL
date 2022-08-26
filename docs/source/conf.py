@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'eFEL'
-copyright = u'2015, BBP, EPFL'
+copyright = u'2015-2022, BBP, EPFL'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -259,7 +259,7 @@ texinfo_documents = [
 epub_title = u'eFEL'
 epub_author = u'BBP, EPFL'
 epub_publisher = u'BBP, EPFL'
-epub_copyright = u'2015, BBP, EPFL'
+epub_copyright = u'2015-2022, BBP, EPFL'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
