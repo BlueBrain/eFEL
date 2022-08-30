@@ -726,6 +726,46 @@ def test_ISI_log_slope():
     numpy.testing.assert_allclose(feature_values[0]['ISI_log_slope'][0], slope)
 
 
+def test_ISI_values_noIgnore():
+    """basic: Test test_ISI_values without Ignoring the first spike"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['ISI_values']
+
+    efel.setIntSetting("ignore_first_spike", 0)
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values_no_ignore = feature_values[0]['ISI_values']
+
+    efel.reset()
+    efel.setIntSetting("ignore_first_spike", 1)
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values = feature_values[0]['ISI_values']
+
+    numpy.testing.assert_equal(len(isi_values) + 1, len(isi_values_no_ignore))
+
+
 def test_ISI_semilog_slope():
     """basic: Test ISI_semilog_slope"""
 
