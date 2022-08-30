@@ -714,28 +714,32 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
+// discrepancy betwen PVTime indices and BurstIndex indices because
+// first ISI value is ignored
 static int __burst_mean_freq(vector<double>& PVTime, vector<int>& BurstIndex,
                              vector<double>& BurstMeanFreq) {
-  vector<double> tmpVec;
-  BurstIndex.insert(BurstIndex.begin(), 0);
-  for (size_t i = 0; i < BurstIndex.size(); i++) tmpVec.push_back(0);
+  // if no burst detected, do not consider all peaks in a single burst
+  if (BurstIndex.size() == 0) return BurstMeanFreq.size();
   double span;
   size_t i;
+
+  // 1st burst
+  span = PVTime[BurstIndex[0]] - PVTime[0];
+  BurstMeanFreq.push_back((BurstIndex[0] + 1) * 1000 / span);
+
   for (i = 0; i < BurstIndex.size() - 1; i++) {
-    if (BurstIndex[i + 1] - BurstIndex[i] == 1) {
-      tmpVec.push_back(0);
-    } else {
-      span = PVTime[BurstIndex[i + 1] - 1] - PVTime[BurstIndex[i]];
-      tmpVec.push_back((BurstIndex[i + 1] - BurstIndex[i] + 1) * 1000 / span);
+    if (BurstIndex[i + 1] - BurstIndex[i] > 1) {
+      span = PVTime[BurstIndex[i + 1]] - PVTime[BurstIndex[i] + 1];
+      BurstMeanFreq.push_back((BurstIndex[i + 1] - BurstIndex[i]) * 1000 / span);
     }
   }
-  // NOW LAST BURST
-  span = PVTime[PVTime.size() - 1] - PVTime[BurstIndex[i]];
-  tmpVec.push_back((PVTime.size() - 1 - BurstIndex[i] + 1) * 1000 / span);
 
-  for (i = 0; i < tmpVec.size(); i++) {
-    if (tmpVec[i] != 0) BurstMeanFreq.push_back(tmpVec[i]);
-  }
+  // last burst
+  if (PVTime.size() - 1 - BurstIndex[i] > 1) {
+      span = PVTime[PVTime.size() - 1] - PVTime[BurstIndex[i] + 1];
+      BurstMeanFreq.push_back((PVTime.size() - 1 - BurstIndex[i]) * 1000 / span);
+    }
+
   return BurstMeanFreq.size();
 }
 
