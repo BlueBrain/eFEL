@@ -105,7 +105,9 @@ def get_allfeature_values():
         'BAC_width']
 
     db_featurenames = [
-        'depol_block']
+        'depol_block',
+        'depol_block_bool'
+    ]
 
     soma_featurenames = all_featurenames[:]
 

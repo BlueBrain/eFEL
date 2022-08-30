@@ -38,7 +38,8 @@ all_pyfeatures = [
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',
-    'depol_block']
+    'depol_block',
+    'depol_block_bool']
 
 
 def voltage():
@@ -240,6 +241,16 @@ def depol_block():
             return None
 
     return numpy.array([1])
+
+
+def depol_block_bool():
+    """Wrapper around the depol_block feature. Returns [1] if depol_block
+    is None, [0] otherwise."""
+
+    if depol_block() is None:
+        return numpy.array([1])
+    else:
+        return numpy.array([0])
 
 
 def _get_cpp_feature(feature_name):

@@ -90,6 +90,11 @@ burst3_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
                                         'basic',
                                         'init_burst3.txt')
 
+spiking_from_beginning_to_end_url = 'file://%s' % os.path.join(
+    os.path.abspath(testdata_dir),
+    'basic',
+    'spiking_from_beginning_to_end.txt')
+
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -2477,3 +2482,33 @@ def test_burst_mean_freq():
         else:
             numpy.testing.assert_allclose(burst_mean_freq, burst_mean_freq_py)
             numpy.testing.assert_allclose(burst_mean_freq, expected_value)
+
+
+def test_segfault_in_AP_begin_width():
+    """basic: Test AP_begin_width with spike before stim and up to the end"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 20.0
+    stim_end = 140.0
+    trace = {}
+
+    trace['T'] = efel.io.load_fragment(
+        '%s#col=1' % spiking_from_beginning_to_end_url)
+    trace['V'] = efel.io.load_fragment(
+        '%s#col=2' % spiking_from_beginning_to_end_url)
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_begin_width']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    expected_values = [
+        4.2, 7.4, 3.3, 10.8, 4.5, 5.6, 7.2, 3.4, 3.5, 3.6, 3.6]
+    numpy.testing.assert_allclose(
+        feature_values[0]['AP_begin_width'], expected_values)
