@@ -343,6 +343,41 @@ Check initiation of AP in AIS
             return None
     return [1]
 
+LibV1 : burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The mean frequency during a burst for each burst
+
+If burst_ISI_indices did not detect any burst beginning,
+then the spikes are not considered to be part of any burst
+
+- **Required features**: burst_ISI_indices, peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    if burst_ISI_indices is None:
+        return None
+    elif len(burst_ISI_indices) == 0:
+        return []
+
+    burst_mean_freq = []
+    burst_index = numpy.insert(
+        burst_index_tmp, burst_index_tmp.size, len(peak_time) - 1
+    )
+
+    # 1st burst
+    span = peak_time[burst_index[0]] - peak_time[0]
+    N_peaks = burst_index[0] + 1
+    burst_mean_freq.append(N_peaks * 1000 / span)
+
+    for i, burst_idx in enumerate(burst_index[:-1]):
+        if burst_index[i + 1] - burst_idx != 1:
+            span = peak_time[burst_index[i + 1]] - peak_time[burst_idx + 1]
+            N_peaks = burst_index[i + 1] - burst_idx
+            burst_mean_freq.append(N_peaks * 1000 / span)
+
+    return burst_mean_freq
+
 LibV1 : burst_number
 ~~~~~~~~~~~~~~~~~~~~
 
