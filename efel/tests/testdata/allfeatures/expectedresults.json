@@ -60590,6 +60590,7 @@
     "initburst_sahp_vb": null,
     "initburst_sahp_ssse": null,
     "depol_block": null,
+    "depol_block_bool": [1],
     "BPAPHeightLoc1": [
         44.759481866542046
     ],

@@ -253,6 +253,17 @@ def test_depol_block():
     _test_expected_value(feature_name, expected_values)
 
 
+def test_depol_block_bool():
+    """pyfeatures: Test depolarization block bool feature"""
+    feature_name = 'depol_block_bool'
+    expected_values = {
+        'depol_block_subthresh': [0], 'depol_block_subthresh_hyperpol': [0],
+        'depol_block_spiking': [0],
+        'depol_block_db': [1]}
+
+    _test_expected_value(feature_name, expected_values)
+
+
 def test_pydistance():
     """pyfeatures: Test python distance against cpp version"""
     mf1_trace = _load_trace('mean_frequency1')

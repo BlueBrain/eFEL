@@ -92,10 +92,6 @@ LibV5 : all_ISI_values, inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth
 - **Pseudocode**: ::
 
     all_isi_values_vec = numpy.diff(peak_time)
-    if len(all_isi_values_vec) > 1:
-        inv_first_ISI = 1000.0 / all_isi_values_vec[0]
-    else:
-        inv_first_ISI = 0
 
     if len(all_isi_values_vec) > 0:
         inv_first_ISI = 1000.0 / all_isi_values_vec[0]
