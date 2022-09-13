@@ -389,6 +389,29 @@ The number of bursts
 
     burst_number = len(burst_mean_freq)
 
+LibV1 : interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The voltage average in between two bursts
+
+Iterating over the burst ISI indices determine the last peak before the burst. 
+Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
+
+- **Required features**: burst_ISI_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_voltage = []
+    for idx in burst_ISI_idxs:
+        ts_idx = peak_idxs[idx]
+        t_start = time[ts_idx] + 5
+        start_idx = np.argwhere(time < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx + 1]
+        t_end = time[te_idx] - 5
+        end_idx = np.argwhere(time > t_end)[0][0]
+
+        interburst_voltage.append(np.mean(voltage[start_idx:end_idx + 1]))
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~
