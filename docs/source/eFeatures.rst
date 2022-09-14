@@ -405,13 +405,13 @@ Starting 5 ms after that peak take the voltage average until 5 ms before the fir
     for idx in burst_ISI_idxs:
         ts_idx = peak_idxs[idx]
         t_start = time[ts_idx] + 5
-        start_idx = np.argwhere(time < t_start)[-1][0]
+        start_idx = numpy.argwhere(time < t_start)[-1][0]
 
         te_idx = peak_idxs[idx + 1]
         t_end = time[te_idx] - 5
-        end_idx = np.argwhere(time > t_end)[0][0]
+        end_idx = numpy.argwhere(time > t_end)[0][0]
 
-        interburst_voltage.append(np.mean(voltage[start_idx:end_idx + 1]))
+        interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~
