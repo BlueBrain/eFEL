@@ -832,6 +832,17 @@ Time between the AP threshold and the peak, given a window
 
         rise_times.append(time[new_end_indice] - time[new_begin_indice])
 
+LibV2 : AP_fall_time
+~~~~~~~~~~~~~~~~~~~~
+
+Time from action potential maximum to the offset
+
+- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time[AP_end_indices] - time[peak_indices]
+
 LibV5 : AP_phaseslope
 ~~~~~~~~~~~~~~~~~~~~~~
 

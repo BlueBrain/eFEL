@@ -2162,6 +2162,30 @@ def test_rise_time_perc():
         numpy.testing.assert_allclose(exp, rise_time)
 
 
+def test_fall_time():
+    """basic: Test AP fall time"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_fall_time', 'AP_end_indices', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    ap_fall_time = feature_values[0]['AP_fall_time']
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    # works because we have the same interpolation as in efel
+    expected = time[AP_end_indices] - time[peak_indices]
+
+    numpy.testing.assert_allclose(ap_fall_time, expected)
+
+
 def test_slow_ahp_start():
     """basic: Test AHP_depth_abs_slow with a custom after spike start time"""
 
