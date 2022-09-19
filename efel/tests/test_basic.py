@@ -2636,6 +2636,8 @@ def test_time_constant():
     import efel
     efel.reset()
 
+    # here, use hyperpolarized_url because sagtrace1_url falls 'too fast'
+    # for golden search bounds as defined in efel
     time = efel.io.load_fragment('%s#col=1' % hyperpolarized_url)
     voltage = efel.io.load_fragment('%s#col=2' % hyperpolarized_url)
     stim_start = 419.995
@@ -2660,6 +2662,9 @@ def test_time_constant():
     time_cst = time_cst[0]
 
     py_tau = py_time_constant(time, voltage, stim_start, stim_end)
+
+    print(f"efel: {time_cst}")
+    print(f"python : {py_tau}")
 
     # some difference because precision difference
     # between efel and python implementation
@@ -2911,3 +2916,101 @@ def test_steady_state_hyper():
     expected = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
 
     numpy.testing.assert_allclose(steady_state_hyper, expected)
+
+
+def test_amp_drop_first_second():
+    """basic: Test amp drop first second"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_first_second", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_first_second = feature_values[0]['amp_drop_first_second']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_first_second, peak_voltage[0] - peak_voltage[1]
+    )
+
+
+def test_amp_drop_first_last():
+    """basic: Test amp drop first last"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_first_last", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_first_last = feature_values[0]['amp_drop_first_last']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_first_last, peak_voltage[0] - peak_voltage[-1]
+    )
+
+
+def test_amp_drop_second_last():
+    """basic: Test amp drop second last"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_second_last", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_second_last = feature_values[0]['amp_drop_second_last']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_second_last, peak_voltage[1] - peak_voltage[-1]
+    )
+
+
+def test_max_amp_difference():
+    """basic: Test max amp difference"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["max_amp_difference", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    max_amp_difference = feature_values[0]['max_amp_difference']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    expected = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
+
+    numpy.testing.assert_allclose(
+        max_amp_difference, expected
+    )

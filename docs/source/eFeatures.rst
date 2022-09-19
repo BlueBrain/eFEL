@@ -503,6 +503,50 @@ Difference peak voltage of the second to first spike
 
     AP2_AP1_diff = peak_voltage[1] - peak_voltage[0]
 
+LibV2 : amp_drop_first_second
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the first and the second peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_first_second = peak_voltage[0] - peak_voltage[1]
+
+LibV2 : amp_drop_first_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the first and the last peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_first_last = peak_voltage[0] - peak_voltage[-1]
+
+LibV2 : amp_drop_second_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the second and the last peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_second_last = peak_voltage[1] - peak_voltage[-1]
+
+LibV2 : max_amp_difference
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Maximum difference of the height of two subsequent peaks
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    max_amp_difference = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
+
 .. image:: _static/figures/AHP.png
 
 LibV5 : AHP_depth_abs
