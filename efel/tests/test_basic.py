@@ -2675,3 +2675,29 @@ def test_depolarized_base():
         py_dep_base.append(numpy.mean(voltage[start_idx:end_idx]))
 
     numpy.testing.assert_allclose(depolarized_base, py_dep_base)
+
+
+def test_AP_duration():
+    """basic: Test AP duration"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_duration", "AP_begin_indices", "AP_end_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    AP_durations = feature_values[0]['AP_duration']
+
+    # works here because we use the same interpolation as in efel
+    py_AP_dur = time[AP_end_indices] - time[AP_begin_indices]
+
+    numpy.testing.assert_allclose(AP_durations, py_AP_dur)

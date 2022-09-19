@@ -636,6 +636,17 @@ Can use strict_stiminterval to not use minimum after stimulus end.
         offset_time[i] = t[numpy.where(v[onset_index:min_AHP_indices[i+1]] < threshold)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
 
+LibV2 : AP_duration
+~~~~~~~~~~~~~~~~~~~
+
+Duration of an action potential from onset to offset
+
+- **Required features**: LibV5:AP_begin_indices, LibV5:AP_end_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    AP_duration = time[AP_end_indices] - time[AP_begin_indices]
+
 LibV5 : AP_width_between_threshold
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
