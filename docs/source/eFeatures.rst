@@ -556,6 +556,22 @@ Time between AP peaks and first AHP depths
     min_AHP_indices = first_min_element(voltage, peak_indices)
     AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
 
+LibV3 : depolarized_base
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mean voltage between consecutive spikes
+(from the end of one spike to the beginning of the next one)
+
+- **Required features**: LibV5:AP_end_indices, LibV5:AP_begin_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    depolarized_base = []
+    for (start_idx, end_idx) in zip(
+        AP_end_indices[:-1], AP_begin_indices[1:])
+    ):
+        depolarized_base.append(numpy.mean(voltage[start_idx:end_idx]))
+
 LibV5 : min_voltage_between_spikes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

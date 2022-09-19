@@ -27,7 +27,7 @@ LibV5:ohmic_input_resistance_vb_ssse    #LibV5:voltage_deflection_vb_ssse #LibV1
 LibV1:maximum_voltage #LibV1:interpolate 
 LibV1:minimum_voltage #LibV1:interpolate 
 LibV1:steady_state_voltage #LibV1:interpolate 
-LibV3:depolarized_base #LibV1:interpolate 
+LibV3:depolarized_base #LibV5:AP_end_indices #LibV5:AP_begin_indices #LibV1:interpolate
 LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate 
 LibV1:Spikecount	#LibV5:peak_indices #LibV1:interpolate 
 LibV5:Spikecount_stimint	#LibV1:peak_time #LibV1:interpolate 

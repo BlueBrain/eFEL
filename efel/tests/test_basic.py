@@ -2641,3 +2641,37 @@ def test_time_constant():
     # between efel and python implementation
     # gets amplified by function such as log and fitting
     assert abs((time_cst - py_tau) / time_cst) < 0.01
+
+
+def test_depolarized_base():
+    """basic: Test depolarized base"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["depolarized_base", "AP_begin_time", "AP_duration"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    depolarized_base = feature_values[0]['depolarized_base']
+    AP_begin_times = feature_values[0]['AP_begin_time']
+    AP_durations = feature_values[0]['AP_duration']
+
+    py_dep_base = []
+    for i, (AP_begin, AP_dur) in enumerate(
+        zip(AP_begin_times[:-1], AP_durations[:-1])
+    ):
+        dep_start_time = AP_begin + AP_dur
+        dep_end_time = AP_begin_times[i + 1]
+        start_idx = numpy.argwhere(time > dep_start_time)[0][0] - 1
+        end_idx = numpy.argwhere(time > dep_end_time)[0][0] - 1
+
+        py_dep_base.append(numpy.mean(voltage[start_idx:end_idx]))
+
+    numpy.testing.assert_allclose(depolarized_base, py_dep_base)
