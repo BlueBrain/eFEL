@@ -531,6 +531,19 @@ Relative voltage values at the first after-hyperpolarization
     min_AHP_values = first_min_element(voltage, peak_indices)
     AHP_depth = min_AHP_values[:] - voltage_base
 
+LibV2 : fast_AHP
+~~~~~~~~~~~~~~~~
+
+Voltage value of the action potential onset relative to the subsequent AHP
+
+Ignores the last spike
+
+- **Required features**: LibV5:AP_begin_indices, LibV5:min_AHP_values
+- **Units**: mV
+- **Pseudocode**: ::
+
+    fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
+
 LibV5 : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -870,7 +883,7 @@ Voltage change rate during the falling phase of the action potential
     )
 
 LibV5 : AP_phaseslope
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Slope of the V, dVdt phasespace plot at the beginning of every spike
 

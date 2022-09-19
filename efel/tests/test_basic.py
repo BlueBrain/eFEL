@@ -2747,6 +2747,7 @@ def test_AP_rise_rate():
     peak_indices = feature_values[0]['peak_indices']
     AP_rise_rate = feature_values[0]['AP_rise_rate']
 
+    # works here because we use the same interpolation as in efel
     py_AP_rise_rate = (voltage[peak_indices] - voltage[AP_begin_indices]) / (
         time[peak_indices] - time[AP_begin_indices]
     )
@@ -2774,8 +2775,37 @@ def test_AP_fall_rate():
     peak_indices = feature_values[0]['peak_indices']
     AP_fall_rate = feature_values[0]['AP_fall_rate']
 
+    # works here because we use the same interpolation as in efel
     py_AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
         time[AP_end_indices] - time[peak_indices]
     )
 
     numpy.testing.assert_allclose(AP_fall_rate, py_AP_fall_rate)
+
+
+def test_fast_AHP():
+    """basic: Test fast AHP"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["fast_AHP", "AP_begin_indices", "min_AHP_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    min_AHP_indices = feature_values[0]['min_AHP_indices']
+    fast_AHP = feature_values[0]['fast_AHP']
+
+    # works here because we use the same interpolation as in efel
+    py_fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[
+        min_AHP_indices[:-1]
+    ]
+
+    numpy.testing.assert_allclose(fast_AHP, py_fast_AHP)
