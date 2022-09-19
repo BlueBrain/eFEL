@@ -2725,3 +2725,57 @@ def test_AP_duration():
     py_AP_dur = time[AP_end_indices] - time[AP_begin_indices]
 
     numpy.testing.assert_allclose(AP_durations, py_AP_dur)
+
+
+def test_AP_rise_rate():
+    """basic: Test AP rise rate"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_rise_rate", "AP_begin_indices", "peak_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+    AP_rise_rate = feature_values[0]['AP_rise_rate']
+
+    py_AP_rise_rate = (voltage[peak_indices] - voltage[AP_begin_indices]) / (
+        time[peak_indices] - time[AP_begin_indices]
+    )
+
+    numpy.testing.assert_allclose(AP_rise_rate, py_AP_rise_rate)
+
+
+def test_AP_fall_rate():
+    """basic: Test AP fall rate"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_fall_rate", "AP_end_indices", "peak_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    peak_indices = feature_values[0]['peak_indices']
+    AP_fall_rate = feature_values[0]['AP_fall_rate']
+
+    py_AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
+        time[AP_end_indices] - time[peak_indices]
+    )
+
+    numpy.testing.assert_allclose(AP_fall_rate, py_AP_fall_rate)

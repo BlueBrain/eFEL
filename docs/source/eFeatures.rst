@@ -841,7 +841,33 @@ Time from action potential maximum to the offset
 - **Units**: ms
 - **Pseudocode**: ::
 
-    time[AP_end_indices] - time[peak_indices]
+    AP_fall_time = time[AP_end_indices] - time[peak_indices]
+
+LibV2 : AP_rise_rate
+~~~~~~~~~~~~~~~~~~~~
+
+Voltage change rate during the rising phase of the action potential
+
+- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    AP_rise_rate = (voltage[peak_indices] - voltage[AP_begin_indices]) / (
+        time[peak_indices] - time[AP_begin_indices]
+    )
+
+LibV2 : AP_fall_rate
+~~~~~~~~~~~~~~~~~~~~
+
+Voltage change rate during the falling phase of the action potential
+
+- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
+        time[AP_end_indices] - time[peak_indices]
+    )
 
 LibV5 : AP_phaseslope
 ~~~~~~~~~~~~~~~~~~~~~~
