@@ -446,6 +446,17 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_Amplitude[1]
     APlast_amp = AP_Amplitude[-1]
 
+LibV5 : mean_AP_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The mean of all of the action potential amplitudes
+
+- **Required features**: LibV1:AP_amplitude (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    mean_AP_amplitude = numpy.mean(AP_amplitude)
+
 LibV2 : AP_Amplitude_change
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -547,6 +558,17 @@ Maximum difference of the height of two subsequent peaks
 
     max_amp_difference = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
 
+LibV1 : AP_amplitude_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of two subsequent peaks
+
+- **Required features**: LibV1:AP_amplitude (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_amplitude_diff = AP_amplitude[1:] - AP_amplitude[:-1]
+
 .. image:: _static/figures/AHP.png
 
 LibV5 : AHP_depth_abs
@@ -586,6 +608,17 @@ Relative voltage values at the first after-hyperpolarization
 
     min_AHP_values = first_min_element(voltage, peak_indices)
     AHP_depth = min_AHP_values[:] - voltage_base
+
+LibV1 : AHP_depth_diff
+~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of subsequent relative voltage values at the first after-hyperpolarization
+
+- **Required features**: LibV1:AHP_depth (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AHP_depth_diff = AHP_depth[1:] - AHP_depth[:-1]
 
 LibV2 : fast_AHP
 ~~~~~~~~~~~~~~~~

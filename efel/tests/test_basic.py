@@ -2663,9 +2663,6 @@ def test_time_constant():
 
     py_tau = py_time_constant(time, voltage, stim_start, stim_end)
 
-    print(f"efel: {time_cst}")
-    print(f"python : {py_tau}")
-
     # some difference because precision difference
     # between efel and python implementation
     # gets amplified by function such as log and fitting
@@ -3013,4 +3010,80 @@ def test_max_amp_difference():
 
     numpy.testing.assert_allclose(
         max_amp_difference, expected
+    )
+
+
+def test_AP_amplitude_diff():
+    """basic: Test AP amplitude diff"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_amplitude_diff", "AP_amplitude"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_amplitude_diff = feature_values[0]['AP_amplitude_diff']
+    AP_amplitude = feature_values[0]['AP_amplitude']
+
+    expected = AP_amplitude[1:] - AP_amplitude[:-1]
+
+    numpy.testing.assert_allclose(
+        AP_amplitude_diff, expected
+    )
+
+
+def test_AHP_depth_diff():
+    """basic: Test AHP depth diff"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AHP_depth_diff", "AHP_depth"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_diff = feature_values[0]['AHP_depth_diff']
+    AHP_depth = feature_values[0]['AHP_depth']
+
+    expected = AHP_depth[1:] - AHP_depth[:-1]
+
+    numpy.testing.assert_allclose(
+        AHP_depth_diff, expected
+    )
+
+
+def test_mean_AP_amplitude():
+    """basic: Test mean AP amplitude"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["mean_AP_amplitude", "AP_amplitude"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    mean_AP_amplitude = feature_values[0]['mean_AP_amplitude']
+    AP_amplitude = feature_values[0]['AP_amplitude']
+
+    numpy.testing.assert_allclose(
+        mean_AP_amplitude, numpy.mean(AP_amplitude)
     )
