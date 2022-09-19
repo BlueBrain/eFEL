@@ -446,6 +446,18 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_Amplitude[1]
     APlast_amp = AP_Amplitude[-1]
 
+LibV2 : AP_Amplitude_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitudes of the second and the first action potential
+divided by the amplitude of the first action potential
+
+- **Required features**: LibV1:AP_amplitude
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_amplitude_change = (AP_amplitude[1:] - AP_amplitude[0]) / AP_amplitude[0]
+
 LibV5 : AP_Amplitude_from_voltagebase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -544,6 +556,18 @@ Ignores the last spike
 
     fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
 
+LibV2 : fast_AHP_change
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the fast AHP of the second and the first action potential
+divided by the fast AHP of the first action potential
+
+- **Required features**: LibV2:fast_AHP
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fast_AHP_change = (fast_AHP[1:] - fast_AHP[0]) / fast_AHP[0]
+
 LibV5 : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -631,6 +655,20 @@ Width of spike at half spike amplitude, with spike onset as described in LibV5: 
     AP_fall_indices = index_after_peak((v(peak_indices) - v(AP_begin_indices)) / 2)
     AP_duration_half_width = t(AP_fall_indices) - t(AP_rise_indices)
 
+LibV2 : AP_duration_half_width_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the FWHM of the second and the first action potential
+divided by the FWHM of the first action potential
+
+- **Required features**: LibV2: AP_duration_half_width
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_duration_half_width_change = (
+        AP_duration_half_width[1:] - AP_duration_half_width[0]
+    ) / AP_duration_half_width[0]
+
 LibV1 : AP_width
 ~~~~~~~~~~~~~~~~
 
@@ -659,6 +697,17 @@ Duration of an action potential from onset to offset
 - **Pseudocode**: ::
 
     AP_duration = time[AP_end_indices] - time[AP_begin_indices]
+
+LibV2 : AP_duration_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the durations of the second and the first action potential divided by the duration of the first action potential
+
+- **Required features**: LibV2:AP_duration
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_duration_change = (AP_duration[1:] - AP_duration[0]) / AP_duration[0]
 
 LibV5 : AP_width_between_threshold
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -881,6 +930,30 @@ Voltage change rate during the falling phase of the action potential
     AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
         time[AP_end_indices] - time[peak_indices]
     )
+
+LibV2 : AP_rise_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the rise rates of the second and the first action potential
+divided by the rise rate of the first action potential
+
+- **Required features**: LibV2: AP_rise_rate_change
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_rise_rate_change = (AP_rise_rate[1:] - AP_rise_rate[0]) / AP_rise_rate[0]
+
+LibV2 : AP_fall_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the fall rates of the second and the first action potential
+divided by the fall rate of the first action potential
+
+- **Required features**: LibV2: AP_fall_rate_change
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_fall_rate_change = (AP_fall_rate[1:] - AP_fall_rate[0]) / AP_fall_rate[0]
 
 LibV5 : AP_phaseslope
 ~~~~~~~~~~~~~~~~~~~~~

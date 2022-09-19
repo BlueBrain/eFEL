@@ -2809,3 +2809,68 @@ def test_fast_AHP():
     ]
 
     numpy.testing.assert_allclose(fast_AHP, py_fast_AHP)
+
+
+def check_change_feature(change_name, base_name):
+    """Test for a 'change' feature
+
+    E.g. change_name='AP_duration_change', base_name='AP_duration'
+    """
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = [change_name, base_name]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    base = feature_values[0][base_name]
+    change = feature_values[0][change_name]
+
+    py_change = (base[1:] - base[0]) / base[0]
+
+    numpy.testing.assert_allclose(change, py_change)
+
+
+def test_AP_amplitude_change():
+    """basic: Test AP amplitude change"""
+
+    check_change_feature("AP_amplitude_change", "AP_amplitude")
+
+
+def test_AP_duration_change():
+    """basic: Test AP duration change"""
+
+    check_change_feature("AP_duration_change", "AP_duration")
+
+
+def test_AP_rise_rate_change():
+    """basic: Test AP rise rate change"""
+
+    check_change_feature("AP_rise_rate_change", "AP_rise_rate")
+
+
+def test_AP_fall_rate_change():
+    """basic: Test AP fall rate change"""
+
+    check_change_feature("AP_fall_rate_change", "AP_fall_rate")
+
+
+def test_fast_AHP_change():
+    """basic: Test fast AHP change"""
+
+    check_change_feature("fast_AHP_change", "fast_AHP")
+
+
+def test_AP_duration_half_width_change():
+    """basic: Test AP duration half width change"""
+
+    check_change_feature(
+        "AP_duration_half_width_change", "AP_duration_half_width"
+    )
