@@ -26,7 +26,6 @@ LibV1:ohmic_input_resistance    #LibV1:voltage_deflection #LibV1:interpolate
 LibV5:ohmic_input_resistance_vb_ssse    #LibV5:voltage_deflection_vb_ssse #LibV1:interpolate 
 LibV1:maximum_voltage #LibV1:interpolate 
 LibV1:minimum_voltage #LibV1:interpolate 
-LibV1:threshold_current #LibV1:interpolate 
 LibV1:steady_state_voltage #LibV1:interpolate 
 LibV3:depolarized_base #LibV1:interpolate 
 LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate 

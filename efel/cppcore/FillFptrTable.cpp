@@ -59,7 +59,6 @@ int FillFptrTable() {
   FptrTableV1["burst_number"] = &LibV1::burst_number;
   FptrTableV1["AP_amplitude_diff"] = &LibV1::AP_amplitude_diff;
   FptrTableV1["AHP_depth_diff"] = &LibV1::AHP_depth_diff;
-  FptrTableV1["threshold_current"] = &LibV1::threshold_current;
 
   //****************** for FptrTableV1 *****************************
 

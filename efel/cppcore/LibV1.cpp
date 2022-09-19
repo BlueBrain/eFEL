@@ -1721,22 +1721,6 @@ int LibV1::single_burst_ratio(mapStr2intVec& IntFeatureData,
   return retval;
 }
 
-// *** threshold_current ***
-// just return the value for threshold_current which has been inserted
-int LibV1::threshold_current(mapStr2intVec& IntFeatureData,
-                             mapStr2doubleVec& DoubleFeatureData,
-                             mapStr2Str& StringData) {
-  int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "threshold_current", nsize);
-  if (retval) {
-    return nsize;
-  }
-  return retval;
-}
-// end of threshold_current
-
 int LibV1::printVectorI(char* strName, vector<int> vec) {
   size_t nSize = 0;
   vector<int>::iterator pos1, pos2;
