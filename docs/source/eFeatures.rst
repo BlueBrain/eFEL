@@ -978,6 +978,96 @@ The average current during the last 10% of time before the stimulus.
     elif current_base_mode == "median":
         current_base = numpy.median(current_slice)
 
+LibV1 : time_constant
+~~~~~~~~~~~~~~~~~~~~~
+
+The membrane time constant
+
+The extraction of the time constant requires a voltage trace of a cell in a hyper- polarized state.
+Starting at stim start find the beginning of the exponential decay where the first derivative of V(t) is smaller than -0.005 V/s in 5 subsequent points.
+The flat subsequent to the exponential decay is defined as the point where the first derivative of the voltage trace is bigger than -0.005
+and the mean of the follwowing 70 points as well.
+If the voltage trace between the beginning of the decay and the flat includes more than 9 points, fit an exponential decay.
+Yield the time constant of that decay.
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: ms
+- **Pseudocode**: ::
+
+    min_derivative = 5e-3
+    decay_start_min_length = 5  # number of indices
+    min_length = 10  # number of indices
+    t_length = 70  # in ms
+
+    # get start and middle indices
+    stim_start_idx = numpy.where(time >= stim_start)[0][0]
+    # increment stimstartindex to skip a possible transient
+    stim_start_idx += 10
+    stim_middle_idx = numpy.where(time >= (stim_start + stim_end) / 2.)[0][0]
+
+    # get derivative
+    t_interval = time[stim_start_idx:stim_middle_idx]
+    dv = five_point_stencil_derivative(voltage[stim_start_idx:stim_middle_idx])
+    dt = five_point_stencil_derivative(t_interval)
+    dvdt = dv / dt
+
+    # find start and end of decay
+    # has to be over deriv threshold for at least a given number of indices
+    pass_threshold_idxs = numpy.append(
+        -1, numpy.argwhere(dvdt > -min_derivative).flatten()
+    )
+    length_idx = numpy.argwhere(
+        numpy.diff(pass_threshold_idxs) > decay_start_min_length
+    )[0][0]
+    i_start = pass_threshold_idxs[length_idx] + 1
+
+    # find flat (end of decay)
+    flat_idxs = numpy.argwhere(dvdt[i_start:] > -min_derivative).flatten()
+    # for loop is not optimised
+    # but we expect the 1st few values to be the ones we are looking for
+    for i in flat_idxs:
+        i_flat = i + i_start
+        i_flat_stop = numpy.argwhere(
+            t_interval >= t_interval[i_flat] + t_length
+        )[0][0]
+        if numpy.mean(dvdt[i_flat:i_flat_stop]) > -min_derivative:
+            break
+
+    dvdt_decay = dvdt[i_start:i_flat]
+    t_decay = time[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay_tmp = voltage[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay = abs(v_decay_tmp - voltage[stim_start_idx + i_flat])
+
+    if len(dvdt_decay) < min_length:
+        return None
+
+    # -- golden search algorithm -- #
+    from scipy.optimize import minimize_scalar
+
+    def numpy_fit(x, t_decay, v_decay):
+        new_v_decay = v_decay + x
+        log_v_decay = numpy.log(new_v_decay)
+        (slope, _), res, _, _, _ = numpy.polyfit(
+            t_decay, log_v_decay, 1, full=True
+        )
+        range = numpy.max(v_decay) - numpy.min(v_decay)
+        return res / (range * range)
+
+    max_bound = min_derivative * 200.
+    golden_bracket = [0, max_bound]
+    result = minimize_scalar(
+        numpy_fit,
+        args=(t_decay, v_decay),
+        bracket=golden_bracket,
+        method='golden',
+    )
+
+    # -- fit -- #
+    log_v_decay = numpy.log(v_decay + result.x)
+    slope, _ = numpy.polyfit(t_decay, log_v_decay, 1)
+
+    time_constant = -1. / slope
+
 LibV5 : decay_time_constant_after_stim
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

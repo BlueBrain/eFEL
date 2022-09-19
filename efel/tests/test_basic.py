@@ -95,6 +95,10 @@ spiking_from_beginning_to_end_url = 'file://%s' % os.path.join(
     'basic',
     'spiking_from_beginning_to_end.txt')
 
+hyperpolarized_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
+                                                'allfeatures',
+                                                'testdb1data.txt')
+
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -2423,7 +2427,6 @@ def py_mean_freq(peak_time, burst_ISI_indices):
         burst_index_tmp, burst_index_tmp.size, len(peak_time) - 1
     )
     burst_index = burst_index.astype(int)
-    print(burst_index)
 
     # 1st burst
     span = peak_time[burst_index[0]] - peak_time[0]
@@ -2512,3 +2515,129 @@ def test_segfault_in_AP_begin_width():
         4.2, 7.4, 3.3, 10.8, 4.5, 5.6, 7.2, 3.4, 3.5, 3.6, 3.6]
     numpy.testing.assert_allclose(
         feature_values[0]['AP_begin_width'], expected_values)
+
+
+def five_point_stencil_derivative(arr):
+    """Five point stencil derivative."""
+    first = arr[1] - arr[0]
+    second = (arr[2] - arr[0]) / 2.
+    middle = (-arr[4:] + 8 * arr[3:-1] - 8 * arr[1:-3] + arr[:-4]) / 12.
+    second_to_last = (arr[-1] - arr[-3]) / 2.
+    last = arr[-1] - arr[-2]
+
+    return numpy.hstack([first, second, middle, second_to_last, last])
+
+
+def py_time_constant(time, voltage, stim_start, stim_end):
+    """Python implementation of time_constant."""
+    min_derivative = 5e-3
+    decay_start_min_length = 5  # number of indices
+    min_length = 10  # number of indices
+    t_length = 70  # in ms
+
+    # get start and middle indices
+    stim_start_idx = numpy.where(time >= stim_start)[0][0]
+    # increment stimstartindex to skip a possible transient
+    stim_start_idx += 10
+    stim_middle_idx = numpy.where(time >= (stim_start + stim_end) / 2.)[0][0]
+
+    # get derivative
+    t_interval = time[stim_start_idx:stim_middle_idx]
+    dv = five_point_stencil_derivative(voltage[stim_start_idx:stim_middle_idx])
+    dt = five_point_stencil_derivative(t_interval)
+    dvdt = dv / dt
+
+    # find start and end of decay
+    # has to be over deriv threshold for at least a given number of indices
+    pass_threshold_idxs = numpy.append(
+        -1, numpy.argwhere(dvdt > -min_derivative).flatten()
+    )
+    length_idx = numpy.argwhere(
+        numpy.diff(pass_threshold_idxs) > decay_start_min_length
+    )[0][0]
+    i_start = pass_threshold_idxs[length_idx] + 1
+
+    # find flat (end of decay)
+    flat_idxs = numpy.argwhere(dvdt[i_start:] > -min_derivative).flatten()
+    # for loop is not optimised
+    # but we expect the 1st few values to be the ones we are looking for
+    for i in flat_idxs:
+        i_flat = i + i_start
+        i_flat_stop = numpy.argwhere(
+            t_interval >= t_interval[i_flat] + t_length
+        )[0][0]
+        if numpy.mean(dvdt[i_flat:i_flat_stop]) > -min_derivative:
+            break
+
+    dvdt_decay = dvdt[i_start:i_flat]
+    t_decay = time[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay_tmp = voltage[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay = abs(v_decay_tmp - voltage[stim_start_idx + i_flat])
+
+    if len(dvdt_decay) < min_length:
+        return None
+
+    # -- golden search algorithm -- #
+    from scipy.optimize import minimize_scalar
+
+    def numpy_fit(x, t_decay, v_decay):
+        new_v_decay = v_decay + x
+        log_v_decay = numpy.log(new_v_decay)
+        (slope, _), res, _, _, _ = numpy.polyfit(
+            t_decay, log_v_decay, 1, full=True
+        )
+        range = numpy.max(v_decay) - numpy.min(v_decay)
+        return res / (range * range)
+
+    max_bound = min_derivative * 200.
+    golden_bracket = [0, max_bound]
+    result = minimize_scalar(
+        numpy_fit,
+        args=(t_decay, v_decay),
+        bracket=golden_bracket,
+        method='golden',
+    )
+
+    # -- fit -- #
+    log_v_decay = numpy.log(v_decay + result.x)
+    slope, _ = numpy.polyfit(t_decay, log_v_decay, 1)
+
+    tau = -1. / slope
+    return abs(tau)
+
+
+def test_time_constant():
+    """basic: Test time constant with python implementation"""
+
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % hyperpolarized_url)
+    voltage = efel.io.load_fragment('%s#col=2' % hyperpolarized_url)
+    stim_start = 419.995
+    stim_end = 1419.995
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    features = ["time_constant"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    time_cst = feature_values[0]["time_constant"]
+    assert len(time_cst) == 1
+    time_cst = time_cst[0]
+
+    py_tau = py_time_constant(time, voltage, stim_start, stim_end)
+
+    # some difference because precision difference
+    # between efel and python implementation
+    # gets amplified by function such as log and fitting
+    assert abs((time_cst - py_tau) / time_cst) < 0.01
