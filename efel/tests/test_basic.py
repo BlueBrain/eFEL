@@ -2874,3 +2874,40 @@ def test_AP_duration_half_width_change():
     check_change_feature(
         "AP_duration_half_width_change", "AP_duration_half_width"
     )
+
+
+def test_steady_state_hyper():
+    """basic: Test steady state hyper"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 800.0
+    stim_end = 3800.0
+
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    features = ["steady_state_hyper"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    steady_state_hyper = feature_values[0]['steady_state_hyper']
+
+    # works here because we use the same interpolation as in efel
+    stim_end_idx = numpy.argwhere(time >= stim_end)[0][0]
+    expected = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
+
+    numpy.testing.assert_allclose(steady_state_hyper, expected)

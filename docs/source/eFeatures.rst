@@ -1083,6 +1083,17 @@ The average voltage during the last 10% of the stimulus duration.
     end_time = stim_end
     steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t < end_time) & (t >= begin_time))])
 
+LibV2:steady_state_hyper
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Steady state voltage during hyperpolarization for 30 data points (after interpolation)
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    stim_end_idx = numpy.argwhere(time >= stim_end)[0][0]
+    steady_state_hyper = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
 
 LibV1 : steady_state_voltage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
