@@ -1358,8 +1358,8 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   // golden section search algorithm
   const double PHI = 1.618033988;
   vector<double> x(3, .0);
-  // time_constant is searched in between 0 and 200 ms
-  x[2] = min_derivative * 200.;
+  // time_constant is searched in between 0 and 1000 ms
+  x[2] = min_derivative * 1000.;
   x[1] = (x[0] * PHI + x[2]) / (1. + PHI);
   // calculate residuals at x[1]
   for (size_t i = 0; i < log_v.size(); i++) {

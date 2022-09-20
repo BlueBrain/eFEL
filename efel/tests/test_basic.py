@@ -95,10 +95,6 @@ spiking_from_beginning_to_end_url = 'file://%s' % os.path.join(
     'basic',
     'spiking_from_beginning_to_end.txt')
 
-hyperpolarized_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                                'allfeatures',
-                                                'testdb1data.txt')
-
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -2610,10 +2606,10 @@ def py_time_constant(time, voltage, stim_start, stim_end):
         (slope, _), res, _, _, _ = numpy.polyfit(
             t_decay, log_v_decay, 1, full=True
         )
-        range = numpy.max(v_decay) - numpy.min(v_decay)
+        range = numpy.max(log_v_decay) - numpy.min(log_v_decay)
         return res / (range * range)
 
-    max_bound = min_derivative * 200.
+    max_bound = min_derivative * 1000.
     golden_bracket = [0, max_bound]
     result = minimize_scalar(
         numpy_fit,
@@ -2636,12 +2632,11 @@ def test_time_constant():
     import efel
     efel.reset()
 
-    # here, use hyperpolarized_url because sagtrace1_url falls 'too fast'
-    # for golden search bounds as defined in efel
-    time = efel.io.load_fragment('%s#col=1' % hyperpolarized_url)
-    voltage = efel.io.load_fragment('%s#col=2' % hyperpolarized_url)
-    stim_start = 419.995
-    stim_end = 1419.995
+    stim_start = 800.0
+    stim_end = 3800.0
+
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
 
     trace = {}
     trace['T'] = time
@@ -2659,14 +2654,12 @@ def test_time_constant():
 
     time_cst = feature_values[0]["time_constant"]
     assert len(time_cst) == 1
-    time_cst = time_cst[0]
 
     py_tau = py_time_constant(time, voltage, stim_start, stim_end)
 
     # some difference because precision difference
     # between efel and python implementation
-    # gets amplified by function such as log and fitting
-    assert abs((time_cst - py_tau) / time_cst) < 0.01
+    numpy.testing.assert_allclose(time_cst, py_tau, rtol=1e-3)
 
 
 def test_depolarized_base():

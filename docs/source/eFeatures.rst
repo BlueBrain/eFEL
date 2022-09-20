@@ -1288,10 +1288,10 @@ Yield the time constant of that decay.
         (slope, _), res, _, _, _ = numpy.polyfit(
             t_decay, log_v_decay, 1, full=True
         )
-        range = numpy.max(v_decay) - numpy.min(v_decay)
+        range = numpy.max(log_v_decay) - numpy.min(log_v_decay)
         return res / (range * range)
 
-    max_bound = min_derivative * 200.
+    max_bound = min_derivative * 1000.
     golden_bracket = [0, max_bound]
     result = minimize_scalar(
         numpy_fit,
