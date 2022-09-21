@@ -777,17 +777,18 @@ int LibV1::burst_number(mapStr2intVec& IntFeatureData,
   return (BurstNum.size());
 }
 
+// reminder: first ISI value is ignored in burst_ISI_indices
 static int __interburst_voltage(vector<int>& BurstIndex, vector<int>& PeakIndex,
                                 vector<double>& T, vector<double>& V,
                                 vector<double>& IBV) {
-  if (BurstIndex.size() < 2) return 0;
+  if (BurstIndex.size() < 1) return 0;
   int j, pIndex, tsIndex, teIndex, cnt;
   double tStart, tEnd, vTotal = 0;
   for (size_t i = 0; i < BurstIndex.size(); i++) {
-    pIndex = BurstIndex[i] - 1;
+    pIndex = BurstIndex[i];
     tsIndex = PeakIndex[pIndex];
     tStart = T[tsIndex] + 5;  // 5Millisecond after
-    pIndex = BurstIndex[i];
+    pIndex = BurstIndex[i] + 1;
     teIndex = PeakIndex[pIndex];
     tEnd = T[teIndex] - 5;  // 5Millisecond before
 
