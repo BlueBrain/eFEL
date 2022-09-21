@@ -1358,8 +1358,8 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   // golden section search algorithm
   const double PHI = 1.618033988;
   vector<double> x(3, .0);
-  // time_constant is searched in between 0 and 200 ms
-  x[2] = min_derivative * 200.;
+  // time_constant is searched in between 0 and 1000 ms
+  x[2] = min_derivative * 1000.;
   x[1] = (x[0] * PHI + x[2]) / (1. + PHI);
   // calculate residuals at x[1]
   for (size_t i = 0; i < log_v.size(); i++) {
@@ -1720,22 +1720,6 @@ int LibV1::single_burst_ratio(mapStr2intVec& IntFeatureData,
   }
   return retval;
 }
-
-// *** threshold_current ***
-// just return the value for threshold_current which has been inserted
-int LibV1::threshold_current(mapStr2intVec& IntFeatureData,
-                             mapStr2doubleVec& DoubleFeatureData,
-                             mapStr2Str& StringData) {
-  int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "threshold_current", nsize);
-  if (retval) {
-    return nsize;
-  }
-  return retval;
-}
-// end of threshold_current
 
 int LibV1::printVectorI(char* strName, vector<int> vec) {
   size_t nSize = 0;
