@@ -124,9 +124,6 @@ int AHP_depth(mapStr2intVec& IntFeatureData,
 int single_burst_ratio(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
-int threshold_current(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData);
 
 int AP_width(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
              mapStr2Str& StringData);
