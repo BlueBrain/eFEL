@@ -3491,7 +3491,6 @@ static int __burst_indices(double burst_factor, const vector<double> ISI_values,
       dMedian = ISIpcopy[int(n / 2)];
     }
 
-    // in_burst = (burst_end_indices.size() < burst_begin_indices.size())
     in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
 
     // look for end burst
@@ -3499,11 +3498,7 @@ static int __burst_indices(double burst_factor, const vector<double> ISI_values,
       burst_end_indices.push_back(i);
       count = i;
     }
-    // // look for begin burst
-    // if (!in_burst && (ISI_values[i] < ISI_values[i - 1] / burst_factor)){
-    //   burst_begin_indices.push_back(i);
-    //   count = i;
-    // }
+
     if (ISI_values[i] < ISI_values[i - 1] / burst_factor){
       if (in_burst){
         burst_begin_indices.back() = i;
@@ -3514,35 +3509,11 @@ static int __burst_indices(double burst_factor, const vector<double> ISI_values,
     }
   }
 
-  // if no end detected for last burst, add last peak index as last burst end
-  // use size() and not size() - 1 because we want the last peak index
-  // in_burst = (burst_end_indices.size() < burst_begin_indices.size())
   in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
   if (in_burst){
     burst_end_indices.push_back(ISI_values.size());
   }
 
-  // // do the same backward for the first burst, to remove any isolated spike
-  // count = min(burst_end_indices.front() + 1, burst_end_indices.size() - 1)
-  // for (size_t i = count - 1; i >= first_ISI; i--) {
-  //   // get median
-  //   ISIpcopy.clear();
-  //   for (size_t j = count; j > i; j--) ISIpcopy.push_back(ISI_values[j]);
-  //   sort(ISIpcopy.begin(), ISIpcopy.end());
-  //   n = ISIpcopy.size();
-  //   if ((n % 2) == 0) {
-  //     dMedian =
-  //         (ISIpcopy[int((n - 1) / 2)] + ISIpcopy[int((n - 1) / 2) + 1]) / 2;
-  //   } else {
-  //     dMedian = ISIpcopy[int(n / 2)];
-  //   }
-
-  //   // look for begin burst
-  //   if (ISI_values[i] > (burst_factor * dMedian)){
-  //     burst_begin_indices.front = i + 1;
-  //     break;
-  //   }
-  // }
   return burst_begin_indices.size();
 }
 
