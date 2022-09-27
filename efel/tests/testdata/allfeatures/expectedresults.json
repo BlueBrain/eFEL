@@ -377,15 +377,10 @@
     "amp_drop_second_last": [
         4.787221503925529
     ],
-    "burst_ISI_indices": [
-        3
-    ],
-    "burst_mean_freq": [
-        3.9840637450221186,
-        7.990411506199836
-    ],
+    "burst_ISI_indices": [],
+    "burst_mean_freq": [],
     "burst_number": [
-        2
+        0
     ],
     "check_AISInitiation": [
         1.0
@@ -416,9 +411,7 @@
         -2.3296693271049533,
         -2.3944223175083863
     ],
-    "interburst_voltage": [
-        -38.820613862535545
-    ],
+    "interburst_voltage": [],
     "inv_fifth_ISI": [
         3.995205753099918
     ],
@@ -60633,5 +60626,23 @@
         2.9999999999972715,
         3.2999999999969987,
         3.2999999999969987
+    ],
+    "burst_begin_indices": [
+        0,
+        4
+    ],
+    "burst_end_indices": [
+        1,
+        5
+    ],
+    "strict_burst_number": [
+        2
+    ],
+    "strict_burst_mean_freq": [
+        9.83767831,
+        7.99041151
+    ],
+    "strict_interburst_voltage": [
+        -38.82061386
     ]
 }

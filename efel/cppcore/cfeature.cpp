@@ -251,6 +251,12 @@ void cFeature::fillfeaturetypes() {
   featuretypes["min_between_peaks_values"] = "double";
   featuretypes["AP_width_between_threshold"] = "double";
 
+  featuretypes["burst_begin_indices"] = "int";
+  featuretypes["burst_end_indices"] = "int";
+  featuretypes["strict_burst_mean_freq"] = "double";
+  featuretypes["strict_burst_number"] = "int";
+  featuretypes["strict_interburst_voltage"] = "double";
+
   // end of feature types
 }
 

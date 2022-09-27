@@ -378,6 +378,26 @@ then the spikes are not considered to be part of any burst
 
     return burst_mean_freq
 
+LibV5 : strict_burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The mean frequency during a burst for each burst
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: burst_begin_indices, burst_end_indices, peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    if burst_begin_indices is None or burst_end_indices is None:
+        strict_burst_mean_freq = None
+    else:
+        strict_burstmean_freq = (
+            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
+                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
+            )
+        )
+
 LibV1 : burst_number
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -388,6 +408,19 @@ The number of bursts
 - **Pseudocode**: ::
 
     burst_number = len(burst_mean_freq)
+
+LibV5 : strict_burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The number of bursts
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: strict_burst_mean_freq
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_number = len(strict_burst_mean_freq)
 
 LibV1 : interburst_voltage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -412,6 +445,32 @@ Starting 5 ms after that peak take the voltage average until 5 ms before the fir
         end_idx = numpy.argwhere(time > t_end)[0][0]
 
         interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
+
+LibV5 : strict_interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The voltage average in between two bursts
+
+Iterating over the burst indices determine the first peak of each burst.
+Starting 5 ms after the previous peak, take the voltage average until 5 ms before the peak.
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: burst_begin_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_voltage = []
+    for idx in burst_begin_idxs[1:]:
+        ts_idx = peak_idxs[idx - 1]
+        t_start = t[ts_idx] + 5
+        start_idx = numpy.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx]
+        t_end = t[te_idx] - 5
+        end_idx = numpy.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~

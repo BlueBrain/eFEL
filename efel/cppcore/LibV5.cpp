@@ -3462,3 +3462,259 @@ int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
   }
   return retval;
 }
+
+// the recorded indices correspond to the peak indices
+// does not skip the first ISI by default
+static int __burst_indices(double burst_factor, const vector<double> ISI_values,
+                      vector<int>& burst_begin_indices,
+                      vector<int>& burst_end_indices) {
+  vector<double> ISIpcopy;
+  vector<double>::iterator it1, it2;
+  int n;
+  double dMedian;
+  bool in_burst;
+  // if skip 1st ISI: int first_ISI=1, count = 1;
+  int first_ISI=0, count = 0;
+
+  burst_begin_indices.push_back(first_ISI);
+
+  for (size_t i = first_ISI + 1; i < (ISI_values.size()); i++) {
+    // get median
+    ISIpcopy.clear();
+    for (size_t j = count; j < i; j++) ISIpcopy.push_back(ISI_values[j]);
+    sort(ISIpcopy.begin(), ISIpcopy.end());
+    n = ISIpcopy.size();
+    if ((n % 2) == 0) {
+      dMedian =
+          (ISIpcopy[int((n - 1) / 2)] + ISIpcopy[int((n - 1) / 2) + 1]) / 2;
+    } else {
+      dMedian = ISIpcopy[int(n / 2)];
+    }
+
+    // in_burst = (burst_end_indices.size() < burst_begin_indices.size())
+    in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
+
+    // look for end burst
+    if (in_burst && ISI_values[i] > (burst_factor * dMedian)){
+      burst_end_indices.push_back(i);
+      count = i;
+    }
+    // // look for begin burst
+    // if (!in_burst && (ISI_values[i] < ISI_values[i - 1] / burst_factor)){
+    //   burst_begin_indices.push_back(i);
+    //   count = i;
+    // }
+    if (ISI_values[i] < ISI_values[i - 1] / burst_factor){
+      if (in_burst){
+        burst_begin_indices.back() = i;
+      } else {
+        burst_begin_indices.push_back(i);
+      }
+      count = i;
+    }
+  }
+
+  // if no end detected for last burst, add last peak index as last burst end
+  // use size() and not size() - 1 because we want the last peak index
+  // in_burst = (burst_end_indices.size() < burst_begin_indices.size())
+  in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
+  if (in_burst){
+    burst_end_indices.push_back(ISI_values.size());
+  }
+
+  // // do the same backward for the first burst, to remove any isolated spike
+  // count = min(burst_end_indices.front() + 1, burst_end_indices.size() - 1)
+  // for (size_t i = count - 1; i >= first_ISI; i--) {
+  //   // get median
+  //   ISIpcopy.clear();
+  //   for (size_t j = count; j > i; j--) ISIpcopy.push_back(ISI_values[j]);
+  //   sort(ISIpcopy.begin(), ISIpcopy.end());
+  //   n = ISIpcopy.size();
+  //   if ((n % 2) == 0) {
+  //     dMedian =
+  //         (ISIpcopy[int((n - 1) / 2)] + ISIpcopy[int((n - 1) / 2) + 1]) / 2;
+  //   } else {
+  //     dMedian = ISIpcopy[int(n / 2)];
+  //   }
+
+  //   // look for begin burst
+  //   if (ISI_values[i] > (burst_factor * dMedian)){
+  //     burst_begin_indices.front = i + 1;
+  //     break;
+  //   }
+  // }
+  return burst_begin_indices.size();
+}
+
+int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData) {
+  int retVal;
+  int nsize;
+  retVal = CheckInMap(IntFeatureData, StringData, "burst_begin_indices",
+                            nsize);
+  if (retVal) {
+    return nsize;
+  }
+
+  vector<int> burst_begin_indices, burst_end_indices;
+  vector<double> ISI_values, tVec;
+  double burst_factor = 0;
+  retVal = getVec(DoubleFeatureData, StringData, "all_ISI_values", ISI_values);
+  if (retVal < 0) return -1;
+  if (ISI_values.size() < 2) {
+    GErrorStr += "\nError: At least than 3 spikes are needed for burst calculation.\n";
+    return -1;
+  }
+  retVal = getDoubleParam(DoubleFeatureData, "burst_factor", tVec);
+  if (retVal < 0)
+    burst_factor = 2;
+  else
+    burst_factor = tVec[0];
+
+  retVal = __burst_indices(burst_factor, ISI_values, burst_begin_indices, burst_end_indices);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "burst_begin_indices", burst_begin_indices);
+    setVec(IntFeatureData, StringData, "burst_end_indices", burst_end_indices);
+  }
+  return retVal;
+}
+
+int LibV5::burst_end_indices(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(IntFeatureData, StringData, "burst_end_indices", nSize);
+  if (retVal) return nSize;
+  return -1;
+}
+
+
+static int __strict_burst_mean_freq(vector<double>& PVTime,
+                             vector<int>& burst_begin_indices,
+                             vector<int>& burst_end_indices,
+                             vector<double>& BurstMeanFreq) {
+  if (burst_begin_indices.size() == 0) return BurstMeanFreq.size();
+  double span;
+  size_t i;
+
+  for (i = 0; i < burst_begin_indices.size(); i++) {
+    if (burst_end_indices[i] - burst_begin_indices[i] > 0) {
+      span = PVTime[burst_end_indices[i]] - PVTime[burst_begin_indices[i]];
+      BurstMeanFreq.push_back((burst_end_indices[i] - burst_begin_indices[i] + 1) * 1000 / span);
+    }
+  }
+
+  return BurstMeanFreq.size();
+}
+
+int LibV5::strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "strict_burst_mean_freq", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> burst_begin_indices, burst_end_indices;
+  vector<double> BurstMeanFreq, PVTime;
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time", PVTime);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
+                     burst_begin_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                     burst_end_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __strict_burst_mean_freq(PVTime, burst_begin_indices,
+                             burst_end_indices, BurstMeanFreq);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "strict_burst_mean_freq",
+                 BurstMeanFreq);
+  }
+  return retVal;
+}
+
+int LibV5::strict_burst_number(mapStr2intVec& IntFeatureData,
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(IntFeatureData, StringData, "strict_burst_number", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> BurstMeanFreq;
+  vector<int> BurstNum;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "strict_burst_mean_freq", BurstMeanFreq);
+  if (retVal < 0) return -1;
+
+  BurstNum.push_back(BurstMeanFreq.size());
+  setVec(IntFeatureData, StringData, "strict_burst_number", BurstNum);
+  return (BurstNum.size());
+}
+
+
+static int __strict_interburst_voltage(vector<int>& burst_begin_indices,
+                                vector<int>& PeakIndex,
+                                vector<double>& T, vector<double>& V,
+                                vector<double>& IBV) {
+  if (burst_begin_indices.size() < 1) return 0;
+  int j, pIndex, tsIndex, teIndex, cnt;
+  double tStart, tEnd, vTotal = 0;
+  for (size_t i = 1; i < burst_begin_indices.size(); i++) {
+    pIndex = burst_begin_indices[i] - 1;
+    tsIndex = PeakIndex[pIndex];
+    tStart = T[tsIndex] + 5;  // 5 millisecond after
+    pIndex = burst_begin_indices[i];
+    teIndex = PeakIndex[pIndex];
+    tEnd = T[teIndex] - 5;  // 5 millisecond before
+
+    for (j = tsIndex; j < teIndex; j++) {
+      if (T[j] > tStart) break;
+    }
+    tsIndex = --j;
+
+    for (j = teIndex; j > tsIndex; j--) {
+      if (T[j] < tEnd) break;
+    }
+    teIndex = ++j;
+    vTotal = 0;
+    for (j = tsIndex, cnt = 1; j <= teIndex; j++, cnt++) vTotal = vTotal + V[j];
+    if (cnt == 0) continue;
+    IBV.push_back(vTotal / (cnt - 1));
+  }
+  return IBV.size();
+}
+
+int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "strict_interburst_voltage", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> burst_begin_indices, PeakIndex;
+  vector<double> V, T, IBV;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "T", T);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
+                     burst_begin_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "V", V);
+  if (retVal < 0) return -1;
+
+  retVal = __strict_interburst_voltage(burst_begin_indices, PeakIndex, T, V, IBV);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "strict_interburst_voltage", IBV);
+  }
+  return retVal;
+}

@@ -3131,3 +3131,207 @@ def test_mean_AP_amplitude():
     numpy.testing.assert_allclose(
         mean_AP_amplitude, numpy.mean(AP_amplitude)
     )
+
+
+def py_burst_indices(ISI_values):
+    """python implementation of burst_begin_indices and burst_end_indices"""
+    if len(ISI_values) < 2:
+        return None, None
+
+    burst_factor = 2
+    median_count = 0
+    burst_begin_indices = [0]
+    burst_end_indices = []
+
+    for i, ISI in enumerate(ISI_values[1:], start=1):
+        median = numpy.median(ISI_values[median_count:i])
+        in_burst = len(burst_end_indices) == 0 or (
+            burst_begin_indices[-1] > burst_end_indices[-1])
+
+        if in_burst and ISI > (burst_factor * median):
+            burst_end_indices.append(i)
+            median_count = i
+
+        if ISI < (ISI_values[i - 1] / burst_factor):
+            if in_burst:
+                burst_begin_indices[-1] = i
+            else:
+                burst_begin_indices.append(i)
+            median_count = i
+
+    in_burst = len(burst_end_indices) == 0 or (
+        burst_begin_indices[-1] > burst_end_indices[-1])
+
+    if in_burst:
+        burst_end_indices.append(len(ISI_values))
+
+    return burst_begin_indices, burst_end_indices
+
+
+def test_burst_indices():
+    """basic: Test burst_begin_indices and burst_end_indices"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['burst_begin_indices', 'burst_end_indices', 'all_ISI_values']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    burst_end_indices = feature_values[0]['burst_end_indices']
+    all_ISI_values = feature_values[0]['all_ISI_values']
+
+    burst_begin_py, burst_end_py = py_burst_indices(
+        all_ISI_values
+    )
+
+    numpy.testing.assert_allclose(burst_begin_indices, burst_begin_py)
+    numpy.testing.assert_allclose(burst_begin_indices, [0, 4])
+    numpy.testing.assert_allclose(burst_end_indices, burst_end_py)
+    numpy.testing.assert_allclose(burst_end_indices, [3, 5])
+
+
+def test_strict_burst_mean_freq():
+    """basic: Test strict_burst_mean_freq"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = [
+        'burst_begin_indices',
+        'burst_end_indices',
+        'peak_time',
+        'strict_burst_mean_freq'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    burst_end_indices = feature_values[0]['burst_end_indices']
+    peak_time = feature_values[0]['peak_time']
+    strict_burst_mean_freq = feature_values[0]['strict_burst_mean_freq']
+
+    if burst_begin_indices is None or burst_end_indices is None:
+        mean_freq_py = None
+    else:
+        mean_freq_py = (
+            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
+                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
+            )
+        )
+
+    numpy.testing.assert_allclose(strict_burst_mean_freq, mean_freq_py)
+    numpy.testing.assert_allclose(
+        strict_burst_mean_freq, [254.77707006, 97.08737864]
+    )
+
+
+def test_strict_burst_number():
+    """basic: Test strict_burst_number"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['strict_burst_number', 'strict_burst_mean_freq']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    strict_burst_number = feature_values[0]['strict_burst_number']
+    strict_burst_mean_freq = feature_values[0]['strict_burst_mean_freq']
+
+    numpy.testing.assert_allclose(
+        strict_burst_number, strict_burst_mean_freq.size
+    )
+    numpy.testing.assert_allclose(strict_burst_number, 2)
+
+
+def py_strict_interburst_voltage(burst_begin_idxs, peak_idxs, t, v):
+    """Python implementation of interburst_voltage"""
+    interburst_voltage = []
+    for idx in burst_begin_idxs[1:]:
+        ts_idx = peak_idxs[idx - 1]
+        t_start = t[ts_idx] + 5
+        start_idx = numpy.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx]
+        t_end = t[te_idx] - 5
+        end_idx = numpy.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
+
+    return numpy.array(interburst_voltage)
+
+
+def test_strict_interburst_voltage():
+    """basic: Test strict_interburst_voltage"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = [
+        'strict_interburst_voltage', 'burst_begin_indices', 'peak_indices'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    strict_interburst_voltage = feature_values[0]['strict_interburst_voltage']
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    strict_interburst_voltage_py = py_strict_interburst_voltage(
+        burst_begin_indices, peak_indices, time, voltage
+    )
+
+    numpy.testing.assert_allclose(
+        strict_interburst_voltage, strict_interburst_voltage_py
+    )
+    numpy.testing.assert_allclose(strict_interburst_voltage, -63.234682)
