@@ -60633,5 +60633,23 @@
         2.9999999999972715,
         3.2999999999969987,
         3.2999999999969987
+    ],
+    "burst_begin_indices": [
+        0,
+        4
+    ],
+    "burst_end_indices": [
+        1,
+        5
+    ],
+    "strict_burst_number": [
+        2
+    ],
+    "strict_burst_mean_freq": [
+        9.83767831,
+        7.99041151
+    ],
+    "strict_interburst_voltage": [
+        -38.82061386
     ]
 }

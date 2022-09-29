@@ -166,5 +166,10 @@
     "voltage_deflection_vb_ssse",
     "min_between_peaks_indices",
     "min_between_peaks_values",
-    "AP_width_between_threshold"
+    "AP_width_between_threshold",
+    "burst_begin_indices",
+    "burst_end_indices",
+    "strict_burst_number",
+    "strict_burst_mean_freq",
+    "strict_interburst_voltage"
 ]

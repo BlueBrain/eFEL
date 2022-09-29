@@ -82,6 +82,7 @@ def reset():
         _settings.down_derivative_threshold)
     setDoubleSetting('interp_step', 0.1)
     setDoubleSetting('burst_factor', 1.5)
+    setDoubleSetting('strict_burst_factor', 2.0)
     setDoubleSetting('voltage_base_start_perc', 0.9)
     setDoubleSetting('voltage_base_end_perc', 1.0)
     setDoubleSetting('current_base_start_perc', 0.9)

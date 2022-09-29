@@ -161,3 +161,8 @@ LibV5:AP_peak_downstroke   #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:int
 LibV5:min_between_peaks_indices 	    #LibV5:peak_indices #LibV1:interpolate 
 LibV5:min_between_peaks_values 	    #LibV5:min_between_peaks_indices #LibV1:interpolate 
 LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:interpolate 
+LibV5:burst_begin_indices    #LibV5:all_ISI_values #LibV1:interpolate
+LibV5:burst_end_indices    #LibV5:burst_begin_indices #LibV1:interpolate
+LibV5:strict_burst_mean_freq    #LibV1:peak_time #LibV5:burst_begin_indices #LibV5:burst_end_indices #LibV1:interpolate
+LibV5:strict_burst_number    #LibV5:strict_burst_mean_freq #LibV1:interpolate
+LibV5:strict_interburst_voltage    #LibV5:peak_indices #LibV5:burst_begin_indices #LibV1:interpolate
