@@ -3537,7 +3537,7 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
     GErrorStr += "\nError: At least than 3 spikes are needed for burst calculation.\n";
     return -1;
   }
-  retVal = getDoubleParam(DoubleFeatureData, "burst_factor", tVec);
+  retVal = getDoubleParam(DoubleFeatureData, "strict_burst_factor", tVec);
   if (retVal < 0)
     burst_factor = 2;
   else

@@ -377,10 +377,15 @@
     "amp_drop_second_last": [
         4.787221503925529
     ],
-    "burst_ISI_indices": [],
-    "burst_mean_freq": [],
+    "burst_ISI_indices": [
+        3
+    ],
+    "burst_mean_freq": [
+        3.9840637450221186,
+        7.990411506199836
+    ],
     "burst_number": [
-        0
+        2
     ],
     "check_AISInitiation": [
         1.0
@@ -411,7 +416,9 @@
         -2.3296693271049533,
         -2.3944223175083863
     ],
-    "interburst_voltage": [],
+    "interburst_voltage": [
+        -38.820613862535545
+    ],
     "inv_fifth_ISI": [
         3.995205753099918
     ],
