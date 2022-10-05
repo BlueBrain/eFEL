@@ -2198,6 +2198,30 @@ def test_rise_time_perc():
         numpy.testing.assert_allclose(exp, rise_time)
 
 
+def test_fall_time():
+    """basic: Test AP fall time"""
+
+    import efel
+    efel.reset()
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True
+    )
+
+    features = ['AP_fall_time', 'AP_end_indices', 'peak_indices']
+
+    feature_values = efel.getFeatureValues(
+        [trace], features, raise_warnings=False
+    )
+    ap_fall_time = feature_values[0]['AP_fall_time']
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    # works because we have the same interpolation as in efel
+    expected = time[AP_end_indices] - time[peak_indices]
+
+    numpy.testing.assert_allclose(ap_fall_time, expected)
+
+
 def test_slow_ahp_start():
     """basic: Test AHP_depth_abs_slow with a custom after spike start time"""
 
@@ -2463,7 +2487,6 @@ def py_mean_freq(peak_time, burst_ISI_indices):
         burst_index_tmp, burst_index_tmp.size, len(peak_time) - 1
     )
     burst_index = burst_index.astype(int)
-    print(burst_index)
 
     # 1st burst
     span = peak_time[burst_index[0]] - peak_time[0]
@@ -2552,3 +2575,803 @@ def test_segfault_in_AP_begin_width():
         4.2, 7.4, 3.3, 10.8, 4.5, 5.6, 7.2, 3.4, 3.5, 3.6, 3.6]
     numpy.testing.assert_allclose(
         feature_values[0]['AP_begin_width'], expected_values)
+
+
+def py_interburst_voltage(burst_ISI_idxs, peak_idxs, t, v):
+    """Python implementation of interburst_voltage"""
+    interburst_voltage = []
+    for idx in burst_ISI_idxs:
+        ts_idx = peak_idxs[idx]
+        t_start = t[ts_idx] + 5
+        start_idx = numpy.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx + 1]
+        t_end = t[te_idx] - 5
+        end_idx = numpy.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
+
+    return numpy.array(interburst_voltage)
+
+
+def test_interburst_voltage():
+    """basic: Test interburst_voltage"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['interburst_voltage', 'burst_ISI_indices', 'peak_indices']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    interburst_voltage = feature_values[0]['interburst_voltage']
+    burst_ISI_indices = feature_values[0]['burst_ISI_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    interburst_voltage_py = py_interburst_voltage(
+        burst_ISI_indices, peak_indices, time, voltage
+    )
+
+    numpy.testing.assert_allclose(interburst_voltage, interburst_voltage_py)
+    numpy.testing.assert_allclose(interburst_voltage, -63.234682)
+
+
+def five_point_stencil_derivative(arr):
+    """Five point stencil derivative."""
+    first = arr[1] - arr[0]
+    second = (arr[2] - arr[0]) / 2.
+    middle = (-arr[4:] + 8 * arr[3:-1] - 8 * arr[1:-3] + arr[:-4]) / 12.
+    second_to_last = (arr[-1] - arr[-3]) / 2.
+    last = arr[-1] - arr[-2]
+
+    return numpy.hstack([first, second, middle, second_to_last, last])
+
+
+def py_time_constant(time, voltage, stim_start, stim_end):
+    """Python implementation of time_constant."""
+    min_derivative = 5e-3
+    decay_start_min_length = 5  # number of indices
+    min_length = 10  # number of indices
+    t_length = 70  # in ms
+
+    # get start and middle indices
+    stim_start_idx = numpy.where(time >= stim_start)[0][0]
+    # increment stimstartindex to skip a possible transient
+    stim_start_idx += 10
+    stim_middle_idx = numpy.where(time >= (stim_start + stim_end) / 2.)[0][0]
+
+    # get derivative
+    t_interval = time[stim_start_idx:stim_middle_idx]
+    dv = five_point_stencil_derivative(voltage[stim_start_idx:stim_middle_idx])
+    dt = five_point_stencil_derivative(t_interval)
+    dvdt = dv / dt
+
+    # find start and end of decay
+    # has to be over deriv threshold for at least a given number of indices
+    pass_threshold_idxs = numpy.append(
+        -1, numpy.argwhere(dvdt > -min_derivative).flatten()
+    )
+    length_idx = numpy.argwhere(
+        numpy.diff(pass_threshold_idxs) > decay_start_min_length
+    )[0][0]
+    i_start = pass_threshold_idxs[length_idx] + 1
+
+    # find flat (end of decay)
+    flat_idxs = numpy.argwhere(dvdt[i_start:] > -min_derivative).flatten()
+    # for loop is not optimised
+    # but we expect the 1st few values to be the ones we are looking for
+    for i in flat_idxs:
+        i_flat = i + i_start
+        i_flat_stop = numpy.argwhere(
+            t_interval >= t_interval[i_flat] + t_length
+        )[0][0]
+        if numpy.mean(dvdt[i_flat:i_flat_stop]) > -min_derivative:
+            break
+
+    dvdt_decay = dvdt[i_start:i_flat]
+    t_decay = time[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay_tmp = voltage[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay = abs(v_decay_tmp - voltage[stim_start_idx + i_flat])
+
+    if len(dvdt_decay) < min_length:
+        return None
+
+    # -- golden search algorithm -- #
+    from scipy.optimize import minimize_scalar
+
+    def numpy_fit(x, t_decay, v_decay):
+        new_v_decay = v_decay + x
+        log_v_decay = numpy.log(new_v_decay)
+        (slope, _), res, _, _, _ = numpy.polyfit(
+            t_decay, log_v_decay, 1, full=True
+        )
+        range = numpy.max(log_v_decay) - numpy.min(log_v_decay)
+        return res / (range * range)
+
+    max_bound = min_derivative * 1000.
+    golden_bracket = [0, max_bound]
+    result = minimize_scalar(
+        numpy_fit,
+        args=(t_decay, v_decay),
+        bracket=golden_bracket,
+        method='golden',
+    )
+
+    # -- fit -- #
+    log_v_decay = numpy.log(v_decay + result.x)
+    slope, _ = numpy.polyfit(t_decay, log_v_decay, 1)
+
+    tau = -1. / slope
+    return abs(tau)
+
+
+def test_time_constant():
+    """basic: Test time constant with python implementation"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 800.0
+    stim_end = 3800.0
+
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    features = ["time_constant"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    time_cst = feature_values[0]["time_constant"]
+    assert len(time_cst) == 1
+
+    py_tau = py_time_constant(time, voltage, stim_start, stim_end)
+
+    # some difference because precision difference
+    # between efel and python implementation
+    numpy.testing.assert_allclose(time_cst, py_tau, rtol=1e-3)
+
+
+def test_depolarized_base():
+    """basic: Test depolarized base"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["depolarized_base", "AP_begin_time", "AP_duration"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    depolarized_base = feature_values[0]['depolarized_base']
+    AP_begin_times = feature_values[0]['AP_begin_time']
+    AP_durations = feature_values[0]['AP_duration']
+
+    py_dep_base = []
+    for i, (AP_begin, AP_dur) in enumerate(
+        zip(AP_begin_times[:-1], AP_durations[:-1])
+    ):
+        dep_start_time = AP_begin + AP_dur
+        dep_end_time = AP_begin_times[i + 1]
+        start_idx = numpy.argwhere(time > dep_start_time)[0][0] - 1
+        end_idx = numpy.argwhere(time > dep_end_time)[0][0] - 1
+
+        py_dep_base.append(numpy.mean(voltage[start_idx:end_idx]))
+
+    numpy.testing.assert_allclose(depolarized_base, py_dep_base)
+
+
+def test_AP_duration():
+    """basic: Test AP duration"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_duration", "AP_begin_indices", "AP_end_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    AP_durations = feature_values[0]['AP_duration']
+
+    # works here because we use the same interpolation as in efel
+    py_AP_dur = time[AP_end_indices] - time[AP_begin_indices]
+
+    numpy.testing.assert_allclose(AP_durations, py_AP_dur)
+
+
+def test_AP_rise_rate():
+    """basic: Test AP rise rate"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_rise_rate", "AP_begin_indices", "peak_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+    AP_rise_rate = feature_values[0]['AP_rise_rate']
+
+    # works here because we use the same interpolation as in efel
+    py_AP_rise_rate = (voltage[peak_indices] - voltage[AP_begin_indices]) / (
+        time[peak_indices] - time[AP_begin_indices]
+    )
+
+    numpy.testing.assert_allclose(AP_rise_rate, py_AP_rise_rate)
+
+
+def test_AP_fall_rate():
+    """basic: Test AP fall rate"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_fall_rate", "AP_end_indices", "peak_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_end_indices = feature_values[0]['AP_end_indices']
+    peak_indices = feature_values[0]['peak_indices']
+    AP_fall_rate = feature_values[0]['AP_fall_rate']
+
+    # works here because we use the same interpolation as in efel
+    py_AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
+        time[AP_end_indices] - time[peak_indices]
+    )
+
+    numpy.testing.assert_allclose(AP_fall_rate, py_AP_fall_rate)
+
+
+def test_fast_AHP():
+    """basic: Test fast AHP"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["fast_AHP", "AP_begin_indices", "min_AHP_indices"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_begin_indices = feature_values[0]['AP_begin_indices']
+    min_AHP_indices = feature_values[0]['min_AHP_indices']
+    fast_AHP = feature_values[0]['fast_AHP']
+
+    # works here because we use the same interpolation as in efel
+    py_fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[
+        min_AHP_indices[:-1]
+    ]
+
+    numpy.testing.assert_allclose(fast_AHP, py_fast_AHP)
+
+
+def check_change_feature(change_name, base_name):
+    """Test for a 'change' feature
+
+    E.g. change_name='AP_duration_change', base_name='AP_duration'
+    """
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = [change_name, base_name]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    base = feature_values[0][base_name]
+    change = feature_values[0][change_name]
+
+    py_change = (base[1:] - base[0]) / base[0]
+
+    numpy.testing.assert_allclose(change, py_change)
+
+
+def test_AP_amplitude_change():
+    """basic: Test AP amplitude change"""
+
+    check_change_feature("AP_amplitude_change", "AP_amplitude")
+
+
+def test_AP_duration_change():
+    """basic: Test AP duration change"""
+
+    check_change_feature("AP_duration_change", "AP_duration")
+
+
+def test_AP_rise_rate_change():
+    """basic: Test AP rise rate change"""
+
+    check_change_feature("AP_rise_rate_change", "AP_rise_rate")
+
+
+def test_AP_fall_rate_change():
+    """basic: Test AP fall rate change"""
+
+    check_change_feature("AP_fall_rate_change", "AP_fall_rate")
+
+
+def test_fast_AHP_change():
+    """basic: Test fast AHP change"""
+
+    check_change_feature("fast_AHP_change", "fast_AHP")
+
+
+def test_AP_duration_half_width_change():
+    """basic: Test AP duration half width change"""
+
+    check_change_feature(
+        "AP_duration_half_width_change", "AP_duration_half_width"
+    )
+
+
+def test_steady_state_hyper():
+    """basic: Test steady state hyper"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 800.0
+    stim_end = 3800.0
+
+    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    features = ["steady_state_hyper"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    steady_state_hyper = feature_values[0]['steady_state_hyper']
+
+    # works here because we use the same interpolation as in efel
+    stim_end_idx = numpy.argwhere(time >= stim_end)[0][0]
+    expected = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
+
+    numpy.testing.assert_allclose(steady_state_hyper, expected)
+
+
+def test_amp_drop_first_second():
+    """basic: Test amp drop first second"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_first_second", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_first_second = feature_values[0]['amp_drop_first_second']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_first_second, peak_voltage[0] - peak_voltage[1]
+    )
+
+
+def test_amp_drop_first_last():
+    """basic: Test amp drop first last"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_first_last", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_first_last = feature_values[0]['amp_drop_first_last']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_first_last, peak_voltage[0] - peak_voltage[-1]
+    )
+
+
+def test_amp_drop_second_last():
+    """basic: Test amp drop second last"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["amp_drop_second_last", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    amp_drop_second_last = feature_values[0]['amp_drop_second_last']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    numpy.testing.assert_allclose(
+        amp_drop_second_last, peak_voltage[1] - peak_voltage[-1]
+    )
+
+
+def test_max_amp_difference():
+    """basic: Test max amp difference"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["max_amp_difference", "peak_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    max_amp_difference = feature_values[0]['max_amp_difference']
+    peak_voltage = feature_values[0]['peak_voltage']
+
+    expected = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
+
+    numpy.testing.assert_allclose(
+        max_amp_difference, expected
+    )
+
+
+def test_AP_amplitude_diff():
+    """basic: Test AP amplitude diff"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AP_amplitude_diff", "AP_amplitude"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AP_amplitude_diff = feature_values[0]['AP_amplitude_diff']
+    AP_amplitude = feature_values[0]['AP_amplitude']
+
+    expected = AP_amplitude[1:] - AP_amplitude[:-1]
+
+    numpy.testing.assert_allclose(
+        AP_amplitude_diff, expected
+    )
+
+
+def test_AHP_depth_diff():
+    """basic: Test AHP depth diff"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AHP_depth_diff", "AHP_depth"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_diff = feature_values[0]['AHP_depth_diff']
+    AHP_depth = feature_values[0]['AHP_depth']
+
+    expected = AHP_depth[1:] - AHP_depth[:-1]
+
+    numpy.testing.assert_allclose(
+        AHP_depth_diff, expected
+    )
+
+
+def test_mean_AP_amplitude():
+    """basic: Test mean AP amplitude"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["mean_AP_amplitude", "AP_amplitude"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    mean_AP_amplitude = feature_values[0]['mean_AP_amplitude']
+    AP_amplitude = feature_values[0]['AP_amplitude']
+
+    numpy.testing.assert_allclose(
+        mean_AP_amplitude, numpy.mean(AP_amplitude)
+    )
+
+
+def py_burst_indices(ISI_values):
+    """python implementation of burst_begin_indices and burst_end_indices"""
+    if len(ISI_values) < 2:
+        return None, None
+
+    burst_factor = 2
+    median_count = 0
+    burst_begin_indices = [0]
+    burst_end_indices = []
+
+    for i, ISI in enumerate(ISI_values[1:], start=1):
+        median = numpy.median(ISI_values[median_count:i])
+        in_burst = len(burst_end_indices) == 0 or (
+            burst_begin_indices[-1] > burst_end_indices[-1])
+
+        if in_burst and ISI > (burst_factor * median):
+            burst_end_indices.append(i)
+            median_count = i
+
+        if ISI < (ISI_values[i - 1] / burst_factor):
+            if in_burst:
+                burst_begin_indices[-1] = i
+            else:
+                burst_begin_indices.append(i)
+            median_count = i
+
+    in_burst = len(burst_end_indices) == 0 or (
+        burst_begin_indices[-1] > burst_end_indices[-1])
+
+    if in_burst:
+        burst_end_indices.append(len(ISI_values))
+
+    return burst_begin_indices, burst_end_indices
+
+
+def test_burst_indices():
+    """basic: Test burst_begin_indices and burst_end_indices"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['burst_begin_indices', 'burst_end_indices', 'all_ISI_values']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    burst_end_indices = feature_values[0]['burst_end_indices']
+    all_ISI_values = feature_values[0]['all_ISI_values']
+
+    burst_begin_py, burst_end_py = py_burst_indices(
+        all_ISI_values
+    )
+
+    numpy.testing.assert_allclose(burst_begin_indices, burst_begin_py)
+    numpy.testing.assert_allclose(burst_begin_indices, [0, 4])
+    numpy.testing.assert_allclose(burst_end_indices, burst_end_py)
+    numpy.testing.assert_allclose(burst_end_indices, [3, 5])
+
+
+def test_strict_burst_mean_freq():
+    """basic: Test strict_burst_mean_freq"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = [
+        'burst_begin_indices',
+        'burst_end_indices',
+        'peak_time',
+        'strict_burst_mean_freq'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    burst_end_indices = feature_values[0]['burst_end_indices']
+    peak_time = feature_values[0]['peak_time']
+    strict_burst_mean_freq = feature_values[0]['strict_burst_mean_freq']
+
+    if burst_begin_indices is None or burst_end_indices is None:
+        mean_freq_py = None
+    else:
+        mean_freq_py = (
+            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
+                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
+            )
+        )
+
+    numpy.testing.assert_allclose(strict_burst_mean_freq, mean_freq_py)
+    numpy.testing.assert_allclose(
+        strict_burst_mean_freq, [254.77707006, 97.08737864]
+    )
+
+
+def test_strict_burst_number():
+    """basic: Test strict_burst_number"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['strict_burst_number', 'strict_burst_mean_freq']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    strict_burst_number = feature_values[0]['strict_burst_number']
+    strict_burst_mean_freq = feature_values[0]['strict_burst_mean_freq']
+
+    numpy.testing.assert_allclose(
+        strict_burst_number, strict_burst_mean_freq.size
+    )
+    numpy.testing.assert_allclose(strict_burst_number, 2)
+
+
+def py_strict_interburst_voltage(burst_begin_idxs, peak_idxs, t, v):
+    """Python implementation of interburst_voltage"""
+    interburst_voltage = []
+    for idx in burst_begin_idxs[1:]:
+        ts_idx = peak_idxs[idx - 1]
+        t_start = t[ts_idx] + 5
+        start_idx = numpy.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx]
+        t_end = t[te_idx] - 5
+        end_idx = numpy.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
+
+    return numpy.array(interburst_voltage)
+
+
+def test_strict_interburst_voltage():
+    """basic: Test strict_interburst_voltage"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = [
+        'strict_interburst_voltage', 'burst_begin_indices', 'peak_indices'
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    strict_interburst_voltage = feature_values[0]['strict_interburst_voltage']
+    burst_begin_indices = feature_values[0]['burst_begin_indices']
+    peak_indices = feature_values[0]['peak_indices']
+
+    strict_interburst_voltage_py = py_strict_interburst_voltage(
+        burst_begin_indices, peak_indices, time, voltage
+    )
+
+    numpy.testing.assert_allclose(
+        strict_interburst_voltage, strict_interburst_voltage_py
+    )
+    numpy.testing.assert_allclose(strict_interburst_voltage, -63.234682)

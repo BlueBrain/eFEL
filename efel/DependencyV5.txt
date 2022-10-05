@@ -26,9 +26,8 @@ LibV1:ohmic_input_resistance    #LibV1:voltage_deflection #LibV1:interpolate
 LibV5:ohmic_input_resistance_vb_ssse    #LibV5:voltage_deflection_vb_ssse #LibV1:interpolate 
 LibV1:maximum_voltage #LibV1:interpolate 
 LibV1:minimum_voltage #LibV1:interpolate 
-LibV1:threshold_current #LibV1:interpolate 
 LibV1:steady_state_voltage #LibV1:interpolate 
-LibV3:depolarized_base #LibV1:interpolate 
+LibV3:depolarized_base #LibV5:AP_end_indices #LibV5:AP_begin_indices #LibV1:interpolate
 LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate 
 LibV1:Spikecount	#LibV5:peak_indices #LibV1:interpolate 
 LibV5:Spikecount_stimint	#LibV1:peak_time #LibV1:interpolate 
@@ -162,3 +161,8 @@ LibV5:AP_peak_downstroke   #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:int
 LibV5:min_between_peaks_indices 	    #LibV5:peak_indices #LibV1:interpolate 
 LibV5:min_between_peaks_values 	    #LibV5:min_between_peaks_indices #LibV1:interpolate 
 LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:interpolate 
+LibV5:burst_begin_indices    #LibV5:all_ISI_values #LibV1:interpolate
+LibV5:burst_end_indices    #LibV5:burst_begin_indices #LibV1:interpolate
+LibV5:strict_burst_mean_freq    #LibV1:peak_time #LibV5:burst_begin_indices #LibV5:burst_end_indices #LibV1:interpolate
+LibV5:strict_burst_number    #LibV5:strict_burst_mean_freq #LibV1:interpolate
+LibV5:strict_interburst_voltage    #LibV5:peak_indices #LibV5:burst_begin_indices #LibV1:interpolate

@@ -378,6 +378,26 @@ then the spikes are not considered to be part of any burst
 
     return burst_mean_freq
 
+LibV5 : strict_burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The mean frequency during a burst for each burst
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: burst_begin_indices, burst_end_indices, peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    if burst_begin_indices is None or burst_end_indices is None:
+        strict_burst_mean_freq = None
+    else:
+        strict_burstmean_freq = (
+            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
+                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
+            )
+        )
+
 LibV1 : burst_number
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -389,6 +409,68 @@ The number of bursts
 
     burst_number = len(burst_mean_freq)
 
+LibV5 : strict_burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The number of bursts
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: strict_burst_mean_freq
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_number = len(strict_burst_mean_freq)
+
+LibV1 : interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The voltage average in between two bursts
+
+Iterating over the burst ISI indices determine the last peak before the burst. 
+Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
+
+- **Required features**: burst_ISI_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_voltage = []
+    for idx in burst_ISI_idxs:
+        ts_idx = peak_idxs[idx]
+        t_start = time[ts_idx] + 5
+        start_idx = numpy.argwhere(time < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx + 1]
+        t_end = time[te_idx] - 5
+        end_idx = numpy.argwhere(time > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
+
+LibV5 : strict_interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The voltage average in between two bursts
+
+Iterating over the burst indices determine the first peak of each burst.
+Starting 5 ms after the previous peak, take the voltage average until 5 ms before the peak.
+
+This implementation does not assume that every spike belongs to a burst.
+
+- **Required features**: burst_begin_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_voltage = []
+    for idx in burst_begin_idxs[1:]:
+        ts_idx = peak_idxs[idx - 1]
+        t_start = t[ts_idx] + 5
+        start_idx = numpy.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx]
+        t_end = t[te_idx] - 5
+        end_idx = numpy.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~
@@ -446,6 +528,29 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_Amplitude[1]
     APlast_amp = AP_Amplitude[-1]
 
+LibV5 : mean_AP_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The mean of all of the action potential amplitudes
+
+- **Required features**: LibV1:AP_amplitude (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    mean_AP_amplitude = numpy.mean(AP_amplitude)
+
+LibV2 : AP_Amplitude_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitudes of the second and the first action potential
+divided by the amplitude of the first action potential
+
+- **Required features**: LibV1:AP_amplitude
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_amplitude_change = (AP_amplitude[1:] - AP_amplitude[0]) / AP_amplitude[0]
+
 LibV5 : AP_Amplitude_from_voltagebase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -491,6 +596,61 @@ Difference peak voltage of the second to first spike
 
     AP2_AP1_diff = peak_voltage[1] - peak_voltage[0]
 
+LibV2 : amp_drop_first_second
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the first and the second peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_first_second = peak_voltage[0] - peak_voltage[1]
+
+LibV2 : amp_drop_first_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the first and the last peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_first_last = peak_voltage[0] - peak_voltage[-1]
+
+LibV2 : amp_drop_second_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of the second and the last peak
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    amp_drop_second_last = peak_voltage[1] - peak_voltage[-1]
+
+LibV2 : max_amp_difference
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Maximum difference of the height of two subsequent peaks
+
+- **Required features**: LibV1:peak_voltage (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    max_amp_difference = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
+
+LibV1 : AP_amplitude_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the amplitude of two subsequent peaks
+
+- **Required features**: LibV1:AP_amplitude (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_amplitude_diff = AP_amplitude[1:] - AP_amplitude[:-1]
+
 .. image:: _static/figures/AHP.png
 
 LibV5 : AHP_depth_abs
@@ -531,6 +691,42 @@ Relative voltage values at the first after-hyperpolarization
     min_AHP_values = first_min_element(voltage, peak_indices)
     AHP_depth = min_AHP_values[:] - voltage_base
 
+LibV1 : AHP_depth_diff
+~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of subsequent relative voltage values at the first after-hyperpolarization
+
+- **Required features**: LibV1:AHP_depth (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AHP_depth_diff = AHP_depth[1:] - AHP_depth[:-1]
+
+LibV2 : fast_AHP
+~~~~~~~~~~~~~~~~
+
+Voltage value of the action potential onset relative to the subsequent AHP
+
+Ignores the last spike
+
+- **Required features**: LibV5:AP_begin_indices, LibV5:min_AHP_values
+- **Units**: mV
+- **Pseudocode**: ::
+
+    fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
+
+LibV2 : fast_AHP_change
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the fast AHP of the second and the first action potential
+divided by the fast AHP of the first action potential
+
+- **Required features**: LibV2:fast_AHP
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fast_AHP_change = (fast_AHP[1:] - fast_AHP[0]) / fast_AHP[0]
+
 LibV5 : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -555,6 +751,22 @@ Time between AP peaks and first AHP depths
 
     min_AHP_indices = first_min_element(voltage, peak_indices)
     AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
+
+LibV3 : depolarized_base
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mean voltage between consecutive spikes
+(from the end of one spike to the beginning of the next one)
+
+- **Required features**: LibV5:AP_end_indices, LibV5:AP_begin_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    depolarized_base = []
+    for (start_idx, end_idx) in zip(
+        AP_end_indices[:-1], AP_begin_indices[1:])
+    ):
+        depolarized_base.append(numpy.mean(voltage[start_idx:end_idx]))
 
 LibV5 : min_voltage_between_spikes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -602,6 +814,20 @@ Width of spike at half spike amplitude, with spike onset as described in LibV5: 
     AP_fall_indices = index_after_peak((v(peak_indices) - v(AP_begin_indices)) / 2)
     AP_duration_half_width = t(AP_fall_indices) - t(AP_rise_indices)
 
+LibV2 : AP_duration_half_width_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the FWHM of the second and the first action potential
+divided by the FWHM of the first action potential
+
+- **Required features**: LibV2: AP_duration_half_width
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_duration_half_width_change = (
+        AP_duration_half_width[1:] - AP_duration_half_width[0]
+    ) / AP_duration_half_width[0]
+
 LibV1 : AP_width
 ~~~~~~~~~~~~~~~~
 
@@ -619,6 +845,28 @@ Can use strict_stiminterval to not use minimum after stimulus end.
         onset_time[i] = t[onset_index]
         offset_time[i] = t[numpy.where(v[onset_index:min_AHP_indices[i+1]] < threshold)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
+
+LibV2 : AP_duration
+~~~~~~~~~~~~~~~~~~~
+
+Duration of an action potential from onset to offset
+
+- **Required features**: LibV5:AP_begin_indices, LibV5:AP_end_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    AP_duration = time[AP_end_indices] - time[AP_begin_indices]
+
+LibV2 : AP_duration_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the durations of the second and the first action potential divided by the duration of the first action potential
+
+- **Required features**: LibV2:AP_duration
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_duration_change = (AP_duration[1:] - AP_duration[0]) / AP_duration[0]
 
 LibV5 : AP_width_between_threshold
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -805,8 +1053,69 @@ Time between the AP threshold and the peak, given a window
 
         rise_times.append(time[new_end_indice] - time[new_begin_indice])
 
+LibV2 : AP_fall_time
+~~~~~~~~~~~~~~~~~~~~
+
+Time from action potential maximum to the offset
+
+- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    AP_fall_time = time[AP_end_indices] - time[peak_indices]
+
+LibV2 : AP_rise_rate
+~~~~~~~~~~~~~~~~~~~~
+
+Voltage change rate during the rising phase of the action potential
+
+- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    AP_rise_rate = (voltage[peak_indices] - voltage[AP_begin_indices]) / (
+        time[peak_indices] - time[AP_begin_indices]
+    )
+
+LibV2 : AP_fall_rate
+~~~~~~~~~~~~~~~~~~~~
+
+Voltage change rate during the falling phase of the action potential
+
+- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    AP_fall_rate = (voltage[AP_end_indices] - voltage[peak_indices]) / (
+        time[AP_end_indices] - time[peak_indices]
+    )
+
+LibV2 : AP_rise_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the rise rates of the second and the first action potential
+divided by the rise rate of the first action potential
+
+- **Required features**: LibV2: AP_rise_rate_change
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_rise_rate_change = (AP_rise_rate[1:] - AP_rise_rate[0]) / AP_rise_rate[0]
+
+LibV2 : AP_fall_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of the fall rates of the second and the first action potential
+divided by the fall rate of the first action potential
+
+- **Required features**: LibV2: AP_fall_rate_change
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_fall_rate_change = (AP_fall_rate[1:] - AP_fall_rate[0]) / AP_fall_rate[0]
+
 LibV5 : AP_phaseslope
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Slope of the V, dVdt phasespace plot at the beginning of every spike
 
@@ -933,6 +1242,17 @@ The average voltage during the last 10% of the stimulus duration.
     end_time = stim_end
     steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t < end_time) & (t >= begin_time))])
 
+LibV2:steady_state_hyper
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Steady state voltage during hyperpolarization for 30 data points (after interpolation)
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: mV
+- **Pseudocode**: ::
+
+    stim_end_idx = numpy.argwhere(time >= stim_end)[0][0]
+    steady_state_hyper = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
 
 LibV1 : steady_state_voltage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -977,6 +1297,96 @@ The average current during the last 10% of time before the stimulus.
         current_base = numpy.mean(current_slice)
     elif current_base_mode == "median":
         current_base = numpy.median(current_slice)
+
+LibV1 : time_constant
+~~~~~~~~~~~~~~~~~~~~~
+
+The membrane time constant
+
+The extraction of the time constant requires a voltage trace of a cell in a hyper- polarized state.
+Starting at stim start find the beginning of the exponential decay where the first derivative of V(t) is smaller than -0.005 V/s in 5 subsequent points.
+The flat subsequent to the exponential decay is defined as the point where the first derivative of the voltage trace is bigger than -0.005
+and the mean of the follwowing 70 points as well.
+If the voltage trace between the beginning of the decay and the flat includes more than 9 points, fit an exponential decay.
+Yield the time constant of that decay.
+
+- **Required features**: t, V, stim_start, stim_end
+- **Units**: ms
+- **Pseudocode**: ::
+
+    min_derivative = 5e-3
+    decay_start_min_length = 5  # number of indices
+    min_length = 10  # number of indices
+    t_length = 70  # in ms
+
+    # get start and middle indices
+    stim_start_idx = numpy.where(time >= stim_start)[0][0]
+    # increment stimstartindex to skip a possible transient
+    stim_start_idx += 10
+    stim_middle_idx = numpy.where(time >= (stim_start + stim_end) / 2.)[0][0]
+
+    # get derivative
+    t_interval = time[stim_start_idx:stim_middle_idx]
+    dv = five_point_stencil_derivative(voltage[stim_start_idx:stim_middle_idx])
+    dt = five_point_stencil_derivative(t_interval)
+    dvdt = dv / dt
+
+    # find start and end of decay
+    # has to be over deriv threshold for at least a given number of indices
+    pass_threshold_idxs = numpy.append(
+        -1, numpy.argwhere(dvdt > -min_derivative).flatten()
+    )
+    length_idx = numpy.argwhere(
+        numpy.diff(pass_threshold_idxs) > decay_start_min_length
+    )[0][0]
+    i_start = pass_threshold_idxs[length_idx] + 1
+
+    # find flat (end of decay)
+    flat_idxs = numpy.argwhere(dvdt[i_start:] > -min_derivative).flatten()
+    # for loop is not optimised
+    # but we expect the 1st few values to be the ones we are looking for
+    for i in flat_idxs:
+        i_flat = i + i_start
+        i_flat_stop = numpy.argwhere(
+            t_interval >= t_interval[i_flat] + t_length
+        )[0][0]
+        if numpy.mean(dvdt[i_flat:i_flat_stop]) > -min_derivative:
+            break
+
+    dvdt_decay = dvdt[i_start:i_flat]
+    t_decay = time[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay_tmp = voltage[stim_start_idx + i_start:stim_start_idx + i_flat]
+    v_decay = abs(v_decay_tmp - voltage[stim_start_idx + i_flat])
+
+    if len(dvdt_decay) < min_length:
+        return None
+
+    # -- golden search algorithm -- #
+    from scipy.optimize import minimize_scalar
+
+    def numpy_fit(x, t_decay, v_decay):
+        new_v_decay = v_decay + x
+        log_v_decay = numpy.log(new_v_decay)
+        (slope, _), res, _, _, _ = numpy.polyfit(
+            t_decay, log_v_decay, 1, full=True
+        )
+        range = numpy.max(log_v_decay) - numpy.min(log_v_decay)
+        return res / (range * range)
+
+    max_bound = min_derivative * 1000.
+    golden_bracket = [0, max_bound]
+    result = minimize_scalar(
+        numpy_fit,
+        args=(t_decay, v_decay),
+        bracket=golden_bracket,
+        method='golden',
+    )
+
+    # -- fit -- #
+    log_v_decay = numpy.log(v_decay + result.x)
+    slope, _ = numpy.polyfit(t_decay, log_v_decay, 1)
+
+    time_constant = -1. / slope
 
 LibV5 : decay_time_constant_after_stim
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

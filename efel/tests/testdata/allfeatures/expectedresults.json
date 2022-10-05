@@ -416,7 +416,9 @@
         -2.3296693271049533,
         -2.3944223175083863
     ],
-    "interburst_voltage": [],
+    "interburst_voltage": [
+        -38.820613862535545
+    ],
     "inv_fifth_ISI": [
         3.995205753099918
     ],
@@ -30549,7 +30551,7 @@
         2999.799999998367
     ],
     "time_constant": [
-        0.7140737703721047
+        0.832345371134732
     ],
     "time_to_first_spike": [
         8.000000000092427
@@ -60590,7 +60592,9 @@
     "initburst_sahp_vb": null,
     "initburst_sahp_ssse": null,
     "depol_block": null,
-    "depol_block_bool": [1],
+    "depol_block_bool": [
+        1
+    ],
     "BPAPHeightLoc1": [
         44.759481866542046
     ],
@@ -60629,5 +60633,23 @@
         2.9999999999972715,
         3.2999999999969987,
         3.2999999999969987
+    ],
+    "burst_begin_indices": [
+        0,
+        4
+    ],
+    "burst_end_indices": [
+        1,
+        5
+    ],
+    "strict_burst_number": [
+        2
+    ],
+    "strict_burst_mean_freq": [
+        9.83767831,
+        7.99041151
+    ],
+    "strict_interburst_voltage": [
+        -38.82061386
     ]
 }

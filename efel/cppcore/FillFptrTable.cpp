@@ -59,7 +59,6 @@ int FillFptrTable() {
   FptrTableV1["burst_number"] = &LibV1::burst_number;
   FptrTableV1["AP_amplitude_diff"] = &LibV1::AP_amplitude_diff;
   FptrTableV1["AHP_depth_diff"] = &LibV1::AHP_depth_diff;
-  FptrTableV1["threshold_current"] = &LibV1::threshold_current;
 
   //****************** for FptrTableV1 *****************************
 
@@ -272,6 +271,12 @@ int FillFptrTable() {
   FptrTableV5["min_between_peaks_indices"] = &LibV5::min_between_peaks_indices;
   FptrTableV5["min_between_peaks_values"] = &LibV5::min_between_peaks_values;
   FptrTableV5["AP_width_between_threshold"] = &LibV5::AP_width_between_threshold;
+
+  FptrTableV5["burst_begin_indices"] = &LibV5::burst_begin_indices;
+  FptrTableV5["burst_end_indices"] = &LibV5::burst_end_indices;
+  FptrTableV5["strict_burst_mean_freq"] = &LibV5::strict_burst_mean_freq;
+  FptrTableV5["strict_burst_number"] = &LibV5::strict_burst_number;
+  FptrTableV5["strict_interburst_voltage"] = &LibV5::strict_interburst_voltage;
   
   //****************** end of FptrTableV5 *****************************
 
