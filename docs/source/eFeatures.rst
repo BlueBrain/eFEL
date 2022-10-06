@@ -61,7 +61,7 @@ LibV1 : ISI_values
 ~~~~~~~~~~~~~~~~~~
 
 The interspike intervals (i.e. time intervals) between adjacent peaks.
-If ignore_first_spike is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
+If ignore_first_ISI is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
@@ -195,7 +195,8 @@ LibV5 : ISI_semilog_slope
 
 The slope of a linear fit to a semilog plot of the ISI values.
 
-Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
+Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
+See LibV1: ISI_values feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -212,7 +213,8 @@ LibV5 : ISI_log_slope
 
 The slope of a linear fit to a loglog plot of the ISI values.
 
-Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
+Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
+See LibV1: ISI_values feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -250,7 +252,8 @@ LibV1 : ISI_CV
 
 The coefficient of variation of the ISIs.
 
-Attention: the 1st ISI is not taken into account. See LibV1: ISI_values feature for more details.
+Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
+See LibV1: ISI_values feature for more details.
 
 - **Required features**: ISI_values
 - **Units**: constant
@@ -265,6 +268,8 @@ LibV5 : irregularity_index
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Mean of the absolute difference of all ISIs, except the first one (see LibV1: ISI_values feature for more details.)
+
+The first ISI can be taken into account if ignore_first_ISI is set to 0.
 
 - **Required features**: ISI_values
 - **Units**: ms
@@ -385,6 +390,8 @@ The mean frequency during a burst for each burst
 
 This implementation does not assume that every spike belongs to a burst.
 
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
 - **Required features**: burst_begin_indices, burst_end_indices, peak_time
 - **Units**: Hz
 - **Pseudocode**: ::
@@ -415,6 +422,8 @@ LibV5 : strict_burst_number
 The number of bursts
 
 This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
 - **Required features**: strict_burst_mean_freq
 - **Units**: constant
@@ -456,6 +465,8 @@ Starting 5 ms after the previous peak, take the voltage average until 5 ms befor
 
 This implementation does not assume that every spike belongs to a burst.
 
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
 - **Required features**: burst_begin_indices, peak_indices
 - **Units**: mV
 - **Pseudocode**: ::
@@ -475,8 +486,12 @@ This implementation does not assume that every spike belongs to a burst.
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~
 
-Length of the second isi over the median of the rest of the isis. The first isi is not taken into account, because it could bias the feature.
+Length of the second isi over the median of the rest of the isis.
+The first isi is not taken into account, because it could bias the feature.
 See LibV1: ISI_values feature for more details.
+
+If ignore_first_ISI is set to 0, then signle burst ratio becomes
+the length of the first isi over the median of the rest of the isis.
 
 - **Required features**: ISI_values
 - **Units**: constant

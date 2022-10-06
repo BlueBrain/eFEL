@@ -3465,7 +3465,8 @@ int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
 
 // the recorded indices correspond to the peak indices
 // does not skip the first ISI by default
-static int __burst_indices(double burst_factor, const vector<double> ISI_values,
+static int __burst_indices(double burst_factor, int IgnoreFirstISI,
+                      const vector<double> ISI_values,
                       vector<int>& burst_begin_indices,
                       vector<int>& burst_end_indices) {
   vector<double> ISIpcopy;
@@ -3473,8 +3474,7 @@ static int __burst_indices(double burst_factor, const vector<double> ISI_values,
   int n;
   double dMedian;
   bool in_burst;
-  // if skip 1st ISI: int first_ISI=1, count = 1;
-  int first_ISI=0, count = 0;
+  int first_ISI = IgnoreFirstISI, count = IgnoreFirstISI;
 
   burst_begin_indices.push_back(first_ISI);
 
@@ -3528,8 +3528,9 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
     return nsize;
   }
 
-  vector<int> burst_begin_indices, burst_end_indices;
+  vector<int> burst_begin_indices, burst_end_indices, retIgnore;
   vector<double> ISI_values, tVec;
+  int IgnoreFirstISI;
   double burst_factor = 0;
   retVal = getVec(DoubleFeatureData, StringData, "all_ISI_values", ISI_values);
   if (retVal < 0) return -1;
@@ -3543,7 +3544,17 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
   else
     burst_factor = tVec[0];
 
-  retVal = __burst_indices(burst_factor, ISI_values, burst_begin_indices, burst_end_indices);
+  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+    IgnoreFirstISI = 0;
+  }
+  else {
+    IgnoreFirstISI = 1;
+   }
+
+  retVal = __burst_indices(
+    burst_factor, IgnoreFirstISI, ISI_values, burst_begin_indices, burst_end_indices
+  );
   if (retVal >= 0) {
     setVec(IntFeatureData, StringData, "burst_begin_indices", burst_begin_indices);
     setVec(IntFeatureData, StringData, "burst_end_indices", burst_end_indices);
