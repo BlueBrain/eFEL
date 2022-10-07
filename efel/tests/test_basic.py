@@ -738,6 +738,46 @@ def test_ISI_log_slope():
     numpy.testing.assert_allclose(feature_values[0]['ISI_log_slope'][0], slope)
 
 
+def test_ISI_values_noIgnore():
+    """basic: Test test_ISI_values without Ignoring the first spike"""
+
+    import efel
+    efel.reset()
+
+    stim_start = 500.0
+    stim_end = 900.0
+
+    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['ISI_values']
+
+    efel.setIntSetting("ignore_first_ISI", 0)
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values_no_ignore = feature_values[0]['ISI_values']
+
+    efel.reset()
+    efel.setIntSetting("ignore_first_ISI", 1)
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+    isi_values = feature_values[0]['ISI_values']
+
+    numpy.testing.assert_equal(len(isi_values) + 1, len(isi_values_no_ignore))
+
+
 def test_ISI_semilog_slope():
     """basic: Test ISI_semilog_slope"""
 
@@ -3172,6 +3212,7 @@ def test_burst_indices():
     """basic: Test burst_begin_indices and burst_end_indices"""
     import efel
     efel.reset()
+    efel.setIntSetting('ignore_first_ISI', 0)
 
     time = efel.io.load_fragment('%s#col=1' % burst1_url)
     voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
@@ -3208,6 +3249,7 @@ def test_strict_burst_mean_freq():
     """basic: Test strict_burst_mean_freq"""
     import efel
     efel.reset()
+    efel.setIntSetting('ignore_first_ISI', 0)
 
     time = efel.io.load_fragment('%s#col=1' % burst1_url)
     voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
@@ -3255,6 +3297,7 @@ def test_strict_burst_number():
     """basic: Test strict_burst_number"""
     import efel
     efel.reset()
+    efel.setIntSetting('ignore_first_ISI', 0)
 
     time = efel.io.load_fragment('%s#col=1' % burst1_url)
     voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
@@ -3303,6 +3346,7 @@ def test_strict_interburst_voltage():
     """basic: Test strict_interburst_voltage"""
     import efel
     efel.reset()
+    efel.setIntSetting('ignore_first_ISI', 0)
 
     time = efel.io.load_fragment('%s#col=1' % burst1_url)
     voltage = efel.io.load_fragment('%s#col=2' % burst1_url)

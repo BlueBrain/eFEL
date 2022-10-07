@@ -224,6 +224,7 @@ def test_initburst_sahp_ssse():
 
 def test_ISIs():
     """pyfeatures: Test ISIs feature"""
+    efel.reset()
 
     mf1_trace = _load_trace('mean_frequency1')
 

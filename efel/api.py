@@ -100,6 +100,7 @@ def reset():
     setStrSetting("current_base_mode", "mean")
     setDoubleSetting("precision_threshold", 1e-10)
     setDoubleSetting("sahp_start", 5.0)
+    setIntSetting("ignore_first_ISI", 1)
 
     _initialise()
 

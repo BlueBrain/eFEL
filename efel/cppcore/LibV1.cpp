@@ -181,7 +181,18 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
     GErrorStr += "\n Three spikes required for calculation of ISI_values.\n";
     return -1;
   }
-  for (size_t i = 2; i < pvTime.size(); i++)
+
+  int IgnoreFirstISI;
+  vector<int> retIgnore;
+  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+    IgnoreFirstISI = 0;
+  }
+  else {
+    IgnoreFirstISI = 1;
+   }
+
+  for (size_t i = IgnoreFirstISI + 1; i < pvTime.size(); i++)
     VecISI.push_back(pvTime[i] - pvTime[i - 1]);
   setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
   return VecISI.size();
@@ -706,6 +717,7 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
 // discrepancy betwen PVTime indices and BurstIndex indices because
 // first ISI value is ignored
 static int __burst_mean_freq(vector<double>& PVTime, vector<int>& BurstIndex,
+                             int IgnoreFirstISI,
                              vector<double>& BurstMeanFreq) {
   // if no burst detected, do not consider all peaks in a single burst
   if (BurstIndex.size() == 0) return BurstMeanFreq.size();
@@ -713,20 +725,20 @@ static int __burst_mean_freq(vector<double>& PVTime, vector<int>& BurstIndex,
   size_t i;
 
   // 1st burst
-  span = PVTime[BurstIndex[0]] - PVTime[0];
-  BurstMeanFreq.push_back((BurstIndex[0] + 1) * 1000 / span);
+  span = PVTime[BurstIndex[0] - 1 + IgnoreFirstISI] - PVTime[0];
+  BurstMeanFreq.push_back((BurstIndex[0] + IgnoreFirstISI) * 1000 / span);
 
   for (i = 0; i < BurstIndex.size() - 1; i++) {
     if (BurstIndex[i + 1] - BurstIndex[i] > 1) {
-      span = PVTime[BurstIndex[i + 1]] - PVTime[BurstIndex[i] + 1];
+      span = PVTime[BurstIndex[i + 1] - 1 + IgnoreFirstISI] - PVTime[BurstIndex[i] + IgnoreFirstISI];
       BurstMeanFreq.push_back((BurstIndex[i + 1] - BurstIndex[i]) * 1000 / span);
     }
   }
 
   // last burst
-  if (PVTime.size() - 1 - BurstIndex[i] > 1) {
-      span = PVTime[PVTime.size() - 1] - PVTime[BurstIndex[i] + 1];
-      BurstMeanFreq.push_back((PVTime.size() - 1 - BurstIndex[i]) * 1000 / span);
+  if (PVTime.size() - IgnoreFirstISI - BurstIndex[i] > 1) {
+      span = PVTime[PVTime.size() - 1] - PVTime[BurstIndex[i] + IgnoreFirstISI];
+      BurstMeanFreq.push_back((PVTime.size() - IgnoreFirstISI - BurstIndex[i]) * 1000 / span);
     }
 
   return BurstMeanFreq.size();
@@ -741,7 +753,8 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
   if (retVal)
     return nSize;
 
-  vector<int> BurstIndex;
+  int IgnoreFirstISI;
+  vector<int> BurstIndex, retIgnore;
   vector<double> BurstMeanFreq, PVTime;
   retVal = getVec(DoubleFeatureData, StringData, "peak_time", PVTime);
   if (retVal < 0) return -1;
@@ -749,7 +762,15 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
                      BurstIndex);
   if (retVal < 0) return -1;
 
-  retVal = __burst_mean_freq(PVTime, BurstIndex, BurstMeanFreq);
+  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+    IgnoreFirstISI = 0;
+  }
+  else {
+    IgnoreFirstISI = 1;
+   }
+
+  retVal = __burst_mean_freq(PVTime, BurstIndex, IgnoreFirstISI, BurstMeanFreq);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "burst_mean_freq",
                  BurstMeanFreq);
@@ -777,18 +798,19 @@ int LibV1::burst_number(mapStr2intVec& IntFeatureData,
   return (BurstNum.size());
 }
 
-// reminder: first ISI value is ignored in burst_ISI_indices
+// reminder: first ISI value is ignored in burst_ISI_indices if IgnoreFirstISI=1
 static int __interburst_voltage(vector<int>& BurstIndex, vector<int>& PeakIndex,
                                 vector<double>& T, vector<double>& V,
+                                int IgnoreFirstISI,
                                 vector<double>& IBV) {
   if (BurstIndex.size() < 1) return 0;
   int j, pIndex, tsIndex, teIndex, cnt;
   double tStart, tEnd, vTotal = 0;
   for (size_t i = 0; i < BurstIndex.size(); i++) {
-    pIndex = BurstIndex[i];
+    pIndex = BurstIndex[i] + IgnoreFirstISI - 1;
     tsIndex = PeakIndex[pIndex];
     tStart = T[tsIndex] + 5;  // 5Millisecond after
-    pIndex = BurstIndex[i] + 1;
+    pIndex = BurstIndex[i] + IgnoreFirstISI;
     teIndex = PeakIndex[pIndex];
     tEnd = T[teIndex] - 5;  // 5Millisecond before
 
@@ -818,7 +840,8 @@ int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
   if (retVal)
     return nSize;
 
-  vector<int> BurstIndex, PeakIndex;
+  int IgnoreFirstISI;
+  vector<int> BurstIndex, PeakIndex, retIgnore;
   vector<double> V, T, IBV;
   retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
   if (retVal < 0) return -1;
@@ -830,7 +853,15 @@ int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
   retVal = getVec(DoubleFeatureData, StringData, "V", V);
   if (retVal < 0) return -1;
 
-  retVal = __interburst_voltage(BurstIndex, PeakIndex, T, V, IBV);
+  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+    IgnoreFirstISI = 0;
+  }
+  else {
+    IgnoreFirstISI = 1;
+   }
+
+  retVal = __interburst_voltage(BurstIndex, PeakIndex, T, V, IgnoreFirstISI, IBV);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "interburst_voltage", IBV);
   }
