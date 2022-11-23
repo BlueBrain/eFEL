@@ -1806,12 +1806,16 @@ static int __AP_width(const vector<double>& t, const vector<double>& v,
   //   printVectorI("peakindices", peakindices);
   //   printVectorI("minahpindices", minahpindices);
   //   printf("\nStimStart = %f , thereshold = %f ", stimstart, threshold);
-  vector<int> indices(minahpindices.size() + 1);
+  vector<int> indices;
   int start_index = distance(
       t.begin(),
       find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
-  indices[0] = start_index;
-  copy(minahpindices.begin(), minahpindices.end(), indices.begin() + 1);
+  indices.push_back(start_index);
+  for (size_t i = 0; i < minahpindices.size(); i++) {
+    if (minahpindices[i] > start_index) {
+      indices.push_back(minahpindices[i]);
+    }
+  }
   for (size_t i = 0; i < indices.size() - 1; i++) {
     /*
     // FWHM (not used):
