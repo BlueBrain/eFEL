@@ -1796,9 +1796,10 @@ int LibV1::printVectorD(char* strName, vector<double> vec) {
 // unfortunately spike width means the width of the spike on onset not at half
 // maximum
 static int __AP_width(const vector<double>& t, const vector<double>& v,
-                      double stimstart, double threshold,
+                      double stimstart, double stimend, double threshold,
                       const vector<int>& peakindices,
                       const vector<int>& minahpindices,
+                      const bool strict_stiminterval,
                       vector<double>& apwidth) {
   //   printf("\n Inside AP_width...\n");
   //   printVectorD("t", t);
@@ -1806,12 +1807,27 @@ static int __AP_width(const vector<double>& t, const vector<double>& v,
   //   printVectorI("peakindices", peakindices);
   //   printVectorI("minahpindices", minahpindices);
   //   printf("\nStimStart = %f , thereshold = %f ", stimstart, threshold);
-  vector<int> indices(minahpindices.size() + 1);
-  int start_index = distance(
-      t.begin(),
-      find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
-  indices[0] = start_index;
-  copy(minahpindices.begin(), minahpindices.end(), indices.begin() + 1);
+  vector<int> indices;
+  if (strict_stiminterval){
+    int start_index = distance(
+        t.begin(),
+        find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
+    int end_index =
+        distance(t.begin(),
+                 find_if(t.begin(), t.end(),
+                         std::bind2nd(std::greater_equal<double>(), stimend)));
+    indices.push_back(start_index);
+    for (size_t i = 0; i < minahpindices.size(); i++) {
+      if (start_index < minahpindices[i] && minahpindices[i] < end_index) {
+        indices.push_back(minahpindices[i]);
+      }
+    }
+  } else {
+    indices.push_back(0);
+    for (size_t i = 0; i < minahpindices.size(); i++) {
+      indices.push_back(minahpindices[i]);
+    }
+  }
   for (size_t i = 0; i < indices.size() - 1; i++) {
     /*
     // FWHM (not used):
@@ -1860,6 +1876,9 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   vector<double> stimstart;
   retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
   if (retval < 0) return -1;
+  vector<double> stimend;
+  retval = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
+  if (retval < 0) return -1;
   vector<int> peakindices;
   retval = getVec(IntFeatureData, StringData, "peak_indices", peakindices);
   if (retval <= 0) {
@@ -1870,9 +1889,18 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   vector<int> minahpindices;
   retval = getVec(IntFeatureData, StringData, "min_AHP_indices", minahpindices);
   if (retval < 0) return -1;
+  bool strict_stiminterval;
+  vector<int> strict_stiminterval_vec;
+  retval = getIntParam(IntFeatureData, "strict_stiminterval",
+                       strict_stiminterval_vec);
+  if (retval <= 0) {
+    strict_stiminterval = false;
+  } else {
+    strict_stiminterval = bool(strict_stiminterval_vec[0]);
+  }
   vector<double> apwidth;
-  retval = __AP_width(t, v, stimstart[0], threshold[0], peakindices,
-                      minahpindices, apwidth);
+  retval = __AP_width(t, v, stimstart[0], stimend[0], threshold[0], peakindices,
+                      minahpindices, strict_stiminterval, apwidth);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_width", apwidth);
   }
