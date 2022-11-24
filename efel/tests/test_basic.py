@@ -3408,4 +3408,14 @@ def test_AP_width_spike_before_stim_start():
 
     ap_width = feature_values[0]['AP_width']
 
-    assert len(ap_width) == 14
+    assert len(ap_width) == 15
+
+    efel.setIntSetting('strict_stiminterval', 1)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    ap_width = feature_values[0]['AP_width']
+
+    assert len(ap_width) == 13
