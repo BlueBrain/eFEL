@@ -3379,3 +3379,43 @@ def test_strict_interburst_voltage():
         strict_interburst_voltage, strict_interburst_voltage_py
     )
     numpy.testing.assert_allclose(strict_interburst_voltage, -63.234682)
+
+
+def test_AP_width_spike_before_stim_start():
+    """basic: Test AP_width with a spike before stim start"""
+    import efel
+    efel.reset()
+
+    stim_start = 700.0
+    stim_end = 2700.0
+
+    time = efel.io.load_fragment('%s#col=1' % spikeoutsidestim_url)
+    voltage = efel.io.load_fragment('%s#col=2' % spikeoutsidestim_url)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_width']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    ap_width = feature_values[0]['AP_width']
+
+    assert len(ap_width) == 15
+
+    efel.setIntSetting('strict_stiminterval', 1)
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+
+    ap_width = feature_values[0]['AP_width']
+
+    assert len(ap_width) == 13

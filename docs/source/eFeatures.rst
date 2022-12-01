@@ -848,7 +848,7 @@ LibV1 : AP_width
 
 Width of spike at threshold, bounded by minimum AHP
 
-Can use strict_stiminterval to not use minimum after stimulus end.
+Can use strict_stiminterval compute only for data in stimulus interval.
 
 - **Required features**: LibV1: peak_indices, LibV5: min_AHP_indices, threshold
 - **Units**: ms
