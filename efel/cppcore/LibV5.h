@@ -275,5 +275,8 @@ int strict_burst_number(mapStr2intVec& IntFeatureData,
 int strict_interburst_voltage(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
+int ADP_peak(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif

@@ -3700,3 +3700,53 @@ int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
   }
   return retVal;
 }
+
+
+static int __ADP_peak(vector<double>& v,
+                      vector<int>& min_AHP_indices,
+                      vector<int>& min_between_peaks_indices,
+                      vector<double>& ADP_peak) {
+  if (min_AHP_indices.size() > min_between_peaks_indices.size()){
+    GErrorStr +=
+        "\nmin_AHP_indices should not have less elements than min_between_peaks_indices\n";
+    return -1;
+  }
+
+  double adp_peak_voltage;
+  for (size_t i = 0; i < min_AHP_indices.size(); i++) {
+    adp_peak_voltage = *max_element(v.begin() + min_AHP_indices[i], v.begin() + min_between_peaks_indices[i]);
+    
+    ADP_peak.push_back(adp_peak_voltage - v[min_AHP_indices[i]]);
+  }
+
+  return ADP_peak.size();
+}
+
+int LibV5::ADP_peak(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "ADP_peak", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> min_AHP_indices, min_between_peaks_indices;
+  vector<double> ADP_peak, v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices",
+                  min_AHP_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_between_peaks_indices",
+                  min_between_peaks_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __ADP_peak(v, min_AHP_indices,
+                      min_between_peaks_indices, ADP_peak);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "ADP_peak",
+           ADP_peak);
+  }
+  return retVal;
+}

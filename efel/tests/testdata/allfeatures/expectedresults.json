@@ -60646,5 +60646,13 @@
     "strict_burst_mean_freq": [
         7.99041151
     ],
-    "strict_interburst_voltage": []
+    "strict_interburst_voltage": [],
+    "ADP_peak": [
+        0.0,
+        2.6873666528663236,
+        0.48122323161050673,
+        0.06877493979540361,
+        0.0,
+        2.99957475153942
+    ]
 }
