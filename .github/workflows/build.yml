@@ -20,22 +20,15 @@ jobs:
       matrix:
         os: [ubuntu-20.04, macos-latest, windows-latest]
         python: [cp36, cp37, cp38, cp39, cp310]
-        arch: [x86_64, amd64, 32]
+        arch: [x86_64, amd64]
         exclude:
           - os: macos-latest
             arch: amd64
-          - os: macos-latest
-            arch: 32
           - os: ubuntu-20.04
             arch: amd64
-          - os: ubuntu-20.04
-            arch: 32
           - os: windows-latest
             arch: x86_64
-          # dropping support for windows 32bit for python >=3.10
-          - os: windows-latest
-            arch: 32
-            python: cp310
+
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
       CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1
