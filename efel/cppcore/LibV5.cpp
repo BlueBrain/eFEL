@@ -3700,3 +3700,99 @@ int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
   }
   return retVal;
 }
+
+
+// strict_stiminterval should be True when using this feature
+static int __ADP_peak_indices(vector<double>& v,
+                      vector<int>& min_AHP_indices,
+                      vector<int>& min_between_peaks_indices,
+                      vector<int>& ADP_peak_indices,
+                      vector<double>& ADP_peak_values) {
+  if (min_AHP_indices.size() > min_between_peaks_indices.size()){
+    GErrorStr +=
+        "\nmin_AHP_indices should not have less elements than min_between_peaks_indices\n";
+    return -1;
+  }
+
+  unsigned adp_peak_index;
+  for (size_t i = 0; i < min_AHP_indices.size(); i++) {
+    adp_peak_index = max_element(
+      v.begin() + min_AHP_indices[i], v.begin() + min_between_peaks_indices[i]
+    ) - v.begin();
+    
+    ADP_peak_indices.push_back(adp_peak_index);
+    ADP_peak_values.push_back(v[adp_peak_index]);
+  }
+
+  return ADP_peak_indices.size();
+}
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                            "ADP_peak_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> min_AHP_indices, min_between_peaks_indices, ADP_peak_indices;
+  vector<double> ADP_peak_values, v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices",
+                  min_AHP_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_between_peaks_indices",
+                  min_between_peaks_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __ADP_peak_indices(v, min_AHP_indices, min_between_peaks_indices,
+                              ADP_peak_indices, ADP_peak_values);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "ADP_peak_indices",
+           ADP_peak_indices);
+    setVec(DoubleFeatureData, StringData, "ADP_peak_values",
+           ADP_peak_values);
+  }
+  return retVal;
+}
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_values(mapStr2intVec& IntFeatureData,
+                          mapStr2doubleVec& DoubleFeatureData,
+                          mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "ADP_peak_values", nSize);
+  if (retVal) return nSize;
+  return -1;
+}
+
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "ADP_peak_amplitude", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> ADP_peak_amplitude, min_AHP_values, ADP_peak_values;
+  retVal = getVec(DoubleFeatureData, StringData, "min_AHP_values",
+                  min_AHP_values);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "ADP_peak_values",
+                  ADP_peak_values);
+  if (retVal < 0) return -1;
+
+  for (size_t i = 0; i < ADP_peak_values.size(); i++) {
+    ADP_peak_amplitude.push_back(ADP_peak_values[i] - min_AHP_values[i]);
+  }
+  setVec(DoubleFeatureData, StringData, "ADP_peak_amplitude",
+           ADP_peak_amplitude);
+  return (ADP_peak_amplitude.size());
+}

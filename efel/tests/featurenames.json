@@ -171,5 +171,8 @@
     "burst_end_indices",
     "strict_burst_number",
     "strict_burst_mean_freq",
-    "strict_interburst_voltage"
+    "strict_interburst_voltage",
+    "ADP_peak_indices",
+    "ADP_peak_values",
+    "ADP_peak_amplitude"
 ]

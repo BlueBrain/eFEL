@@ -3419,3 +3419,78 @@ def test_AP_width_spike_before_stim_start():
     ap_width = feature_values[0]['AP_width']
 
     assert len(ap_width) == 13
+
+
+def py_adp_peak_amplitude(v, min_AHP_indices, min_between_peaks_indices):
+    """Python implementation of ADP_peak_amplitude
+
+    v should be interpolated
+    """
+    min_v_indices = min_between_peaks_indices[:len(min_AHP_indices)]
+    if len(min_v_indices) != len(min_AHP_indices):
+        raise ValueError(
+            "min_AHP_indices and min_between_peaks_indices"
+            "should have the same size"
+        )
+
+    # faster than numpy.array([
+    #   numpy.max(v[i:j + 1]) for (i, j) in zip(min_AHP_indices, min_v_indices
+    # )])
+    reductions = numpy.column_stack((min_AHP_indices, min_v_indices)).ravel()
+    adp_peak_v = numpy.maximum.reduceat(v, reductions)[::2]
+
+    min_AHP_values = v[min_AHP_indices]
+
+    return adp_peak_v - min_AHP_values
+
+
+def test_ADP_peak_amplitude():
+    """basic: Test ADP_peak_amplitude"""
+    import efel
+    efel.reset()
+    efel.setIntSetting('strict_stiminterval', True)
+
+    stim_start = 250.0
+    stim_end = 1600.0
+
+    time = efel.io.load_fragment('%s#col=1' % burst2_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst2_url)
+
+    _, interp_voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = [
+        "min_AHP_indices",
+        "min_between_peaks_indices",
+        "ADP_peak_values",
+        "ADP_peak_amplitude"
+    ]
+
+    feature_values = efel.getFeatureValues(
+        [trace],
+        features,
+        raise_warnings=False
+    )
+
+    min_AHP_indices = feature_values[0]["min_AHP_indices"]
+    min_between_peaks_indices = feature_values[0]["min_between_peaks_indices"]
+    adp_peak_values = feature_values[0]["ADP_peak_values"]
+    adp_peak_amplitude_efel = feature_values[0]["ADP_peak_amplitude"]
+
+    adp_peak_amplitude_py = py_adp_peak_amplitude(
+        interp_voltage, min_AHP_indices, min_between_peaks_indices
+    )
+    adp_peak_amplitude_py2 = adp_peak_values - interp_voltage[min_AHP_indices]
+
+    numpy.testing.assert_allclose(
+        adp_peak_amplitude_py, adp_peak_amplitude_efel
+    )
+    numpy.testing.assert_allclose(
+        adp_peak_amplitude_py2, adp_peak_amplitude_efel, atol=1e-10
+    )
