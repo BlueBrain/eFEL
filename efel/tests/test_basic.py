@@ -3488,5 +3488,9 @@ def test_ADP_peak_amplitude():
     )
     adp_peak_amplitude_py2 = adp_peak_values - interp_voltage[min_AHP_indices]
 
-    numpy.testing.assert_allclose(adp_peak_amplitude_py, adp_peak_amplitude_efel)
-    numpy.testing.assert_allclose(adp_peak_amplitude_py2, adp_peak_amplitude_efel, atol=1e-10)
+    numpy.testing.assert_allclose(
+        adp_peak_amplitude_py, adp_peak_amplitude_efel
+    )
+    numpy.testing.assert_allclose(
+        adp_peak_amplitude_py2, adp_peak_amplitude_efel, atol=1e-10
+    )
