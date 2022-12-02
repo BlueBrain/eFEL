@@ -257,7 +257,9 @@ void cFeature::fillfeaturetypes() {
   featuretypes["strict_burst_number"] = "int";
   featuretypes["strict_interburst_voltage"] = "double";
 
-  featuretypes["ADP_peak"] = "double";
+  featuretypes["ADP_peak_indices"] = "int";
+  featuretypes["ADP_peak_values"] = "double";
+  featuretypes["ADP_peak_amplitude"] = "double";
 
   // end of feature types
 }

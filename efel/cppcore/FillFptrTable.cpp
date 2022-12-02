@@ -278,7 +278,9 @@ int FillFptrTable() {
   FptrTableV5["strict_burst_number"] = &LibV5::strict_burst_number;
   FptrTableV5["strict_interburst_voltage"] = &LibV5::strict_interburst_voltage;
 
-  FptrTableV5["ADP_peak"] = &LibV5::ADP_peak;
+  FptrTableV5["ADP_peak_indices"] = &LibV5::ADP_peak_indices;
+  FptrTableV5["ADP_peak_values"] = &LibV5::ADP_peak_values;
+  FptrTableV5["ADP_peak_amplitude"] = &LibV5::ADP_peak_amplitude;
   
   //****************** end of FptrTableV5 *****************************
 

@@ -3421,8 +3421,8 @@ def test_AP_width_spike_before_stim_start():
     assert len(ap_width) == 13
 
 
-def py_adp_peak(v, min_AHP_indices, min_between_peaks_indices):
-    """Python implementation of ADP_peak
+def py_adp_peak_amplitude(v, min_AHP_indices, min_between_peaks_indices):
+    """Python implementation of ADP_peak_amplitude
 
     v should be interpolated
     """
@@ -3444,8 +3444,8 @@ def py_adp_peak(v, min_AHP_indices, min_between_peaks_indices):
     return adp_peak_v - min_AHP_values
 
 
-def test_ADP_peak():
-    """basic: Test ADP_peak"""
+def test_ADP_peak_amplitude():
+    """basic: Test ADP_peak_amplitude"""
     import efel
     efel.reset()
     efel.setIntSetting('strict_stiminterval', True)
@@ -3465,7 +3465,12 @@ def test_ADP_peak():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ["min_AHP_indices", "min_between_peaks_indices", "ADP_peak"]
+    features = [
+        "min_AHP_indices",
+        "min_between_peaks_indices",
+        "ADP_peak_values",
+        "ADP_peak_amplitude"
+    ]
 
     feature_values = efel.getFeatureValues(
         [trace],
@@ -3475,9 +3480,13 @@ def test_ADP_peak():
 
     min_AHP_indices = feature_values[0]["min_AHP_indices"]
     min_between_peaks_indices = feature_values[0]["min_between_peaks_indices"]
-    adp_peak_efel = feature_values[0]["ADP_peak"]
+    adp_peak_values = feature_values[0]["ADP_peak_values"]
+    adp_peak_amplitude_efel = feature_values[0]["ADP_peak_amplitude"]
 
-    adp_peak_py = py_adp_peak(
+    adp_peak_amplitude_py = py_adp_peak_amplitude(
         interp_voltage, min_AHP_indices, min_between_peaks_indices
     )
-    numpy.testing.assert_allclose(adp_peak_py, adp_peak_efel)
+    adp_peak_amplitude_py2 = adp_peak_values - interp_voltage[min_AHP_indices]
+
+    numpy.testing.assert_allclose(adp_peak_amplitude_py, adp_peak_amplitude_efel)
+    numpy.testing.assert_allclose(adp_peak_amplitude_py2, adp_peak_amplitude_efel, atol=1e-10)
