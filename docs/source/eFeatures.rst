@@ -767,10 +767,10 @@ Time between AP peaks and first AHP depths
     min_AHP_indices = first_min_element(voltage, peak_indices)
     AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
 
-LibV5 : ADP_peak
-~~~~~~~~~~~~~~~~
+LibV5 : ADP_peak_values
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Amplitude of the small afterdepolarization peak with respect to the fast AHP voltage
+Absolute voltage values of the small afterdepolarization peak
 
 strict_stiminterval should be set to True for this feature to behave as expected.
 
@@ -778,11 +778,22 @@ strict_stiminterval should be set to True for this feature to behave as expected
 - **Units**: mV
 - **Pseudocode**: ::
 
-    adp_peak_v = numpy.array(
+    adp_peak_values = numpy.array(
         [numpy.max(v[i:j + 1]) for (i, j) in zip(min_AHP_indices, min_v_indices)]
     )
-    min_AHP_values = v[min_AHP_indices]
-    adp_peak = adp_peak_v - min_AHP_values
+
+LibV5 : ADP_peak_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Amplitude of the small afterdepolarization peak with respect to the fast AHP voltage
+
+strict_stiminterval should be set to True for this feature to behave as expected.
+
+- **Required features**: LibV5:min_AHP_values, LibV5:ADP_peak_values
+- **Units**: mV
+- **Pseudocode**: ::
+
+    adp_peak_amplitude = adp_peak_values - min_AHP_values
 
 LibV3 : depolarized_base
 ~~~~~~~~~~~~~~~~~~~~~~~~

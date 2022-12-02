@@ -3702,6 +3702,7 @@ int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
 }
 
 
+// strict_stiminterval should be True when using this feature
 static int __ADP_peak_indices(vector<double>& v,
                       vector<int>& min_AHP_indices,
                       vector<int>& min_between_peaks_indices,
@@ -3726,6 +3727,7 @@ static int __ADP_peak_indices(vector<double>& v,
   return ADP_peak_indices.size();
 }
 
+// strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
@@ -3757,6 +3759,7 @@ int LibV5::ADP_peak_indices(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
+// strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
@@ -3768,6 +3771,7 @@ int LibV5::ADP_peak_values(mapStr2intVec& IntFeatureData,
 }
 
 
+// strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
