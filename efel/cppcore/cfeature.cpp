@@ -261,6 +261,10 @@ void cFeature::fillfeaturetypes() {
   featuretypes["ADP_peak_values"] = "double";
   featuretypes["ADP_peak_amplitude"] = "double";
 
+  featuretypes["interburst_min_indices"] = "int";
+  featuretypes["interburst_min_values"] = "double";
+  featuretypes["time_to_interburst_min"] = "double";
+
   // end of feature types
 }
 

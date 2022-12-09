@@ -60670,5 +60670,8 @@
         -41.97919073015028,
         -41.12299346923828,
         -38.12341871769886
-    ]
+    ],
+    "interburst_min_indices": [],
+    "interburst_min_values": [],
+    "time_to_interburst_min": []
 }

@@ -169,3 +169,6 @@ LibV5:strict_interburst_voltage    #LibV5:peak_indices #LibV5:burst_begin_indice
 LibV5:ADP_peak_indices    #LibV5:min_AHP_indices #LibV5:min_between_peaks_indices #LibV1:interpolate
 LibV5:ADP_peak_values     #LibV5:ADP_peak_indices #LibV1:interpolate
 LibV5:ADP_peak_amplitude  #LibV5:ADP_peak_values #LibV5:min_AHP_values #LibV1:interpolate
+LibV5:interburst_min_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
+LibV5:interburst_min_values      #LibV5:interburst_min_indices #LibV1: interpolate
+LibV5:time_to_interburst_min     #LibV5:interburst_min_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate

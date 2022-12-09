@@ -3494,3 +3494,152 @@ def test_ADP_peak_amplitude():
     numpy.testing.assert_allclose(
         adp_peak_amplitude_py2, adp_peak_amplitude_efel, atol=1e-10
     )
+
+
+def py_interburst_min_values(v, peak_indices, burst_end_indices):
+    """min voltage between burst and next peak"""
+    if peak_indices is None or burst_end_indices is None:
+        return None
+
+    interburst_min = [
+        numpy.min(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        ) for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
+    return numpy.array(interburst_min)
+
+
+def py_time_to_interburst_min(
+    v, t, peak_indices, burst_end_indices, peak_time
+):
+    """time from burst last peak to min between burst and next peak"""
+    if peak_indices is None or burst_end_indices is None:
+        return None
+
+    time_to_interburst_min = [
+        t[peak_indices[i] + numpy.argmin(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        )] - peak_time[i]
+        for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
+    return numpy.array(time_to_interburst_min)
+
+
+def test_interburst_min_values():
+    """basic: Test interburst_min_values"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        _, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            "peak_indices",
+            "burst_end_indices",
+            "interburst_min_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        peak_indices = feature_values[0]["peak_indices"]
+        burst_end_indices = feature_values[0]["burst_end_indices"]
+        interburst_min_values = feature_values[0]["interburst_min_values"]
+
+        interburst_min_py = py_interburst_min_values(
+            interp_voltage, peak_indices, burst_end_indices
+        )
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        interburst_min_py = numpy.array(interburst_min_py, dtype=numpy.float)
+        interburst_min_values = numpy.array(
+            interburst_min_values, dtype=numpy.float
+        )
+
+        numpy.testing.assert_allclose(
+            interburst_min_py, interburst_min_values
+        )
+
+
+def test_time_to_interburst_min():
+    """basic: Test time_to_interburst_min"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            "peak_indices",
+            "burst_end_indices",
+            "peak_time",
+            "time_to_interburst_min",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        peak_indices = feature_values[0]["peak_indices"]
+        peak_time = feature_values[0]["peak_time"]
+        burst_end_indices = feature_values[0]["burst_end_indices"]
+        time_to_interburst_min = feature_values[0]["time_to_interburst_min"]
+
+        time_to_interburst_min_py = py_time_to_interburst_min(
+            interp_voltage,
+            interp_time,
+            peak_indices,
+            burst_end_indices,
+            peak_time,
+        )
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        time_to_interburst_min_py = numpy.array(
+            time_to_interburst_min_py, dtype=numpy.float
+        )
+        time_to_interburst_min = numpy.array(
+            time_to_interburst_min, dtype=numpy.float
+        )
+
+        numpy.testing.assert_allclose(
+            time_to_interburst_min_py, time_to_interburst_min
+        )
