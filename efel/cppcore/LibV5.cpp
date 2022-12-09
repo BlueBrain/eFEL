@@ -3796,3 +3796,108 @@ int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
            ADP_peak_amplitude);
   return (ADP_peak_amplitude.size());
 }
+
+
+
+static int __interburst_min_indices(vector<double>& v,
+                      vector<int>& peak_indices,
+                      vector<int>& burst_end_indices,
+                      vector<int>& interburst_min_indices,
+                      vector<double>& interburst_min_values) {
+  unsigned interburst_min_index;
+  for (size_t i = 0;
+       i < burst_end_indices.size() && burst_end_indices[i] + 1 < peak_indices.size();
+       i++) {
+    interburst_min_index = min_element(
+      v.begin() + peak_indices[burst_end_indices[i]],
+      v.begin() + peak_indices[burst_end_indices[i] + 1]
+    ) - v.begin();
+    
+    interburst_min_indices.push_back(interburst_min_index);
+    interburst_min_values.push_back(v[interburst_min_index]);
+  }
+
+  return interburst_min_indices.size();
+}
+
+int LibV5::interburst_min_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                      "interburst_min_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> peak_indices, burst_end_indices, interburst_min_indices;
+  vector<double> interburst_min_values, v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __interburst_min_indices(v, peak_indices, burst_end_indices,
+                                    interburst_min_indices,
+                                    interburst_min_values);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "interburst_min_indices",
+           interburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_min_values",
+           interburst_min_values);
+  }
+  return retVal;
+}
+
+int LibV5::interburst_min_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "interburst_min_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
+
+int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "time_to_interburst_min", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> time_to_interburst_min, peak_time, time;
+  vector<int> interburst_min_indices, burst_end_indices;
+  retVal = getVec(DoubleFeatureData, StringData, "T",
+                  time);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time",
+                  peak_time);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "interburst_min_indices",
+                  interburst_min_indices);
+  if (retVal < 0) return -1;
+
+  if (burst_end_indices.size() < interburst_min_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than interburst_min_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < interburst_min_indices.size(); i++) {
+    time_to_interburst_min.push_back(time[interburst_min_indices[i]] -
+                                     peak_time[burst_end_indices[i]]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_interburst_min",
+         time_to_interburst_min);
+  return (time_to_interburst_min.size());
+}

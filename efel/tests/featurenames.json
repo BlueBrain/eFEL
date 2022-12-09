@@ -174,5 +174,8 @@
     "strict_interburst_voltage",
     "ADP_peak_indices",
     "ADP_peak_values",
-    "ADP_peak_amplitude"
+    "ADP_peak_amplitude",
+    "interburst_min_indices",
+    "interburst_min_values",
+    "time_to_interburst_min"
 ]

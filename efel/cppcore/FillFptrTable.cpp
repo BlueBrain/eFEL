@@ -281,6 +281,10 @@ int FillFptrTable() {
   FptrTableV5["ADP_peak_indices"] = &LibV5::ADP_peak_indices;
   FptrTableV5["ADP_peak_values"] = &LibV5::ADP_peak_values;
   FptrTableV5["ADP_peak_amplitude"] = &LibV5::ADP_peak_amplitude;
+
+  FptrTableV5["interburst_min_indices"] = &LibV5::interburst_min_indices;
+  FptrTableV5["interburst_min_values"] = &LibV5::interburst_min_values;
+  FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
   
   //****************** end of FptrTableV5 *****************************
 

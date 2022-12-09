@@ -483,8 +483,47 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
 
         interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
 
+LibV5 : interburst_min_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The minimum voltage between the end of a burst and the next spike.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_min = [
+        numpy.min(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        ) for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
+LibV5 : time_to_interburst_min
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The time between the last spike of a burst and the minimum between that spike and the next.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: peak_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_interburst_min = [
+        t[peak_indices[i] + numpy.argmin(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        )] - peak_time[i]
+        for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
 LibV1 : single_burst_ratio
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.
