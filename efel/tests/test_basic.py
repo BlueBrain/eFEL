@@ -3572,9 +3572,9 @@ def test_interburst_min_values():
 
         # convert to float so that None edge case get converted to nan
         # and can pass in assert_allclose
-        interburst_min_py = numpy.array(interburst_min_py, dtype=numpy.float)
+        interburst_min_py = numpy.array(interburst_min_py, dtype=numpy.float64)
         interburst_min_values = numpy.array(
-            interburst_min_values, dtype=numpy.float
+            interburst_min_values, dtype=numpy.float64
         )
 
         numpy.testing.assert_allclose(
@@ -3634,10 +3634,10 @@ def test_time_to_interburst_min():
         # convert to float so that None edge case get converted to nan
         # and can pass in assert_allclose
         time_to_interburst_min_py = numpy.array(
-            time_to_interburst_min_py, dtype=numpy.float
+            time_to_interburst_min_py, dtype=numpy.float64
         )
         time_to_interburst_min = numpy.array(
-            time_to_interburst_min, dtype=numpy.float
+            time_to_interburst_min, dtype=numpy.float64
         )
 
         numpy.testing.assert_allclose(
