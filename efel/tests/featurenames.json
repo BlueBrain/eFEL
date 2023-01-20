@@ -149,6 +149,7 @@
     "single_burst_ratio",
     "spike_half_width",
     "spike_width2",
+    "spikes_per_burst",
     "steady_state_hyper",
     "steady_state_voltage",
     "steady_state_voltage_stimend",

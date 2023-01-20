@@ -1787,3 +1787,18 @@ Difference between minimum and steady state during stimulation
 
     diff_min_duringstim: min_duringstim - steady_state_voltage_stimend
 
+Python efeature: spikes_per_burst
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Number of spikes in each burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spike_per_bursts = []
+    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
+        spike_per_bursts.append(idx_end - idx_begin + 1)
+

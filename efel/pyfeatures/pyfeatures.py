@@ -39,7 +39,9 @@ all_pyfeatures = [
     'initburst_sahp_vb',
     'initburst_sahp_ssse',
     'depol_block',
-    'depol_block_bool']
+    'depol_block_bool',
+    'spikes_per_burst'
+]
 
 
 def voltage():
@@ -251,6 +253,22 @@ def depol_block_bool():
         return numpy.array([1])
     else:
         return numpy.array([0])
+
+
+def spikes_per_burst():
+    """Calculate the number of spikes per burst"""
+
+    burst_begin_indices = _get_cpp_feature("burst_begin_indices")
+    burst_end_indices = _get_cpp_feature("burst_end_indices")
+
+    if burst_begin_indices is None:
+        return None
+
+    ap_per_bursts = []
+    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
+        ap_per_bursts.append(idx_end - idx_begin + 1)
+
+    return numpy.array(ap_per_bursts)
 
 
 def _get_cpp_feature(feature_name):
