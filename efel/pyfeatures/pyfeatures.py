@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 import numpy
+from scipy import signal
 import efel.cppcore
 
 
@@ -38,7 +39,10 @@ all_pyfeatures = [
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',
-    'depol_block']
+    'depol_block',
+    'subthreshold_oscillations',
+    'subthreshold_frequencies',
+]
 
 
 def voltage():
@@ -240,6 +244,76 @@ def depol_block():
             return None
 
     return numpy.array([1])
+
+
+import matplotlib.pyplot as plt
+def _subthreshold_frequencies():
+
+    threshold = 500.
+    freq_max = 0.1
+    plot = False
+
+    peak_times = _get_cpp_feature("peak_time")
+    if list(peak_times):
+        print('traces has spikes, so we cannot compute subthreshold features')
+        return []
+
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    stim_start = stim_start + 0.3*(stim_end-stim_start)
+    raw_voltage = _get_cpp_feature("voltage")
+    raw_time = _get_cpp_feature("time")
+    raw_time = raw_time[:len(raw_voltage)]
+    time = numpy.linspace(raw_time[0], raw_time[-1], 100001)
+    voltage = numpy.interp(time, raw_time, raw_voltage)
+
+    voltage = voltage[(time>stim_start)& (time<stim_end)]
+    time = time[(time>stim_start)& (time<stim_end)]
+
+    amps = numpy.fft.rfft(voltage)[1:]
+    dt = time[1] - time[0]
+    freqs = numpy.fft.rfftfreq(len(time) - 1, dt)[1:]
+    power = abs(amps)**2 / dt
+    from scipy.signal import savgol_filter
+    _power = savgol_filter(power, 50, 3)
+    base_power = numpy.median(_power[freqs < freq_max])
+
+    peaks = signal.find_peaks(_power, height=threshold * base_power, width=30)#, )
+    peaks = [freqs[peak] for peak in peaks[0] if freqs[peak] < freq_max]
+    if len(peaks)>0:
+        plt.figure()
+        plt.plot(raw_time, raw_voltage)
+        plt.savefig('test.pdf')
+        plt.close()
+
+        plt.figure()
+        plt.axvline(freq_max)
+        plt.axhline(base_power)
+        plt.axhline(threshold*base_power, c='r')
+
+        for peak in peaks:
+            plt.axvline(peak, lw=0.5, c='k')
+        plt.plot(freqs, power, lw=0.5)
+        plt.loglog(freqs, _power, lw=0.5, c='b')
+        #plt.gca().set_xlim(0, 0.2)
+        plt.savefig('subthreshold_fft.pdf')
+        plt.close()
+
+        plt.figure()
+        plt.plot(time, voltage)
+        plt.savefig('voltage.pdf')
+
+        plt.close()
+    return peaks
+
+
+def subthreshold_oscillations():
+    peaks = _subthreshold_frequencies()
+    return numpy.array([1 if len(peaks) > 0 else 0])
+
+
+def subthreshold_frequencies():
+    return _subthreshold_frequencies()
 
 
 def _get_cpp_feature(feature_name):
