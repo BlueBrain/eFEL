@@ -1704,8 +1704,11 @@ Difference between maximum voltage during stimulus and voltage base
 Requested eFeatures
 ===================
 
-LibV1 : AHP_depth_last
-~~~~~~~~~~~~~~~~~~~~~~
+Cpp features
+------------
+
+LibV1: AHP_depth_last
+~~~~~~~~~~~~~~~~~~~~~
 
 Relative voltage values at the last after-hyperpolarization
 
@@ -1717,8 +1720,8 @@ Relative voltage values at the last after-hyperpolarization
     AHP_depth = last_AHP_values[:] - voltage_base
 
 
-LibV5 : AHP_time_from_peak_last
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LibV5: AHP_time_from_peak_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between AP peaks and last AHP depths
 
@@ -1730,8 +1733,8 @@ Time between AP peaks and last AHP depths
     AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
 
 
-LibV5 : steady_state_voltage_stimend_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LibV5: steady_state_voltage_stimend_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage during the last 90% of the stimulus duration realtive to voltage_base
 
@@ -1742,8 +1745,8 @@ The average voltage during the last 90% of the stimulus duration realtive to vol
     steady_state_voltage_stimend_from_voltage_base = steady_state_voltage_stimend - voltage_base
 
 
-LibV5 : min_duringstim_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LibV5: min_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage during stimulus
 
@@ -1754,8 +1757,8 @@ The minimum voltage during stimulus
     min_duringstim_from_voltage_base = minimum_voltage - voltage_base
 
 
-LibV5 : max_duringstim_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LibV5: max_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage during stimulus
 
@@ -1765,7 +1768,7 @@ The minimum voltage during stimulus
 
     max_duringstim_from_voltage_base = maximum_voltage - voltage_base
 
-LibV5 : diff_max_duringstim
+LibV5: diff_max_duringstim
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference between maximum and steady state during stimulation
@@ -1776,8 +1779,8 @@ Difference between maximum and steady state during stimulation
 
     diff_max_duringstim: max_duringstim - steady_state_voltage_stimend
 
-LibV5 : diff_min_duringstim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LibV5: diff_min_duringstim
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference between minimum and steady state during stimulation
 
@@ -1786,6 +1789,9 @@ Difference between minimum and steady state during stimulation
 - **Pseudocode**: ::
 
     diff_min_duringstim: min_duringstim - steady_state_voltage_stimend
+
+Python features
+---------------
 
 Python efeature: spikes_per_burst
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
