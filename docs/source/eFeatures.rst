@@ -1769,7 +1769,7 @@ The minimum voltage during stimulus
     max_duringstim_from_voltage_base = maximum_voltage - voltage_base
 
 LibV5: diff_max_duringstim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference between maximum and steady state during stimulation
 
