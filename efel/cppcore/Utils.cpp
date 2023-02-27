@@ -38,7 +38,7 @@ int LinearInterpolation(double Stepdx,
   size_t InterpX_size;
   double x = X[0];
   double start = X[0];
-  double stop = X[X.size() - 1] + Stepdx;
+  double stop = X[X.size() - 1];
   
   // Inspired by the way numpy.arange works
   // Do not remove the 'ceil' in favor of < stop in for loop
@@ -47,6 +47,11 @@ int LinearInterpolation(double Stepdx,
   for (size_t i = 0; i < InterpX_size; i++) {
       InterpX.push_back(x);
       x += Stepdx;
+  }
+
+  if (InterpX[InterpX.size() - 1] < X[X.size() - 1]){
+    InterpX.push_back(x);
+    InterpX_size += 1;
   }
 
   // Create the y values
