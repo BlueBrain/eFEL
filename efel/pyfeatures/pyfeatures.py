@@ -101,6 +101,7 @@ def initburst_sahp():
     # Required cpp features
     voltage = _get_cpp_feature("voltage")
     time = _get_cpp_feature("time")
+    time = time[:len(voltage)]
     peak_times = _get_cpp_feature("peak_time")
 
     # Required python features
