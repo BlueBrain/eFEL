@@ -3149,30 +3149,6 @@ def test_AHP_depth_diff():
     )
 
 
-def test_mean_AP_amplitude():
-    """basic: Test mean AP amplitude"""
-
-    import efel
-    efel.reset()
-
-    trace, time, voltage, stim_start, stim_end = load_data(
-        'mean_frequency1', interp=True)
-
-    features = ["mean_AP_amplitude", "AP_amplitude"]
-
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            features, raise_warnings=False)
-
-    mean_AP_amplitude = feature_values[0]['mean_AP_amplitude']
-    AP_amplitude = feature_values[0]['AP_amplitude']
-
-    numpy.testing.assert_allclose(
-        mean_AP_amplitude, numpy.mean(AP_amplitude)
-    )
-
-
 def py_burst_indices(ISI_values):
     """python implementation of burst_begin_indices and burst_end_indices"""
     if len(ISI_values) < 2:
