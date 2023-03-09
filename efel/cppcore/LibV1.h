@@ -143,6 +143,9 @@ int Spikecount(mapStr2intVec& IntFeatureData,
                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int AHP_depth_slow(mapStr2intVec& IntFeatureData,
+                       mapStr2doubleVec& DoubleFeatureData,
+                       mapStr2Str& StringData);
 int burst_number(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AP_amplitude_diff(mapStr2intVec& IntFeatureData,

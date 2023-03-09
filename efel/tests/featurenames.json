@@ -178,5 +178,6 @@
     "ADP_peak_amplitude",
     "interburst_min_indices",
     "interburst_min_values",
-    "time_to_interburst_min"
+    "time_to_interburst_min",
+    "AHP_depth_slow"
 ]
