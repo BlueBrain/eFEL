@@ -724,6 +724,21 @@ a given number of ms (default: 5) after the peak
 - **Required features**: LibV1:peak_indices
 - **Units**: mV
 
+
+LibV1 : AHP_depth_slow
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Relative voltage values at the first after-hyperpolarization starting 
+a given number of ms (default: 5) after the peak
+
+- **Required features**: LibV1:voltage_base (mV), LibV1:AHP_depth_abs_slow (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AHP_depth_slow = AHP_depth_abs_slow[:] - voltage_base
+
+
 LibV1 : AHP_slow_time
 ~~~~~~~~~~~~~~~~~~~~~
 
