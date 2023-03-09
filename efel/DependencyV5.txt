@@ -32,7 +32,7 @@ LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate
 LibV1:Spikecount	#LibV5:peak_indices #LibV1:interpolate 
 LibV5:Spikecount_stimint	#LibV1:peak_time #LibV1:interpolate 
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values #LibV1:interpolate 
-LibV1:AHP_depth_slow    #LibV5:voltage_base	#LibV5:min_AHP_values #LibV1:interpolate
+LibV1:AHP_depth_slow    #LibV5:voltage_base	#LibV1:AHP_depth_abs_slow #LibV1:interpolate
 LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices #LibV1:interpolate
 LibV5:AP_end_indices        #LibV5:peak_indices #LibV1:interpolate
 LibV2:AP_fall_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices     #LibV5:AP_end_indices #LibV1:interpolate 

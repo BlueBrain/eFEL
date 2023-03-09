@@ -1943,12 +1943,13 @@ static int __AHP_depth_slow(const vector<double>& voltagebase,
   }
   return ahpdepth.size();
 }
+
 int LibV1::AHP_depth_slow(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
   int retval;
   int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth", nsize);
+  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth_slow", nsize);
   if (retval) {
     return nsize;
   }
@@ -1957,15 +1958,16 @@ int LibV1::AHP_depth_slow(mapStr2intVec& IntFeatureData,
   retval = getVec(DoubleFeatureData, StringData, "voltage_base",
                         voltagebase);
   if (retval < 0) return -1;
-  vector<double> minahpvalues;
+  vector<double> ahpdepthabsslow;
   retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
-                        minahpvalues);
+                        ahpdepthabsslow);
+  std::cout << "retval:" << retval;
   if (retval < 0) return -1;
 
-  vector<double> ahpdepth;
-  retval = __AHP_depth_slow(voltagebase, minahpvalues, ahpdepth);
+  vector<double> ahpdepthslow;
+  retval = __AHP_depth_slow(voltagebase, ahpdepthabsslow, ahpdepthslow);
   if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AHP_depth", ahpdepth);
+    setVec(DoubleFeatureData, StringData, "AHP_depth_slow", ahpdepthslow);
   }
   return retval;
 }
