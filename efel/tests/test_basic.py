@@ -3149,6 +3149,33 @@ def test_AHP_depth_diff():
     )
 
 
+def test_AHP_depth_slow():
+    """basic: Test AHP depth slow"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AHP_depth_slow", "AHP_depth_abs_slow", "voltage_base"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_slow = feature_values[0]["AHP_depth_slow"]
+    AHP_depth_abs_slow = feature_values[0]["AHP_depth_abs_slow"]
+    voltage_base = feature_values[0]["voltage_base"]
+
+    expected = AHP_depth_abs_slow - voltage_base
+
+    numpy.testing.assert_allclose(
+        AHP_depth_slow, expected
+    )
+
+
 def test_mean_AP_amplitude():
     """basic: Test mean AP amplitude"""
 
