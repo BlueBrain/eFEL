@@ -95,7 +95,7 @@ Then, while you are implementing the code in C++ you can easily compare the
 results to the Nose test.
 
 The Nose tests of the individual eFeatures are
-`here <https://github.com/BlueBrain/eFEL/blob/master/efel/tests/
+`here_nose <https://github.com/BlueBrain/eFEL/blob/master/efel/tests/
 test_basic.py>`_
 .Just add your own test by defining a new function 'test_yourfeature()'.
 
