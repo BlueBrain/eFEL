@@ -3646,3 +3646,85 @@ def test_time_to_interburst_min():
         numpy.testing.assert_allclose(
             time_to_interburst_min_py, time_to_interburst_min
         )
+
+
+def test_spikes_per_burst_diff():
+    """basic: Test spikes_per_burst_diff"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['spikes_per_burst_diff']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    spikes_per_burst_diff = feature_values[0]['spikes_per_burst_diff']
+    assert list(spikes_per_burst_diff) == [1]
+
+
+def test_spikes_in_burst1_burst2_diff():
+    """basic: Test spikes_in_burst1_burst2_diff"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['spikes_in_burst1_burst2_diff']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    spikes_in_burst1_burst2_diff = feature_values[0][
+        'spikes_in_burst1_burst2_diff'
+    ]
+    assert list(spikes_in_burst1_burst2_diff) == [1]
+
+
+def test_spikes_in_burst1_burstlast_diff():
+    """basic: Test spikes_in_burst1_burstlast_diff"""
+    import efel
+    efel.reset()
+
+    time = efel.io.load_fragment('%s#col=1' % burst1_url)
+    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = interpolate(time, voltage, 0.1)
+
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [250]
+    trace['stim_end'] = [1600]
+
+    features = ['spikes_in_burst1_burstlast_diff']
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    spikes_in_burst1_burstlast_diff = feature_values[0][
+        'spikes_in_burst1_burstlast_diff'
+    ]
+    assert list(spikes_in_burst1_burstlast_diff) == [1]
