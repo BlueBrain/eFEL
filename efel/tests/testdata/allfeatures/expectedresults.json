@@ -60679,6 +60679,12 @@
     ],
     "interburst_min_indices": [],
     "interburst_min_values": [],
+    "postburst_min_indices": [
+        26465
+    ],
+    "postburst_min_values": [
+        -41.52919675004766
+    ],
     "time_to_interburst_min": [],
     "AHP_depth_slow": [
         28.81047723194662,
