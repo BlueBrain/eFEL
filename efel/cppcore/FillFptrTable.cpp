@@ -285,6 +285,8 @@ int FillFptrTable() {
 
   FptrTableV5["interburst_min_indices"] = &LibV5::interburst_min_indices;
   FptrTableV5["interburst_min_values"] = &LibV5::interburst_min_values;
+  FptrTableV5["postburst_min_indices"] = &LibV5::postburst_min_indices;
+  FptrTableV5["postburst_min_values"] = &LibV5::postburst_min_values;
   FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
   
   //****************** end of FptrTableV5 *****************************

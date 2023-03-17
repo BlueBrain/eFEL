@@ -3863,6 +3863,98 @@ int LibV5::interburst_min_values(mapStr2intVec& IntFeatureData,
 }
 
 
+static int __postburst_min_indices(vector<double>& t,
+                                   vector<double>& v,
+                                   vector<int>& peak_indices,
+                                   vector<int>& burst_end_indices,
+                                   vector<int>& postburst_min_indices,
+                                   vector<double>& postburst_min_values,
+                                   const double stim_end) {
+  unsigned postburst_min_index, stim_end_index, end_index;
+  stim_end_index =
+      distance(t.begin(),
+                find_if(t.begin(), t.end(),
+                        std::bind2nd(std::greater_equal<double>(), stim_end)));
+  end_index = distance(t.begin(), t.end());
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + peak_indices[burst_end_indices[i] + 1]
+      ) - v.begin();
+    } else if (peak_indices[burst_end_indices[i]] < stim_end_index){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + stim_end_index
+      ) - v.begin();
+    } else {
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + end_index
+      ) - v.begin();
+    }
+    
+    postburst_min_indices.push_back(postburst_min_index);
+    postburst_min_values.push_back(v[postburst_min_index]);
+  }
+
+  return postburst_min_indices.size();
+}
+
+int LibV5::postburst_min_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                      "postburst_min_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  double stim_end;
+  vector<int> peak_indices, burst_end_indices, postburst_min_indices;
+  vector<double> postburst_min_values, t, v, stim_end_vec;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal =
+      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_end = stim_end_vec[0];
+  }
+
+  retVal = __postburst_min_indices(t, v, peak_indices, burst_end_indices,
+                                   postburst_min_indices,
+                                   postburst_min_values,
+                                   stim_end);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "postburst_min_indices",
+           postburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_min_values",
+           postburst_min_values);
+  }
+  return retVal;
+}
+
+int LibV5::postburst_min_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "postburst_min_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
+
 int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {

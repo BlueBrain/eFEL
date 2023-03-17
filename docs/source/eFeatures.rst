@@ -502,6 +502,36 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
         ) for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
+LibV5 : postburst_min_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The minimum voltage after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_min = [
+        numpy.min(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        ) for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
+    if len(postburst_min) < len(burst_end_indices):
+        if t[burst_end_indices[-1]] < stim_end:
+            end_idx = numpy.where(t >= stim_end)[0][0]
+            postburst_min.append(numpy.min(
+                v[peak_indices[burst_end_indices[-1]]:peak_indices[end_idx]]
+            ))
+        else:
+            postburst_min.append(numpy.min(
+                v[peak_indices[burst_end_indices[-1]]:]
+            ))
+
 LibV5 : time_to_interburst_min
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
