@@ -1820,3 +1820,41 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
     for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
         spike_per_bursts.append(idx_end - idx_begin + 1)
 
+Python efeature: spikes_per_burst_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between each burst and the next one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spikes_per_burst[:-1] - spikes_per_burst[1:]
+
+Python efeature: spikes_in_burst1_burst2_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the second one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: spikes_per_burst_diff
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst_diff[0]])
+
+Python efeature: spikes_in_burst1_burstlast_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the last one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])

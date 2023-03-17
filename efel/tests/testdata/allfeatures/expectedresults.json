@@ -540,7 +540,12 @@
         2.6602184713542556,
         2.8238770245407068
     ],
-    "spikes_per_burst": [2],
+    "spikes_per_burst": [
+        2
+    ],
+    "spikes_per_burst_diff": [],
+    "spikes_in_burst1_burst2_diff": null,
+    "spikes_in_burst1_burstlast_diff": null,
     "steady_state_hyper": [
         -39.7063975216648
     ],
@@ -60675,7 +60680,7 @@
     "interburst_min_indices": [],
     "interburst_min_values": [],
     "time_to_interburst_min": [],
-    "AHP_depth_slow":[
+    "AHP_depth_slow": [
         28.81047723194662,
         32.02907786238346,
         32.65404519917785,

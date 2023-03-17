@@ -40,7 +40,10 @@ all_pyfeatures = [
     'initburst_sahp_ssse',
     'depol_block',
     'depol_block_bool',
-    'spikes_per_burst'
+    'spikes_per_burst',
+    'spikes_per_burst_diff',
+    'spikes_in_burst1_burst2_diff',
+    'spikes_in_burst1_burstlast_diff'
 ]
 
 
@@ -270,6 +273,37 @@ def spikes_per_burst():
         ap_per_bursts.append(idx_end - idx_begin + 1)
 
     return numpy.array(ap_per_bursts)
+
+
+def spikes_per_burst_diff():
+    """Calculate the diff between the spikes in each burst and the next one"""
+    spikes_per_burst_values = spikes_per_burst()
+    if spikes_per_burst_values is None:
+        return None
+
+    return spikes_per_burst_values[:-1] - spikes_per_burst_values[1:]
+
+
+def spikes_in_burst1_burst2_diff():
+    """Calculate the diff between the spikes in 1st and 2nd bursts"""
+    spikes_per_burst_diff_values = spikes_per_burst_diff()
+    if spikes_per_burst_diff_values is None or len(
+        spikes_per_burst_diff_values
+    ) < 1:
+        return None
+
+    return numpy.array([spikes_per_burst_diff_values[0]])
+
+
+def spikes_in_burst1_burstlast_diff():
+    """Calculate the diff between the spikes in 1st and last bursts"""
+    spikes_per_burst_values = spikes_per_burst()
+    if spikes_per_burst_values is None or len(spikes_per_burst_values) < 2:
+        return None
+
+    return numpy.array([
+        spikes_per_burst_values[0] - spikes_per_burst_values[-1]
+    ])
 
 
 def _get_cpp_feature(feature_name):
