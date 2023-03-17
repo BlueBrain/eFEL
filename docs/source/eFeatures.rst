@@ -525,7 +525,7 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
         if t[burst_end_indices[-1]] < stim_end:
             end_idx = numpy.where(t >= stim_end)[0][0]
             postburst_min.append(numpy.min(
-                v[peak_indices[burst_end_indices[-1]]:peak_indices[end_idx]]
+                v[peak_indices[burst_end_indices[-1]]:end_idx]
             ))
         else:
             postburst_min.append(numpy.min(
