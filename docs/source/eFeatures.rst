@@ -635,7 +635,7 @@ divided by the amplitude of the first action potential
 
     AP_amplitude_change = (AP_amplitude[1:] - AP_amplitude[0]) / AP_amplitude[0]
 
-LibV5 : AP_Amplitude_from_voltagebase
+LibV5 : AP_amplitude_from_voltagebase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from voltage base
@@ -644,7 +644,7 @@ The relative height of the action potential from voltage base
 - **Units**: mV
 - **Pseudocode**: ::
 
-    AP_Amplitude_from_voltagebase = peak_voltage - voltage_base
+    AP_amplitude_from_voltagebase = peak_voltage - voltage_base
 
 LibV5 : AP1_peak, AP2_peak
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
