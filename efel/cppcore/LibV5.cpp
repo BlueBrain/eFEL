@@ -4061,3 +4061,83 @@ int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
          time_to_interburst_min);
   return (time_to_interburst_min.size());
 }
+
+
+// *** AHP_depth_from_AP_begin_voltage ***
+static int __AHP_depth_from_AP_begin_voltage(const vector<double>& ap_begin_voltage,
+                       const vector<double>& minahpvalues,
+                       vector<double>& ahpdepth) {
+  for (size_t i = 0; i < minahpvalues.size(); i++) {
+    ahpdepth.push_back(ap_begin_voltage[i] - minahpvalues[i]);
+  }
+  return ahpdepth.size();
+}
+
+int LibV5::AHP_depth_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
+                     mapStr2doubleVec& DoubleFeatureData,
+                     mapStr2Str& StringData) {
+  int retval;
+  int nsize;
+  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth_from_AP_begin_voltage", nsize);
+  if (retval) {
+    return nsize;
+  }
+
+  vector<double> voltagebase;
+  retval = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
+                        voltagebase);
+  if (retval < 0) return -1;
+  vector<double> ahpdepthabs;
+  retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs",
+                        ahpdepthabs);
+  if (retval < 0) return -1;
+
+  vector<double> ahpdepth;
+  retval = __AHP_depth_from_AP_begin_voltage(voltagebase, ahpdepthabs, ahpdepth);
+  if (retval >= 0) {
+    setVec(DoubleFeatureData, StringData, "AHP_depth_from_AP_begin_voltage", ahpdepth);
+  }
+  return retval;
+}
+// end of AHP_depth_from_AP_begin_voltage
+
+
+// *** AHP_depth_slow_from_AP_begin_voltage ***
+static int __AHP_depth_slow_from_AP_begin_voltage(const vector<double>& ap_begin_voltage,
+                       const vector<double>& minahpvalues,
+                       vector<double>& ahpdepth) {
+  for (size_t i = 0; i < minahpvalues.size(); i++) {
+    ahpdepth.push_back(ap_begin_voltage[i] - minahpvalues[i]);
+  }
+  return ahpdepth.size();
+}
+
+int LibV5::AHP_depth_slow_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
+                     mapStr2doubleVec& DoubleFeatureData,
+                     mapStr2Str& StringData) {
+  int retval;
+  int nsize;
+  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth_slow_from_AP_begin_voltage", nsize);
+  if (retval) {
+    return nsize;
+  }
+
+  vector<double> voltagebase;
+  retval = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
+                        voltagebase);
+  if (retval < 0) return -1;
+  vector<double> ahpdepthabsslow;
+  retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
+                        ahpdepthabsslow);
+  if (retval < 0) return -1;
+
+  vector<double> ahpdepthslow;
+  retval = __AHP_depth_slow_from_AP_begin_voltage(voltagebase, ahpdepthabsslow, ahpdepthslow);
+  if (retval >= 0) {
+    setVec(DoubleFeatureData, StringData, "AHP_depth_slow_from_AP_begin_voltage", ahpdepthslow);
+  }
+  return retval;
+}
+// end of AHP_depth_slow_from_AP_begin_voltage
+
+
