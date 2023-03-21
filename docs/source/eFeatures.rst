@@ -392,6 +392,8 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: burst_begin_indices, burst_end_indices, peak_time
 - **Units**: Hz
 - **Pseudocode**: ::
@@ -424,6 +426,8 @@ The number of bursts
 This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
 - **Required features**: strict_burst_mean_freq
 - **Units**: constant
@@ -467,6 +471,8 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: burst_begin_indices, peak_indices
 - **Units**: mV
 - **Pseudocode**: ::
@@ -492,6 +498,8 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: peak_indices, burst_end_indices
 - **Units**: mV
 - **Pseudocode**: ::
@@ -510,6 +518,8 @@ The minimum voltage after the end of a burst.
 This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
 - **Required features**: peak_indices, burst_end_indices
 - **Units**: mV
@@ -540,6 +550,8 @@ The time between the last spike of a burst and the minimum between that spike an
 This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
 - **Required features**: peak_indices, burst_end_indices, peak_time
 - **Units**: ms
@@ -1842,6 +1854,8 @@ Number of spikes in each burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
 - **Units**: constant
 - **Pseudocode**: ::
@@ -1857,6 +1871,8 @@ Difference of number of spikes between each burst and the next one.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: spikes_per_burst
 - **Units**: constant
 - **Pseudocode**: ::
@@ -1870,6 +1886,8 @@ Difference of number of spikes between the first burst and the second one.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
 - **Required features**: spikes_per_burst_diff
 - **Units**: constant
 - **Pseudocode**: ::
@@ -1882,6 +1900,8 @@ Python efeature: spikes_in_burst1_burstlast_diff
 Difference of number of spikes between the first burst and the last one.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
 - **Required features**: spikes_per_burst
 - **Units**: constant
