@@ -4083,9 +4083,9 @@ int LibV5::AHP_depth_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
     return nsize;
   }
 
-  vector<double> voltagebase;
+  vector<double> apbeginvoltage;
   retval = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
-                        voltagebase);
+                        apbeginvoltage);
   if (retval < 0) return -1;
   vector<double> ahpdepthabs;
   retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs",
@@ -4093,7 +4093,7 @@ int LibV5::AHP_depth_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
   if (retval < 0) return -1;
 
   vector<double> ahpdepth;
-  retval = __AHP_depth_from_AP_begin_voltage(voltagebase, ahpdepthabs, ahpdepth);
+  retval = __AHP_depth_from_AP_begin_voltage(apbeginvoltage, ahpdepthabs, ahpdepth);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AHP_depth_from_AP_begin_voltage", ahpdepth);
   }
@@ -4104,10 +4104,10 @@ int LibV5::AHP_depth_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
 
 // *** AHP_depth_slow_from_AP_begin_voltage ***
 static int __AHP_depth_slow_from_AP_begin_voltage(const vector<double>& ap_begin_voltage,
-                       const vector<double>& minahpvalues,
+                       const vector<double>& ahpdepthabsslow,
                        vector<double>& ahpdepth) {
-  for (size_t i = 0; i < minahpvalues.size(); i++) {
-    ahpdepth.push_back(ap_begin_voltage[i] - minahpvalues[i]);
+  for (size_t i = 0; i < ahpdepthabsslow.size(); i++) {
+    ahpdepth.push_back(ap_begin_voltage[i] - ahpdepthabsslow[i]);
   }
   return ahpdepth.size();
 }
@@ -4122,9 +4122,9 @@ int LibV5::AHP_depth_slow_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
     return nsize;
   }
 
-  vector<double> voltagebase;
+  vector<double> apbeginvoltage;
   retval = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
-                        voltagebase);
+                        apbeginvoltage);
   if (retval < 0) return -1;
   vector<double> ahpdepthabsslow;
   retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
@@ -4132,7 +4132,7 @@ int LibV5::AHP_depth_slow_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
   if (retval < 0) return -1;
 
   vector<double> ahpdepthslow;
-  retval = __AHP_depth_slow_from_AP_begin_voltage(voltagebase, ahpdepthabsslow, ahpdepthslow);
+  retval = __AHP_depth_slow_from_AP_begin_voltage(apbeginvoltage, ahpdepthabsslow, ahpdepthslow);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AHP_depth_slow_from_AP_begin_voltage", ahpdepthslow);
   }

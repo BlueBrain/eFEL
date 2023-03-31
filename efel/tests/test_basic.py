@@ -3205,6 +3205,64 @@ def test_AHP_depth_slow():
     )
 
 
+def test_AHP_depth_from_AP_begin_voltage():
+    """basic: Test AHP depth from AP begin voltage"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AHP_depth_from_AP_begin_voltage", "AHP_depth_abs", "AP_begin_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_from_AP_begin_voltage = feature_values[0]["AHP_depth_from_AP_begin_voltage"]
+    AHP_depth_abs = feature_values[0]["AHP_depth_abs"]
+    AP_begin_voltage = feature_values[0]["AP_begin_voltage"]
+
+    # we do this to mimic the cpp implementation, sometimes different AP are picked up
+    # but as we consider averages, it's ok. To fix at some point.
+    expected = [v - ahp for v, ahp in zip(AP_begin_voltage, AHP_depth_abs)]
+
+    numpy.testing.assert_allclose(
+        AHP_depth_from_AP_begin_voltage, expected
+    )
+
+
+def test_AHP_depth_slow_from_AP_begin_voltage():
+    """basic: Test AHP depth slow from AP begin voltage"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ["AHP_depth_slow_from_AP_begin_voltage", "AHP_depth_abs_slow", "AP_begin_voltage"]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_slow_from_AP_begin_voltage = feature_values[0]["AHP_depth_slow_from_AP_begin_voltage"]
+    AHP_depth_abs_slow = feature_values[0]["AHP_depth_abs_slow"]
+    AP_begin_voltage = feature_values[0]["AP_begin_voltage"]
+
+    # we do this to mimic the cpp implementation, sometimes different AP are picked up
+    # but as we consider averages, it's ok. To fix at some point.
+    expected = [v - ahp for v, ahp in zip(AP_begin_voltage, AHP_depth_abs_slow)]
+
+    numpy.testing.assert_allclose(
+        AHP_depth_slow_from_AP_begin_voltage, expected
+    )
+
+
 def py_burst_indices(ISI_values):
     """python implementation of burst_begin_indices and burst_end_indices"""
     if len(ISI_values) < 2:
