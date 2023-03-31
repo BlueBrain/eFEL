@@ -43,8 +43,41 @@ all_pyfeatures = [
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
-    'spikes_in_burst1_burstlast_diff'
+    'spikes_in_burst1_burstlast_diff',
+    'postburst_min_values_slow',
+    'interburst_min_values_slow'
 ]
+
+
+def postburst_min_values_slow():
+    v = _get_cpp_feature("voltage")
+    t = _get_cpp_feature("time")
+    peak_indices = _get_cpp_feature("peak_indices")
+    burst_end_indices = _get_cpp_feature("burst_end_indices")
+    postburst_min = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            shift = 0.1 * (t[peak_indices[i + 1]] - t[peak_indices[i]])
+            mask = (t > t[peak_indices[i]] + shift) & (t < t[peak_indices[i + 1]])
+        else:
+            mask = (t > t[peak_indices[i]] + shift)
+
+        postburst_min.append(numpy.min(v[ mask ]))
+    return postburst_min
+
+
+def interburst_min_values_slow():
+    v = _get_cpp_feature("voltage")
+    t = _get_cpp_feature("time")
+    peak_indices = _get_cpp_feature("peak_indices")
+    burst_end_indices = _get_cpp_feature("burst_end_indices")
+    interburst_min = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            shift = 0.1 * (t[peak_indices[i + 1]] - t[peak_indices[i]])
+            mask = (t > t[peak_indices[i]] + shift) & (t < t[peak_indices[i + 1]])
+        interburst_min.append(numpy.min(v[ mask ]))
+    return interburst_min
 
 
 def voltage():
