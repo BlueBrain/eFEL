@@ -779,7 +779,7 @@ a given number of ms (default: 5) after the peak
     AHP_depth_slow = AHP_depth_abs_slow[:] - voltage_base
 
 LibV5 : AHP_depth_from_AP_begin_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage values at the first after-hyperpolarization relative to AP_begin_voltage
 
