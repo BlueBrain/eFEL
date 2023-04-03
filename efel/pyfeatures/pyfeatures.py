@@ -55,6 +55,7 @@ def postburst_min_values_slow():
     peak_indices = _get_cpp_feature("peak_indices")
     burst_end_indices = _get_cpp_feature("burst_end_indices")
     postburst_min = []
+    shift = 0
     for i in burst_end_indices:
         if i + 1 < len(peak_indices):
             shift = 0.1 * (t[peak_indices[i + 1]] - t[peak_indices[i]])
@@ -62,8 +63,8 @@ def postburst_min_values_slow():
         else:
             mask = (t > t[peak_indices[i]] + shift)
 
-        postburst_min.append(numpy.min(v[ mask ]))
-    return postburst_min
+        postburst_min.append(numpy.min(v[mask]))
+    return numpy.array(postburst_min)
 
 
 def interburst_min_values_slow():
@@ -72,12 +73,13 @@ def interburst_min_values_slow():
     peak_indices = _get_cpp_feature("peak_indices")
     burst_end_indices = _get_cpp_feature("burst_end_indices")
     interburst_min = []
+    shift = 0
     for i in burst_end_indices:
         if i + 1 < len(peak_indices):
             shift = 0.1 * (t[peak_indices[i + 1]] - t[peak_indices[i]])
             mask = (t > t[peak_indices[i]] + shift) & (t < t[peak_indices[i + 1]])
-        interburst_min.append(numpy.min(v[ mask ]))
-    return interburst_min
+        interburst_min.append(numpy.min(v[mask]))
+    return numpy.array(interburst_min)
 
 
 def voltage():
