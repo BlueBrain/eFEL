@@ -43,7 +43,8 @@ all_pyfeatures = [
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
-    'spikes_in_burst1_burstlast_diff'
+    'spikes_in_burst1_burstlast_diff',
+    'multiple_decay_time_constant',
 ]
 
 
@@ -306,6 +307,36 @@ def spikes_in_burst1_burstlast_diff():
     ])
 
 
+def multiple_decay_time_constant():
+    """Calculate the time constants after each step for a stimuli containing several
+     steps, as for example SpikeRec protocols"""
+
+    time_constants = []
+
+    # Get all the step start and end times
+    multi_stim_start = _get_cpp_data("multi_stim_start")
+    multi_stim_end = _get_cpp_data("multi_stim_end")
+
+    if multi_stim_start is None or multi_stim_end is None:
+        return None
+
+    if len(multi_stim_start) != len(multi_stim_end):
+        return None
+
+    # For each step, calculate the decay_time_constant_after_stim
+    for i, (stim_start, stim_end) in enumerate(zip(multi_stim_start, multi_stim_end)):
+
+        efel.cppcore.setFeatureDouble("stim_start", [stim_start])
+        efel.cppcore.setFeatureDouble("stim_end", [stim_end])
+
+        print(_get_cpp_data("stim_start"), _get_cpp_data("stim_end"))
+        time_constants.append(_get_cpp_feature("decay_time_constant_after_stim")[0])
+        print(time_constants)
+        #efel.cppcore.setFeatureDouble("decay_time_constant_after_stim", None)
+
+    return numpy.array(time_constants)
+
+
 def _get_cpp_feature(feature_name):
     """Get cpp feature"""
     cppcoreFeatureValues = list()
@@ -320,4 +351,6 @@ def _get_cpp_feature(feature_name):
 def _get_cpp_data(data_name):
     """Get cpp data value"""
 
+    if data_name in ["multi_stim_start", "multi_stim_end"]:
+        return efel.cppcore.getMapDoubleData(data_name)
     return efel.cppcore.getMapDoubleData(data_name)[0]
