@@ -1967,6 +1967,35 @@ def test_decay_time_constant_after_stim2():
         feature_values['decay_time_constant_after_stim'][0], rtol=0, atol=1e-1)
 
 
+def test_multiple_decay_time_constant_after_stim():
+    """basic: Test multiple_decay_time_constant_after_stim"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = ['multiple_decay_time_constant_after_stim']
+
+    efel.setDoubleSetting("multi_stim_start", [stim_start])
+    efel.setDoubleSetting("multi_stim_end", [stim_end])
+
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+    expected = decay_time_constant_after_stim(
+        time,
+        voltage,
+        stim_end + 1.0,
+        stim_end + 10.0,
+        stim_start,
+        stim_end)
+
+    numpy.testing.assert_allclose(
+        expected,
+        feature_values['multiple_decay_time_constant_after_stim'][0])
+
+
 def sag_time_constant(
         time, voltage, min_v, steady_state_v, sag_ampl, stim_start, stim_end):
     """sag_time_constant numpy implementation"""

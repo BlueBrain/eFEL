@@ -108,6 +108,7 @@
     "current",
     "current_base",
     "decay_time_constant_after_stim",
+    "multiple_decay_time_constant_after_stim",
     "depol_block",
     "depol_block_bool",
     "depolarized_base",
