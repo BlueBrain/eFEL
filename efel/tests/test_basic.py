@@ -1348,7 +1348,7 @@ def test_derivwindow1():
             features)
 
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
-    numpy.testing.assert_allclose(AP_begin_voltage, -83.57661997973835)
+    numpy.testing.assert_allclose(AP_begin_voltage, -45.5055215)
 
     efel.reset()
     efel.setDoubleSetting('interp_step', 0.01)

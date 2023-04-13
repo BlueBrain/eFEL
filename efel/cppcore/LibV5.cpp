@@ -659,7 +659,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   // printf("Found %d minima\n", minima.size());
   for (size_t i = 0; i < minima.size() - 1; i++) {
     // assure that the width of the slope is bigger than 4
-    int newbegin = minima[i];
+    int newbegin = minima[i + 1];
     int begin = minima[i];
     int width = derivative_window;
     bool skip = false;
@@ -670,16 +670,19 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
       begin = distance(
           dvdt.begin(),
           find_if(
-              dvdt.begin() + newbegin, dvdt.begin() + minima[i + 1],
-              std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
+              // use reverse iterator to get last occurence
+              // and avoid false positive long before the spike
+              dvdt.rbegin() + v.size() - newbegin,
+              dvdt.rbegin() + v.size() - minima[i],
+              std::bind2nd(std::less_equal<double>(), derivativethreshold)).base());
       // printf("%d %d\n", newbegin, minima[i+1]);
-      if (begin == minima[i + 1]) {
+      if (begin == minima[i]) {
         // printf("Skipping %d %d\n", newbegin, minima[i+1]);
         // could not find a spike in between these minima
         skip = true;
         break;
       }
-      newbegin = begin + 1;
+      newbegin = begin - 1;
     } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
                      std::bind2nd(std::less<double>(), derivativethreshold)) !=
              dvdt.begin() + begin + width);
