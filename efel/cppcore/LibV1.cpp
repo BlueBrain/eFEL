@@ -539,11 +539,13 @@ static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                                         const vector<int>& peakindices,
                                         double sahp_start,
                                         vector<int>& adas_indices) {
-  adas_indices.resize(peakindices.size());
-  for (size_t i = 0; i < peakindices.size() - 1; i++) {
+
+
+  //adas_indices.resize(peakindices.size() - 1);
+  for (size_t i = 0; i < peakindices.size()-1; i++) {
     // start 5 ms (or custom duration) after last spike
     double t_start = t[peakindices[i]] + sahp_start;
-    adas_indices[i] = distance(
+    adas_indices.push_back(distance(
         v.begin(),
         min_element(
             v.begin() +
@@ -551,7 +553,7 @@ static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                          find_if(t.begin() + peakindices[i],
                                  t.begin() + peakindices[i + 1],
                                  bind2nd(greater_equal<double>(), t_start))),
-            v.begin() + peakindices[i + 1]));
+            v.begin() + peakindices[i + 1])));
   }
   return adas_indices.size();
 }
@@ -588,13 +590,24 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
   };
 
   vector<int> adas_indices;
+
+  vector<double> stim_end;
+  retval = getVec(DoubleFeatureData, StringData, "stim_end", stim_end);
+  int end_index = distance(
+      t.begin(), find_if(t.begin(), t.end(),
+                         bind2nd(greater_equal<double>(), stim_end[0])));
+  // if the last spike happens to be close to the end of the stimulus
+  // there will not be a proper AHP, this case is not properly dealt with here
+  if (end_index > peakindices.back() + 5) {
+    peakindices.push_back(end_index);
+  }
   retval = __AHP_depth_abs_slow_indices(t, v, peakindices, sahp_start[0], adas_indices);
   vector<double> ahpdepthabsslow(adas_indices.size());
   vector<double> ahpslowtime(adas_indices.size());
   for (size_t i = 0; i < adas_indices.size(); i++) {
     ahpdepthabsslow[i] = v[adas_indices[i]];
     ahpslowtime[i] = (t[adas_indices[i]] - t[peakindices[i + 1]]) /
-                     (t[peakindices[i + 2]] - t[peakindices[i + 1]]);
+                     (t[peakindices[i + 1]] - t[peakindices[i]]);
   }
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
