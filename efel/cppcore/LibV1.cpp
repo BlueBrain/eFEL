@@ -534,25 +534,24 @@ int LibV1::AHP_depth_abs(mapStr2intVec& IntFeatureData,
 // *** AHP_depth_abs_slow ***
 // same as AHP_depth_abs but the minimum search starts 
 // 5 ms (or custom duration) after the spike,
-// first ISI is ignored
 static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                                         const vector<double>& v,
                                         const vector<int>& peakindices,
                                         double sahp_start,
                                         vector<int>& adas_indices) {
-  adas_indices.resize(peakindices.size() - 2);
-  for (size_t i = 0; i < adas_indices.size(); i++) {
+  adas_indices.resize(peakindices.size());
+  for (size_t i = 0; i < peakindices.size() - 1; i++) {
     // start 5 ms (or custom duration) after last spike
-    double t_start = t[peakindices[i + 1]] + sahp_start;
+    double t_start = t[peakindices[i]] + sahp_start;
     adas_indices[i] = distance(
         v.begin(),
         min_element(
             v.begin() +
                 distance(t.begin(),
-                         find_if(t.begin() + peakindices[i + 1],
-                                 t.begin() + peakindices[i + 2],
+                         find_if(t.begin() + peakindices[i],
+                                 t.begin() + peakindices[i + 1],
                                  bind2nd(greater_equal<double>(), t_start))),
-            v.begin() + peakindices[i + 2]));
+            v.begin() + peakindices[i + 1]));
   }
   return adas_indices.size();
 }
