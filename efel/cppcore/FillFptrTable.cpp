@@ -252,6 +252,8 @@ int FillFptrTable() {
   FptrTableV5["current_base"] = &LibV5::current_base;
   FptrTableV5["decay_time_constant_after_stim"] =
       &LibV5::decay_time_constant_after_stim;
+  FptrTableV5["multiple_decay_time_constant_after_stim"] =
+      &LibV5::multiple_decay_time_constant_after_stim;
   FptrTableV5["sag_time_constant"] =
       &LibV5::sag_time_constant;
 

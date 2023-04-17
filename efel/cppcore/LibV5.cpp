@@ -2576,6 +2576,71 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
+// Calculate the time constants after each step for a stimuli containing several
+// steps, as for example SpikeRec protocols
+int LibV5::multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
+                                             mapStr2doubleVec& DoubleFeatureData,
+                                             mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "multiple_decay_time_constant_after_stim", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  vector<double> voltages;
+  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
+  if (retVal < 0) return -1;
+
+  vector<double> times;
+  retVal = getVec(DoubleFeatureData, StringData, "T", times);
+  if (retVal < 0) return -1;
+
+  vector<double> vect;
+  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_end", vect);
+  if (retVal < 0) return -1;
+  vector<double> stimsEnd = vect;
+
+  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_start", vect);
+  if (retVal < 0) return -1;
+  vector<double> stimsStart = vect;
+
+  double decay_start_after_stim, decay_end_after_stim;
+  retVal = getVec(DoubleFeatureData, StringData, "decay_start_after_stim",
+                        vect);
+  if (retVal == 1) {
+    decay_start_after_stim = vect[0];
+  } else {
+    decay_start_after_stim = 1.0;
+  }
+
+  retVal =
+      getVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
+  if (retVal == 1) {
+    decay_end_after_stim = vect[0];
+  } else {
+    decay_end_after_stim = 10.0;
+  }
+
+  // Call the decay_time_constant_after_stim for each set of stim_start
+  // and stim_end
+  double ret_dtcas;
+  vector<double> dtcas;
+  for (size_t i = 0; i < stimsStart.size(); i++) {
+      ret_dtcas = __decay_time_constant_after_stim(times, voltages,
+                 decay_start_after_stim, decay_end_after_stim, stimsStart[i],
+                 stimsEnd[i]);
+      dtcas.push_back(ret_dtcas);
+  }
+
+  setVec(DoubleFeatureData, StringData, "multiple_decay_time_constant_after_stim",
+             dtcas);
+
+  return 1;
+}
+
 // compute time constant for the decay from the sag to the steady_state_voltage
 // noisy data is expected, so no golden section search is used
 // because with noisy data, x>0 often gives a worse logarithmic fit
