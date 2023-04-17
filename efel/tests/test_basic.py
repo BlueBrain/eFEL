@@ -3673,7 +3673,7 @@ def py_postburst_min_values(t, v, peak_indices, burst_end_indices, stim_end):
 
 
 def test_postburst_min_values():
-    """basic: Test interburst_min_values"""
+    """basic: Test postburst_min_values"""
     urls = [burst1_url, burst2_url, burst3_url]
     for i, url in enumerate(urls):
         import efel
@@ -3813,3 +3813,127 @@ def test_spikes_in_burst1_burstlast_diff():
         'spikes_in_burst1_burstlast_diff'
     ]
     assert list(spikes_in_burst1_burstlast_diff) == [1]
+
+
+def test_postburst_slow_ahp_values():
+    """basic: Test postburst_slow_ahp_values when no fast AHP is present"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+        # use this to have all spikes in burst for burst3_url case
+        efel.setDoubleSetting('strict_burst_factor', 4.0)
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            "postburst_slow_ahp_values",
+            "postburst_min_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        postburst_slow_ahp_values = feature_values[0][
+            "postburst_slow_ahp_values"
+        ]
+        postburst_min_values = feature_values[0]["postburst_min_values"]
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        postburst_slow_ahp_values = numpy.array(
+            postburst_slow_ahp_values, dtype=numpy.float64
+        )
+        postburst_min_values = numpy.array(
+            postburst_min_values, dtype=numpy.float64
+        )
+
+        # are equal when there is no fast AHP
+        numpy.testing.assert_allclose(
+            postburst_slow_ahp_values, postburst_min_values
+        )
+
+
+def test_time_to_postburst_slow_ahp():
+    """basic: Test time_to_postburst_slow_ahp"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            # "peak_indices",
+            "burst_end_indices",
+            "peak_time",
+            "time_to_postburst_slow_ahp",
+            "postburst_slow_ahp_indices",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        # peak_indices = feature_values[0]["peak_indices"]
+        peak_time = feature_values[0]["peak_time"]
+        burst_end_indices = feature_values[0]["burst_end_indices"]
+        postburst_slow_ahp_indices = feature_values[0][
+            "postburst_slow_ahp_indices"
+        ]
+        time_to_postburst_slow_ahp = feature_values[0][
+            "time_to_postburst_slow_ahp"
+        ]
+
+        if peak_time is None or burst_end_indices is None:
+            time_to_postburst_slow_ahp_py = None
+        else:
+            time_to_postburst_slow_ahp_py = interp_time[
+                postburst_slow_ahp_indices
+            ] - peak_time[burst_end_indices]
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        time_to_postburst_slow_ahp_py = numpy.array(
+            time_to_postburst_slow_ahp_py, dtype=numpy.float64
+        )
+        time_to_postburst_slow_ahp = numpy.array(
+            time_to_postburst_slow_ahp, dtype=numpy.float64
+        )
+
+        numpy.testing.assert_allclose(
+            time_to_postburst_slow_ahp_py, time_to_postburst_slow_ahp
+        )

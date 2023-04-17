@@ -3957,6 +3957,119 @@ int LibV5::postburst_min_values(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
+static int __postburst_slow_ahp_indices(vector<double>& t,
+                                   vector<double>& v,
+                                   vector<int>& peak_indices,
+                                   vector<int>& burst_end_indices,
+                                   vector<int>& postburst_slow_ahp_indices,
+                                   vector<double>& postburst_slow_ahp_values,
+                                   const double stim_end,
+                                   double sahp_start) {
+  unsigned postburst_slow_ahp_index, stim_end_index, end_index, t_start_index;
+  stim_end_index =
+      distance(t.begin(),
+                find_if(t.begin(), t.end(),
+                        std::bind2nd(std::greater_equal<double>(), stim_end)));
+  end_index = distance(t.begin(), t.end());
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    double t_start = t[peak_indices[burst_end_indices[i]]] + sahp_start;
+
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + peak_indices[burst_end_indices[i] + 1],
+        std::bind2nd(std::greater_equal<double>(), t_start)
+      ) - t.begin();
+      postburst_slow_ahp_index = min_element(
+        v.begin() + t_start_index,
+        v.begin() + peak_indices[burst_end_indices[i] + 1]
+      ) - v.begin();
+    } else if (peak_indices[burst_end_indices[i]] < stim_end_index){
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + stim_end_index,
+        std::bind2nd(std::greater_equal<double>(), t_start)
+      ) - t.begin();
+      postburst_slow_ahp_index = min_element(
+        v.begin() + t_start_index, v.begin() + stim_end_index
+      ) - v.begin();
+    } else {
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + end_index,
+        std::bind2nd(std::greater_equal<double>(), t_start)
+      ) - t.begin();
+      postburst_slow_ahp_index = min_element(
+        v.begin() + t_start_index, v.begin() + end_index
+      ) - v.begin();
+    }
+    
+    postburst_slow_ahp_indices.push_back(postburst_slow_ahp_index);
+    postburst_slow_ahp_values.push_back(v[postburst_slow_ahp_index]);
+  }
+
+  return postburst_slow_ahp_indices.size();
+}
+
+int LibV5::postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                      "postburst_slow_ahp_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  double stim_end;
+  vector<int> peak_indices, burst_end_indices, postburst_slow_ahp_indices;
+  vector<double> postburst_slow_ahp_values, t, v, stim_end_vec;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal =
+      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_end = stim_end_vec[0];
+  }
+  // time after the spike in ms after which to start searching for minimum
+  vector<double> sahp_start;
+  retVal = getVec(DoubleFeatureData, StringData, "sahp_start", sahp_start);
+  if (retVal < 0){
+    sahp_start.push_back(5);
+  };
+
+  retVal = __postburst_slow_ahp_indices(t, v, peak_indices, burst_end_indices,
+                                   postburst_slow_ahp_indices,
+                                   postburst_slow_ahp_values,
+                                   stim_end,
+                                   sahp_start[0]);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "postburst_slow_ahp_indices",
+           postburst_slow_ahp_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_slow_ahp_values",
+           postburst_slow_ahp_values);
+  }
+  return retVal;
+}
+
+int LibV5::postburst_slow_ahp_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "postburst_slow_ahp_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
 
 int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
@@ -3995,4 +4108,43 @@ int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
   setVec(DoubleFeatureData, StringData, "time_to_interburst_min",
          time_to_interburst_min);
   return (time_to_interburst_min.size());
+}
+
+int LibV5::time_to_postburst_slow_ahp(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "time_to_postburst_slow_ahp", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> time_to_postburst_slow_ahp, peak_time, time;
+  vector<int> postburst_slow_ahp_indices, burst_end_indices;
+  retVal = getVec(DoubleFeatureData, StringData, "T",
+                  time);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time",
+                  peak_time);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "postburst_slow_ahp_indices",
+                  postburst_slow_ahp_indices);
+  if (retVal < 0) return -1;
+
+  if (burst_end_indices.size() < postburst_slow_ahp_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than postburst_slow_ahp_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < postburst_slow_ahp_indices.size(); i++) {
+    time_to_postburst_slow_ahp.push_back(time[postburst_slow_ahp_indices[i]] -
+                                         peak_time[burst_end_indices[i]]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_postburst_slow_ahp",
+         time_to_postburst_slow_ahp);
+  return (time_to_postburst_slow_ahp.size());
 }

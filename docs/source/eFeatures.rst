@@ -525,7 +525,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 - **Units**: mV
 - **Pseudocode**: ::
 
-    interburst_min = [
+    postburst_min = [
         numpy.min(
             v[peak_indices[i]:peak_indices[i + 1]]
         ) for i in burst_end_indices if i + 1 < len(peak_indices)
@@ -541,6 +541,36 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             postburst_min.append(numpy.min(
                 v[peak_indices[burst_end_indices[-1]]:]
             ))
+
+LibV5 : postburst_slow_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The slow AHP voltage after the end of a burst.
+
+The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    postburst_slow_ahp = []
+    for i in burst_end_indices:
+        i_start = numpy.where(t >= t[peak_indices[i]] + sahp_start)[0][0]
+        if i + 1 < len(peak_indices):
+            postburst_slow_ahp.append(numpy.min(v[i_start:peak_indices[i + 1]]))
+        else:
+            if t[burst_end_indices[-1]] < stim_end:
+                end_idx = numpy.where(t >= stim_end)[0][0]
+                postburst_slow_ahp.append(numpy.min(v[i_start:end_idx]))
+            else:
+                postburst_slow_ahp.append(numpy.min(v[i_start:]))
 
 LibV5 : time_to_interburst_min
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -563,6 +593,26 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         )] - peak_time[i]
         for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
+
+LibV5 : time_to_postburst_slow_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The time between the last spike of a burst and the slow ahp afterwards.
+
+The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_slow_ahp_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
