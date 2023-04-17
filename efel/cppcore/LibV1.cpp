@@ -1961,7 +1961,7 @@ int LibV1::AHP_depth_slow(mapStr2intVec& IntFeatureData,
   vector<double> ahpdepthabsslow;
   retval = getVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
                         ahpdepthabsslow);
-  std::cout << "retval:" << retval;
+
   if (retval < 0) return -1;
 
   vector<double> ahpdepthslow;
