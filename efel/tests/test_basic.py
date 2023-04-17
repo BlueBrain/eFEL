@@ -3895,7 +3895,6 @@ def test_time_to_postburst_slow_ahp():
             trace['stim_end'] = [2150]
 
         features = [
-            # "peak_indices",
             "burst_end_indices",
             "peak_time",
             "time_to_postburst_slow_ahp",
@@ -3908,7 +3907,6 @@ def test_time_to_postburst_slow_ahp():
             raise_warnings=False
         )
 
-        # peak_indices = feature_values[0]["peak_indices"]
         peak_time = feature_values[0]["peak_time"]
         burst_end_indices = feature_values[0]["burst_end_indices"]
         postburst_slow_ahp_indices = feature_values[0][
