@@ -3890,11 +3890,17 @@ static int __postburst_min_indices(vector<double>& t,
         v.begin() + peak_indices[burst_end_indices[i]],
         v.begin() + stim_end_index
       ) - v.begin();
+      if (postburst_min_index == stim_end_index){
+        postburst_min_index--;
+      }
     } else {
       postburst_min_index = min_element(
         v.begin() + peak_indices[burst_end_indices[i]],
         v.begin() + end_index
       ) - v.begin();
+      if (postburst_min_index == end_index){
+        postburst_min_index--;
+      }
     }
     
     postburst_min_indices.push_back(postburst_min_index);
@@ -3990,18 +3996,28 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
         t.begin() + stim_end_index,
         std::bind2nd(std::greater_equal<double>(), t_start)
       ) - t.begin();
-      postburst_slow_ahp_index = min_element(
-        v.begin() + t_start_index, v.begin() + stim_end_index
-      ) - v.begin();
+      if (t_start_index < stim_end_index){
+        postburst_slow_ahp_index = min_element(
+          v.begin() + t_start_index, v.begin() + stim_end_index
+        ) - v.begin();
+      } else {
+        // edge case: stim_end_index is 1 index after stim_end
+        postburst_slow_ahp_index = stim_end_index - 1;
+      }
     } else {
       t_start_index = find_if(
         t.begin() + peak_indices[burst_end_indices[i]],
         t.begin() + end_index,
         std::bind2nd(std::greater_equal<double>(), t_start)
       ) - t.begin();
-      postburst_slow_ahp_index = min_element(
-        v.begin() + t_start_index, v.begin() + end_index
-      ) - v.begin();
+      if (t_start_index < end_index){
+        postburst_slow_ahp_index = min_element(
+          v.begin() + t_start_index, v.begin() + end_index
+        ) - v.begin();
+      } else{
+        // edge case: end_index is 1 index after end
+        postburst_slow_ahp_index = end_index - 1;
+      }
     }
     
     postburst_slow_ahp_indices.push_back(postburst_slow_ahp_index);
