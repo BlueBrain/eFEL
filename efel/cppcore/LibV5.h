@@ -218,6 +218,9 @@ int current_base(mapStr2intVec& IntFeatureData,
 int decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
+int multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData);
 int sag_time_constant(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);

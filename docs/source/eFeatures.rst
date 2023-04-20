@@ -1595,6 +1595,29 @@ The decay time constant of the voltage right after the stimulus
 
     decay_time_constant_after_stim = -1. / slope
 
+LibV5 : multiple_decay_time_constant_after_stim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When multiple stimuli are applied, this function returns a list of decay time constants
+each computed on the voltage right after each stimulus.
+
+The settings multi_stim_start and multi_stim_end are mandatory for this feature to work.
+Each is a list containing the start and end times of each stimulus present in the current protocol respectively.
+
+- **Required features**: t, V, stim_start, stim_end
+- **Required settings**: multi_stim_start, multi_stim_end
+- **Parameters**: decay_start_after_stim (default = 1.0 ms), decay_end_after_stim (default = 10.0 ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    multiple_decay_time_constant_after_stim = []
+    for i in range(len(number_stimuli):
+        stim_start = multi_stim_start[i]
+        stim_end = multi_stim_end[i]
+        multiple_decay_time_constant_after_stim.append(
+            decay_time_constant_after_stim(stim_start, stim_end)
+        )
+
 LibV5 : sag_time_constant
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

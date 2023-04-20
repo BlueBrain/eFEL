@@ -393,6 +393,7 @@
     "decay_time_constant_after_stim": [
         13.45188514197874
     ],
+    "multiple_decay_time_constant_after_stim": null,
     "depolarized_base": [
         -43.027576049717304,
         -40.91599220132688,
