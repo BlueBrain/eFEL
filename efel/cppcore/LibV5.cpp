@@ -657,7 +657,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   minima.push_back(endindex);
   //}
   // printf("Found %d minima\n", minima.size());
-  for (size_t i = 0; i < minima.size() - 1; i++) {
+  for (size_t i = 0; i < minima.size() - 2; i++) {
     // assure that the width of the slope is bigger than 4
     int newbegin = minima[i + 1];
     int begin = minima[i];
@@ -675,6 +675,10 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
               dvdt.rbegin() + v.size() - newbegin,
               dvdt.rbegin() + v.size() - minima[i],
               std::bind2nd(std::less_equal<double>(), derivativethreshold)).base());
+      // cover edge case to avoid going out of index in the while condition
+      if (begin > endindex - width){
+        begin = endindex - width;
+      }
       // printf("%d %d\n", newbegin, minima[i+1]);
       if (begin == minima[i]) {
         // printf("Skipping %d %d\n", newbegin, minima[i+1]);
