@@ -4068,7 +4068,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
         ) - v.begin();
       } else {
         // edge case: stim_end_index is 1 index after stim_end
-        postburst_slow_ahp_index = stim_end_index - 1;
+        continue;
       }
     } else {
       t_start_index = find_if(
@@ -4082,7 +4082,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
         ) - v.begin();
       } else{
         // edge case: end_index is 1 index after end
-        postburst_slow_ahp_index = end_index - 1;
+        continue;
       }
     }
     
@@ -4260,7 +4260,9 @@ static int __postburst_fast_ahp_indices(const vector<double>& t, const vector<do
   }
 
   size_t fahpindex = 0;
-  for (size_t i = 0; i < start_indices.size() - 1; i++) {
+  for (size_t i = 0; i < start_indices.size(); i++) {
+    // can use first_min_element because dv/dt is very steep before fash ahp
+    // and noise is very unlikely to make voltage go up before reaching fast ahp
     fahpindex = distance(
         v.begin(), first_min_element(v.begin() + start_indices[i],
                                      v.begin() + end_indices[i]));
@@ -4350,55 +4352,27 @@ int LibV5::postburst_fast_ahp_values(mapStr2intVec& IntFeatureData,
 }
 
 static int __postburst_adp_peak_indices(const vector<double>& t, const vector<double>& v,
-                                        const vector<int>& peak_indices,
-                                        const vector<int>& burst_end_indices,
                                         const vector<int>& postburst_fast_ahp_indices,
-                                        const double stim_end,
+                                        const vector<int>& postburst_slow_ahp_indices,
                                         vector<int>& postburst_adp_peak_indices,
                                         vector<double>& postburst_adp_peak_values) {
-  vector<int> start_indices, end_indices;
-  // iterate over postburst_fast_ahp_indices because it might be smaller than burst_end_indices
-  for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
-    if (burst_end_indices[i] + 1 < peak_indices.size()){
-      if (peak_indices[burst_end_indices[i]] < postburst_fast_ahp_indices[i] &&
-          postburst_fast_ahp_indices[i] < peak_indices[burst_end_indices[i] + 1]){
-        start_indices.push_back(postburst_fast_ahp_indices[i]);
-        end_indices.push_back(peak_indices[burst_end_indices[i] + 1]);
-      } else {
-        GErrorStr +=
-          "\n Could not compute postburst_adp_peak_indices because burst_end_indices "
-          "does not match postburst_fast_ahp_indices\n";
-        return -1;
-      }
-    } else {
-      if (peak_indices[burst_end_indices[i]] < postburst_fast_ahp_indices[i] &&
-          postburst_fast_ahp_indices[i] > peak_indices[burst_end_indices[i] + 1]){
-        start_indices.push_back(postburst_fast_ahp_indices[i]);
-      }
-    }
-  }
 
-  unsigned end_index = 0;
-  if (t[start_indices.back()] < stim_end) {
-    end_index =
-        distance(t.begin(),
-                 find_if(t.begin(), t.end(),
-                         std::bind2nd(std::greater_equal<double>(), stim_end)));
-  } else {
-    end_index = distance(t.begin(), t.end());
+  if (postburst_slow_ahp_indices.size() > postburst_fast_ahp_indices.size()){
+    GErrorStr +=
+        "\n postburst_slow_ahp should not have more elements than "
+        "postburst_fast_ahp for postburst_adp_peak_indices calculation.\n";
+    return -1;
   }
-  
-  if (end_indices.size() < start_indices.size()){
-    end_indices.push_back(end_index);
-  }
-
   size_t adppeakindex = 0;
-  for (size_t i = 0; i < start_indices.size() - 1; i++) {
+  for (size_t i = 0; i < postburst_slow_ahp_indices.size(); i++) {
+    if (postburst_slow_ahp_indices[i] < postburst_fast_ahp_indices[i]){
+      continue;
+    }
     adppeakindex = distance(
-        v.begin(), first_max_element(v.begin() + start_indices[i],
-                                     v.begin() + end_indices[i + 1]));
-    std::cout << adppeakindex << std::endl;
-    if (adppeakindex != end_index - 1) {
+        v.begin(), max_element(v.begin() + postburst_fast_ahp_indices[i],
+                               v.begin() + postburst_slow_ahp_indices[i]));
+
+    if (adppeakindex != postburst_slow_ahp_indices[i]) {
       postburst_adp_peak_indices.push_back(adppeakindex);
 
       EFEL_ASSERT(adppeakindex < v.size(),
@@ -4419,9 +4393,8 @@ int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
   if (retVal) return nSize;
 
   double stim_end;
-  vector<int> postburst_adp_peak_indices, postburst_fast_ahp_indices;
-  vector<int> strict_stiminterval_vec, peak_indices, burst_end_indices;
-  vector<double> v, t, stim_end_vec, postburst_adp_peak_values;
+  vector<int> postburst_adp_peak_indices, postburst_fast_ahp_indices, postburst_slow_ahp_indices;
+  vector<double> v, t, postburst_adp_peak_values;
 
   // Get voltage
   retVal = getVec(DoubleFeatureData, StringData, "V", v);
@@ -4431,25 +4404,7 @@ int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
   retVal = getVec(DoubleFeatureData, StringData, "T", t);
   if (retVal <= 0) return -1;
 
-  // Get peak_indices
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", peak_indices);
-  if (retVal < 1) {
-    GErrorStr +=
-        "\n At least one spike required for calculation of "
-        "postburst_adp_peak_indices.\n";
-    return -1;
-  }
-
-  // Get burst_end_indices
-  retVal = getVec(IntFeatureData, StringData, "burst_end_indices", burst_end_indices);
-  if (retVal < 1) {
-    GErrorStr +=
-        "\n At least one burst required for calculation of "
-        "postburst_adp_peak_indices.\n";
-    return -1;
-  }
-
-  // Get burst_end_indices
+  // Get postburst fash ahp indices
   retVal = getVec(IntFeatureData, StringData, "postburst_fast_ahp_indices", postburst_fast_ahp_indices);
   if (retVal < 1) {
     GErrorStr +=
@@ -4458,18 +4413,18 @@ int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  /// Get stim_end
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
-  if (retVal <= 0) {
+  // Get postburst slow ahp indices
+  retVal = getVec(IntFeatureData, StringData, "postburst_slow_ahp_indices", postburst_slow_ahp_indices);
+  if (retVal < 1) {
+    GErrorStr +=
+        "\n At least one post-burst slow AHP required for calculation of "
+        "postburst_adp_peak_indices.\n";
     return -1;
-  } else {
-    stim_end = stim_end_vec[0];
   }
 
   retVal =
-      __postburst_adp_peak_indices(t, v, peak_indices, burst_end_indices, postburst_fast_ahp_indices,
-                                   stim_end, postburst_adp_peak_indices, postburst_adp_peak_values);
+      __postburst_adp_peak_indices(t, v, postburst_fast_ahp_indices, postburst_slow_ahp_indices,
+                                   postburst_adp_peak_indices, postburst_adp_peak_values);
 
   if (retVal == 0)
     return -1;
