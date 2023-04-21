@@ -271,6 +271,10 @@ void cFeature::fillfeaturetypes() {
   featuretypes["postburst_slow_ahp_values"] = "double";
   featuretypes["time_to_interburst_min"] = "double";
   featuretypes["time_to_postburst_slow_ahp"] = "double";
+  featuretypes["postburst_fast_ahp_indices"] = "int";
+  featuretypes["postburst_fast_ahp_values"] = "double";
+  featuretypes["postburst_adp_peak_indices"] = "int";
+  featuretypes["postburst_adp_peak_values"] = "double";
 
   // end of feature types
 }

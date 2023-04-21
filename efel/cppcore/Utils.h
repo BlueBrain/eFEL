@@ -80,6 +80,29 @@ ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
   return lowest;
 }
 
+template <class ForwardIterator>
+ForwardIterator first_max_element(ForwardIterator first, ForwardIterator last) {
+  ForwardIterator highest = first;
+  ForwardIterator loop = first;
+  ForwardIterator highestMax = first;
+  int maxCounter = 0;
+  if (first == last) return last;
+  while (++loop != last) {
+    if (*loop > *highest) {
+      highest = loop;
+    }
+    if (*loop <= *highestMax) {
+      maxCounter++;
+    }
+    if (*loop > *highestMax) {
+      maxCounter = 0;
+      highestMax = loop;
+    }
+    if (maxCounter == 2) return highestMax;
+  }
+  return highest;
+}
+
 #define EFEL_ASSERT(assertion, message) efel_assert(assertion, message, __FILE__,__LINE__)
 inline void
 efel_assert(bool assertion, const char *message, const char *file, const int line)
