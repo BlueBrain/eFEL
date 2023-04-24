@@ -323,5 +323,29 @@ int postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
 int postburst_adp_peak_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
+int time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_20percent_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_20percent_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_40percent_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_40percent_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_60percent_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_60percent_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif
