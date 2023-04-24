@@ -624,6 +624,7 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
 //
 static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
+                              const vector<int>& pi,
                               const vector<int>& ahpi, vector<int>& apbi,
                               double dTh, int derivative_window) {
   const double derivativethreshold = dTh;
@@ -636,7 +637,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
             std::divides<double>());
 
   // restrict to time interval where stimulus is applied
-  vector<int> minima;
+  vector<int> minima, peak_indices;
   int stimbeginindex =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
@@ -650,16 +651,21 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     //    break;
     //}
   }
-  // if the AHP_indices are already restricted make sure that we do not miss
-  // the last spike
-  // if(t[minima.back()] < stimend) {
+   for (size_t i = 0; i < pi.size(); i++) {
+    if (pi[i] > stimbeginindex) {
+      peak_indices.push_back(pi[i]);
+    }
+  }
   int endindex = distance(t.begin(), t.end());
-  minima.push_back(endindex);
-  //}
+  if (minima.size() < peak_indices.size()){
+    GErrorStr += "\nMore peaks than min_AHP in AP_begin_indices\n";
+    return -1;
+  }
+
   // printf("Found %d minima\n", minima.size());
-  for (size_t i = 0; i < minima.size() - 2; i++) {
+  for (size_t i = 0; i < peak_indices.size(); i++) {
     // assure that the width of the slope is bigger than 4
-    int newbegin = minima[i + 1];
+    int newbegin = peak_indices[i];
     int begin = minima[i];
     int width = derivative_window;
     bool skip = false;
@@ -723,6 +729,9 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   vector<double> stimend;
   retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
   if (retVal < 0) return -1;
+  vector<int> pi;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
+  if (retVal < 0) return -1;
   vector<int> ahpi;
   retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
   if (retVal < 0) return -1;
@@ -747,7 +756,8 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   
   // Calculate feature
   retVal =
-      __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi, dTh[0], derivative_window[0]);
+      __AP_begin_indices(t, v, stimstart[0], stimend[0], 
+                         pi, ahpi, apbi, dTh[0], derivative_window[0]);
 
   // Save feature value
   if (retVal >= 0) {
