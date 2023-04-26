@@ -642,7 +642,13 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
       distance(t.begin(),
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), stimstart)));
-  minima.push_back(stimbeginindex);
+  
+  if (stimbeginindex > 0){
+    // to avoid skipping AP_begin when it is exactly at simbeginindex
+    minima.push_back(stimbeginindex - 1);
+  } else {
+    minima.push_back(stimbeginindex);
+  }
   for (size_t i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
