@@ -643,8 +643,12 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), stimstart)));
   
-  if (stimbeginindex > 0){
-    // to avoid skipping AP_begin when it is exactly at simbeginindex
+  if (stimbeginindex > 1){
+    // to avoid skipping AP_begin when it is exactly at stimbeginindex
+    // also because of float precision and interpolation, sometimes stimbeginindex
+    // can be slightly above 'real' stim begin index
+    minima.push_back(stimbeginindex - 2);
+  } else if (stimbeginindex == 1){
     minima.push_back(stimbeginindex - 1);
   } else {
     minima.push_back(stimbeginindex);
