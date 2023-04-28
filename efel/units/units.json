@@ -57,7 +57,6 @@
     "amp_drop_first_last": "mV",
     "amp_drop_first_second": "mV",
     "amp_drop_second_last": "mV",
-    "burst_begin_indices": "constant",
     "burst_mean_freq": "Hz",
     "burst_number": "constant",
     "check_AISInitiation": "constant",
