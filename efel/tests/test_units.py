@@ -9,6 +9,6 @@ def test_get_unit():
     assert get_unit("time_to_last_spike") == "ms"
     assert get_unit("inv_second_ISI") == "Hz"
     assert get_unit("check_AISInitiation") == "constant"
-    assert get_unit("bpo_holding_current") == "nA"
     assert get_unit("AP1_amp") != "wrong unit"
     assert get_unit("AP1_amp") == "mV"
+    assert get_unit("ohmic_input_resistance") == "MΩ"
