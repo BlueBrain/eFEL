@@ -680,6 +680,23 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 LibV5 : time_to_postburst_fast_ahp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Time to the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+
+LibV5 : time_to_postburst_adp_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Time to the small ADP peak after the fast AHP after the end of a burst.
 
 This implementation does not assume that every spike belongs to a burst.
@@ -688,11 +705,24 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
 
 The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
-- **Required features**: postburst_fast_ahp_indices, postburst_slow_ahp_indices
+- **Required features**: postburst_adp_peak_indices, burst_end_indices, peak_time
 - **Units**: ms
 - **Pseudocode**: ::
 
-    [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+    time_to_postburst_adp_peaks = []
+    n_peaks = len(peak_time)
+    for i, adppeaki in enumerate(postburst_adppeaki):
+        # there are not always an adp peak after each burst
+        # so make sure that the burst and adp peak indices are consistent
+        k = 0
+        while (
+            burst_endi[i] + k + 1 < n_peaks and peak_time[burst_endi[i] + k + 1] < t[adppeaki]
+        ):
+            k += 1
+
+        time_to_postburst_adp_peaks.append(t[adppeaki] - peak_time[burst_endi[i] + k])
+
+    return time_to_postburst_adp_peaks
 
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

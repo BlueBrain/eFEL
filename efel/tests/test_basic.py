@@ -4243,3 +4243,92 @@ def test_time_to_postburst_fast_ahp():
         numpy.testing.assert_allclose(
             time_to_postburst_fast_ahp, time_to_postburst_fast_ahp_py
         )
+
+
+def py_time_to_postburst_adp_peak(t, postburst_adppeaki, burst_endi, peak_time):
+    """python implementation of time to post burst ADP peak."""
+    if postburst_adppeaki is None or burst_endi is None:
+        return None
+
+    time_to_postburst_adp_peaks = []
+    n_peaks = len(peak_time)
+    for i, adppeaki in enumerate(postburst_adppeaki):
+        # there are not always an adp peak after each burst
+        # so make sure that the burst and adp peak indices are consistent
+        k = 0
+        while (
+            burst_endi[i] + k + 1 < n_peaks and peak_time[burst_endi[i] + k + 1] < t[adppeaki]
+        ):
+            k += 1
+
+        time_to_postburst_adp_peaks.append(t[adppeaki] - peak_time[burst_endi[i] + k])
+
+    return time_to_postburst_adp_peaks
+
+
+def test_time_to_postburst_adp_peak():
+    """basic: Test time_to_postburst_adp_peak"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "time_to_postburst_adp_peak",
+            "postburst_adp_peak_indices",
+            "burst_end_indices",
+            "peak_time",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        time_to_postburst_adp_peak = feature_values[0][
+            "time_to_postburst_adp_peak"
+        ]
+        postburst_adppeaki = feature_values[0][
+            "postburst_adp_peak_indices"
+        ]
+        burst_endi = feature_values[0][
+            "burst_end_indices"
+        ]
+        peak_time = feature_values[0][
+            "peak_time"
+        ]
+
+
+        time_to_postburst_adp_peak_py = py_time_to_postburst_adp_peak(
+            interp_time, postburst_adppeaki, burst_endi, peak_time
+        )
+
+        time_to_postburst_adp_peak = numpy.array(
+            time_to_postburst_adp_peak, dtype=numpy.float64
+        )
+        time_to_postburst_adp_peak_py = numpy.array(
+            time_to_postburst_adp_peak_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            time_to_postburst_adp_peak, time_to_postburst_adp_peak_py
+        )
