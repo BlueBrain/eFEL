@@ -3957,7 +3957,7 @@ static int __postburst_min_indices(vector<double>& t,
         v.begin() + stim_end_index
       ) - v.begin();
       if (postburst_min_index == stim_end_index){
-        postburst_min_index--;
+        continue;
       }
     } else {
       postburst_min_index = min_element(
@@ -3965,7 +3965,7 @@ static int __postburst_min_indices(vector<double>& t,
         v.begin() + end_index
       ) - v.begin();
       if (postburst_min_index == end_index){
-        postburst_min_index--;
+        continue;
       }
     }
     
@@ -4432,6 +4432,7 @@ int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
     setVec(IntFeatureData, StringData, "postburst_adp_peak_indices", postburst_adp_peak_indices);
     setVec(DoubleFeatureData, StringData, "postburst_adp_peak_values",
                  postburst_adp_peak_values);
+    return retVal;
   }
   return -1;
 }
