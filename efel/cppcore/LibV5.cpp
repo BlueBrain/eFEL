@@ -4372,7 +4372,7 @@ static int __postburst_adp_peak_indices(const vector<double>& t, const vector<do
         v.begin(), max_element(v.begin() + postburst_fast_ahp_indices[i],
                                v.begin() + postburst_slow_ahp_indices[i]));
 
-    if (adppeakindex != postburst_slow_ahp_indices[i] - 1) {
+    if (adppeakindex < postburst_slow_ahp_indices[i] - 1) {
       postburst_adp_peak_indices.push_back(adppeakindex);
 
       EFEL_ASSERT(adppeakindex < v.size(),
@@ -4517,8 +4517,15 @@ int LibV5::time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
   }
 
   for (size_t i = 0; i < postburst_adp_peak_indices.size(); i++) {
+    // there are not always an adp peak after each burst
+    // so make sure that the burst and adp peak indices are consistent
+    size_t k = 0;
+    while (burst_end_indices[i] + k + 1 < peak_time.size() &&
+           peak_time[burst_end_indices[i] + k + 1] < time[postburst_adp_peak_indices[i]]){
+      k++;
+    }
     time_to_postburst_adp_peak.push_back(time[postburst_adp_peak_indices[i]] -
-                                         peak_time[burst_end_indices[i]]);
+                                        peak_time[burst_end_indices[i] + k]);
   }
   setVec(DoubleFeatureData, StringData, "time_to_postburst_adp_peak",
          time_to_postburst_adp_peak);
