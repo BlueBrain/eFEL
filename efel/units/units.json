@@ -61,7 +61,7 @@
     "burst_mean_freq": "Hz",
     "burst_number": "constant",
     "check_AISInitiation": "constant",
-    "current_base": "mV",
+    "current_base": "nA",
     "decay_time_constant_after_stim": "ms",
     "depolarized_base": "mV",
     "diff_max_duringstim": "mV",

@@ -1423,7 +1423,7 @@ The average current during the last 10% of time before the stimulus.
 
 - **Required features**: t, I, stim_start, stim_end
 - **Parameters**: current_base_start_perc (default = 0.9), current_base_end_perc (default = 1.0), precision_threshold (default = 1e-10), current_base_mode (can be "mean" or "median", default="mean")
-- **Units**: mV
+- **Units**: nA
 - **Pseudocode**: ::
 
     current_slice = I[numpy.where(
