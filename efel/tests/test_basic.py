@@ -4168,3 +4168,78 @@ def test_postburst_adp_peak_values():
         numpy.testing.assert_allclose(
             postburst_adppeaki, postburst_adppeaki_py
         )
+
+
+def py_time_to_postburst_fast_ahp(t, postburst_fahpi, burst_endi, peak_time):
+    """python implementation of time to post burst fast ahp."""
+    if postburst_fahpi is None or burst_endi is None:
+        return None
+    return [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+
+
+def test_time_to_postburst_fast_ahp():
+    """basic: Test time_to_postburst_fast_ahp"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "time_to_postburst_fast_ahp",
+            "postburst_fast_ahp_indices",
+            "burst_end_indices",
+            "peak_time",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        time_to_postburst_fast_ahp = feature_values[0][
+            "time_to_postburst_fast_ahp"
+        ]
+        postburst_fahpi = feature_values[0][
+            "postburst_fast_ahp_indices"
+        ]
+        burst_endi = feature_values[0][
+            "burst_end_indices"
+        ]
+        peak_time = feature_values[0][
+            "peak_time"
+        ]
+
+
+        time_to_postburst_fast_ahp_py = py_time_to_postburst_fast_ahp(
+            interp_time, postburst_fahpi, burst_endi, peak_time
+        )
+
+        time_to_postburst_fast_ahp = numpy.array(
+            time_to_postburst_fast_ahp, dtype=numpy.float64
+        )
+        time_to_postburst_fast_ahp_py = numpy.array(
+            time_to_postburst_fast_ahp_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            time_to_postburst_fast_ahp, time_to_postburst_fast_ahp_py
+        )

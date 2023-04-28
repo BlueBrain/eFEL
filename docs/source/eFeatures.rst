@@ -677,6 +677,23 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         return None
     return adp_peak_values
 
+LibV5 : time_to_postburst_fast_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time to the small ADP peak after the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, postburst_slow_ahp_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
