@@ -82,13 +82,25 @@ The time interval between the first too peaks
     doublet_ISI = peak_time[1] - peak_time[0]
 
 
-LibV5 : all_ISI_values, inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
+LibV5: all_ISI_values
+~~~~~~~~~~~~~~~~~~~~~
+
+The interspike intervals (i.e. time intervals) between adjacent peaks.
+
+- **Required features**: peak_time (ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+
+
+LibV5 : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
 
 - **Required features**: peak_time (ms)
-- **Units**: ms
+- **Units**: Hz
 - **Pseudocode**: ::
 
     all_isi_values_vec = numpy.diff(peak_time)
