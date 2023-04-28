@@ -10,7 +10,7 @@
     "AHP_depth_slow": "mV",
     "AHP_slow_time": "constant",
     "AHP_time_from_peak": "ms",
-    "AHP_time_from_peak_last": "mV",
+    "AHP_time_from_peak_last": "ms",
     "AP1_peak": "mV",
     "AP2_AP1_begin_width_diff": "ms",
     "AP2_AP1_diff": "mV",

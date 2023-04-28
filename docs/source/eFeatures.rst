@@ -1803,7 +1803,7 @@ LibV5: AHP_time_from_peak_last
 Time between AP peaks and last AHP depths
 
 - **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
-- **Units**: mV
+- **Units**: ms
 - **Pseudocode**: ::
 
     last_AHP_indices = last_min_element(voltage, peak_indices)
