@@ -12,3 +12,10 @@
 .vscode
 *.so
 coverage.xml
+docs/bin
+docs/lib
+docs/source/lib
+bin
+*.tox-info.json
+*.ipynb_checkpoints
+lib
