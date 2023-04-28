@@ -1,27 +1,47 @@
 """Parse eFeatures.rst.
     Make sure every unit there is present in efel.units
 """
-
 from pathlib import Path
-import re
-
 
 from efel import units
 
 
+def preprocess_rst_text(rst_text: str) -> str:
+    """Preprocess rst text to make it easier to parse.
+    Keep only the lines that contain the feature name and the units."""
+    lines = rst_text.split('\n')
+    modified_lines = []
+
+    for i, line in enumerate(lines):
+        if '~~~' in line:
+            modified_lines.append(lines[i-1])
+        elif line.strip().startswith('- **Units**:'):
+            modified_lines.append(line)
+
+    return '\n'.join(modified_lines)
+
+
 def extract_feature_and_units(rst_text: str) -> dict:
     """Parse rst to extract features and units."""
-    # Use regex to match and extract the desired information
-    pattern = r'LibV\d+\s*:\s*([\w_]+)[\s\S]*?- \*\*Units\*\*:\s*([\w/\(\)]+)'
-    matches = re.findall(pattern, rst_text)
-
+    rst_text = preprocess_rst_text(rst_text)
+    lines = rst_text.split('\n')
     result = {}
-    if matches:
-        for match in matches:
-            feature_name, unit = match
-            result[feature_name] = unit
-    return result
+    
+    for i in range(0, len(lines), 2):
+        feature_line = lines[i]
+        
+        try:
+            unit_line = lines[i+1]
+        except IndexError:
+            break
 
+        feature_names = [name.strip() for name in feature_line.split(':')[-1].split(',')]
+        unit = unit_line.split(':')[-1].strip()
+        
+        for feature_name in feature_names:
+            result[feature_name] = unit
+
+    return result
 
 def test_extract_feature_and_units():
     rst1 = """
@@ -86,6 +106,22 @@ def test_extract_feature_and_units():
         - **Units**: V/s"""
     assert extract_feature_and_units(rst4) == {"AP_peak_upstroke": "V/s"}
 
+    rst5 = """
+        Python efeature: spikes_per_burst
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Number of spikes in each burst.
+
+        The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+        The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+        - **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
+        - **Units**: constant
+        - **Pseudocode**: ::
+
+        """
+    assert extract_feature_and_units(rst5) == {"spikes_per_burst": "constant"}
 
 def test_efeature_units():
     """Test to assure the rst and efel API are consistent."""
