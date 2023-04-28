@@ -53,7 +53,7 @@
     "Spikecount_stimint": "constant",
     "adaptation_index": "constant",
     "adaptation_index_2": "constant",
-    "all_ISI_values": "Hz",
+    "all_ISI_values": "ms",
     "amp_drop_first_last": "mV",
     "amp_drop_first_second": "mV",
     "amp_drop_second_last": "mV",

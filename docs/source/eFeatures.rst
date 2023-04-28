@@ -88,7 +88,7 @@ LibV5 : all_ISI_values, inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
 
 - **Required features**: peak_time (ms)
-- **Units**: Hz
+- **Units**: ms
 - **Pseudocode**: ::
 
     all_isi_values_vec = numpy.diff(peak_time)
