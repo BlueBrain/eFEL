@@ -12,7 +12,7 @@ from efel import units
 def extract_feature_and_units(rst_text: str) -> dict:
     """Parse rst to extract features and units."""
     # Use regex to match and extract the desired information
-    pattern = r'LibV\d+\s*:\s*([\w_]+)[\s\S]*?- \*\*Units\*\*:\s*(\w+)'
+    pattern = r'LibV\d+\s*:\s*([\w_]+)[\s\S]*?- \*\*Units\*\*:\s*([\w/\(\)]+)'
     matches = re.findall(pattern, rst_text)
 
     if matches:
