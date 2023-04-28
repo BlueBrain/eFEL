@@ -188,5 +188,17 @@
     "postburst_slow_ahp_values",
     "time_to_interburst_min",
     "time_to_postburst_slow_ahp",
-    "AHP_depth_slow"
+    "AHP_depth_slow",
+    "postburst_fast_ahp_indices",
+    "postburst_fast_ahp_values",
+    "postburst_adp_peak_indices",
+    "postburst_adp_peak_values",
+    "time_to_postburst_fast_ahp",
+    "time_to_postburst_adp_peak",
+    "interburst_20percent_indices",
+    "interburst_20percent_values",
+    "interburst_40percent_indices",
+    "interburst_40percent_values",
+    "interburst_60percent_indices",
+    "interburst_60percent_values"
 ]

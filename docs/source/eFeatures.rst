@@ -614,6 +614,69 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
+LibV5 : postburst_fast_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The fast AHP voltage after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    postburst_fahp = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            stop_i = peak_indices[i + 1]
+        elif i + 1 < stim_end_index:
+            stop_i = stim_end_index
+        else:
+            stop_i = len(v) - 1
+        
+        v_crop = v[peak_indices[i]:stop_i]
+        # get where the voltage is going up
+        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
+        # the voltage should go up for at least two consecutive points
+        crop_arg_arg = numpy.argwhere(numpy.diff(crop_args) == 1)[0][0]
+        crop_arg = crop_args[crop_arg_arg]
+        end_i = peak_indices[i] + crop_arg + 1
+        # the fast ahp is between last peak of burst and the point where voltage is going back up
+        postburst_fahp.append(numpy.min(v[peak_indices[i]:end_i]))
+
+    return postburst_fahp
+
+LibV5 : postburst_adp_peak_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The small ADP peak after the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, postburst_slow_ahp_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    adp_peak_values = []
+    for i, sahpi in enumerate(postburst_sahpi):
+        if sahpi < postburst_fahpi[i]:
+            continue
+        adppeaki = numpy.argmax(v[postburst_fahpi[i]:sahpi]) + postburst_fahpi[i]
+        if adppeaki != sahpi - 1:
+            adp_peak_values.append(v[adppeaki])
+
+    if len(adp_peak_values) == 0:
+        return None
+    return adp_peak_values
+
 LibV1 : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

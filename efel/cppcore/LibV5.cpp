@@ -4372,7 +4372,7 @@ static int __postburst_adp_peak_indices(const vector<double>& t, const vector<do
         v.begin(), max_element(v.begin() + postburst_fast_ahp_indices[i],
                                v.begin() + postburst_slow_ahp_indices[i]));
 
-    if (adppeakindex != postburst_slow_ahp_indices[i]) {
+    if (adppeakindex != postburst_slow_ahp_indices[i] - 1) {
       postburst_adp_peak_indices.push_back(adppeakindex);
 
       EFEL_ASSERT(adppeakindex < v.size(),

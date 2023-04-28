@@ -60699,5 +60699,17 @@
         32.02907786238346,
         32.65404519917785,
         33.435288866699345
-    ]
+    ],
+    "postburst_fast_ahp_indices": [26438],
+    "postburst_fast_ahp_values": [-41.12299347],
+    "postburst_adp_peak_indices": [26438],
+    "postburst_adp_peak_values": [-41.12299347],
+    "time_to_postburst_fast_ahp": [5.99999999999],
+    "time_to_postburst_adp_peak": [5.99999999999],
+    "interburst_20percent_indices": null,
+    "interburst_20percent_values": null,
+    "interburst_40percent_indices": null,
+    "interburst_40percent_values": null,
+    "interburst_60percent_indices": null,
+    "interburst_60percent_values": null
 }
