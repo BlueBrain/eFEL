@@ -15,14 +15,12 @@ def extract_feature_and_units(rst_text: str) -> dict:
     pattern = r'LibV\d+\s*:\s*([\w_]+)[\s\S]*?- \*\*Units\*\*:\s*([\w/\(\)]+)'
     matches = re.findall(pattern, rst_text)
 
+    result = {}
     if matches:
-        result = {}
         for match in matches:
             feature_name, unit = match
             result[feature_name] = unit
-        return result
-    else:
-        return None
+    return result
 
 
 def test_efeature_units():
