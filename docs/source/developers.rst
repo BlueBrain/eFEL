@@ -82,6 +82,7 @@ changed to accomodate the new eFeature
   relevant table
 * efel/cppcore/cfeature.cpp: Add the type of the eFeature
 * AUTHORS.txt: If your name isn't there yet, add yourself to the authors list
+* efel/units/units.json: Add the units of the eFeature to the API
 
 You can confirm everything compiles correctly by executing::
 

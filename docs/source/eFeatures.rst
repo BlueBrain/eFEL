@@ -73,7 +73,7 @@ If ignore_first_ISI is True, the 1st spike will not be taken into account, becau
 LibV1 : doublet_ISI
 ~~~~~~~~~~~~~~~~~~~
 
-The time interval between the first too peaks
+The time interval between the first two peaks
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
@@ -82,7 +82,19 @@ The time interval between the first too peaks
     doublet_ISI = peak_time[1] - peak_time[0]
 
 
-LibV5 : all_ISI_values, inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
+LibV5: all_ISI_values
+~~~~~~~~~~~~~~~~~~~~~
+
+The interspike intervals, i.e., the time intervals between adjacent peaks.
+
+- **Required features**: peak_time (ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+
+
+LibV5 : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
@@ -1423,7 +1435,7 @@ The average current during the last 10% of time before the stimulus.
 
 - **Required features**: t, I, stim_start, stim_end
 - **Parameters**: current_base_start_perc (default = 0.9), current_base_end_perc (default = 1.0), precision_threshold (default = 1e-10), current_base_mode (can be "mean" or "median", default="mean")
-- **Units**: mV
+- **Units**: nA
 - **Pseudocode**: ::
 
     current_slice = I[numpy.where(
@@ -1657,7 +1669,7 @@ The ratio between the voltage deflection and stimulus current
 
 - **Required features**: t, V, stim_start, stim_end, voltage_deflection
 - **Parameters**: stimulus_current
-- **Units**: mV/nA
+- **Units**: MΩ
 - **Pseudocode**: ::
 
     ohmic_input_resistance = voltage_deflection / stimulus_current
@@ -1669,7 +1681,7 @@ The ratio between the voltage deflection (between voltage base and steady-state 
 
 - **Required features**: t, V, stim_start, stim_end, voltage_deflection_vb_ssse
 - **Parameters**: stimulus_current
-- **Units**: mV/nA
+- **Units**: MΩ
 - **Pseudocode**: ::
 
     ohmic_input_resistance_vb_ssse = voltage_deflection_vb_ssse / stimulus_current
@@ -1803,7 +1815,7 @@ LibV5: AHP_time_from_peak_last
 Time between AP peaks and last AHP depths
 
 - **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
-- **Units**: mV
+- **Units**: ms
 - **Pseudocode**: ::
 
     last_AHP_indices = last_min_element(voltage, peak_indices)

@@ -76,7 +76,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     install_requires=['numpy>=1.6', 'six'],
     extras_require={'neo': ['neo[neomatlabio]>=0.5.1']},
-    packages=['efel', 'efel.pyfeatures'],
+    packages=['efel', 'efel.pyfeatures', 'efel.units'],
     author="BlueBrain Project, EPFL",
     maintainer="Werner Van Geit",
     maintainer_email="werner.vangeit@epfl.ch",
@@ -110,5 +110,6 @@ setup(
         '': ['DependencyV5.txt',
              'VERSION.txt',
              'README.md',
-             'GITHASH.txt'] + cppcore_headers},
+             'GITHASH.txt',
+             'units/units.json'] + cppcore_headers},
     ext_modules=[cppcore])
