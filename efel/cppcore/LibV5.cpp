@@ -4620,43 +4620,43 @@ int LibV5::interburst_20percent_values(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-// index and voltage value at 40% of the duration of the interburst after fast AHP
-static int __interburst_40percent_indices(const vector<double>& t, const vector<double>& v,
+// index and voltage value at 25% of the duration of the interburst after fast AHP
+static int __interburst_25percent_indices(const vector<double>& t, const vector<double>& v,
                                         const vector<int>& postburst_fast_ahp_indices,
                                         const vector<int>& peak_indices,
                                         const vector<int>& burst_end_indices,
-                                        vector<int>& interburst_40percent_indices,
-                                        vector<double>& interburst_40percent_values) {
+                                        vector<int>& interburst_25percent_indices,
+                                        vector<double>& interburst_25percent_values) {
 
-  double time_interval, time_at_40percent;
-  size_t index_at_40percent;
+  double time_interval, time_at_25percent;
+  size_t index_at_25percent;
   for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
     if (i < burst_end_indices.size()){
       if (burst_end_indices[i] + 1 < peak_indices.size()){
         time_interval = t[peak_indices[burst_end_indices[i] + 1]] - t[postburst_fast_ahp_indices[i]];
-        time_at_40percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.4;
-        index_at_40percent =
+        time_at_25percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.25;
+        index_at_25percent =
           distance(t.begin(),
                     find_if(t.begin(), t.end(),
-                            std::bind2nd(std::greater_equal<double>(), time_at_40percent)));
-        interburst_40percent_indices.push_back(index_at_40percent);
-        interburst_40percent_values.push_back(v[index_at_40percent]);
+                            std::bind2nd(std::greater_equal<double>(), time_at_25percent)));
+        interburst_25percent_indices.push_back(index_at_25percent);
+        interburst_25percent_values.push_back(v[index_at_25percent]);
       }
     }
   }
-  return interburst_40percent_indices.size();
+  return interburst_25percent_indices.size();
 }
 
-int LibV5::interburst_40percent_indices(mapStr2intVec& IntFeatureData,
+int LibV5::interburst_25percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
   int retVal, nSize;
 
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_40percent_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "interburst_25percent_indices", nSize);
   if (retVal) return nSize;
 
-  vector<int> interburst_40percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
-  vector<double> v, t, interburst_40percent_values;
+  vector<int> interburst_25percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
+  vector<double> v, t, interburst_25percent_values;
 
   // Get voltage
   retVal = getVec(DoubleFeatureData, StringData, "V", v);
@@ -4679,72 +4679,72 @@ int LibV5::interburst_40percent_indices(mapStr2intVec& IntFeatureData,
   if (retVal < 1) {
     GErrorStr +=
         "\n At least one post-burst fast AHP required for calculation of "
-        "interburst_40percent_indices.\n";
+        "interburst_25percent_indices.\n";
     return -1;
   }
 
   retVal =
-      __interburst_40percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
-                                   interburst_40percent_indices, interburst_40percent_values);
+      __interburst_25percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
+                                   interburst_25percent_indices, interburst_25percent_values);
 
   if (retVal == 0)
     return -1;
   if (retVal > 0) {
-    setVec(IntFeatureData, StringData, "interburst_40percent_indices", interburst_40percent_indices);
-    setVec(DoubleFeatureData, StringData, "interburst_40percent_values",
-                 interburst_40percent_values);
-    return interburst_40percent_indices.size();
+    setVec(IntFeatureData, StringData, "interburst_25percent_indices", interburst_25percent_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_25percent_values",
+                 interburst_25percent_values);
+    return interburst_25percent_indices.size();
   }
   return -1;
 }
 
-int LibV5::interburst_40percent_values(mapStr2intVec& IntFeatureData,
+int LibV5::interburst_25percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_40percent_values", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "interburst_25percent_values", nSize);
   if (retVal >= 0) return nSize;
   return -1;
 }
 
-// index and voltage value at 60% of the duration of the interburst after fast AHP
-static int __interburst_60percent_indices(const vector<double>& t, const vector<double>& v,
+// index and voltage value at 30% of the duration of the interburst after fast AHP
+static int __interburst_30percent_indices(const vector<double>& t, const vector<double>& v,
                                         const vector<int>& postburst_fast_ahp_indices,
                                         const vector<int>& peak_indices,
                                         const vector<int>& burst_end_indices,
-                                        vector<int>& interburst_60percent_indices,
-                                        vector<double>& interburst_60percent_values) {
+                                        vector<int>& interburst_30percent_indices,
+                                        vector<double>& interburst_30percent_values) {
 
-  double time_interval, time_at_60percent;
-  size_t index_at_60percent;
+  double time_interval, time_at_30percent;
+  size_t index_at_30percent;
   for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
     if (i < burst_end_indices.size()){
       if (burst_end_indices[i] + 1 < peak_indices.size()){
         time_interval = t[peak_indices[burst_end_indices[i] + 1]] - t[postburst_fast_ahp_indices[i]];
-        time_at_60percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.6;
-        index_at_60percent =
+        time_at_30percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.3;
+        index_at_30percent =
           distance(t.begin(),
                     find_if(t.begin(), t.end(),
-                            std::bind2nd(std::greater_equal<double>(), time_at_60percent)));
-        interburst_60percent_indices.push_back(index_at_60percent);
-        interburst_60percent_values.push_back(v[index_at_60percent]);
+                            std::bind2nd(std::greater_equal<double>(), time_at_30percent)));
+        interburst_30percent_indices.push_back(index_at_30percent);
+        interburst_30percent_values.push_back(v[index_at_30percent]);
       }
     }
   }
-  return interburst_60percent_indices.size();
+  return interburst_30percent_indices.size();
 }
 
-int LibV5::interburst_60percent_indices(mapStr2intVec& IntFeatureData,
+int LibV5::interburst_30percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
   int retVal, nSize;
 
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_60percent_indices", nSize);
+  retVal = CheckInMap(IntFeatureData, StringData, "interburst_30percent_indices", nSize);
   if (retVal) return nSize;
 
-  vector<int> interburst_60percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
-  vector<double> v, t, interburst_60percent_values;
+  vector<int> interburst_30percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
+  vector<double> v, t, interburst_30percent_values;
 
   // Get voltage
   retVal = getVec(DoubleFeatureData, StringData, "V", v);
@@ -4767,31 +4767,31 @@ int LibV5::interburst_60percent_indices(mapStr2intVec& IntFeatureData,
   if (retVal < 1) {
     GErrorStr +=
         "\n At least one post-burst fast AHP required for calculation of "
-        "interburst_60percent_indices.\n";
+        "interburst_30percent_indices.\n";
     return -1;
   }
 
   retVal =
-      __interburst_60percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
-                                   interburst_60percent_indices, interburst_60percent_values);
+      __interburst_30percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
+                                   interburst_30percent_indices, interburst_30percent_values);
 
   if (retVal == 0)
     return -1;
   if (retVal > 0) {
-    setVec(IntFeatureData, StringData, "interburst_60percent_indices", interburst_60percent_indices);
-    setVec(DoubleFeatureData, StringData, "interburst_60percent_values",
-                 interburst_60percent_values);
-    return interburst_60percent_indices.size();
+    setVec(IntFeatureData, StringData, "interburst_30percent_indices", interburst_30percent_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_30percent_values",
+                 interburst_30percent_values);
+    return interburst_30percent_indices.size();
   }
   return -1;
 }
 
-int LibV5::interburst_60percent_values(mapStr2intVec& IntFeatureData,
+int LibV5::interburst_30percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
   int retVal, nSize;
   retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_60percent_values", nSize);
+      CheckInMap(DoubleFeatureData, StringData, "interburst_30percent_values", nSize);
   if (retVal >= 0) return nSize;
   return -1;
 }

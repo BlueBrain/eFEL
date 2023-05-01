@@ -279,10 +279,10 @@ void cFeature::fillfeaturetypes() {
   featuretypes["time_to_postburst_adp_peak"] = "double";
   featuretypes["interburst_20percent_indices"] = "int";
   featuretypes["interburst_20percent_values"] = "double";
-  featuretypes["interburst_40percent_indices"] = "int";
-  featuretypes["interburst_40percent_values"] = "double";
-  featuretypes["interburst_60percent_indices"] = "int";
-  featuretypes["interburst_60percent_values"] = "double";
+  featuretypes["interburst_25percent_indices"] = "int";
+  featuretypes["interburst_25percent_values"] = "double";
+  featuretypes["interburst_30percent_indices"] = "int";
+  featuretypes["interburst_30percent_values"] = "double";
 
   // end of feature types
 }

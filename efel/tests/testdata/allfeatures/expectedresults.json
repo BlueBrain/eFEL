@@ -60708,8 +60708,8 @@
     "time_to_postburst_adp_peak": [5.99999999999],
     "interburst_20percent_indices": null,
     "interburst_20percent_values": null,
-    "interburst_40percent_indices": null,
-    "interburst_40percent_values": null,
-    "interburst_60percent_indices": null,
-    "interburst_60percent_values": null
+    "interburst_25percent_indices": null,
+    "interburst_25percent_values": null,
+    "interburst_30percent_indices": null,
+    "interburst_30percent_values": null
 }

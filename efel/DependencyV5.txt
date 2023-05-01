@@ -187,7 +187,7 @@ LibV5:time_to_postburst_fast_ahp     #LibV5:postburst_fast_ahp_indices #LibV1:pe
 LibV5:time_to_postburst_adp_peak     #LibV5:postburst_adp_peak_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
 LibV5:interburst_20percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
 LibV5:interburst_20percent_values      #LibV5:interburst_20percent_indices #LibV1:interpolate
-LibV5:interburst_40percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_40percent_values      #LibV5:interburst_40percent_indices #LibV1:interpolate
-LibV5:interburst_60percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_60percent_values      #LibV5:interburst_60percent_indices #LibV1:interpolate
+LibV5:interburst_25percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
+LibV5:interburst_25percent_values      #LibV5:interburst_25percent_indices #LibV1:interpolate
+LibV5:interburst_30percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
+LibV5:interburst_30percent_values      #LibV5:interburst_30percent_indices #LibV1:interpolate

@@ -335,16 +335,16 @@ int interburst_20percent_indices(mapStr2intVec& IntFeatureData,
 int interburst_20percent_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int interburst_40percent_indices(mapStr2intVec& IntFeatureData,
+int interburst_25percent_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int interburst_40percent_values(mapStr2intVec& IntFeatureData,
+int interburst_25percent_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int interburst_60percent_indices(mapStr2intVec& IntFeatureData,
+int interburst_30percent_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int interburst_60percent_values(mapStr2intVec& IntFeatureData,
+int interburst_30percent_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
 }

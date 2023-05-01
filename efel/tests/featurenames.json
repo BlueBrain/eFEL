@@ -197,8 +197,8 @@
     "time_to_postburst_adp_peak",
     "interburst_20percent_indices",
     "interburst_20percent_values",
-    "interburst_40percent_indices",
-    "interburst_40percent_values",
-    "interburst_60percent_indices",
-    "interburst_60percent_values"
+    "interburst_25percent_indices",
+    "interburst_25percent_values",
+    "interburst_30percent_indices",
+    "interburst_30percent_values"
 ]
