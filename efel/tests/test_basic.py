@@ -4332,3 +4332,167 @@ def test_time_to_postburst_adp_peak():
         numpy.testing.assert_allclose(
             time_to_postburst_adp_peak, time_to_postburst_adp_peak_py
         )
+
+
+def py_XXpercent_interburst_values(t, v, postburst_fahpi, burst_endi, peaki, percent=20.):
+    """python implementation of 20% / 40% / 60% interburst values."""
+    if postburst_fahpi is None or burst_endi is None:
+        return None, None
+
+    XXpercent_interburst = []
+    XXpercent_interburst_i = []
+    for i, postburst_fahp_i in enumerate(postburst_fahpi):
+        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
+            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
+            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percent / 100.
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            XXpercent_interburst_i.append(index_at_XXpercent)
+            XXpercent_interburst.append(v[index_at_XXpercent])
+
+    return XXpercent_interburst_i, XXpercent_interburst
+
+
+def test_interburst_XXpercent_values():
+    """basic: Test interburst_20percent_values, interburst_40percent_values,
+        interburst_60percent_values
+    """
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time = efel.io.load_fragment('%s#col=1' % url)
+        voltage = efel.io.load_fragment('%s#col=2' % url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "postburst_fast_ahp_indices",
+            "burst_end_indices",
+            "peak_indices",
+            "interburst_20percent_indices",
+            "interburst_20percent_values",
+            "interburst_40percent_indices",
+            "interburst_40percent_values",
+            "interburst_60percent_indices",
+            "interburst_60percent_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        postburst_fahpi = feature_values[0][
+            "postburst_fast_ahp_indices"
+        ]
+        burst_endi = feature_values[0][
+            "burst_end_indices"
+        ]
+        peaki = feature_values[0][
+            "peak_indices"
+        ]
+        interburst_20i = feature_values[0][
+            "interburst_20percent_indices"
+        ]
+        interburst_20 = feature_values[0][
+            "interburst_20percent_values"
+        ]
+        interburst_40i = feature_values[0][
+            "interburst_40percent_indices"
+        ]
+        interburst_40 = feature_values[0][
+            "interburst_40percent_values"
+        ]
+        interburst_60i = feature_values[0][
+            "interburst_60percent_indices"
+        ]
+        interburst_60 = feature_values[0][
+            "interburst_60percent_values"
+        ]
+        
+
+        interburst_20i_py, interburst_20_py = py_XXpercent_interburst_values(
+            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 20.
+        )
+        interburst_40i_py, interburst_40_py = py_XXpercent_interburst_values(
+            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 40.
+        )
+        interburst_60i_py, interburst_60_py = py_XXpercent_interburst_values(
+            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 60.
+        )
+
+        interburst_20 = numpy.array(
+            interburst_20, dtype=numpy.float64
+        )
+        interburst_20_py = numpy.array(
+            interburst_20_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_20, interburst_20_py
+        )
+
+        interburst_20i = numpy.array(
+            interburst_20i, dtype=numpy.float64
+        )
+        interburst_20i_py = numpy.array(
+            interburst_20i_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_20i, interburst_20i_py
+        )
+
+        interburst_40 = numpy.array(
+            interburst_40, dtype=numpy.float64
+        )
+        interburst_40_py = numpy.array(
+            interburst_40_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_40, interburst_40_py
+        )
+
+        interburst_40i = numpy.array(
+            interburst_40i, dtype=numpy.float64
+        )
+        interburst_40i_py = numpy.array(
+            interburst_40i_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_40i, interburst_40i_py
+        )
+
+        interburst_60 = numpy.array(
+            interburst_60, dtype=numpy.float64
+        )
+        interburst_60_py = numpy.array(
+            interburst_60_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_60, interburst_60_py
+        )
+
+        interburst_60i = numpy.array(
+            interburst_60i, dtype=numpy.float64
+        )
+        interburst_60i_py = numpy.array(
+            interburst_60i_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            interburst_60i, interburst_60i_py
+        )
