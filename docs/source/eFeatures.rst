@@ -85,7 +85,7 @@ The time interval between the first too peaks
 LibV5: all_ISI_values
 ~~~~~~~~~~~~~~~~~~~~~
 
-The interspike intervals (i.e. time intervals) between adjacent peaks.
+The interspike intervals, i.e., the time intervals between adjacent peaks.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
