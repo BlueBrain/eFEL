@@ -96,8 +96,8 @@ spiking_from_beginning_to_end_url = 'file://%s' % os.path.join(
     'spiking_from_beginning_to_end.txt')
 
 testdata_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                                'allfeatures',
-                                                'testdata.txt')
+                                          'allfeatures',
+                                          'testdata.txt')
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -3984,17 +3984,20 @@ def py_postburst_fahp(v, peak_indices, burst_end_indices, stim_end_index):
             stop_i = stim_end_index
         else:
             stop_i = len(v) - 1
-        
+
         v_crop = v[peak_indices[i]:stop_i]
         # get where the voltage is going up
-        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
+        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:, 0]
         # the voltage should go up for at least two consecutive points
         crop_arg_arg = numpy.argwhere(numpy.diff(crop_args) == 1)[0][0]
         crop_arg = crop_args[crop_arg_arg]
         end_i = peak_indices[i] + crop_arg + 1
-        # the fast ahp is between last peak of burst and the point where voltage is going back up
+        # the fast ahp is between the last peak of the burst and
+        # the point where the voltage is going back up
         postburst_fahp.append(numpy.min(v[peak_indices[i]:end_i]))
-        postburst_fahp_idxs.append(numpy.argmin(v[peak_indices[i]:end_i]) + peak_indices[i])
+        postburst_fahp_idxs.append(
+            numpy.argmin(v[peak_indices[i]:end_i]) + peak_indices[i]
+        )
 
     return postburst_fahp_idxs, postburst_fahp
 
@@ -4048,7 +4051,9 @@ def test_postburst_fast_ahp_values():
         ]
 
         stim_end_index = numpy.argwhere(trace['stim_end'] > interp_time)[0][0]
-        postburst_fahpi_py, postburst_fahp_py = py_postburst_fahp(interp_voltage, peak_indices, burst_end_indices, stim_end_index)
+        postburst_fahpi_py, postburst_fahp_py = py_postburst_fahp(
+            interp_voltage, peak_indices, burst_end_indices, stim_end_index
+        )
 
         postburst_fahp = numpy.array(
             postburst_fahp, dtype=numpy.float64
@@ -4077,13 +4082,15 @@ def py_postburst_adppeak(
     """python implementation of adp peak after burst."""
     if postburst_sahpi is None or postburst_fahpi is None:
         return None, None
-    
+
     adp_peak_indices = []
     adp_peak_values = []
     for i, sahpi in enumerate(postburst_sahpi):
         if sahpi < postburst_fahpi[i]:
             continue
-        adppeaki = numpy.argmax(v[postburst_fahpi[i]:sahpi]) + postburst_fahpi[i]
+        adppeaki = numpy.argmax(
+            v[postburst_fahpi[i]:sahpi]
+        ) + postburst_fahpi[i]
         if adppeaki != sahpi - 1:
             adp_peak_indices.append(adppeaki)
             adp_peak_values.append(v[adppeaki])
@@ -4174,7 +4181,8 @@ def py_time_to_postburst_fast_ahp(t, postburst_fahpi, burst_endi, peak_time):
     """python implementation of time to post burst fast ahp."""
     if postburst_fahpi is None or burst_endi is None:
         return None
-    return [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+    return [t[fahpi] - peak_time[burst_endi[i]] for (i, fahpi) in
+            enumerate(postburst_fahpi)]
 
 
 def test_time_to_postburst_fast_ahp():
@@ -4229,7 +4237,6 @@ def test_time_to_postburst_fast_ahp():
             "peak_time"
         ]
 
-
         time_to_postburst_fast_ahp_py = py_time_to_postburst_fast_ahp(
             interp_time, postburst_fahpi, burst_endi, peak_time
         )
@@ -4245,7 +4252,9 @@ def test_time_to_postburst_fast_ahp():
         )
 
 
-def py_time_to_postburst_adp_peak(t, postburst_adppeaki, burst_endi, peak_time):
+def py_time_to_postburst_adp_peak(
+    t, postburst_adppeaki, burst_endi, peak_time
+):
     """python implementation of time to post burst ADP peak."""
     if postburst_adppeaki is None or burst_endi is None:
         return None
@@ -4256,12 +4265,13 @@ def py_time_to_postburst_adp_peak(t, postburst_adppeaki, burst_endi, peak_time):
         # there are not always an adp peak after each burst
         # so make sure that the burst and adp peak indices are consistent
         k = 0
-        while (
-            burst_endi[i] + k + 1 < n_peaks and peak_time[burst_endi[i] + k + 1] < t[adppeaki]
-        ):
+        while (burst_endi[i] + k + 1 < n_peaks and
+               peak_time[burst_endi[i] + k + 1] < t[adppeaki]):
             k += 1
 
-        time_to_postburst_adp_peaks.append(t[adppeaki] - peak_time[burst_endi[i] + k])
+        time_to_postburst_adp_peaks.append(
+            t[adppeaki] - peak_time[burst_endi[i] + k]
+        )
 
     return time_to_postburst_adp_peaks
 
@@ -4318,7 +4328,6 @@ def test_time_to_postburst_adp_peak():
             "peak_time"
         ]
 
-
         time_to_postburst_adp_peak_py = py_time_to_postburst_adp_peak(
             interp_time, postburst_adppeaki, burst_endi, peak_time
         )
@@ -4334,7 +4343,9 @@ def test_time_to_postburst_adp_peak():
         )
 
 
-def py_XXpercent_interburst_values(t, v, postburst_fahpi, burst_endi, peaki, percent=20.):
+def py_XXpercent_interburst_values(
+    t, v, postburst_fahpi, burst_endi, peaki, percent=20.
+):
     """python implementation of 20% / 40% / 60% interburst values."""
     if postburst_fahpi is None or burst_endi is None:
         return None, None
@@ -4344,7 +4355,8 @@ def py_XXpercent_interburst_values(t, v, postburst_fahpi, burst_endi, peaki, per
     for i, postburst_fahp_i in enumerate(postburst_fahpi):
         if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
             time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percent / 100.
+            time_at_XXpercent = (t[postburst_fahp_i]
+                                 + time_interval * percent / 100.)
             index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
             XXpercent_interburst_i.append(index_at_XXpercent)
             XXpercent_interburst.append(v[index_at_XXpercent])
@@ -4425,16 +4437,30 @@ def test_interburst_XXpercent_values():
         interburst_60 = feature_values[0][
             "interburst_60percent_values"
         ]
-        
 
         interburst_20i_py, interburst_20_py = py_XXpercent_interburst_values(
-            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 20.
+            interp_time,
+            interp_voltage,
+            postburst_fahpi,
+            burst_endi,
+            peaki,
+            20.,
         )
         interburst_40i_py, interburst_40_py = py_XXpercent_interburst_values(
-            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 40.
+            interp_time,
+            interp_voltage,
+            postburst_fahpi,
+            burst_endi,
+            peaki,
+            40.,
         )
         interburst_60i_py, interburst_60_py = py_XXpercent_interburst_values(
-            interp_time, interp_voltage, postburst_fahpi, burst_endi, peaki, 60.
+            interp_time,
+            interp_voltage,
+            postburst_fahpi,
+            burst_endi,
+            peaki,
+            60.,
         )
 
         interburst_20 = numpy.array(
