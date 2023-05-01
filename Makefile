@@ -15,7 +15,7 @@ doc_efeatures:
 	pdflatex -output-directory=../../build_efeatures efeature-documentation.tex
 doc: install doc_efeatures
 	pip install sphinx sphinx-autobuild sphinx_rtd_theme
-	cd docs; $(MAKE) clean; $(MAKE) html
+	cd docs; $(MAKE) clean; $(MAKE) html SPHINXOPTS=-W
 doc_upload: doc
 	cd docs/build/html && \
 	cp ../../build_efeatures/efeature-documentation.pdf . && \
