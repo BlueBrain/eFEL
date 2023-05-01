@@ -73,7 +73,7 @@ If ignore_first_ISI is True, the 1st spike will not be taken into account, becau
 LibV1 : doublet_ISI
 ~~~~~~~~~~~~~~~~~~~
 
-The time interval between the first too peaks
+The time interval between the first two peaks
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
