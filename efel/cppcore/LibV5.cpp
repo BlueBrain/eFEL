@@ -4532,6 +4532,182 @@ int LibV5::time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
   return (time_to_postburst_adp_peak.size());
 }
 
+// index and voltage value at 10% of the duration of the interburst after fast AHP
+static int __interburst_10percent_indices(const vector<double>& t, const vector<double>& v,
+                                        const vector<int>& postburst_fast_ahp_indices,
+                                        const vector<int>& peak_indices,
+                                        const vector<int>& burst_end_indices,
+                                        vector<int>& interburst_10percent_indices,
+                                        vector<double>& interburst_10percent_values) {
+
+  double time_interval, time_at_10percent;
+  size_t index_at_10percent;
+  for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
+    if (i < burst_end_indices.size()){
+      if (burst_end_indices[i] + 1 < peak_indices.size()){
+        time_interval = t[peak_indices[burst_end_indices[i] + 1]] - t[postburst_fast_ahp_indices[i]];
+        time_at_10percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.1;
+        index_at_10percent =
+          distance(t.begin(),
+                    find_if(t.begin(), t.end(),
+                            std::bind2nd(std::greater_equal<double>(), time_at_10percent)));
+        interburst_10percent_indices.push_back(index_at_10percent);
+        interburst_10percent_values.push_back(v[index_at_10percent]);
+      }
+    }
+  }
+  return interburst_10percent_indices.size();
+}
+
+int LibV5::interburst_10percent_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+
+  retVal = CheckInMap(IntFeatureData, StringData, "interburst_10percent_indices", nSize);
+  if (retVal) return nSize;
+
+  vector<int> interburst_10percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
+  vector<double> v, t, interburst_10percent_values;
+
+  // Get voltage
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+
+  // Get time
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+
+  // Get postburst fash ahp indices
+  retVal = getVec(IntFeatureData, StringData, "postburst_fast_ahp_indices", postburst_fast_ahp_indices);
+  if (retVal < 1) {
+    GErrorStr +=
+        "\n At least one post-burst fast AHP required for calculation of "
+        "interburst_10percent_indices.\n";
+    return -1;
+  }
+
+  retVal =
+      __interburst_10percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
+                                   interburst_10percent_indices, interburst_10percent_values);
+
+  if (retVal == 0)
+    return -1;
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "interburst_10percent_indices", interburst_10percent_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_10percent_values",
+                 interburst_10percent_values);
+    return interburst_10percent_indices.size();
+  }
+  return -1;
+}
+
+int LibV5::interburst_10percent_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "interburst_10percent_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
+// index and voltage value at 15% of the duration of the interburst after fast AHP
+static int __interburst_15percent_indices(const vector<double>& t, const vector<double>& v,
+                                        const vector<int>& postburst_fast_ahp_indices,
+                                        const vector<int>& peak_indices,
+                                        const vector<int>& burst_end_indices,
+                                        vector<int>& interburst_15percent_indices,
+                                        vector<double>& interburst_15percent_values) {
+
+  double time_interval, time_at_15percent;
+  size_t index_at_15percent;
+  for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
+    if (i < burst_end_indices.size()){
+      if (burst_end_indices[i] + 1 < peak_indices.size()){
+        time_interval = t[peak_indices[burst_end_indices[i] + 1]] - t[postburst_fast_ahp_indices[i]];
+        time_at_15percent = t[postburst_fast_ahp_indices[i]] + time_interval * 0.15;
+        index_at_15percent =
+          distance(t.begin(),
+                    find_if(t.begin(), t.end(),
+                            std::bind2nd(std::greater_equal<double>(), time_at_15percent)));
+        interburst_15percent_indices.push_back(index_at_15percent);
+        interburst_15percent_values.push_back(v[index_at_15percent]);
+      }
+    }
+  }
+  return interburst_15percent_indices.size();
+}
+
+int LibV5::interburst_15percent_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+
+  retVal = CheckInMap(IntFeatureData, StringData, "interburst_15percent_indices", nSize);
+  if (retVal) return nSize;
+
+  vector<int> interburst_15percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
+  vector<double> v, t, interburst_15percent_values;
+
+  // Get voltage
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+
+  // Get time
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+
+  // Get postburst fash ahp indices
+  retVal = getVec(IntFeatureData, StringData, "postburst_fast_ahp_indices", postburst_fast_ahp_indices);
+  if (retVal < 1) {
+    GErrorStr +=
+        "\n At least one post-burst fast AHP required for calculation of "
+        "interburst_15percent_indices.\n";
+    return -1;
+  }
+
+  retVal =
+      __interburst_15percent_indices(t, v, postburst_fast_ahp_indices, peak_indices, burst_end_indices,
+                                   interburst_15percent_indices, interburst_15percent_values);
+
+  if (retVal == 0)
+    return -1;
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "interburst_15percent_indices", interburst_15percent_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_15percent_values",
+                 interburst_15percent_values);
+    return interburst_15percent_indices.size();
+  }
+  return -1;
+}
+
+int LibV5::interburst_15percent_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "interburst_15percent_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
 // index and voltage value at 20% of the duration of the interburst after fast AHP
 static int __interburst_20percent_indices(const vector<double>& t, const vector<double>& v,
                                         const vector<int>& postburst_fast_ahp_indices,
