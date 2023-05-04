@@ -622,7 +622,7 @@ The voltages at the maxima of the peaks
     peak_voltage = voltage[peak_indices]
 
 
-LibV1 : AP_Amplitude, AP1_amp, AP2_amp, APlast_amp
+LibV1 : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from spike onset
@@ -631,10 +631,10 @@ The relative height of the action potential from spike onset
 - **Units**: mV
 - **Pseudocode**: ::
 
-    AP_Amplitude = peak_voltage - voltage[AP_begin_indices]
-    AP1_amp = AP_Amplitude[0]
-    AP2_amp = AP_Amplitude[1]
-    APlast_amp = AP_Amplitude[-1]
+    AP_amplitude = peak_voltage - voltage[AP_begin_indices]
+    AP1_amp = AP_amplitude[0]
+    AP2_amp = AP_amplitude[1]
+    APlast_amp = AP_amplitude[-1]
 
 LibV5 : mean_AP_amplitude
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -934,8 +934,8 @@ LibV5 : min_between_peaks_values
 
 Minimal voltage between consecutive spikes
 
-The last value is the minimum between last spike and stimulus end
-if strict stiminterval is True, and minimum between last spike and last value
+The last value of min_between_peaks_values is the minimum between last spike and stimulus end
+if strict stiminterval is True, and minimum between last spike and last voltage value
 if strict stiminterval is False
 
 
