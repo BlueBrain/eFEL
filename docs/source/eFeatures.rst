@@ -761,10 +761,19 @@ Difference of the amplitude of two subsequent peaks
 
 .. image:: _static/figures/AHP.png
 
+LibV5 : min_AHP_values
+~~~~~~~~~~~~~~~~~~~~~~
+
+Absolute voltage values at the first after-hyperpolarization.
+
+- **Required features**: LibV5:min_AHP_indices
+- **Units**: mV
+
 LibV5 : AHP_depth_abs
 ~~~~~~~~~~~~~~~~~~~~~
 
-Absolute voltage values at the first after-hyperpolarization
+Absolute voltage values at the first after-hyperpolarization.
+Is the same as min_AHP_values
 
 - **Required features**: LibV5:min_AHP_values (mV)
 - **Units**: mV
@@ -1881,6 +1890,53 @@ Difference between minimum and steady state during stimulation
 
 Python features
 ---------------
+
+Python efeature: initburst_sahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage after initial burst
+
+The end of the initial burst is detected when the ISIs frequency gets lower than initburst_freq_threshold, in Hz.
+Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
+and initburst_sahp_end (in ms) after the last spike of the burst.
+
+- **Required features**: LibV1: peak_time 
+- **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
+- **Units**: mV
+
+Python efeature: initburst_sahp_ssse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage from steady_state_voltage_stimend after initial burst
+
+- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
+- **Units**: mV
+- **Pseudocode**: ::
+
+    numpy.array([initburst_sahp_value[0] - ssse[0]])
+
+Python efeature: initburst_sahp_vb
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage from voltage base after initial burst
+
+- **Required features**: LibV5: voltage_base, initburst_sahp
+- **Units**: mV
+- **Pseudocode**: ::
+
+    numpy.array([initburst_sahp_value[0] - voltage_base[0]])
+
+Python efeature: depol_block_bool
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check for a depolarization block. Returns 1 if there is a depolarization block or a hyperpolarized block, and returns 0 otherwise.
+
+A depolarization block is detected when the voltage stays higher than the mean of AP_begin_voltage for longer than 50 ms.
+
+A hyperpolarized block is detected when, after stimulus start, the voltage stays below -75 mV for longer than 50 ms.
+
+- **Required features**: LibV5: AP_begin_voltage
+- **Units**: constant
 
 Python efeature: spikes_per_burst
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

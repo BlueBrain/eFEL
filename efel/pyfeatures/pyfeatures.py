@@ -241,7 +241,7 @@ def depol_block():
             [time[up_indexes[k]] - time[down_idx] for k,
              down_idx in enumerate(down_indexes)])
 
-        # if it stays in hyperpolarzed stage for more than min_duration,
+        # if it stays in hyperpolarized stage for more than min_duration,
         # flag as depolarization block
         if max_hyperpol_duration > block_min_duration:
             return None
