@@ -1929,11 +1929,11 @@ Slow AHP voltage from voltage base after initial burst
 Python efeature: depol_block_bool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Check for a depolarization block. Returns 1 if there is a depolarization block or a hyperpolarized block, and returns 0 otherwise.
+Check for a depolarization block. Returns 1 if there is a depolarization block or a hyperpolarization block, and returns 0 otherwise.
 
 A depolarization block is detected when the voltage stays higher than the mean of AP_begin_voltage for longer than 50 ms.
 
-A hyperpolarized block is detected when, after stimulus start, the voltage stays below -75 mV for longer than 50 ms.
+A hyperpolarization block is detected when, after stimulus start, the voltage stays below -75 mV for longer than 50 ms.
 
 - **Required features**: LibV5: AP_begin_voltage
 - **Units**: constant
