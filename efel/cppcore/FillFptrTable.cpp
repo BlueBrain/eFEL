@@ -299,8 +299,6 @@ int FillFptrTable() {
   FptrTableV5["postburst_adp_peak_values"] = &LibV5::postburst_adp_peak_values;
   FptrTableV5["time_to_postburst_fast_ahp"] = &LibV5::time_to_postburst_fast_ahp;
   FptrTableV5["time_to_postburst_adp_peak"] = &LibV5::time_to_postburst_adp_peak;
-  FptrTableV5["interburst_10percent_indices"] = &LibV5::interburst_10percent_indices;
-  FptrTableV5["interburst_10percent_values"] = &LibV5::interburst_10percent_values;
   FptrTableV5["interburst_15percent_indices"] = &LibV5::interburst_15percent_indices;
   FptrTableV5["interburst_15percent_values"] = &LibV5::interburst_15percent_values;
   FptrTableV5["interburst_20percent_indices"] = &LibV5::interburst_20percent_indices;
@@ -309,6 +307,10 @@ int FillFptrTable() {
   FptrTableV5["interburst_25percent_values"] = &LibV5::interburst_25percent_values;
   FptrTableV5["interburst_30percent_indices"] = &LibV5::interburst_30percent_indices;
   FptrTableV5["interburst_30percent_values"] = &LibV5::interburst_30percent_values;
+  FptrTableV5["interburst_40percent_indices"] = &LibV5::interburst_40percent_indices;
+  FptrTableV5["interburst_40percent_values"] = &LibV5::interburst_40percent_values;
+  FptrTableV5["interburst_60percent_indices"] = &LibV5::interburst_60percent_indices;
+  FptrTableV5["interburst_60percent_values"] = &LibV5::interburst_60percent_values;
 
   //****************** end of FptrTableV5 *****************************
 
