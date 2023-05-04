@@ -138,5 +138,10 @@
     "voltage_deflection_vb_ssse": "mV",
     "AP_amplitude": "mV",
     "adaptation_index2": "constant",
-    "AP_height": "mV"
+    "AP_height": "mV",
+    "min_AHP_values": "mV",
+    "initburst_sahp": "mV",
+    "initburst_sahp_ssse": "mV",
+    "initburst_sahp_vb": "mV",
+    "depol_block_bool": "constant"
 }
