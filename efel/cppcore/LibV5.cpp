@@ -5060,3 +5060,46 @@ int LibV5::interburst_60percent_values(mapStr2intVec& IntFeatureData,
   if (retVal >= 0) return nSize;
   return -1;
 }
+
+static int __interburst_duration(const vector<double>& peak_time,
+                                const vector<int>& burst_end_indices,
+                                vector<double>& interburst_duration) {
+
+  double duration;
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    if (burst_end_indices[i] + 1 < peak_time.size()){
+      duration = peak_time[burst_end_indices[i] + 1] - peak_time[burst_end_indices[i]];
+      interburst_duration.push_back(duration);
+    }
+  }
+  return interburst_duration.size();
+}
+
+int LibV5::interburst_duration(mapStr2intVec& IntFeatureData,
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  int retVal, nSize;
+
+  retVal = CheckInMap(IntFeatureData, StringData, "interburst_duration", nSize);
+  if (retVal) return nSize;
+
+  vector<int> burst_end_indices;
+  vector<double> peak_time, interburst_duration;
+
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time",
+                  peak_time);
+  if (retVal < 0) return -1;
+
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+
+  retVal =
+      __interburst_duration(peak_time, burst_end_indices, interburst_duration);
+
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "interburst_duration", interburst_duration);
+    return interburst_duration.size();
+  }
+  return -1;
+}

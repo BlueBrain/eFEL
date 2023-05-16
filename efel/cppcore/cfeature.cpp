@@ -289,6 +289,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["interburst_40percent_values"] = "double";
   featuretypes["interburst_60percent_indices"] = "int";
   featuretypes["interburst_60percent_values"] = "double";
+  featuretypes["interburst_duration"] = "double";
 
   // end of feature types
 }

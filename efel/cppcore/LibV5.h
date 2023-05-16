@@ -365,5 +365,8 @@ int interburst_60percent_indices(mapStr2intVec& IntFeatureData,
 int interburst_60percent_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
+int interburst_duration(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);                            
 }
 #endif

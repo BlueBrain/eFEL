@@ -311,6 +311,7 @@ int FillFptrTable() {
   FptrTableV5["interburst_40percent_values"] = &LibV5::interburst_40percent_values;
   FptrTableV5["interburst_60percent_indices"] = &LibV5::interburst_60percent_indices;
   FptrTableV5["interburst_60percent_values"] = &LibV5::interburst_60percent_values;
+  FptrTableV5["interburst_duration"] = &LibV5::interburst_duration;
 
   //****************** end of FptrTableV5 *****************************
 
