@@ -80,6 +80,6 @@ The output of this example is::
 This means that the eFEL found 5 action potentials in the voltage trace. The
 amplitudes of these APs are the result of the 'AP_amplitude' feature.
 
-The voltage before the start of the stimulis is measured by 'voltage_base'.
+The voltage before the start of the stimulus is measured by 'voltage_base'.
 
 Results are in mV.

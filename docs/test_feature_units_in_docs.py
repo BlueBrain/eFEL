@@ -114,7 +114,7 @@ def test_extract_feature_and_units():
 
         The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-        The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+        The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
         - **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
         - **Units**: constant

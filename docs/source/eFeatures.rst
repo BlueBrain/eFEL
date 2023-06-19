@@ -404,7 +404,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: burst_begin_indices, burst_end_indices, peak_time
 - **Units**: Hz
@@ -439,7 +439,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: strict_burst_mean_freq
 - **Units**: constant
@@ -483,7 +483,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: burst_begin_indices, peak_indices
 - **Units**: mV
@@ -510,7 +510,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: peak_indices, burst_end_indices
 - **Units**: mV
@@ -531,7 +531,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: peak_indices, burst_end_indices
 - **Units**: mV
@@ -563,7 +563,7 @@ This implementation does not assume that every spike belongs to a burst.
 
 The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
 
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: peak_indices, burst_end_indices, peak_time
 - **Units**: ms
