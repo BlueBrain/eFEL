@@ -1,0 +1,46 @@
+{
+    "title" : "eFEL",
+    "license": "LGPLv3",
+    "upload_type": "software",
+    "description": "The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.",
+    "creators": [
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Moor, Ruben"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Ranjan, Rajnish"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Van Geit, Werner",
+        "orcid": "0000-0002-2915-720X"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Rössert, Christian",
+        "orcid": "0000-0002-4839-2424"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Riquelme, Juan Luis",
+        "orcid": "0000-0003-4604-7405"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Damart, Tanguy",
+        "orcid": "0000-0003-2175-7304"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Jaquier, Aurélien",
+        "orcid": "0000-0001-6202-6175"
+      },
+      {
+        "affiliation": "Blue Brain Project, EPFL",
+        "name": "Tuncel, Anil",
+        "orcid": "0000-0003-0317-2556"
+      }
+    ]
+  }
