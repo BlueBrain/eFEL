@@ -31,6 +31,7 @@ from __future__ import division
 
 import os
 import numpy
+import pandas as pd
 
 import efel
 import efel.cppcore as cppcore
@@ -443,6 +444,21 @@ def getFeatureValues(
         return list(map_result)
     else:
         return map_result
+
+
+def get_features_df(
+        traces,
+        featureNames,
+        parallel_map=None,
+        raise_warnings=True):
+    """Auxiliary function to return the feature results as a dataframe."""
+    feature_values = getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=parallel_map,
+        return_list=True,
+        raise_warnings=raise_warnings)
+    return pd.DataFrame(feature_values)
 
 
 def get_py_feature(featureName):
