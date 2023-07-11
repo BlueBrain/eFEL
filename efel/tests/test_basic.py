@@ -2271,7 +2271,7 @@ def test_slow_ahp_start():
     ahp_depth_abs_slow = feature_values[0]['AHP_depth_abs_slow']
 
     expected = []
-    for i in range(1, len(peak_indices) - 1):
+    for i in range(len(peak_indices) - 1):
         new_start_time = time[peak_indices[i]] + trace['sahp_start'][0]
         new_idx = numpy.min(numpy.where(time >= new_start_time)[0])
         expected.append(numpy.min(voltage[new_idx:peak_indices[i + 1]]))
@@ -3202,6 +3202,66 @@ def test_AHP_depth_slow():
 
     numpy.testing.assert_allclose(
         AHP_depth_slow, expected
+    )
+
+
+def test_AHP_depth_from_AP_begin_voltage():
+    """basic: Test AHP depth from AP begin voltage"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = [
+        "AHP_depth_from_AP_begin_voltage", "AHP_depth_abs", "AP_begin_voltage"
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_from_AP_begin_voltage = feature_values[0][
+        "AHP_depth_from_AP_begin_voltage"
+    ]
+    AHP_depth_abs = feature_values[0]["AHP_depth_abs"]
+    AP_begin_voltage = feature_values[0]["AP_begin_voltage"]
+
+    expected = AP_begin_voltage - AHP_depth_abs
+    numpy.testing.assert_allclose(
+        AHP_depth_from_AP_begin_voltage, expected
+    )
+
+
+def test_AHP_depth_slow_from_AP_begin_voltage():
+    """basic: Test AHP depth slow from AP begin voltage"""
+
+    import efel
+    efel.reset()
+
+    trace, time, voltage, stim_start, stim_end = load_data(
+        'mean_frequency1', interp=True)
+
+    features = [
+        "AHP_depth_slow_from_AP_begin_voltage",
+        "AHP_depth_abs_slow", "AP_begin_voltage"
+    ]
+
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    AHP_depth_slow_from_AP_begin_voltage = feature_values[0][
+        "AHP_depth_slow_from_AP_begin_voltage"
+    ]
+    AHP_depth_abs_slow = feature_values[0]["AHP_depth_abs_slow"]
+    AP_begin_voltage = feature_values[0]["AP_begin_voltage"]
+    expected = AP_begin_voltage - AHP_depth_abs_slow
+    numpy.testing.assert_allclose(
+        AHP_depth_slow_from_AP_begin_voltage, expected
     )
 
 

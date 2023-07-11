@@ -290,6 +290,8 @@ int FillFptrTable() {
   FptrTableV5["postburst_min_indices"] = &LibV5::postburst_min_indices;
   FptrTableV5["postburst_min_values"] = &LibV5::postburst_min_values;
   FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
+  FptrTableV5["AHP_depth_slow_from_AP_begin_voltage"] = &LibV5::AHP_depth_slow_from_AP_begin_voltage;
+  FptrTableV5["AHP_depth_from_AP_begin_voltage"] = &LibV5::AHP_depth_from_AP_begin_voltage;
   
   //****************** end of FptrTableV5 *****************************
 

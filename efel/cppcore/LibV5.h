@@ -302,5 +302,11 @@ int postburst_min_values(mapStr2intVec& IntFeatureData,
 int time_to_interburst_min(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
+int AHP_depth_slow_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int AHP_depth_from_AP_begin_voltage(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
 }
 #endif

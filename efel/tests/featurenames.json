@@ -185,5 +185,7 @@
     "postburst_min_indices",
     "postburst_min_values",
     "time_to_interburst_min",
-    "AHP_depth_slow"
+    "AHP_depth_slow",
+    "AHP_depth_from_AP_begin_voltage",
+    "AHP_depth_slow_from_AP_begin_voltage"
 ]

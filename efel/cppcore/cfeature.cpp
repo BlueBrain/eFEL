@@ -269,6 +269,8 @@ void cFeature::fillfeaturetypes() {
   featuretypes["postburst_min_values"] = "double";
   featuretypes["time_to_interburst_min"] = "double";
 
+  featuretypes["AHP_depth_slow_from_AP_begin_voltage"] = "double";
+  featuretypes["AHP_depth_from_AP_begin_voltage"] = "double";
   // end of feature types
 }
 
