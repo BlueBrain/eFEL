@@ -45,7 +45,15 @@
     <td>Gitter</td>
     <td>
         <a href="https://gitter.im/bluebrain/efel">
-        <img src="https://badges.gitter.im/Join%20Chat.svg"
+        <img src="https://badges.gitter.im/Join%20Chat.svg" />
+    </a>
+    </td>
+</tr>
+<tr>
+    <td>Citation</td>
+    <td>
+        <a href="https://doi.org/10.5281/zenodo.593869">
+        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.8146607.svg" alt="DOI"/>
     </a>
     </td>
 </tr>
@@ -67,6 +75,32 @@ The core of the library is written in C++, and a Python wrapper is included.
 At the moment we provide a way to automatically compile and install the library
 as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
 library can be found [here](http://efel.readthedocs.io/en/latest/installation.html#installing-the-c-standalone-library).
+
+
+Citation
+========
+
+When you use this eFEL software for your research, we ask you to cite the following publications (this includes poster presentations):
+
+```
+    @article{efel, 
+        title={eFEL}, 
+        DOI={10.5281/zenodo.593869},
+        url={https://doi.org/10.5281/zenodo.593869} 
+        abstractNote={The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.}, 
+        publisher={Zenodo}, 
+        author={Ranjan, Rajnish and
+                Van Geit, Werner and
+                Moor, Ruben and
+                Rössert, Christian and
+                Riquelme, Juan Luis and
+                Damart, Tanguy and
+                Jaquier, Aurélien and
+                Tuncel, Anil},
+        year={2023}, 
+        month={Jul} 
+    }
+```
 
 News
 ====
