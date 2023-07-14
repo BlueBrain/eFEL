@@ -12,7 +12,7 @@ jobs:
     uses: BlueBrain/eFEL/.github/workflows/test.yml@master
 
   tag:
-    name: Bump version, push tag and store tag in github env
+    name: Bump version, push tag and make a release
     needs: call-test-workflow
     runs-on: ubuntu-20.04
     permissions:
@@ -39,6 +39,13 @@ jobs:
       - name: Get and store tag from triggered tag push
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
+          generate_release_notes: true
   
   wheels:
     needs: [call-test-workflow, tag]
@@ -114,13 +121,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: ${{ env.TAG_NAME }}
-          generate_release_notes: true
 
       - name: Download all artifacts
         uses: actions/download-artifact@v2
