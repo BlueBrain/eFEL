@@ -794,13 +794,13 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   picopy.push_back(v.size() - 1);
 
   for (size_t i = 0; i < apei.size(); i++) {
-    maxslope = std::distance(
+    max_slope = std::distance(
         dvdt.begin(),
         std::min_element(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1]));
     // assure that the width of the slope is bigger than 4
     apei[i] = std::distance(
         dvdt.begin(),
-        std::find_if(maxslope, dvdt.begin() + picopy[i + 1],
+        std::find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
                 std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
   }
   return apei.size();
