@@ -26,9 +26,23 @@ jobs:
         pip install tox tox-gh-actions
 
     - name: Run tox
-      run: tox
+      run: tox  # since python-version is set above it calls py3-etc. not docs
 
     - name: "Upload coverage to Codecov"
       uses: codecov/codecov-action@v2
       with:
         fail_ci_if_error: false
+  docs:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install tox tox-gh-actions
+    - name: Run tox
+      run: tox -e docs
