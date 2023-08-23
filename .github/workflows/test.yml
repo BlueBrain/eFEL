@@ -29,6 +29,7 @@ jobs:
       run: tox  # since python-version is set above it calls py3-etc. not docs
 
     - name: "Upload coverage to Codecov"
+      if: ${{matrix.python-version == '3.11'}}
       uses: codecov/codecov-action@v2
       with:
         fail_ci_if_error: false
