@@ -34,10 +34,10 @@
   </td>
 </tr>
 <tr>
-  <td>Coverage</td>
+  <td>Python Coverage</td>
   <td>
     <a href="https://codecov.io/gh/BlueBrain/efel">
-    <img src="https://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master" alt="coverage" />
+    <img src="https://codecov.io/github/BlueBrain/eFEL/coverage.svg?branch=master" alt="Python coverage" />
     </a>
   </td>
 </tr>
