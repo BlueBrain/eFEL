@@ -35,7 +35,8 @@ pypi: test
 	python setup.py sdist bdist
 	twine upload dist/*
 clean:
-	rm -rf tests/log/fllog.txt
+	rm -f tests/log/fllog.txt
+	rm -f fllog.txt
 	rm -rf build_cmake
 	rm -rf build
 	rm -rf docs/build
