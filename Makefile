@@ -1,5 +1,3 @@
-TEST_REQUIREMENTS=nose coverage virtualenv
-
 all: install
 install: clean
 	python setup.py sdist
@@ -25,8 +23,6 @@ doc_upload: doc
 	git commit -m "Updating docs" && \
 	git push "git@github.com:BlueBrain/eFEL.git" master:gh-pages --force && \
 	rm -rf .git
-install_test_requirements:
-	pip install -q $(TEST_REQUIREMENTS) --upgrade
 update_version:
 	cd efel && \
 	python -c 'import version; version._get_version_number()' && \
