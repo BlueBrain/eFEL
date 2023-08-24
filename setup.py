@@ -63,9 +63,17 @@ cppcore_headers = [
         'cppcore',
         filename) for filename in cppcore_headers]
 
+
+coverage_flags = []
+if os.environ.get('EFEL_COVERAGE_BUILD'):
+    coverage_flags = ['-fprofile-arcs', '-ftest-coverage']
+
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
-                    include_dirs=['efel/cppcore/'])
+                    include_dirs=['efel/cppcore/'],
+                    extra_compile_args=coverage_flags,
+                    extra_link_args=coverage_flags)
+
 setup(
     name="efel",
     version=versioneer.get_version(),

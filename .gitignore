@@ -12,6 +12,7 @@
 .vscode
 *.so
 coverage.xml
+cpp_coverage.xml
 docs/bin
 docs/lib
 docs/source/lib
