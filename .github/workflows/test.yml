@@ -28,9 +28,30 @@ jobs:
     - name: Run tox
       run: tox  # since python-version is set above it calls py3-etc. not docs
 
+  coverage:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install tox tox-gh-actions
+
+    - name: Run tox coverage
+      run: tox -e coverage  # specify the coverage environment
+
     - name: "Upload coverage to Codecov"
-      if: ${{matrix.python-version == '3.11'}}
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         fail_ci_if_error: false
   docs:
