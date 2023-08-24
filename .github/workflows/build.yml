@@ -68,7 +68,7 @@ jobs:
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
       CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1
-      CIBW_TEST_COMMAND: pytest -sx {project}/efel/tests
+      CIBW_TEST_COMMAND: pytest -sx {project}/tests
       CIBW_SKIP: "*-musllinux_*"
       
     steps:
