@@ -26,7 +26,7 @@ jobs:
         pip install tox tox-gh-actions
 
     - name: Run tox
-      run: tox  # since python-version is set above it calls py3-etc. not docs
+      run: tox  # this does not call docs
 
   coverage:
     runs-on: ubuntu-20.04
