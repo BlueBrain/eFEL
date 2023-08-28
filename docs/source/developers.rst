@@ -101,7 +101,7 @@ test_basic.py>`_
 .Just add your own test by defining a new function 'test_yourfeature()'.
 
 Some test data is available
-`here <https://github.com/BlueBrain/eFEL/tree/master/tests/
+`at this link <https://github.com/BlueBrain/eFEL/tree/master/tests/
 testdata/basic>`_
 , but you can of course add your own traces.
 
