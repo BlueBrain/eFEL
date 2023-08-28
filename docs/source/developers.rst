@@ -9,7 +9,7 @@ Requirements
 As a developer you will need some extra requirements
 
 * To get the latest source code: `Git <https://git-scm.com/>`_
-* To run the tests: `Nose <https://nose.readthedocs.org/en/latest/>`_
+* To run the tests: `Pytest <https://readthedocs.org/projects/pytest/>`_
 * To build the documentation: `Sphinx <http://sphinx-doc.org/>`_, and pdflatex
   (e.g. from `Mactex <https://tug.org/mactex/>`_)
 
@@ -34,7 +34,7 @@ To simplify certain tasks for developers, a Makefile is provided in the root of
 the eFEL project. This Makefile has the following targets
 
 * **install**: installs the eFEL using pip from the working directory
-* **test**: run the installation and all the Nose tests
+* **test**: run the installation and all the tests
 * **doc**: build the sphinx and latex documentation
 * **clean**: clean up the build directories
 * **pypi**: run test target and upload to pypi
@@ -91,17 +91,17 @@ You can confirm everything compiles correctly by executing::
 Adding a test
 -------------
 Most eFeatures are fairly easy to implement in Python, so it is advised to first
-write a Python implementation of your eFeature, and to add it Nose tests.
+write a Python implementation of your eFeature, and to add a test to it.
 Then, while you are implementing the code in C++ you can easily compare the
-results to the Nose test.
+results to the test.
 
-The Nose tests of the individual eFeatures are
-`here_nose <https://github.com/BlueBrain/eFEL/blob/master/efel/tests/
+The tests of the individual eFeatures are
+`here <https://github.com/BlueBrain/eFEL/blob/master/tests/
 test_basic.py>`_
 .Just add your own test by defining a new function 'test_yourfeature()'.
 
 Some test data is available
-`here <https://github.com/BlueBrain/eFEL/tree/master/efel/tests/
+`at this link <https://github.com/BlueBrain/eFEL/tree/master/tests/
 testdata/basic>`_
 , but you can of course add your own traces.
 
