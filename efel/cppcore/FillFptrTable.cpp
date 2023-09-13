@@ -79,9 +79,7 @@ int FillFptrTable() {
   */
 
   // AP parameter
-  FptrTableV2["AP_begin_indices"] = &LibV2::AP_begin_indices;
   FptrTableV2["AP_rise_indices"] = &LibV2::AP_rise_indices;
-  FptrTableV2["AP_end_indices"] = &LibV2::AP_end_indices;
   FptrTableV2["AP_fall_indices"] = &LibV2::AP_fall_indices;
   // eFeatures
   FptrTableV2["AP_duration"] = &LibV2::AP_duration;
@@ -139,33 +137,12 @@ int FillFptrTable() {
   //****************** end of FptrTableV2 *****************************
 
   //******************  FptrTableV3 *****************************
-  FptrTableV3["interpolate"] = &LibV3::interpolate;
-  FptrTableV3["trace_check"] = &LibV3::trace_check;
-  FptrTableV3["peak_indices"] = &LibV3::peak_indices;
-  FptrTableV3["ISI_values"] = &LibV3::ISI_values;
-  FptrTableV3["ISI_CV"] = &LibV3::ISI_CV;
-  FptrTableV3["peak_voltage"] = &LibV3::peak_voltage;
-  FptrTableV3["mean_frequency"] = &LibV3::firing_rate;
-  FptrTableV3["peak_time"] = &LibV3::peak_time;
-  FptrTableV3["time_to_first_spike"] = &LibV3::first_spike_time;
-  FptrTableV3["spike_half_width"] = &LibV3::spike_width1;
-  FptrTableV3["min_AHP_indices"] = &LibV3::min_AHP_indices;
-  FptrTableV3["min_AHP_values"] = &LibV3::min_AHP_values;
-  FptrTableV3["AHP_depth_abs"] = &LibV3::AHP_depth_abs;
-  FptrTableV3["voltage_base"] = &LibV3::rest_voltage_value;
-  FptrTableV3["adaptation_index2"] = &LibV3::adaptation_index2;
-  FptrTableV3["AP_height"] = &LibV3::AP_height;
   FptrTableV3["AP_amplitude"] = &LibV3::AP_amplitude;
   FptrTableV3["AP_width"] = &LibV3::AP_width;
-  FptrTableV3["doublet_ISI"] = &LibV3::doublet_ISI;
 
   FptrTableV3["AP_begin_indices"] = &LibV3::AP_begin_indices;
-  FptrTableV3["AP_rise_indices"] = &LibV3::AP_rise_indices;
   FptrTableV3["AP_end_indices"] = &LibV3::AP_end_indices;
-  FptrTableV3["AP_fall_indices"] = &LibV3::AP_fall_indices;
   // eFeatures
-  FptrTableV3["AP_duration"] = &LibV3::AP_duration;
-
   FptrTableV3["depolarized_base"] = &LibV3::depolarized_base;
 
   //****************** end of FptrTableV3 *****************************
