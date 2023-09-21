@@ -1,4 +1,3 @@
-from __future__ import print_function
 """Basic example 1 for eFEL"""
 
 import os
