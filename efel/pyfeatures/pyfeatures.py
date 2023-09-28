@@ -61,18 +61,21 @@ def time():
 
 def impedance():
     from scipy.ndimage.filters import gaussian_filter1d
+
     voltage_trace = voltage()
     holding_voltage = _get_cpp_feature("voltage_base")
     normalized_voltage = voltage_trace - holding_voltage
     current_trace = current()
+    dt = _get_cpp_data("interp_step")
     if current_trace is not None:
-        current_base = numpy.median(current_trace[0:10])
+        current_base = _get_cpp_feature("current_base")
         normalized_current = current_trace - current_base
         spike_count = _get_cpp_feature("Spikecount")
         if spike_count < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)
-            freq = numpy.fft.fftfreq(len(normalized_voltage), d=0.0001)
+            # convert dt from ms to s to have freq in Hz
+            freq = numpy.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
             if any(fft_cur) == 0:
                 return None
             else:
