@@ -793,7 +793,7 @@ a given number of ms (default: 5) after the peak
 Relative voltage values at the first after-hyperpolarization starting 
 a given number of ms (default: 5) after the peak
 
-- **Required features**: LibV1:voltage_base (mV), LibV1:AHP_depth_abs_slow (mV)
+- **Required features**: LibV5:voltage_base (mV), LibV1:AHP_depth_abs_slow (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -813,7 +813,7 @@ interspike interval
 
 Relative voltage values at the first after-hyperpolarization
 
-- **Required features**: LibV1:voltage_base (mV), LibV5:min_AHP_values (mV)
+- **Required features**: LibV5:voltage_base (mV), LibV5:min_AHP_values (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1810,7 +1810,7 @@ LibV1 : AHP_depth_last
 
 Relative voltage values at the last after-hyperpolarization
 
-- **Required features**: LibV1:voltage_base (mV), LibV5:last_AHP_values (mV)
+- **Required features**: LibV5:voltage_base (mV), LibV5:last_AHP_values (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 

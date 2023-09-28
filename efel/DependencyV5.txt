@@ -150,7 +150,7 @@ LibV5:current #LibV1:interpolate
 LibV5:time #LibV1:interpolate 
 LibV5:steady_state_voltage_stimend #LibV1:interpolate 
 LibV5:voltage_base #LibV1:interpolate
-LibV5:current_base 
+LibV5:current_base #LibV1:interpolate
 LibV5:decay_time_constant_after_stim #LibV1:interpolate 
 LibV5:sag_time_constant #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:sag_amplitude #LibV1:interpolate
 LibV5:multiple_decay_time_constant_after_stim #LibV5:decay_time_constant_after_stim #LibV1:interpolate
@@ -172,7 +172,7 @@ LibV5:ADP_peak_indices    #LibV5:min_AHP_indices #LibV5:min_between_peaks_indice
 LibV5:ADP_peak_values     #LibV5:ADP_peak_indices #LibV1:interpolate
 LibV5:ADP_peak_amplitude  #LibV5:ADP_peak_values #LibV5:min_AHP_values #LibV1:interpolate
 LibV5:interburst_min_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:interburst_min_values      #LibV5:interburst_min_indices #LibV1: interpolate
+LibV5:interburst_min_values      #LibV5:interburst_min_indices #LibV1:interpolate
 LibV5:postburst_min_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:postburst_min_values      #LibV5:postburst_min_indices #LibV1: interpolate
+LibV5:postburst_min_values      #LibV5:postburst_min_indices #LibV1:interpolate
 LibV5:time_to_interburst_min     #LibV5:interburst_min_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
