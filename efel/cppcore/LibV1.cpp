@@ -73,6 +73,15 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   setVec(DoubleFeatureData, StringData, "V", VIntrpol);
   setVec(DoubleFeatureData, StringData, "T", TIntrpol);
   setVec(IntFeatureData, StringData, "interpolate", intrpolte);
+
+  // also interpolate current if present
+  vector<double> I, IIntrpol, TIntrpolI;
+  int retValI;
+  retValI = getVec(DoubleFeatureData, StringData, "I", I);
+  if (retValI > 0){
+    LinearInterpolation(InterpStep, T, I, TIntrpolI, IIntrpol);
+    setVec(DoubleFeatureData, StringData, "I", IIntrpol);
+  }
   return retVal;
 }
 
