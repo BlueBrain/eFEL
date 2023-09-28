@@ -65,8 +65,8 @@ The code and example trace are available
         for trace_results in traces_results:
             # trace_result is a dictionary, with as keys the requested eFeatures
             for feature_name, feature_values in trace_results.items():
-                print "Feature %s has the following values: %s" % \
-                    (feature_name, ', '.join([str(x) for x in feature_values]))
+                print("Feature %s has the following values: %s" % \
+                    (feature_name, ', '.join([str(x) for x in feature_values])))
 
 
     if __name__ == '__main__':
