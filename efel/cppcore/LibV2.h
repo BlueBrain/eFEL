@@ -30,10 +30,6 @@ namespace LibV2 {
 // AP parameters of eCode Specification 1.04
 // partly reimplemented Shaul's matlab code ap_points.m
 //
-int AP_begin_indices(mapStr2intVec& IntFeatureData,
-                     mapStr2doubleVec& DoubleFeatureData,
-                     mapStr2Str& StringData);
-
 int AP_rise_indices(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData);
@@ -41,9 +37,6 @@ int AP_rise_indices(mapStr2intVec& IntFeatureData,
 int AP_fall_indices(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData);
-
-int AP_end_indices(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
 // eFeatures
 int AP_duration(mapStr2intVec& IntFeatureData,

@@ -82,6 +82,7 @@ def reset():
         _settings.down_derivative_threshold)
     setDoubleSetting('interp_step', 0.1)
     setDoubleSetting('burst_factor', 1.5)
+    setDoubleSetting('strict_burst_factor', 2.0)
     setDoubleSetting('voltage_base_start_perc', 0.9)
     setDoubleSetting('voltage_base_end_perc', 1.0)
     setDoubleSetting('current_base_start_perc', 0.9)
@@ -99,6 +100,7 @@ def reset():
     setStrSetting("current_base_mode", "mean")
     setDoubleSetting("precision_threshold", 1e-10)
     setDoubleSetting("sahp_start", 5.0)
+    setIntSetting("ignore_first_ISI", 1)
 
     _initialise()
 
@@ -354,7 +356,10 @@ def _initialise():
         cppcore.setFeatureInt(setting_name, [int_setting])
 
     for setting_name, double_setting in list(_double_settings.items()):
-        cppcore.setFeatureDouble(setting_name, [double_setting])
+        if isinstance(double_setting, list):
+            cppcore.setFeatureDouble(setting_name, double_setting)
+        else:
+            cppcore.setFeatureDouble(setting_name, [double_setting])
 
     for setting_name, str_setting in list(_string_settings.items()):
         cppcore.setFeatureString(setting_name, str_setting)

@@ -32,9 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import shutil
 import tempfile
-import nose.tools as nt
 
 import numpy as np
+import pytest
 
 testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'testdata/')
@@ -97,7 +97,7 @@ class TestCppcore(object):
         test_data_path = os.path.join(testdata_dir, '../featurenames.json')
         with open(test_data_path, 'r') as featurenames_json:
             expected_featurenames = json.load(featurenames_json)
-        nt.assert_equal(set(feature_names), set(expected_featurenames))
+        assert set(feature_names) == set(expected_featurenames)
 
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
@@ -106,15 +106,15 @@ class TestCppcore(object):
         return_value = efel.cppcore.getFeatureDouble(
             "AP_amplitude",
             feature_values)
-        nt.assert_equal(return_value, -1)
+        assert return_value == -1
 
-    @nt.raises(TypeError)
+    @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureDouble_wrong_type(self):  # pylint: disable=R0201
         """cppcore: Teting getFeatureDouble with wrong type"""
         import efel.cppcore
         efel.cppcore.getFeatureDouble("AP_fall_indices", list())
 
-    @nt.raises(TypeError)
+    @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureInt_wrong_type(self):  # pylint: disable=R0201
         """cppcore: Teting getFeatureInt with wrong type"""
         import efel.cppcore
@@ -125,7 +125,7 @@ class TestCppcore(object):
         import efel.cppcore
 
         self.setup_data()
-        nt.assert_almost_equal(
+        np.testing.assert_allclose(
             3.09045815935,
             efel.cppcore.getDistance(
                 'AP_amplitude',
@@ -141,28 +141,27 @@ class TestCppcore(object):
         # get double feature
         feature_values = list()
         efel.cppcore.getFeature('AP_amplitude', feature_values)
-        nt.ok_(isinstance(feature_values[0], float))
-        nt.eq_(5, len(feature_values))
-        nt.ok_(
-            np.allclose(
-                [80.45724099440199, 80.46320199354948, 80.73300299176428,
-                 80.9965359926715, 81.87292599493423], feature_values))
+        assert isinstance(feature_values[0], float)
+        assert 5 == len(feature_values)
+        assert np.allclose([80.45724099440199, 80.46320199354948,
+                            80.73300299176428, 80.9965359926715,
+                            81.87292599493423], feature_values)
 
         # get int feature
         feature_values = list()
         efel.cppcore.getFeature('AP_fall_indices', feature_values)
-        nt.ok_(isinstance(feature_values[0], int))
-        nt.eq_(5, len(feature_values))
-        nt.eq_([5665, 6066, 6537, 7170, 8275], feature_values)
+        assert isinstance(feature_values[0], int)
+        assert 5 == len(feature_values)
+        assert [5665, 6066, 6537, 7170, 8275] == feature_values
 
     def test_getFeature_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
         feature_values = list()
         return_value = efel.cppcore.getFeature("AP_amplitude", feature_values)
-        nt.assert_equal(return_value, -1)
+        assert return_value == -1
 
-    @nt.raises(TypeError)
+    @pytest.mark.xfail(raises=TypeError)
     def test_getFeature_non_existant(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel.cppcore
@@ -177,9 +176,9 @@ class TestCppcore(object):
             self.setup_data()
             with open(os.path.join(tempdir, 'fllog.txt')) as fd:
                 contents = fd.read()
-                nt.ok_('Initializing' in contents)
+                assert 'Initializing' in contents
                 # test vector working (if more than 10 elements, prints ...
-                nt.ok_('...' in contents)
+                assert '...' in contents
             # re-call efel's Initialize with current dir
             # to remove pointer to tempdir.
             # this pointer was preventing the deletion of tempdir on windows.

@@ -165,6 +165,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["Spikecount"] = "int";
   featuretypes["Spikecount_stimint"] = "int";
   featuretypes["AHP_depth"] = "double";
+  featuretypes["AHP_depth_slow"] = "double";
   featuretypes["amp_drop_first_second"] = "double";
   featuretypes["amp_drop_first_last"] = "double";
   featuretypes["amp_drop_second_last"] = "double";
@@ -240,6 +241,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["voltage_base"] = "double";
   featuretypes["current_base"] = "double";
   featuretypes["decay_time_constant_after_stim"] = "double";
+  featuretypes["multiple_decay_time_constant_after_stim"] = "double";
   featuretypes["sag_time_constant"] = "double";
   featuretypes["maximum_voltage_from_voltagebase"] = "double";
   featuretypes["sag_amplitude"] = "double";
@@ -250,6 +252,22 @@ void cFeature::fillfeaturetypes() {
   featuretypes["min_between_peaks_indices"] = "int";
   featuretypes["min_between_peaks_values"] = "double";
   featuretypes["AP_width_between_threshold"] = "double";
+
+  featuretypes["burst_begin_indices"] = "int";
+  featuretypes["burst_end_indices"] = "int";
+  featuretypes["strict_burst_mean_freq"] = "double";
+  featuretypes["strict_burst_number"] = "int";
+  featuretypes["strict_interburst_voltage"] = "double";
+
+  featuretypes["ADP_peak_indices"] = "int";
+  featuretypes["ADP_peak_values"] = "double";
+  featuretypes["ADP_peak_amplitude"] = "double";
+
+  featuretypes["interburst_min_indices"] = "int";
+  featuretypes["interburst_min_values"] = "double";
+  featuretypes["postburst_min_indices"] = "int";
+  featuretypes["postburst_min_values"] = "double";
+  featuretypes["time_to_interburst_min"] = "double";
 
   // end of feature types
 }

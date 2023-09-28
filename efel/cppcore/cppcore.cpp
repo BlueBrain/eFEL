@@ -40,11 +40,6 @@
 #include <cfeature.h>
 #include <efel.h>
 
-#if PY_MAJOR_VERSION >= 3
-#define IS_PY3K
-#endif
-
-
 extern cFeature* pFeature;
 
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
@@ -326,7 +321,6 @@ static PyMethodDef CppCoreMethods[] = {
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
-#if PY_MAJOR_VERSION >= 3
 struct module_state {
   PyObject* error;
 };
@@ -351,8 +345,3 @@ extern "C" PyObject* PyInit_cppcore(void) {
   PyObject* module = PyModule_Create(&moduledef);
   return module;
 }
-#else
-PyMODINIT_FUNC initcppcore(void) {
-  (void)Py_InitModule("cppcore", CppCoreMethods);
-}
-#endif

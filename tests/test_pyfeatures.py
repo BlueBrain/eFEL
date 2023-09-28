@@ -31,8 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
 import numpy
-import nose.tools as nt
-from nose.plugins.attrib import attr  # NOQA
 
 import efel
 
@@ -164,6 +162,9 @@ def _load_trace(trace_name):
         'stim_end': [trace_data['stim_end']],
     }
 
+    if trace_name == "current":
+        trace['T'] = trace['T'] * 1000.0  # s -> ms
+
     if 'i_col' in trace_data:
         trace['I'] = efel.io.load_fragment('%s#col=%d' %
                                            (url, trace_data['i_col']))
@@ -180,12 +181,12 @@ def _test_expected_value(feature_name, expected_values):
         feature_values = efel.getFeatureValues([trace], [feature_name])
 
         if expected_value is None:
-            nt.assert_true(feature_values[0][feature_name] is None)
+            assert feature_values[0][feature_name] is None
         else:
-            nt.assert_true(
-                numpy.allclose(
-                    feature_values[0][feature_name],
-                    expected_value))
+            assert numpy.allclose(
+                feature_values[0][feature_name],
+                expected_value
+            )
 
 
 def test_initburst_sahp():
@@ -236,16 +237,17 @@ def test_initburst_sahp_ssse():
 
 def test_ISIs():
     """pyfeatures: Test ISIs feature"""
+    efel.reset()
 
     mf1_trace = _load_trace('mean_frequency1')
 
     feature_values = efel.getFeatureValues([mf1_trace], ['ISI_values', 'ISIs'])
 
-    nt.assert_true(numpy.allclose(
+    assert numpy.allclose(
         feature_values[0]['ISIs'][1:],
-        feature_values[0]['ISI_values']))
+        feature_values[0]['ISI_values'])
 
-    nt.assert_almost_equal(
+    numpy.testing.assert_allclose(
         efel.getDistance(
             mf1_trace,
             'ISIs',
@@ -261,6 +263,17 @@ def test_depol_block():
         'depol_block_subthresh': [1], 'depol_block_subthresh_hyperpol': [1],
         'depol_block_spiking': [1],
         'depol_block_db': None}
+
+    _test_expected_value(feature_name, expected_values)
+
+
+def test_depol_block_bool():
+    """pyfeatures: Test depolarization block bool feature"""
+    feature_name = 'depol_block_bool'
+    expected_values = {
+        'depol_block_subthresh': [0], 'depol_block_subthresh_hyperpol': [0],
+        'depol_block_spiking': [0],
+        'depol_block_db': [1]}
 
     _test_expected_value(feature_name, expected_values)
 
@@ -290,14 +303,14 @@ def test_pydistance():
     ]:
         efel.reset()
         mf1_trace['stim_end'] = [stim_end]
-        nt.assert_equal(
-            efel.getDistance(*args), efel.api._getDistance_cpp(*args))
+        assert (
+            efel.getDistance(*args) == efel.api._getDistance_cpp(*args))
 
     # Extra sanity checks for trace_check
     mf1_trace['stim_end'] = [600]
 
     efel.reset()
-    nt.assert_almost_equal(efel.getDistance(
+    numpy.testing.assert_allclose(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
@@ -305,7 +318,7 @@ def test_pydistance():
         trace_check=False), 30.422218394481284)
 
     efel.reset()
-    nt.assert_almost_equal(efel.api._getDistance_cpp(
+    numpy.testing.assert_allclose(efel.api._getDistance_cpp(
         mf1_trace,
         feature_name,
         mean,
@@ -323,24 +336,12 @@ def test_pydistance_featurefail():
     std = 1.0
 
     efel.reset()
-    nt.assert_almost_equal(efel.getDistance(
+    numpy.testing.assert_allclose(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
         std,
         trace_check=True), 250.0)
-
-
-def test_current():
-    """pyfeatures: Test current feature"""
-
-    feature_name = 'current'
-    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                      'basic',
-                                      'current.txt'))
-    current = data[:, 1]
-    expected_values = {'current': current}
-    _test_expected_value(feature_name, expected_values)
 
 
 def test_interpolate_current():
@@ -357,19 +358,24 @@ def test_interpolate_current():
     data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
                                       'basic',
                                       'current.txt'))
-    time = data[:, 0]
+    time = data[:, 0] * 1000.0  # -> ms
     current = data[:, 1]
     voltage = data[:, 2]
 
     feature_name = ['time', 'current', 'voltage']
     trace = _load_trace('current')
-    feature_values = efel.getFeatureValues([trace], ['current'])
-    interp_time, interp_current = interpolate(time, current, new_dt=0.00025)
+    feature_values = efel.getFeatureValues([trace], feature_name)
+    feature_time = feature_values[0]["time"]
+    feature_current = feature_values[0]["current"]
+    feature_voltage = feature_values[0]["voltage"]
+    interp_time, interp_current = interpolate(time, current, new_dt=0.1)
+    _, interp_voltage = interpolate(time, voltage, new_dt=0.1)
 
-    nt.assert_equal(len(interp_time), len(time))
-    nt.assert_equal(len(interp_current), len(current))
-    nt.assert_equal(len(voltage), len(current))
-    nt.assert_true(numpy.allclose(interp_current, current))
+    assert len(interp_time) == len(feature_time)
+    assert len(interp_current) == len(feature_current)
+    assert len(interp_voltage) == len(feature_voltage)
+    assert len(feature_voltage) == len(feature_current)
+    assert numpy.allclose(interp_current, feature_current, atol=1e-6)
 
 
 def test_impedance():

@@ -624,6 +624,7 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
 //
 static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
+                              const vector<int>& pi,
                               const vector<int>& ahpi, vector<int>& apbi,
                               double dTh, int derivative_window) {
   const double derivativethreshold = dTh;
@@ -635,18 +636,23 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  /*for (size_t i = 0; i < dvdt.size(); i++) {
-      printf("%d %f %f\n", i, dvdt[i]);
-  }
-  printf("\n");*/
-
   // restrict to time interval where stimulus is applied
-  vector<int> minima;
+  vector<int> minima, peak_indices;
   int stimbeginindex =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
                        std::bind2nd(std::greater_equal<double>(), stimstart)));
-  minima.push_back(stimbeginindex);
+  
+  if (stimbeginindex > 1){
+    // to avoid skipping AP_begin when it is exactly at stimbeginindex
+    // also because of float precision and interpolation, sometimes stimbeginindex
+    // can be slightly above 'real' stim begin index
+    minima.push_back(stimbeginindex - 2);
+  } else if (stimbeginindex == 1){
+    minima.push_back(stimbeginindex - 1);
+  } else {
+    minima.push_back(stimbeginindex);
+  }
   for (size_t i = 0; i < ahpi.size(); i++) {
     if (ahpi[i] > stimbeginindex) {
       minima.push_back(ahpi[i]);
@@ -655,16 +661,21 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     //    break;
     //}
   }
-  // if the AHP_indices are already restricted make sure that we do not miss
-  // the last spike
-  // if(t[minima.back()] < stimend) {
+   for (size_t i = 0; i < pi.size(); i++) {
+    if (pi[i] > stimbeginindex) {
+      peak_indices.push_back(pi[i]);
+    }
+  }
   int endindex = distance(t.begin(), t.end());
-  minima.push_back(endindex);
-  //}
+  if (minima.size() < peak_indices.size()){
+    GErrorStr += "\nMore peaks than min_AHP in AP_begin_indices\n";
+    return -1;
+  }
+
   // printf("Found %d minima\n", minima.size());
-  for (size_t i = 0; i < minima.size() - 1; i++) {
+  for (size_t i = 0; i < peak_indices.size(); i++) {
     // assure that the width of the slope is bigger than 4
-    int newbegin = minima[i];
+    int newbegin = peak_indices[i];
     int begin = minima[i];
     int width = derivative_window;
     bool skip = false;
@@ -675,16 +686,23 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
       begin = distance(
           dvdt.begin(),
           find_if(
-              dvdt.begin() + newbegin, dvdt.begin() + minima[i + 1],
-              std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
+              // use reverse iterator to get last occurence
+              // and avoid false positive long before the spike
+              dvdt.rbegin() + v.size() - newbegin,
+              dvdt.rbegin() + v.size() - minima[i],
+              std::bind2nd(std::less_equal<double>(), derivativethreshold)).base());
+      // cover edge case to avoid going out of index in the while condition
+      if (begin > endindex - width){
+        begin = endindex - width;
+      }
       // printf("%d %d\n", newbegin, minima[i+1]);
-      if (begin == minima[i + 1]) {
+      if (begin == minima[i]) {
         // printf("Skipping %d %d\n", newbegin, minima[i+1]);
         // could not find a spike in between these minima
         skip = true;
         break;
       }
-      newbegin = begin + 1;
+      newbegin = begin - 1;
     } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
                      std::bind2nd(std::less<double>(), derivativethreshold)) !=
              dvdt.begin() + begin + width);
@@ -721,6 +739,9 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   vector<double> stimend;
   retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
   if (retVal < 0) return -1;
+  vector<int> pi;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
+  if (retVal < 0) return -1;
   vector<int> ahpi;
   retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
   if (retVal < 0) return -1;
@@ -745,7 +766,8 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   
   // Calculate feature
   retVal =
-      __AP_begin_indices(t, v, stimstart[0], stimend[0], ahpi, apbi, dTh[0], derivative_window[0]);
+      __AP_begin_indices(t, v, stimstart[0], stimend[0], 
+                         pi, ahpi, apbi, dTh[0], derivative_window[0]);
 
   // Save feature value
   if (retVal >= 0) {
@@ -761,6 +783,7 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;
+  int max_slope;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
@@ -771,10 +794,13 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   picopy.push_back(v.size() - 1);
 
   for (size_t i = 0; i < apei.size(); i++) {
+    max_slope = std::distance(
+        dvdt.begin(),
+        std::min_element(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1]));
     // assure that the width of the slope is bigger than 4
     apei[i] = std::distance(
         dvdt.begin(),
-        std::find_if(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1],
+        std::find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
                 std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
   }
   return apei.size();
@@ -1286,6 +1312,7 @@ int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
 
 // spike width at spike start
 static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
+                            double stimstart,
                             const vector<int>& AP_begin_indices,
                             const vector<int>& min_ahp_indices,
                             vector<double>& AP_begin_width) {
@@ -1294,15 +1321,32 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   /// vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   // copy(min_ahp_indices.begin(), min_ahp_indices.end(),
   // min_ahp_indices_plus.begin());
-  if (AP_begin_indices.size() < min_ahp_indices.size()) return -1;
+
+  // keep only min_ahp_indices values that are after stim start
+  // because AP_begin_indices are all after stim start
+  // if not done, could cause cases where AP_begin_indices[i] > min_ahp_indices[i]
+  // leading to segmentation faults
+  int stimbeginindex =
+      distance(t.begin(),
+               find_if(t.begin(), t.end(),
+                       std::bind2nd(std::greater_equal<double>(), stimstart)));
+
+  vector<int> strict_min_ahp_indices;
   for (size_t i = 0; i < min_ahp_indices.size(); i++) {
+    if (min_ahp_indices[i] > stimbeginindex) {
+      strict_min_ahp_indices.push_back(min_ahp_indices[i]);
+    }
+  }
+
+  if (AP_begin_indices.size() < strict_min_ahp_indices.size()) return -1;
+  for (size_t i = 0; i < strict_min_ahp_indices.size(); i++) {
     double v_start = v[AP_begin_indices[i]];
     // interpolate this one time step where the voltage is close to v_start in
     // the falling edge
     int rise_index = AP_begin_indices[i];
     int fall_index = distance(
         v.begin(),
-        find_if(v.begin() + rise_index + 1, v.begin() + min_ahp_indices[i],
+        find_if(v.begin() + rise_index + 1, v.begin() + strict_min_ahp_indices[i],
                 std::bind2nd(std::less_equal<double>(), v_start)));
     // v_dev = v_start - v[fall_index];
     // delta_v = v[fall_index] - v[fall_index - 1];
@@ -1329,6 +1373,9 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
   retVal = getVec(DoubleFeatureData, StringData, "T", t);
   if (retVal < 0) return -1;
+  vector<double> stimstart;
+  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+  if (retVal < 0) return -1;
   retVal =
       getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndex);
   if (retVal < 0) return -1;
@@ -1343,7 +1390,7 @@ int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
   // Take derivative of voltage from 1st AHPmin to the peak of the spike
   // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
   retVal =
-      __AP_begin_width(t, V, AP_begin_indices, minAHPIndex, AP_begin_width);
+      __AP_begin_width(t, V, stimstart[0], AP_begin_indices, minAHPIndex, AP_begin_width);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_begin_width",
                  AP_begin_width);
@@ -2557,6 +2604,71 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
+// Calculate the time constants after each step for a stimuli containing several
+// steps, as for example SpikeRec protocols
+int LibV5::multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
+                                             mapStr2doubleVec& DoubleFeatureData,
+                                             mapStr2Str& StringData) {
+  int retVal;
+  int nSize;
+
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "multiple_decay_time_constant_after_stim", nSize);
+  if (retVal) {
+    return nSize;
+  }
+
+  vector<double> voltages;
+  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
+  if (retVal < 0) return -1;
+
+  vector<double> times;
+  retVal = getVec(DoubleFeatureData, StringData, "T", times);
+  if (retVal < 0) return -1;
+
+  vector<double> vect;
+  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_end", vect);
+  if (retVal < 0) return -1;
+  vector<double> stimsEnd = vect;
+
+  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_start", vect);
+  if (retVal < 0) return -1;
+  vector<double> stimsStart = vect;
+
+  double decay_start_after_stim, decay_end_after_stim;
+  retVal = getVec(DoubleFeatureData, StringData, "decay_start_after_stim",
+                        vect);
+  if (retVal == 1) {
+    decay_start_after_stim = vect[0];
+  } else {
+    decay_start_after_stim = 1.0;
+  }
+
+  retVal =
+      getVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
+  if (retVal == 1) {
+    decay_end_after_stim = vect[0];
+  } else {
+    decay_end_after_stim = 10.0;
+  }
+
+  // Call the decay_time_constant_after_stim for each set of stim_start
+  // and stim_end
+  double ret_dtcas;
+  vector<double> dtcas;
+  for (size_t i = 0; i < stimsStart.size(); i++) {
+      ret_dtcas = __decay_time_constant_after_stim(times, voltages,
+                 decay_start_after_stim, decay_end_after_stim, stimsStart[i],
+                 stimsEnd[i]);
+      dtcas.push_back(ret_dtcas);
+  }
+
+  setVec(DoubleFeatureData, StringData, "multiple_decay_time_constant_after_stim",
+             dtcas);
+
+  return 1;
+}
+
 // compute time constant for the decay from the sag to the steady_state_voltage
 // noisy data is expected, so no golden section search is used
 // because with noisy data, x>0 often gives a worse logarithmic fit
@@ -2858,7 +2970,17 @@ static int __peak_indices(double threshold, vector<double>& V,
         "\nVoltage never goes below or above threshold in spike detection.\n";
     return 0;
   }
+  if (upVec.size() == 0) {
+    GErrorStr +=
+        "\nVoltage never goes above threshold in spike detection.\n";
+    return 0;
+  }
 
+  // case where voltage starts above threshold: remove 1st dnVec
+  while (dnVec.size() > 0 && dnVec[0] < upVec[0]) {
+    dnVec.erase(dnVec.begin());
+  }
+  
   if (upVec.size() > dnVec.size()) {
     size_t size_diff = upVec.size() - dnVec.size();
     for (size_t i = 0; i < size_diff; i++) {
@@ -3435,4 +3557,535 @@ int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
     setVec(DoubleFeatureData, StringData, "AP_width_between_threshold", ap_width_threshold);
   }
   return retval;
+}
+
+// the recorded indices correspond to the peak indices
+// does not skip the first ISI by default
+static int __burst_indices(double burst_factor, int IgnoreFirstISI,
+                      const vector<double> ISI_values,
+                      vector<int>& burst_begin_indices,
+                      vector<int>& burst_end_indices) {
+  vector<double> ISIpcopy;
+  vector<double>::iterator it1, it2;
+  int n;
+  double dMedian;
+  bool in_burst;
+  int first_ISI = IgnoreFirstISI, count = IgnoreFirstISI;
+
+  burst_begin_indices.push_back(first_ISI);
+
+  for (size_t i = first_ISI + 1; i < (ISI_values.size()); i++) {
+    // get median
+    ISIpcopy.clear();
+    for (size_t j = count; j < i; j++) ISIpcopy.push_back(ISI_values[j]);
+    sort(ISIpcopy.begin(), ISIpcopy.end());
+    n = ISIpcopy.size();
+    if ((n % 2) == 0) {
+      dMedian =
+          (ISIpcopy[int((n - 1) / 2)] + ISIpcopy[int((n - 1) / 2) + 1]) / 2;
+    } else {
+      dMedian = ISIpcopy[int(n / 2)];
+    }
+
+    in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
+
+    // look for end burst
+    if (in_burst && ISI_values[i] > (burst_factor * dMedian)){
+      burst_end_indices.push_back(i);
+      count = i;
+    }
+
+    if (ISI_values[i] < ISI_values[i - 1] / burst_factor){
+      if (in_burst){
+        burst_begin_indices.back() = i;
+      } else {
+        burst_begin_indices.push_back(i);
+      }
+      count = i;
+    }
+  }
+
+  in_burst = (burst_end_indices.size() == 0 || burst_begin_indices.back() > burst_end_indices.back());
+  if (in_burst){
+    burst_end_indices.push_back(ISI_values.size());
+  }
+
+  return burst_begin_indices.size();
+}
+
+int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData) {
+  int retVal;
+  int nsize;
+  retVal = CheckInMap(IntFeatureData, StringData, "burst_begin_indices",
+                            nsize);
+  if (retVal) {
+    return nsize;
+  }
+
+  vector<int> burst_begin_indices, burst_end_indices, retIgnore;
+  vector<double> ISI_values, tVec;
+  int IgnoreFirstISI;
+  double burst_factor = 0;
+  retVal = getVec(DoubleFeatureData, StringData, "all_ISI_values", ISI_values);
+  if (retVal < 0) return -1;
+  if (ISI_values.size() < 2) {
+    GErrorStr += "\nError: At least than 3 spikes are needed for burst calculation.\n";
+    return -1;
+  }
+  retVal = getDoubleParam(DoubleFeatureData, "strict_burst_factor", tVec);
+  if (retVal < 0)
+    burst_factor = 2;
+  else
+    burst_factor = tVec[0];
+
+  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+    IgnoreFirstISI = 0;
+  }
+  else {
+    IgnoreFirstISI = 1;
+   }
+
+  retVal = __burst_indices(
+    burst_factor, IgnoreFirstISI, ISI_values, burst_begin_indices, burst_end_indices
+  );
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "burst_begin_indices", burst_begin_indices);
+    setVec(IntFeatureData, StringData, "burst_end_indices", burst_end_indices);
+  }
+  return retVal;
+}
+
+int LibV5::burst_end_indices(mapStr2intVec& IntFeatureData,
+                    mapStr2doubleVec& DoubleFeatureData,
+                    mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(IntFeatureData, StringData, "burst_end_indices", nSize);
+  if (retVal) return nSize;
+  return -1;
+}
+
+
+static int __strict_burst_mean_freq(vector<double>& PVTime,
+                             vector<int>& burst_begin_indices,
+                             vector<int>& burst_end_indices,
+                             vector<double>& BurstMeanFreq) {
+  if (burst_begin_indices.size() == 0) return BurstMeanFreq.size();
+  double span;
+  size_t i;
+
+  for (i = 0; i < burst_begin_indices.size(); i++) {
+    if (burst_end_indices[i] - burst_begin_indices[i] > 0) {
+      span = PVTime[burst_end_indices[i]] - PVTime[burst_begin_indices[i]];
+      BurstMeanFreq.push_back((burst_end_indices[i] - burst_begin_indices[i] + 1) * 1000 / span);
+    }
+  }
+
+  return BurstMeanFreq.size();
+}
+
+int LibV5::strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "strict_burst_mean_freq", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> burst_begin_indices, burst_end_indices;
+  vector<double> BurstMeanFreq, PVTime;
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time", PVTime);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
+                     burst_begin_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                     burst_end_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __strict_burst_mean_freq(PVTime, burst_begin_indices,
+                             burst_end_indices, BurstMeanFreq);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "strict_burst_mean_freq",
+                 BurstMeanFreq);
+  }
+  return retVal;
+}
+
+int LibV5::strict_burst_number(mapStr2intVec& IntFeatureData,
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(IntFeatureData, StringData, "strict_burst_number", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> BurstMeanFreq;
+  vector<int> BurstNum;
+  retVal = getVec(DoubleFeatureData, StringData,
+                        "strict_burst_mean_freq", BurstMeanFreq);
+  if (retVal < 0) return -1;
+
+  BurstNum.push_back(BurstMeanFreq.size());
+  setVec(IntFeatureData, StringData, "strict_burst_number", BurstNum);
+  return (BurstNum.size());
+}
+
+
+static int __strict_interburst_voltage(vector<int>& burst_begin_indices,
+                                vector<int>& PeakIndex,
+                                vector<double>& T, vector<double>& V,
+                                vector<double>& IBV) {
+  if (burst_begin_indices.size() < 1) return 0;
+  int j, pIndex, tsIndex, teIndex, cnt;
+  double tStart, tEnd, vTotal = 0;
+  for (size_t i = 1; i < burst_begin_indices.size(); i++) {
+    pIndex = burst_begin_indices[i] - 1;
+    tsIndex = PeakIndex[pIndex];
+    tStart = T[tsIndex] + 5;  // 5 millisecond after
+    pIndex = burst_begin_indices[i];
+    teIndex = PeakIndex[pIndex];
+    tEnd = T[teIndex] - 5;  // 5 millisecond before
+
+    for (j = tsIndex; j < teIndex; j++) {
+      if (T[j] > tStart) break;
+    }
+    tsIndex = --j;
+
+    for (j = teIndex; j > tsIndex; j--) {
+      if (T[j] < tEnd) break;
+    }
+    teIndex = ++j;
+    vTotal = 0;
+    for (j = tsIndex, cnt = 1; j <= teIndex; j++, cnt++) vTotal = vTotal + V[j];
+    if (cnt == 0) continue;
+    IBV.push_back(vTotal / (cnt - 1));
+  }
+  return IBV.size();
+}
+
+int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "strict_interburst_voltage", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> burst_begin_indices, PeakIndex;
+  vector<double> V, T, IBV;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "T", T);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
+                     burst_begin_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "V", V);
+  if (retVal < 0) return -1;
+
+  retVal = __strict_interburst_voltage(burst_begin_indices, PeakIndex, T, V, IBV);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "strict_interburst_voltage", IBV);
+  }
+  return retVal;
+}
+
+
+// strict_stiminterval should be True when using this feature
+static int __ADP_peak_indices(vector<double>& v,
+                      vector<int>& min_AHP_indices,
+                      vector<int>& min_between_peaks_indices,
+                      vector<int>& ADP_peak_indices,
+                      vector<double>& ADP_peak_values) {
+  if (min_AHP_indices.size() > min_between_peaks_indices.size()){
+    GErrorStr +=
+        "\nmin_AHP_indices should not have less elements than min_between_peaks_indices\n";
+    return -1;
+  }
+
+  unsigned adp_peak_index;
+  for (size_t i = 0; i < min_AHP_indices.size(); i++) {
+    adp_peak_index = max_element(
+      v.begin() + min_AHP_indices[i], v.begin() + min_between_peaks_indices[i]
+    ) - v.begin();
+    
+    ADP_peak_indices.push_back(adp_peak_index);
+    ADP_peak_values.push_back(v[adp_peak_index]);
+  }
+
+  return ADP_peak_indices.size();
+}
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                            "ADP_peak_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> min_AHP_indices, min_between_peaks_indices, ADP_peak_indices;
+  vector<double> ADP_peak_values, v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices",
+                  min_AHP_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "min_between_peaks_indices",
+                  min_between_peaks_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __ADP_peak_indices(v, min_AHP_indices, min_between_peaks_indices,
+                              ADP_peak_indices, ADP_peak_values);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "ADP_peak_indices",
+           ADP_peak_indices);
+    setVec(DoubleFeatureData, StringData, "ADP_peak_values",
+           ADP_peak_values);
+  }
+  return retVal;
+}
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_values(mapStr2intVec& IntFeatureData,
+                          mapStr2doubleVec& DoubleFeatureData,
+                          mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "ADP_peak_values", nSize);
+  if (retVal) return nSize;
+  return -1;
+}
+
+
+// strict_stiminterval should be True when using this feature
+int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "ADP_peak_amplitude", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> ADP_peak_amplitude, min_AHP_values, ADP_peak_values;
+  retVal = getVec(DoubleFeatureData, StringData, "min_AHP_values",
+                  min_AHP_values);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "ADP_peak_values",
+                  ADP_peak_values);
+  if (retVal < 0) return -1;
+
+  for (size_t i = 0; i < ADP_peak_values.size(); i++) {
+    ADP_peak_amplitude.push_back(ADP_peak_values[i] - min_AHP_values[i]);
+  }
+  setVec(DoubleFeatureData, StringData, "ADP_peak_amplitude",
+           ADP_peak_amplitude);
+  return (ADP_peak_amplitude.size());
+}
+
+
+
+static int __interburst_min_indices(vector<double>& v,
+                      vector<int>& peak_indices,
+                      vector<int>& burst_end_indices,
+                      vector<int>& interburst_min_indices,
+                      vector<double>& interburst_min_values) {
+  unsigned interburst_min_index;
+  for (size_t i = 0;
+       i < burst_end_indices.size() && burst_end_indices[i] + 1 < peak_indices.size();
+       i++) {
+    interburst_min_index = min_element(
+      v.begin() + peak_indices[burst_end_indices[i]],
+      v.begin() + peak_indices[burst_end_indices[i] + 1]
+    ) - v.begin();
+    
+    interburst_min_indices.push_back(interburst_min_index);
+    interburst_min_values.push_back(v[interburst_min_index]);
+  }
+
+  return interburst_min_indices.size();
+}
+
+int LibV5::interburst_min_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                      "interburst_min_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<int> peak_indices, burst_end_indices, interburst_min_indices;
+  vector<double> interburst_min_values, v;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+
+  retVal = __interburst_min_indices(v, peak_indices, burst_end_indices,
+                                    interburst_min_indices,
+                                    interburst_min_values);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "interburst_min_indices",
+           interburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_min_values",
+           interburst_min_values);
+  }
+  return retVal;
+}
+
+int LibV5::interburst_min_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "interburst_min_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
+
+static int __postburst_min_indices(vector<double>& t,
+                                   vector<double>& v,
+                                   vector<int>& peak_indices,
+                                   vector<int>& burst_end_indices,
+                                   vector<int>& postburst_min_indices,
+                                   vector<double>& postburst_min_values,
+                                   const double stim_end) {
+  unsigned postburst_min_index, stim_end_index, end_index;
+  stim_end_index =
+      distance(t.begin(),
+                find_if(t.begin(), t.end(),
+                        std::bind2nd(std::greater_equal<double>(), stim_end)));
+  end_index = distance(t.begin(), t.end());
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + peak_indices[burst_end_indices[i] + 1]
+      ) - v.begin();
+    } else if (peak_indices[burst_end_indices[i]] < stim_end_index){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + stim_end_index
+      ) - v.begin();
+    } else {
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + end_index
+      ) - v.begin();
+    }
+    
+    postburst_min_indices.push_back(postburst_min_index);
+    postburst_min_values.push_back(v[postburst_min_index]);
+  }
+
+  return postburst_min_indices.size();
+}
+
+int LibV5::postburst_min_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(IntFeatureData, StringData,
+                      "postburst_min_indices", nSize);
+  if (retVal)
+    return nSize;
+
+  double stim_end;
+  vector<int> peak_indices, burst_end_indices, postburst_min_indices;
+  vector<double> postburst_min_values, t, v, stim_end_vec;
+  retVal = getVec(DoubleFeatureData, StringData, "T", t);
+  if (retVal <= 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "V", v);
+  if (retVal <= 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "peak_indices",
+                  peak_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal =
+      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
+  if (retVal <= 0) {
+    return -1;
+  } else {
+    stim_end = stim_end_vec[0];
+  }
+
+  retVal = __postburst_min_indices(t, v, peak_indices, burst_end_indices,
+                                   postburst_min_indices,
+                                   postburst_min_values,
+                                   stim_end);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "postburst_min_indices",
+           postburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_min_values",
+           postburst_min_values);
+  }
+  return retVal;
+}
+
+int LibV5::postburst_min_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal =
+      CheckInMap(DoubleFeatureData, StringData, "postburst_min_values", nSize);
+  if (retVal >= 0) return nSize;
+  return -1;
+}
+
+
+int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  int retVal, nSize;
+  retVal = CheckInMap(DoubleFeatureData, StringData,
+                            "time_to_interburst_min", nSize);
+  if (retVal)
+    return nSize;
+
+  vector<double> time_to_interburst_min, peak_time, time;
+  vector<int> interburst_min_indices, burst_end_indices;
+  retVal = getVec(DoubleFeatureData, StringData, "T",
+                  time);
+  if (retVal < 0) return -1;
+  retVal = getVec(DoubleFeatureData, StringData, "peak_time",
+                  peak_time);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
+                  burst_end_indices);
+  if (retVal < 0) return -1;
+  retVal = getVec(IntFeatureData, StringData, "interburst_min_indices",
+                  interburst_min_indices);
+  if (retVal < 0) return -1;
+
+  if (burst_end_indices.size() < interburst_min_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than interburst_min_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < interburst_min_indices.size(); i++) {
+    time_to_interburst_min.push_back(time[interburst_min_indices[i]] -
+                                     peak_time[burst_end_indices[i]]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_interburst_min",
+         time_to_interburst_min);
+  return (time_to_interburst_min.size());
 }

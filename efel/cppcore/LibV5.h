@@ -218,6 +218,9 @@ int current_base(mapStr2intVec& IntFeatureData,
 int decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
+int multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData);
 int sag_time_constant(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
@@ -258,6 +261,45 @@ int min_between_peaks_values(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
 int AP_width_between_threshold(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int burst_begin_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int burst_end_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int strict_burst_number(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int strict_interburst_voltage(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int ADP_peak_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int ADP_peak_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_min_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int interburst_min_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int postburst_min_indices(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int postburst_min_values(mapStr2intVec& IntFeatureData,
+                            mapStr2doubleVec& DoubleFeatureData,
+                            mapStr2Str& StringData);
+int time_to_interburst_min(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
 }

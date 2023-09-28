@@ -56,7 +56,7 @@ with open('testdata/allfeatures/expectedresults.json') as f:
     new_expected_results = json.load(f)
 
 
-assert(set(old_expected_results.keys()) == set(new_expected_results.keys()))
+assert (set(old_expected_results.keys()) == set(new_expected_results.keys()))
 
 
 diff_results = {}

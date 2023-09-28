@@ -124,9 +124,6 @@ int AHP_depth(mapStr2intVec& IntFeatureData,
 int single_burst_ratio(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
-int threshold_current(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData);
 
 int AP_width(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
              mapStr2Str& StringData);
@@ -146,6 +143,9 @@ int Spikecount(mapStr2intVec& IntFeatureData,
                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int AHP_depth_slow(mapStr2intVec& IntFeatureData,
+                       mapStr2doubleVec& DoubleFeatureData,
+                       mapStr2Str& StringData);
 int burst_number(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AP_amplitude_diff(mapStr2intVec& IntFeatureData,
