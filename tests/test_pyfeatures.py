@@ -385,3 +385,4 @@ def test_impedance():
 
     expected_values = {feature_name: 4.23076923076923}
     _test_expected_value(feature_name, expected_values)
+    assert False

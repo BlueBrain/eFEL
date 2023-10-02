@@ -62,14 +62,15 @@ def time():
 def impedance():
     from scipy.ndimage.filters import gaussian_filter1d
 
+    dt = _get_cpp_data("interp_step")
+    Z_max_freq = _get_cpp_data("impedance_max_freq")
     voltage_trace = voltage()
     holding_voltage = _get_cpp_feature("voltage_base")
     normalized_voltage = voltage_trace - holding_voltage
     current_trace = current()
-    dt = _get_cpp_data("interp_step")
     if current_trace is not None:
-        current_base = _get_cpp_feature("current_base")
-        normalized_current = current_trace - current_base
+        holding_current = _get_cpp_feature("current_base")
+        normalized_current = current_trace - holding_current
         spike_count = _get_cpp_feature("Spikecount")
         if spike_count < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
@@ -81,8 +82,8 @@ def impedance():
             else:
                 Z = fft_volt / fft_cur
                 norm_Z = abs(Z) / max(abs(Z))
-                # physiological range of frequencies range [0,100]
-                smooth_Z = gaussian_filter1d(norm_Z[0:100], 10)
+                select_idxs = numpy.swapaxes(numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1)[0]
+                smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
                 ind_max = numpy.argmax(smooth_Z)
                 return freq[ind_max]
         else:
