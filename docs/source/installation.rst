@@ -3,7 +3,7 @@ Installation
 
 Requirements
 ------------
-* `Python 3.4+ <https://www.python.org/download/releases/3.4.3/>`_
+* `Python <https://www.python.org/downloads/>`_
 * `Pip <https://pip.pypa.io>`_ (installed by default in newer versions of Python)
 * `Numpy <http://www.numpy.org>`_ (will be installed automatically by pip)
 * The instruction below are written assuming you have access to a command shell on Linux / UNIX / MacOSX / Cygwin
@@ -13,12 +13,12 @@ Installation using pip
 
 The easiest way to install eFEL is to use `pip <https://pip.pypa.io>`_::
 
-    pip install git+git://github.com/BlueBrain/eFEL
+    pip install efel
 
 In case you don't have administrator access this command might fail with a
 permission error. In that case you could install eFEL in your home directory::
 
-    pip install --user git+git://github.com/BlueBrain/eFEL
+    pip install efel --user
 
 Or you could use a `python virtual environment <https://virtualenv.pypa.io>`_::
 
