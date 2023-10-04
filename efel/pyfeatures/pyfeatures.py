@@ -82,7 +82,9 @@ def impedance():
             else:
                 Z = fft_volt / fft_cur
                 norm_Z = abs(Z) / max(abs(Z))
-                select_idxs = numpy.swapaxes(numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1)[0]
+                select_idxs = numpy.swapaxes(
+                    numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1
+                )[0]
                 smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
                 ind_max = numpy.argmax(smooth_Z)
                 return freq[ind_max]

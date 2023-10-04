@@ -143,5 +143,6 @@
     "initburst_sahp": "mV",
     "initburst_sahp_ssse": "mV",
     "initburst_sahp_vb": "mV",
-    "depol_block_bool": "constant"
+    "depol_block_bool": "constant",
+    "impedance": "Hz"
 }
