@@ -2,8 +2,6 @@
 
 """Test all features on an example trace"""
 
-from __future__ import print_function
-
 """
 Copyright (c) 2015, Blue Brain Project/EPFL
 
