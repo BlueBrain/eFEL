@@ -75,19 +75,18 @@ def impedance():
         if spike_count < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)
-            # convert dt from ms to s to have freq in Hz
-            freq = numpy.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
             if any(fft_cur) == 0:
                 return None
-            else:
-                Z = fft_volt / fft_cur
-                norm_Z = abs(Z) / max(abs(Z))
-                select_idxs = numpy.swapaxes(
-                    numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1
-                )[0]
-                smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
-                ind_max = numpy.argmax(smooth_Z)
-                return freq[ind_max]
+            # convert dt from ms to s to have freq in Hz
+            freq = numpy.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
+            Z = fft_volt / fft_cur
+            norm_Z = abs(Z) / max(abs(Z))
+            select_idxs = numpy.swapaxes(
+                numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1
+            )[0]
+            smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
+            ind_max = numpy.argmax(smooth_Z)
+            return freq[ind_max]
         else:
             return None
     else:
