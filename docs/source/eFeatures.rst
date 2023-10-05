@@ -2000,6 +2000,36 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
+`Python efeature`_ : impedance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes the impedance given a ZAP current input and its voltage response.
+It will return the frequency at which the impedance is maximal, in the range (0, impedance_max_freq] Hz,
+with impedance_max_freq being a setting with 50.0 as a default value.
+
+- **Required features**: current, LibV1:Spikecount, LibV5:voltage_base, LibV5:current_base
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    normalized_voltage = voltage_trace - voltage_base
+    normalized_current = current_trace - current_base
+    if spike_count < 1:  # if there is no spikes in ZAP
+        fft_volt = numpy.fft.fft(normalized_voltage)
+        fft_cur = numpy.fft.fft(normalized_current)
+        if any(fft_cur) == 0:
+            return None
+        # convert dt from ms to s to have freq in Hz
+        freq = numpy.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
+        Z = fft_volt / fft_cur
+        norm_Z = abs(Z) / max(abs(Z))
+        select_idxs = numpy.swapaxes(numpy.argwhere((freq > 0) & (freq <= impedance_max_freq)), 0, 1)[0]
+        smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
+        ind_max = numpy.argmax(smooth_Z)
+        return freq[ind_max]
+    else:
+        return None
+
+
 
 .. _LibV1: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV1.cpp
 .. _LibV2: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV2.cpp

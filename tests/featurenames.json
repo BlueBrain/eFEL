@@ -115,6 +115,7 @@
     "doublet_ISI",
     "fast_AHP",
     "fast_AHP_change",
+    "impedance",
     "initburst_sahp",
     "initburst_sahp_ssse",
     "initburst_sahp_vb",

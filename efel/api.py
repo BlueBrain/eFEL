@@ -98,6 +98,7 @@ def reset():
     setDoubleSetting("precision_threshold", 1e-10)
     setDoubleSetting("sahp_start", 5.0)
     setIntSetting("ignore_first_ISI", 1)
+    setDoubleSetting("impedance_max_freq", 50.0)
 
     _initialise()
 
