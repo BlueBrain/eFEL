@@ -1435,8 +1435,8 @@ def test_spikecount_stimint1():
         spikecount_stimint + 2)
 
 
-def test_spikecount_libv4peakindices():
-    """basic: Test Spikecount in combination with LibV4 peak_indices"""
+def test_spikecount_libv5peakindices():
+    """basic: Test Spikecount in combination with LibV5 peak_indices"""
 
     import efel
     efel.reset()
@@ -1457,7 +1457,7 @@ def test_spikecount_libv4peakindices():
     features = ['peak_indices', 'Spikecount']
 
     test_peak = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'DependencyV5_LibV4peakindices.txt')
+                             'DependencyV5_LibV5peakindices.txt')
     efel.setDependencyFileLocation(test_peak)
 
     feature_values = \

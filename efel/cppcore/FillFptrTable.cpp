@@ -147,8 +147,6 @@ int FillFptrTable() {
 
   //****************** end of FptrTableV3 *****************************
 
-  FptrTableV4["peak_indices"] = &LibV4::peak_indices;
-
   //******************  FptrTableV5 *****************************
 
   FptrTableV5["ISI_log_slope"] = &LibV5::ISI_log_slope;
