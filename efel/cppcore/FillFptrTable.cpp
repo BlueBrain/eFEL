@@ -64,17 +64,10 @@ int FillFptrTable() {
 
   //****************** for FptrTableV2 *****************************
   /*
-  FptrTableV2["peak_indices"]         = &LibV2::peak_indices;
-  FptrTableV2["ISI_values"]           = &LibV2::ISI_values;
-  FptrTableV2["peak_voltage"]         = &LibV2::peak_voltage;
-  FptrTableV2["firing_rate"]          = &LibV2::firing_rate;
-  FptrTableV2["peak_time"]    = &LibV2::peak_time;
-  FptrTableV2["first_spike_time"]     = &LibV2::first_spike_time;
   FptrTableV2["AHP_min_indices"]      = &LibV2::AHP_min_indices;
   FptrTableV2["AHP_values"]           = &LibV2::AHP_values;
   FptrTableV2["rest_voltage_value"]   = &LibV2::rest_voltage_value;
   FptrTableV2["burst_vector"]         = &LibV2::burst_vector;
-  FptrTableV2["adaptation_index"]     = &LibV2::adaptation_index;
   */
 
   // AP parameter
