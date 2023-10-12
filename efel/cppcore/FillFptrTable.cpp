@@ -137,11 +137,6 @@ int FillFptrTable() {
   //****************** end of FptrTableV2 *****************************
 
   //******************  FptrTableV3 *****************************
-  FptrTableV3["AP_amplitude"] = &LibV3::AP_amplitude;
-  FptrTableV3["AP_width"] = &LibV3::AP_width;
-
-  FptrTableV3["AP_begin_indices"] = &LibV3::AP_begin_indices;
-  FptrTableV3["AP_end_indices"] = &LibV3::AP_end_indices;
   // eFeatures
   FptrTableV3["depolarized_base"] = &LibV3::depolarized_base;
 
