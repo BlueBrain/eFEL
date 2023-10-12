@@ -20,7 +20,6 @@
 int FillFptrTable() {
   //****************** for FptrTableV1 *****************************
   FptrTableV1["interpolate"] = &LibV1::interpolate;
-  FptrTableV1["peak_indices"] = &LibV1::peak_indices;
   FptrTableV1["ISI_values"] = &LibV1::ISI_values;
   FptrTableV1["peak_voltage"] = &LibV1::peak_voltage;
   FptrTableV1["mean_frequency"] = &LibV1::firing_rate;

@@ -33,9 +33,6 @@ int printVectorD(char* strName, vector<double> vec);
 int interpolate(mapStr2intVec& IntFeatureData,
                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
-int peak_indices(mapStr2intVec& IntFeatureData,
-                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
 int ISI_values(mapStr2intVec& IntFeatureData,
                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 

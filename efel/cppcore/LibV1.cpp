@@ -85,66 +85,6 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-static int __peak_indices(double dThreshold, vector<double>& V,
-                          vector<int>& PeakIndex) {
-  vector<int> upVec, dnVec;
-  double dtmp;
-  int itmp;
-
-  for (size_t i = 1; i < V.size(); i++) {
-    if (V[i] > dThreshold && V[i - 1] < dThreshold) {
-      upVec.push_back(i);
-    } else if (V[i] < dThreshold && V[i - 1] > dThreshold) {
-      dnVec.push_back(i);
-    }
-  }
-  if (dnVec.size() == 0) {
-    GErrorStr +=
-        "\nVoltage never goes below or above threshold in spike detection.\n";
-    return 0;
-  }
-
-  if (dnVec.size() != upVec.size()) {
-    GErrorStr += "\nVoltage never goes below threshold after last spike.\n";
-    return 0;
-  }
-
-  PeakIndex.clear();
-  int j = 0;
-  for (size_t i = 0; i < upVec.size(); i++) {
-    dtmp = -1e9;
-    itmp = -1;
-    for (j = upVec[i]; j <= dnVec[i]; j++) {
-      if (dtmp < V[j]) {
-        dtmp = V[j];
-        itmp = j;
-      }
-    }
-    if (itmp != -1) PeakIndex.push_back(itmp);
-  }
-  return PeakIndex.size();
-}
-int LibV1::peak_indices(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  // printf("\n  LibV1  This is inside peak_indices()");
-  int retVal, nSize;
-  retVal =
-      CheckInMap(IntFeatureData, StringData, "peak_indices", nSize);
-  if (retVal)
-    return nSize;
-  vector<int> PeakIndex;
-  vector<double> v, Th;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getDoubleParam(DoubleFeatureData, "Threshold", Th);
-  if (retVal <= 0) return -1;
-  int retval = __peak_indices(Th[0], v, PeakIndex);
-  if (retval >= 0)
-    setVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
-  return retval;
-}
-
 // *** Spikecount ***
 int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
