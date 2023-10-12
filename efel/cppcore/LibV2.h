@@ -72,73 +72,13 @@ int AP_duration_half_width(mapStr2intVec& IntFeatureData,
 int AP_duration_half_width_change(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData);
-
-int E6(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E7(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-
 int BPAPatt2(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
              mapStr2Str& StringData);
 int BPAPatt3(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
              mapStr2Str& StringData);
-int E39(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E39_cod(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-            mapStr2Str& StringData);
-int E2(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E3(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E4(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E5(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E8(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E9(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-       mapStr2Str& StringData);
-int E10(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E11(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E12(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E13(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E14(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E15(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E16(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E17(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E18(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E19(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E20(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E21(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E22(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E23(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E24(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E25(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E26(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
-int E27(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
 int steady_state_hyper(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
-int E40(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-        mapStr2Str& StringData);
 int amp_drop_first_second(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData);
