@@ -49,9 +49,6 @@ int first_spike_time(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData);
 
-int spike_width1(mapStr2intVec& IntFeatureData,
-                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
 int spike_width2(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 

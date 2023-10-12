@@ -31,7 +31,6 @@ int FillFptrTable() {
   FptrTableV1["burst_ISI_indices"] = &LibV1::burst_ISI_indices;
   FptrTableV1["adaptation_index"] = &LibV1::adaptation_index;
   FptrTableV1["trace_check"] = &LibV1::trace_check;
-  FptrTableV1["spike_half_width"] = &LibV1::spike_width1;
   FptrTableV1["spike_width2"] = &LibV1::spike_width2;
   FptrTableV1["burst_mean_freq"] = &LibV1::burst_mean_freq;
   FptrTableV1["interburst_voltage"] = &LibV1::interburst_voltage;
