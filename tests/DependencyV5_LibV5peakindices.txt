@@ -45,9 +45,38 @@ LibV2:AP_rise_rate_change	#LibV2:AP_rise_rate
 LibV2:AP_fall_rate_change	#LibV2:AP_fall_rate
 LibV2:fast_AHP_change	#LibV2:fast_AHP
 LibV2:AP_duration_half_width_change	#LibV2:AP_duration_half_width
+LibV2:E6	#LibV1:AP_amplitude;APWaveForm
+LibV2:E7	#LibV2:AP_duration;APWaveForm
 LibV1:single_burst_ratio	#LibV1:ISI_values
 LibV2:BPAPatt2	#LibV1:peak_voltage;location_soma #LibV5:voltage_base;location
 LibV2:BPAPatt3	#LibV1:peak_voltage;location_soma #LibV5:voltage_base;location
+LibV2:E39	#LibV1:mean_frequency;IDthreshold
+LibV2:E39_cod	#LibV2:E39
+LibV2:E2	#LibV2:amp_drop_first_second;APDrop
+LibV2:E3	#LibV2:amp_drop_first_last;APDrop
+LibV2:E4	#LibV2:amp_drop_second_last;APDrop
+LibV2:E5	#LibV2:max_amp_difference;APDrop
+LibV2:E8	#LibV2:AP_duration_half_width;APWaveForm
+LibV2:E9	#LibV2:AP_rise_time;APWaveForm
+LibV2:E10	#LibV2:AP_fall_time;APWaveForm
+LibV2:E11	#LibV2:AP_rise_rate;APWaveForm
+LibV2:E12	#LibV2:AP_fall_rate;APWaveForm
+LibV2:E13	#LibV2:fast_AHP;APWaveForm
+LibV2:E14	#LibV1:peak_voltage;APWaveForm
+LibV2:E15	#LibV2:AP_duration;APWaveForm
+LibV2:E16	#LibV2:AP_duration_half_width;APWaveForm
+LibV2:E17	#LibV2:AP_rise_time;APWaveForm
+LibV2:E18	#LibV2:AP_fall_time;APWaveForm
+LibV2:E19	#LibV2:AP_rise_rate;APWaveForm
+LibV2:E20	#LibV2:AP_fall_rate;APWaveForm
+LibV2:E21	#LibV2:fast_AHP;APWaveForm
+LibV2:E22	#LibV2:AP_amplitude_change;APWaveForm
+LibV2:E23	#LibV2:AP_duration_change;APWaveForm
+LibV2:E24	#LibV2:AP_duration_half_width_change;APWaveForm
+LibV2:E25	#LibV2:AP_rise_rate_change;APWaveForm
+LibV2:E26	#LibV2:AP_fall_rate_change;APWaveForm
+LibV2:E27	#LibV2:fast_AHP_change;APWaveForm
+LibV2:E40   #LibV1:time_to_first_spike;IDrest 
 LibV2:steady_state_hyper
 LibV2:amp_drop_first_second	#LibV1:peak_voltage
 LibV2:amp_drop_first_last	#LibV1:peak_voltage
