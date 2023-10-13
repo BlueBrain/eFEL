@@ -298,57 +298,6 @@ int LibV1::first_spike_time(mapStr2intVec& IntFeatureData,
   return first_spike.size();
 }
 
-// min_AHP_indices
-// find the minimum between two spikes,
-// and the minimum between the last spike and the time the stimulus ends
-int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(IntFeatureData, StringData, "min_AHP_indices", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<int> peak_indices_plus;
-  vector<int> min_ahp_indices;
-  vector<double> v;
-  vector<double> min_ahp_values;
-  vector<double> stim_end;
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices",
-                     peak_indices_plus);
-  if (retVal < 1) {
-    GErrorStr += "\n At least one spike required for calculation of "
-        "min_AHP_indices.\n";
-    return -1;
-  }
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stim_end);
-  if (retVal <= 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
-
-  int end_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), stim_end[0])));
-  // if the last spike happens to be close to the end of the stimulus
-  // there will not be a proper AHP, this case is not properly dealt with here
-  if (end_index > peak_indices_plus.back() + 5) {
-    peak_indices_plus.push_back(end_index);
-  }
-  for (size_t i = 0; i < peak_indices_plus.size() - 1; i++) {
-    int ahpindex = distance(
-        v.begin(), min_element(v.begin() + peak_indices_plus[i],
-                               v.begin() + peak_indices_plus[i + 1]));
-    min_ahp_indices.push_back(ahpindex);
-    min_ahp_values.push_back(v[ahpindex]);
-  }
-  setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-  setVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
-  return min_ahp_indices.size();
-}
-
 int LibV1::AP_height(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {

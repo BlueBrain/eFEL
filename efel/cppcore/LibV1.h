@@ -52,10 +52,6 @@ int first_spike_time(mapStr2intVec& IntFeatureData,
 int spike_width2(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
-int min_AHP_indices(mapStr2intVec& IntFeatureData,
-                    mapStr2doubleVec& DoubleFeatureData,
-                    mapStr2Str& StringData);
-
 int burst_ISI_indices(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);
