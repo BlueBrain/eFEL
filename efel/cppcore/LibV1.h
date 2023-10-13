@@ -62,10 +62,6 @@ int AHP_depth_abs(mapStr2intVec& IntFeatureData,
 int min_AHP_values(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
-int rest_voltage_value(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
-
 int burst_ISI_indices(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);

@@ -27,7 +27,6 @@ int FillFptrTable() {
   FptrTableV1["time_to_first_spike"] = &LibV1::first_spike_time;
   FptrTableV1["min_AHP_indices"] = &LibV1::min_AHP_indices;
   FptrTableV1["min_AHP_values"] = &LibV1::min_AHP_values;
-  FptrTableV1["voltage_base"] = &LibV1::rest_voltage_value;
   FptrTableV1["burst_ISI_indices"] = &LibV1::burst_ISI_indices;
   FptrTableV1["adaptation_index"] = &LibV1::adaptation_index;
   FptrTableV1["trace_check"] = &LibV1::trace_check;
@@ -65,7 +64,6 @@ int FillFptrTable() {
   /*
   FptrTableV2["AHP_min_indices"]      = &LibV2::AHP_min_indices;
   FptrTableV2["AHP_values"]           = &LibV2::AHP_values;
-  FptrTableV2["rest_voltage_value"]   = &LibV2::rest_voltage_value;
   FptrTableV2["burst_vector"]         = &LibV2::burst_vector;
   */
 

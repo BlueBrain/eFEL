@@ -565,43 +565,6 @@ int LibV1::AHP_slow_time(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "voltage_base", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<double> v, t, stimStart, vRest;
-  double startTime, endTime;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-  startTime = stimStart[0] * .25;  // It is 25% from start (0), so if stimulus
-                                   // starts at 100ms then StartTime will be
-                                   // 25mS
-  // as in above case end time will be 25% less than startTime
-  endTime = stimStart[0] * .75;
-  int nCount = 0;
-  double vSum = 0;
-  // calculte the mean of voltage between startTime and endTime
-  for (size_t i = 0; i < t.size(); i++) {
-    if (t[i] >= startTime) {
-      vSum = vSum + v[i];
-      nCount++;
-    }
-    if (t[i] > endTime) break;
-  }
-  vRest.push_back(vSum / nCount);
-  setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
-  return 1;
-}
-
 static int __burst_ISI_indices(double BurstFactor, vector<int>& PeakIndex,
                                vector<double>& ISIValues,
                                vector<int>& BurstIndex) {
