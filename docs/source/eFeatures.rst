@@ -290,7 +290,7 @@ The first ISI can be taken into account if ignore_first_ISI is set to 0.
     irregularity_index = numpy.mean(numpy.absolute(ISI_values[1:] - ISI_values[:-1]))
 
 
-`LibV5`_ : adaptation_index
+`LibV1`_ : adaptation_index
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normalized average difference of two consecutive ISIs, skipping the first ISIs
@@ -319,7 +319,7 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
 
-`LibV5`_ : adaptation_index_2
+`LibV1`_ : adaptation_index_2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normalized average difference of two consecutive ISIs, starting at the second ISI
