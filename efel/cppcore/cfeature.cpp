@@ -36,7 +36,6 @@ cFeature::cFeature(const string& strDepFile, const string& outdir)
   mapFptrLib["LibV1"] = &FptrTableV1;
   mapFptrLib["LibV2"] = &FptrTableV2;
   mapFptrLib["LibV3"] = &FptrTableV3;
-  mapFptrLib["LibV4"] = &FptrTableV4;
   mapFptrLib["LibV5"] = &FptrTableV5;
 
   fillfeaturetypes();

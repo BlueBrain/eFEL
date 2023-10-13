@@ -27,20 +27,6 @@ using std::vector;
 
 namespace LibV3 {
 
-int AP_amplitude(mapStr2intVec& IntFeatureData,
-                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-int AP_width(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-             mapStr2Str& StringData);
-
-int AP_begin_indices(mapStr2intVec& IntFeatureData,
-                     mapStr2doubleVec& DoubleFeatureData,
-                     mapStr2Str& StringData);
-
-int AP_end_indices(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-// eFeatures
 
 int depolarized_base(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,

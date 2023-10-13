@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-set(FEATURESRCS Utils.cpp LibV1.cpp LibV2.cpp LibV3.cpp LibV4.cpp LibV5.cpp
+set(FEATURESRCS Utils.cpp LibV1.cpp LibV2.cpp LibV3.cpp LibV5.cpp
     FillFptrTable.cpp DependencyTree.cpp efel.cpp cfeature.cpp
     mapoperations.cpp)
 
@@ -33,6 +33,6 @@ add_library(efel SHARED ${FEATURESRCS})
 install(TARGETS efel LIBRARY DESTINATION lib)
 
 install(FILES efel.h cfeature.h FillFptrTable.h LibV1.h LibV2.h LibV3.h
-    LibV4.h LibV5.h mapoperations.h Utils.h DependencyTree.h eFELLogger.h
+    LibV5.h mapoperations.h Utils.h DependencyTree.h eFELLogger.h
     types.h
     DESTINATION include)
