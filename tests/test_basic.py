@@ -163,9 +163,11 @@ def test_setDependencyFileLocation():
     """basic: Test if setDependencyFileLocation works"""
     import efel
     efel.reset()
-    test_peak = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'DependencyV5_LibV5peakindices.txt')
-    efel.setDependencyFileLocation(test_peak)
+    dep_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'DependencyV5_LibV5peakindices.txt')
+    efel.setDependencyFileLocation(dep_file)
+    result = efel.getDependencyFileLocation()
+    assert result == dep_file
 
 
 def test_nonexisting_feature():
