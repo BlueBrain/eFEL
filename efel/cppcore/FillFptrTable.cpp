@@ -32,7 +32,6 @@ int FillFptrTable() {
   FptrTableV1["spike_width2"] = &LibV1::spike_width2;
   FptrTableV1["burst_mean_freq"] = &LibV1::burst_mean_freq;
   FptrTableV1["interburst_voltage"] = &LibV1::interburst_voltage;
-  FptrTableV1["AHP_depth_abs"] = &LibV1::AHP_depth_abs;
   // passive properties
   FptrTableV1["time_constant"] = &LibV1::time_constant;
   FptrTableV1["voltage_deflection"] = &LibV1::voltage_deflection;

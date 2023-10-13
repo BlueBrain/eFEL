@@ -447,29 +447,6 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
   return apamplitude.size();
 }
 
-// AHP_depth_abs
-// naming conflict here AHP_depth_abs does the same as min_AHP_values.
-// In my opinion the should not be a feature called 'AHP_depth_abs',
-// use min_AHP_values instead.
-// A more interesting feature would be 'AHP_depth' anyways, which calculates the
-// depth of the AHP relative to the voltage base
-int LibV1::AHP_depth_abs(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "AHP_depth_abs", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<double> vAHP;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "min_AHP_values", vAHP);
-  if (retVal <= 0) return -1;
-  setVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
-  return vAHP.size();
-}
-
 // *** AHP_depth_abs_slow ***
 // same as AHP_depth_abs but the minimum search starts 
 // 5 ms (or custom duration) after the spike,
