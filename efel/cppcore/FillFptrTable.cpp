@@ -26,7 +26,6 @@ int FillFptrTable() {
   FptrTableV1["peak_time"] = &LibV1::peak_time;
   FptrTableV1["time_to_first_spike"] = &LibV1::first_spike_time;
   FptrTableV1["min_AHP_indices"] = &LibV1::min_AHP_indices;
-  FptrTableV1["min_AHP_values"] = &LibV1::min_AHP_values;
   FptrTableV1["burst_ISI_indices"] = &LibV1::burst_ISI_indices;
   FptrTableV1["adaptation_index"] = &LibV1::adaptation_index;
   FptrTableV1["trace_check"] = &LibV1::trace_check;

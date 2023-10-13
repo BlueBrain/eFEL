@@ -349,16 +349,6 @@ int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
   return min_ahp_indices.size();
 }
 
-int LibV1::min_AHP_values(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "min_AHP_values", nSize);
-  if (retVal) return nSize;
-  return -1;
-}
-
 int LibV1::AP_height(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
