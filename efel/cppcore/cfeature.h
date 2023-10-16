@@ -46,21 +46,19 @@ class cFeature {
   std::map<string, vector<featureStringPair > > fptrlookup;
 
   template <typename T>
-  vector<T>& getMapData(string strName, map<string, vector<T>>& mapData) {
+  const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData) {
       auto mapItr = mapData.find(strName);
       if (mapItr == mapData.end()) {
-          GErrorStr += "Feature [" + strName + "] data is missing\n";
-          mapData[strName] = vector<T>{};
-          return mapData[strName];
+          return vector<T>{}; // Return an empty vector without modifying the map
       }
       return mapItr->second;
   }
 
-  vector<int>& getmapIntData(string strName) {
+  const vector<int> getmapIntData(string strName) {
       return getMapData(strName, mapIntData);
   }
 
-  vector<double>& getmapDoubleData(string strName) {
+  const vector<double> getmapDoubleData(string strName) {
       return getMapData(strName, mapDoubleData);
   }
 

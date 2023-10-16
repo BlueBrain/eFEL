@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 import os
-import shutil
+from pathlib import Path
 import tempfile
 
 import numpy as np
@@ -181,5 +181,28 @@ class TestCppcore:
             # to remove pointer to tempdir.
             # this pointer was preventing the deletion of tempdir on windows.
             efel.cppcore.Initialize(efel.getDependencyFileLocation(), '.')
-        finally:
-            shutil.rmtree(tempdir)
+
+    @pytest.mark.parametrize(
+        "feature_name", ['AP_amplitude', 'time_to_first_spike', 'peak_indices'])
+    def test_caching(self, feature_name):
+        """Test to make sure the caching mechanism works as intended.
+        AP_amplitude: vector<double>
+        time_to_first_spike: has a different implementation name
+        peak_indices: vector<int>
+        """
+        with tempfile.TemporaryDirectory(prefix='efel_test_cache') as tempdir:
+            import efel
+            efel.cppcore.Initialize(efel.getDependencyFileLocation(), tempdir)
+            self.setup_data()
+            feature_values = list()
+            efel.cppcore.getFeature(feature_name, feature_values)
+            efel.cppcore.getFeature(feature_name, feature_values)
+            efel.cppcore.getFeature(feature_name, feature_values)
+            with (Path(tempdir) / 'fllog.txt').open() as fd:
+                contents = fd.read()
+        assert f"Calculated feature {feature_name}" in contents
+        assert f"Reusing computed value of {feature_name}" in contents
+        # make sure Calculated feature text occurs once
+        assert contents.count(f"Calculated feature {feature_name}") == 1
+        # make sure Reusing computed value of text occurs twice
+        assert contents.count(f"Reusing computed value of {feature_name}") == 2
