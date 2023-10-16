@@ -280,29 +280,6 @@ void cFeature::get_feature_names(vector<string>& feature_names) {
   }
 }
 
-vector<int>& cFeature::getmapIntData(string strName) {
-  map<string, vector<int> >::iterator mapstr2IntItr;
-  mapstr2IntItr = mapIntData.find(strName);
-  if (mapstr2IntItr == mapIntData.end()) {
-    GErrorStr += "Feature [" + strName + "] data is missing\n";
-    vector<int> empty_vec;
-    mapIntData[strName] = empty_vec;
-    return mapIntData[strName];
-  }
-  return mapstr2IntItr->second;
-}
-vector<double>& cFeature::getmapDoubleData(string strName) {
-  map<string, vector<double> >::iterator mapstr2DoubleItr;
-  mapstr2DoubleItr = mapDoubleData.find(strName);
-  if (mapstr2DoubleItr == mapDoubleData.end()) {
-    GErrorStr += "Feature [" + strName + "] data is missing\n";
-    vector<double> empty_vec;
-    mapDoubleData[strName] = empty_vec;
-    return mapDoubleData[strName];
-  }
-  return mapstr2DoubleItr->second;
-}
-
 /*
 int cFeature::getmapfptrVec(string strName, vector<fptr> &vFptr){
     map<string, vector< fptr > >::iterator mapFptrItr;
@@ -450,7 +427,7 @@ int cFeature::getFeatureInt(string strName, vector<int>& vec) {
               << endl;
     return -1;
   }
-  vec = getmapIntData(strName);
+  vec = cFeature::getmapIntData(strName);
 
   logger << "Calculated feature " << strName << ":" << vec << endl;
 
