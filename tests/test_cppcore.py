@@ -45,7 +45,7 @@ def test_import():
     import efel.cppcore  # NOQA
 
 
-class TestCppcore(object):
+class TestCppcore:
 
     """Test cppcore"""
 
@@ -87,7 +87,7 @@ class TestCppcore(object):
 
     def test_getFeatureNames(self):  # pylint: disable=R0201
         """cppcore: Testing getting all feature names"""
-        import efel.cppcore
+        import efel
         feature_names = []
         efel.cppcore.getFeatureNames(feature_names)
 
@@ -101,7 +101,7 @@ class TestCppcore(object):
 
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
-        import efel.cppcore
+        import efel
         feature_values = list()
         return_value = efel.cppcore.getFeatureDouble(
             "AP_amplitude",
@@ -111,18 +111,18 @@ class TestCppcore(object):
     @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureDouble_wrong_type(self):  # pylint: disable=R0201
         """cppcore: Teting getFeatureDouble with wrong type"""
-        import efel.cppcore
+        import efel
         efel.cppcore.getFeatureDouble("AP_fall_indices", list())
 
     @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureInt_wrong_type(self):  # pylint: disable=R0201
         """cppcore: Teting getFeatureInt with wrong type"""
-        import efel.cppcore
+        import efel
         efel.cppcore.getFeatureInt("AP_amplitude", list())
 
     def test_getDistance(self):
         """cppcore: Testing getDistance()"""
-        import efel.cppcore
+        import efel
 
         self.setup_data()
         np.testing.assert_allclose(
@@ -135,7 +135,7 @@ class TestCppcore(object):
 
     def test_getFeature(self):
         """cppcore: Testing getFeature"""
-        import efel.cppcore
+        import efel
         self.setup_data()
 
         # get double feature
@@ -146,7 +146,6 @@ class TestCppcore(object):
         assert np.allclose([80.45724099440199, 80.46320199354948,
                             80.73300299176428, 80.9965359926715,
                             81.87292599493423], feature_values)
-
         # get int feature
         feature_values = list()
         efel.cppcore.getFeature('AP_fall_indices', feature_values)
@@ -156,7 +155,7 @@ class TestCppcore(object):
 
     def test_getFeature_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
-        import efel.cppcore
+        import efel
         feature_values = list()
         return_value = efel.cppcore.getFeature("AP_amplitude", feature_values)
         assert return_value == -1
@@ -164,17 +163,16 @@ class TestCppcore(object):
     @pytest.mark.xfail(raises=TypeError)
     def test_getFeature_non_existant(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
-        import efel.cppcore
+        import efel
         efel.cppcore.getFeature("does_not_exist", list())
 
     def test_logging(self):  # pylint: disable=R0201
         """cppcore: Testing logging"""
         import efel
-        tempdir = tempfile.mkdtemp('efel_tests')
-        try:
+        with tempfile.TemporaryDirectory(prefix='efel_tests') as tempdir:
             efel.cppcore.Initialize(efel.getDependencyFileLocation(), tempdir)
             self.setup_data()
-            with open(os.path.join(tempdir, 'fllog.txt')) as fd:
+            with (Path(tempdir) / 'fllog.txt').open() as fd:
                 contents = fd.read()
                 assert 'Initializing' in contents
                 # test vector working (if more than 10 elements, prints ...
