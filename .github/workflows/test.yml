@@ -27,13 +27,6 @@ jobs:
 
     - name: Run tox
       run: |
-        sudo apt update
-        sudo apt install -y g++-11 gcc-11
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11
-        sudo update-alternatives --config gcc
-        g++ --version
-        gcc --version
-        cmake --version
         tox  # this does not call docs
 
   coverage:
