@@ -29,6 +29,8 @@ set(FEATURESRCS Utils.cpp LibV1.cpp LibV2.cpp LibV3.cpp LibV5.cpp
     mapoperations.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
 
 add_library(efelStatic ${FEATURESRCS})
 set_target_properties(efelStatic PROPERTIES OUTPUT_NAME efel)

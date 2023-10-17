@@ -114,7 +114,7 @@ int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
 int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int size, retVal;
+  int retVal;
   vector<int> maxnSpike;
   vector<double> spikeSkipf;
 
@@ -876,7 +876,6 @@ int LibV5::AP1_amp(mapStr2intVec& IntFeatureData,
 int LibV5::APlast_amp(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  int retVal;
   vector<double> AP_amplitudes, APlast_amp;
   int AP_amplitude_size;
 
@@ -3292,7 +3291,6 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
 int LibV5::burst_end_indices(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
-  int retVal;
   return 1;
 }
 

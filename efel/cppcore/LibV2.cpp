@@ -731,7 +731,6 @@ int LibV2::BPAPatt3(mapStr2intVec& IntFeatureData,
 // unit: Hz / nA
 int LibV2::E39(mapStr2intVec& IntFeatureData,
                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
-  int retval;
   vector<string> stim_params;
   // retrieve the complete suffixes of all traces where the suffix matches
   // "IDthreshold":
