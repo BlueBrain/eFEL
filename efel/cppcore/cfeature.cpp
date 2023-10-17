@@ -420,59 +420,35 @@ int cFeature::calc_features(const string& name) {
   }
 }
 
-int cFeature::getFeatureInt(string strName, vector<int>& vec) {
-  const auto& dataMap = mapIntData;
-  // 1) Check if the feature is in the map.
-  vec = getMapData<int>(strName, dataMap);
-  if (!vec.empty())
-  {
-    logger << "Reusing computed value of " << strName << "." << endl;
-    return vec.size();
-  }
-  else
-  {
-    // 2) If it's not in the map, compute.
-    logger << "Going to calculate feature " << strName << " ..." << endl;
-    if (calc_features(strName) < 0) {
-      logger << "Failed to calculate feature " << strName << ": " << GErrorStr << endl;
-      return -1;
+template <typename T>
+int cFeature::getFeature(string strName, vector<T>& vec) {
+    const map<string, vector<T>>* dataMap;
+    if constexpr (std::is_same_v<T, int>)
+        dataMap = &mapIntData;
+    else  // cppcore sends only int or double, no other types
+        dataMap = &mapDoubleData;
+
+    // 1) Check if the feature is in the map.
+    vec = getMapData<T>(strName, *dataMap);
+    if (!vec.empty()) {
+        logger << "Reusing computed value of " << strName << "." << endl;
+        return vec.size();
+    } else {
+        // 2) If it's not in the map, compute.
+        logger << "Going to calculate feature " << strName << " ..." << endl;
+        if (calc_features(strName) < 0) {
+            logger << "Failed to calculate feature " << strName << ": " << GErrorStr << endl;
+            return -1;
+        }
+        vec = getMapData<T>(strName, *dataMap);
+        if (vec.empty())
+            GErrorStr += "Feature [" + strName + "] data is missing\n";
+
+        logger << "Calculated feature " << strName << ":" << vec << endl;
+        return vec.size();
     }
-    vec = getMapData<int>(strName, dataMap);
-    if (vec.empty())
-      GErrorStr += "Feature [" + strName + "] data is missing\n";
-
-    logger << "Calculated feature " << strName << ":" << vec << endl;
-
-    return vec.size();
-  }
 }
 
-int cFeature::getFeatureDouble(string strName, vector<double>& vec) {
-  const auto& dataMap = mapDoubleData;
-  // 1) Check if the feature is in the map.
-  vec = getMapData<double>(strName, dataMap);
-  if (!vec.empty())
-  {
-    logger << "Reusing computed value of " << strName << "." << endl;
-    return vec.size();
-  }
-  else
-  {
-    // 2) If it's not in the map, compute.
-    logger << "Going to calculate feature " << strName << " ..." << endl;
-    if (calc_features(strName) < 0) {
-      logger << "Failed to calculate feature " << strName << ": " << GErrorStr << endl;
-      return -1;
-    }
-    vec = getMapData<double>(strName, dataMap);
-    if (vec.empty())
-      GErrorStr += "Feature [" + strName + "] data is missing\n";
-
-    logger << "Calculated feature " << strName << ":" << vec << endl;
-
-    return vec.size();
-  }
-}
 
 int cFeature::setFeatureString(const string& key, const string& value) {
   logger << "Set " << key << ": " << value << endl;
@@ -582,7 +558,7 @@ double cFeature::getDistance(string strName, double mean, double std,
   // Check if a the trace doesn't contain any spikes outside of the stimulus
   // interval
   if (trace_check) {
-      retVal = getFeatureInt("trace_check", feature_veci);
+      retVal = getFeature<int>("trace_check", feature_veci);
       if (retVal < 0) {
           return error_dist;
       }
@@ -596,10 +572,10 @@ double cFeature::getDistance(string strName, double mean, double std,
   }
 
   if (featureType == "int") {
-    retVal = getFeatureInt(strName, feature_veci);
+    retVal = getFeature<int>(strName, feature_veci);
     intFlag = 1;
   } else {
-    retVal = getFeatureDouble(strName, feature_vec);
+    retVal = getFeature<double>(strName, feature_vec);
     intFlag = 0;
   }
   // printf("\n Calculating distance for [%s] values [", strName.c_str());

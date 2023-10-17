@@ -67,10 +67,10 @@ class cFeature {
   cFeature(const string& depFile, const string& outdir);
   int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
+  template <typename T>
+  int getFeature(string strName, vector<T>& vec);
   int setFeatureInt(string strName, vector<int>& intVec);
-  int getFeatureInt(string strName, vector<int>& vec);
   int setFeatureDouble(string strName, vector<double>& DoubleVec);
-  int getFeatureDouble(string strName, vector<double>& vec);
   int setFeatureString(const string& key, const string& value);
   int getFeatureString(const string& key, string& value);
   void getTraces(const string& wildcard, vector<string>& traces);
