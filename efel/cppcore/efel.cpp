@@ -68,7 +68,7 @@ int setFeatureDouble(const char *strName, double *A, unsigned nValue) {
 
 int getFeatureInt(const char *strName, int **A) {
   vector<int> vec;
-  if (pFeature->getFeatureInt(string(strName), vec) < 0) {
+  if (pFeature->getFeature<int>(string(strName), vec) < 0) {
     return -1;
   }
   *A = new int[vec.size()];
@@ -81,7 +81,7 @@ int getFeatureInt(const char *strName, int **A) {
 int getFeatureDouble(const char *strName, double **A) {
   vector<double> vec;
   // printf("\nInside featureLibrary.. Before getdouble [%s ]\n", strName);
-  if (pFeature->getFeatureDouble(string(strName), vec) < 0) {
+  if (pFeature->getFeature<double>(string(strName), vec) < 0) {
     return -1;
   }
   *A = new double[vec.size()];

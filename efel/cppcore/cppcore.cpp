@@ -126,11 +126,11 @@ _getfeature(PyObject* self, PyObject* args, const string &type) {
 
   if (feature_type == "int") {
     vector<int> values;
-    return_value = pFeature->getFeatureInt(string(feature_name), values);
+    return_value = pFeature->getFeature<int>(string(feature_name), values);
     PyList_from_vectorint(values, py_values);
   } else if (feature_type == "double") {
     vector<double> values;
-    return_value = pFeature->getFeatureDouble(string(feature_name), values);
+    return_value = pFeature->getFeature<double>(string(feature_name), values);
     PyList_from_vectordouble(values, py_values);
   } else {
     PyErr_SetString(PyExc_TypeError, "Unknown feature name");

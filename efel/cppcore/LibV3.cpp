@@ -69,12 +69,6 @@ int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(IntFeatureData, StringData, "depolarized_base",
-                         nSize);
-  if (retVal) {
-    return nSize;
-  }
   vector<double> t;
   retVal = getVec(DoubleFeatureData, StringData, "T", t);
   if (retVal < 0) return -1;

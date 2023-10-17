@@ -100,23 +100,6 @@ int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Stri
   return (v.size());
 }
 
-template <class T>
-int CheckInMap(std::map<std::string, std::vector<T> >& FeatureData,
-                     mapStr2Str& StringData, string strFeature, int& nSize){
-  string params;
-  getStrParam(StringData, "params", params);
-  strFeature += params;
-  typename std::map<std::string, std::vector<T> >::const_iterator
-   mapstr2VecItr(FeatureData.find(strFeature));
-
-  if (mapstr2VecItr != FeatureData.end()) {
-    nSize = mapstr2VecItr->second.size();
-    return 1;
-  }
-  nSize = -1;
-  return 0;
-}
-
 /*
  *  Take a wildcard string as an argument:
  *  wildcards seperated by ';' e.g. "APWaveForm;soma"
@@ -228,7 +211,3 @@ template int getVec(std::map<std::string, std::vector<double> >& FeatureData, ma
                  string strFeature, vector<double>& v);
 template int getVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<int>& v);
-template int CheckInMap(std::map<std::string, std::vector<double> >& FeatureData,
-                     mapStr2Str& StringData, string strFeature, int& nSize);
-template int CheckInMap(std::map<std::string, std::vector<int> >& FeatureData,
-                     mapStr2Str& StringData, string strFeature, int& nSize);

@@ -15,7 +15,12 @@
 # along with this library; if not, write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.12)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -24,6 +29,8 @@ set(FEATURESRCS Utils.cpp LibV1.cpp LibV2.cpp LibV3.cpp LibV5.cpp
     mapoperations.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
 
 add_library(efelStatic ${FEATURESRCS})
 set_target_properties(efelStatic PROPERTIES OUTPUT_NAME efel)
