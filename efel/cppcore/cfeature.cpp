@@ -57,6 +57,23 @@ cFeature::cFeature(const string& strDepFile, const string& outdir)
   logger << "Using dependency file: " << strDepFile << endl;
 }
 
+template <typename T>
+const vector<T> cFeature::getMapData(const string& strName, const map<string, vector<T>>& mapData) {
+    auto mapItr = mapData.find(strName);
+    if (mapItr == mapData.end()) {
+        return vector<T>{}; // Return an empty vector without modifying the map
+    }
+    return mapItr->second;
+}
+
+const vector<int> cFeature::getmapIntData(string strName) {
+    return getMapData(strName, mapIntData);
+}
+
+const vector<double> cFeature::getmapDoubleData(string strName) {
+    return getMapData(strName, mapDoubleData);
+}
+
 int cFeature::setVersion(string strDepFile) {
   FptrTable.clear();
   /*

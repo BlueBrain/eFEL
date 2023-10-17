@@ -44,27 +44,13 @@ class cFeature {
 
  public:
   std::map<string, vector<featureStringPair > > fptrlookup;
-
-  template <typename T>
-  const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData) {
-      auto mapItr = mapData.find(strName);
-      if (mapItr == mapData.end()) {
-          return vector<T>{}; // Return an empty vector without modifying the map
-      }
-      return mapItr->second;
-  }
-
-  const vector<int> getmapIntData(string strName) {
-      return getMapData(strName, mapIntData);
-  }
-
-  const vector<double> getmapDoubleData(string strName) {
-      return getMapData(strName, mapDoubleData);
-  }
-
   eFELLogger logger;
 
   cFeature(const string& depFile, const string& outdir);
+  template <typename T>
+  const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData);
+  const vector<int> getmapIntData(string strName);
+  const vector<double> getmapDoubleData(string strName);
   int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
   template <typename T>
