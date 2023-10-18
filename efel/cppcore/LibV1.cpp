@@ -48,10 +48,7 @@ std::string to_string(const T& value) {
 int LibV1::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(IntFeatureData, StringData, "interpolate", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> V, T, VIntrpol, TIntrpol, InterpStepVec;
   vector<int> intrpolte;
@@ -85,78 +82,13 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-static int __peak_indices(double dThreshold, vector<double>& V,
-                          vector<int>& PeakIndex) {
-  vector<int> upVec, dnVec;
-  double dtmp;
-  int itmp;
-
-  for (size_t i = 1; i < V.size(); i++) {
-    if (V[i] > dThreshold && V[i - 1] < dThreshold) {
-      upVec.push_back(i);
-    } else if (V[i] < dThreshold && V[i - 1] > dThreshold) {
-      dnVec.push_back(i);
-    }
-  }
-  if (dnVec.size() == 0) {
-    GErrorStr +=
-        "\nVoltage never goes below or above threshold in spike detection.\n";
-    return 0;
-  }
-
-  if (dnVec.size() != upVec.size()) {
-    GErrorStr += "\nVoltage never goes below threshold after last spike.\n";
-    return 0;
-  }
-
-  PeakIndex.clear();
-  int j = 0;
-  for (size_t i = 0; i < upVec.size(); i++) {
-    dtmp = -1e9;
-    itmp = -1;
-    for (j = upVec[i]; j <= dnVec[i]; j++) {
-      if (dtmp < V[j]) {
-        dtmp = V[j];
-        itmp = j;
-      }
-    }
-    if (itmp != -1) PeakIndex.push_back(itmp);
-  }
-  return PeakIndex.size();
-}
-int LibV1::peak_indices(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  // printf("\n  LibV1  This is inside peak_indices()");
-  int retVal, nSize;
-  retVal =
-      CheckInMap(IntFeatureData, StringData, "peak_indices", nSize);
-  if (retVal)
-    return nSize;
-  vector<int> PeakIndex;
-  vector<double> v, Th;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getDoubleParam(DoubleFeatureData, "Threshold", Th);
-  if (retVal <= 0) return -1;
-  int retval = __peak_indices(Th[0], v, PeakIndex);
-  if (retval >= 0)
-    setVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
-  return retval;
-}
-
 // *** Spikecount ***
 int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
   int retval;
-  int nsize;
   size_t spikecount_value;
-  retval =
-      CheckInMap(IntFeatureData, StringData, "Spikecount", nsize);
-  if (retval) {
-    return nsize;
-  }
+
   vector<int> peakindices;
   retval = getVec(IntFeatureData, StringData, "peak_indices",
                      peakindices);
@@ -178,11 +110,7 @@ int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
 int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData, "ISI_values",
-                            nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> VecISI, pvTime;
   retVal = getVec(DoubleFeatureData, StringData, "peak_time", pvTime);
@@ -230,10 +158,6 @@ static int __ISI_CV(const vector<double>& isivalues, vector<double>& isicv) {
 int LibV1::ISI_CV(mapStr2intVec& IntFeatureData,
                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval =
-      CheckInMap(DoubleFeatureData, StringData, "ISI_CV", nsize);
-  if (retval) return nsize;
 
   vector<double> isivalues;
   retval = getVec(DoubleFeatureData, StringData, "ISI_values",
@@ -252,11 +176,7 @@ int LibV1::ISI_CV(mapStr2intVec& IntFeatureData,
 int LibV1::peak_voltage(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "peak_voltage", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   // vector<int> PeakI = getVec(IntFeatureData, StringData,
   // string("peak_indices"));
@@ -280,11 +200,7 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
   // printf("\n  LibV1  This is inside firing_rate()");
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "mean_frequency", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> stimStart, stimEnd, peakVTime, firing_rate;
   double lastAPTime = 0.;
@@ -314,10 +230,7 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
 int LibV1::peak_time(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData, "peak_time", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<int> PeakI;
   vector<double> T, pvTime;
@@ -336,11 +249,7 @@ int LibV1::peak_time(mapStr2intVec& IntFeatureData,
 int LibV1::first_spike_time(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "time_to_first_spike", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> first_spike;
   vector<double> peaktime;
@@ -358,74 +267,10 @@ int LibV1::first_spike_time(mapStr2intVec& IntFeatureData,
   return first_spike.size();
 }
 
-// min_AHP_indices
-// find the minimum between two spikes,
-// and the minimum between the last spike and the time the stimulus ends
-int LibV1::min_AHP_indices(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(IntFeatureData, StringData, "min_AHP_indices", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<int> peak_indices_plus;
-  vector<int> min_ahp_indices;
-  vector<double> v;
-  vector<double> min_ahp_values;
-  vector<double> stim_end;
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices",
-                     peak_indices_plus);
-  if (retVal < 1) {
-    GErrorStr += "\n At least one spike required for calculation of "
-        "min_AHP_indices.\n";
-    return -1;
-  }
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stim_end);
-  if (retVal <= 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
-
-  int end_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), stim_end[0])));
-  // if the last spike happens to be close to the end of the stimulus
-  // there will not be a proper AHP, this case is not properly dealt with here
-  if (end_index > peak_indices_plus.back() + 5) {
-    peak_indices_plus.push_back(end_index);
-  }
-  for (size_t i = 0; i < peak_indices_plus.size() - 1; i++) {
-    int ahpindex = distance(
-        v.begin(), min_element(v.begin() + peak_indices_plus[i],
-                               v.begin() + peak_indices_plus[i + 1]));
-    min_ahp_indices.push_back(ahpindex);
-    min_ahp_values.push_back(v[ahpindex]);
-  }
-  setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-  setVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
-  return min_ahp_indices.size();
-}
-
-int LibV1::min_AHP_values(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "min_AHP_values", nSize);
-  if (retVal) return nSize;
-  return -1;
-}
-
 int LibV1::AP_height(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData, "AP_height", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> vPeak;
   retVal = getVec(DoubleFeatureData, StringData, "peak_voltage", vPeak);
@@ -439,11 +284,7 @@ int LibV1::AP_height(mapStr2intVec& IntFeatureData,
 int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "AP_amplitude", nSize);
-  if (retVal > 0)
-    return nSize;
+  int retVal;
 
   vector<double> peakvoltage;
   vector<double> peaktime;
@@ -517,29 +358,6 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
   return apamplitude.size();
 }
 
-// AHP_depth_abs
-// naming conflict here AHP_depth_abs does the same as min_AHP_values.
-// In my opinion the should not be a feature called 'AHP_depth_abs',
-// use min_AHP_values instead.
-// A more interesting feature would be 'AHP_depth' anyways, which calculates the
-// depth of the AHP relative to the voltage base
-int LibV1::AHP_depth_abs(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "AHP_depth_abs", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<double> vAHP;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "min_AHP_values", vAHP);
-  if (retVal <= 0) return -1;
-  setVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
-  return vAHP.size();
-}
-
 // *** AHP_depth_abs_slow ***
 // same as AHP_depth_abs but the minimum search starts 
 // 5 ms (or custom duration) after the spike,
@@ -570,12 +388,6 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "AHP_depth_abs_slow", nsize);
-  if (retval) {
-    return nsize;
-  }
 
   vector<double> t;
   retval = getVec(DoubleFeatureData, StringData, "T", t);
@@ -618,48 +430,7 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
 int LibV1::AHP_slow_time(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "AHP_slow_time", nSize);
-  if (retVal) return nSize;
   return -1;
-}
-
-int LibV1::rest_voltage_value(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "voltage_base", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<double> v, t, stimStart, vRest;
-  double startTime, endTime;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-  startTime = stimStart[0] * .25;  // It is 25% from start (0), so if stimulus
-                                   // starts at 100ms then StartTime will be
-                                   // 25mS
-  // as in above case end time will be 25% less than startTime
-  endTime = stimStart[0] * .75;
-  int nCount = 0;
-  double vSum = 0;
-  // calculte the mean of voltage between startTime and endTime
-  for (size_t i = 0; i < t.size(); i++) {
-    if (t[i] >= startTime) {
-      vSum = vSum + v[i];
-      nCount++;
-    }
-    if (t[i] > endTime) break;
-  }
-  vRest.push_back(vSum / nCount);
-  setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
-  return 1;
 }
 
 static int __burst_ISI_indices(double BurstFactor, vector<int>& PeakIndex,
@@ -693,11 +464,7 @@ static int __burst_ISI_indices(double BurstFactor, vector<int>& PeakIndex,
 int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "burst_ISI_indices", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<int> PeakIndex, BurstIndex;
   vector<double> ISIValues, tVec;
@@ -756,11 +523,7 @@ static int __burst_mean_freq(vector<double>& PVTime, vector<int>& BurstIndex,
 int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "burst_mean_freq", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   int IgnoreFirstISI;
   vector<int> BurstIndex, retIgnore;
@@ -790,11 +553,7 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
 int LibV1::burst_number(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(IntFeatureData, StringData, "burst_number", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> BurstMeanFreq;
   vector<int> BurstNum;
@@ -843,11 +602,7 @@ static int __interburst_voltage(vector<int>& BurstIndex, vector<int>& PeakIndex,
 int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "interburst_voltage", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   int IgnoreFirstISI;
   vector<int> BurstIndex, PeakIndex, retIgnore;
@@ -934,11 +689,7 @@ static int __adaptation_index(double spikeSkipf, int maxnSpike,
 int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "adaptation_index", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> peakVTime, stimStart, stimEnd, OffSetVec, spikeSkipf,
       adaptation_index;
@@ -1025,10 +776,6 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "adaptation_index2", nsize);
-  if (retval) return nsize;
 
   vector<double> peakvoltagetime;
   retval = getVec(DoubleFeatureData, StringData, "peak_time",
@@ -1069,10 +816,6 @@ int LibV1::trace_check(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
   int retval;
-  int size;
-  retval = CheckInMap(IntFeatureData, StringData, "trace_check", size);
-  if (retval)
-    return size;
 
   vector<double> peak_time;
   vector<double> stim_start;
@@ -1190,11 +933,7 @@ static int __spike_width2(vector<double>& t, vector<double>& V,
 int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "spike_width2", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<int> PeakIndex, minAHPIndex;
   vector<double> V, t, dv1, dv2, spike_width2;
@@ -1216,88 +955,6 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
   retVal = __spike_width2(t, V, PeakIndex, minAHPIndex, spike_width2);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "spike_width2", spike_width2);
-  }
-  return retVal;
-}
-
-// spike half width
-// for spike amplitude = v_peak - v_AHP
-static int __spike_width1(const vector<double>& t, const vector<double>& v,
-                          const vector<int>& peak_indices,
-                          const vector<int>& min_ahp_indices, double stim_start,
-                          vector<double>& spike_width1) {
-  int start_index = distance(
-      t.begin(), find_if(t.begin(), t.end(),
-                         bind2nd(greater_equal<double>(), stim_start)));
-  vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
-  copy(min_ahp_indices.begin(), min_ahp_indices.end(),
-       min_ahp_indices_plus.begin() + 1);
-  for (size_t i = 1; i < min_ahp_indices_plus.size(); i++) {
-    double v_half = (v[peak_indices[i - 1]] + v[min_ahp_indices_plus[i]]) / 2.;
-    // interpolate this one time step where the voltage is close to v_half in
-    // the rising and in the falling edge
-    double v_dev;
-    double delta_v;
-    double t_dev_rise;
-    double t_dev_fall;
-    double delta_t;
-    int rise_index =
-        distance(v.begin(), find_if(v.begin() + min_ahp_indices_plus[i - 1],
-                                    v.begin() + peak_indices[i - 1],
-                                    bind2nd(greater_equal<double>(), v_half)));
-    v_dev = v_half - v[rise_index];
-    delta_v = v[rise_index] - v[rise_index - 1];
-    delta_t = t[rise_index] - t[rise_index - 1];
-    t_dev_rise = delta_t * v_dev / delta_v;
-    int fall_index =
-        distance(v.begin(), find_if(v.begin() + peak_indices[i - 1],
-                                    v.begin() + min_ahp_indices_plus[i],
-                                    bind2nd(less_equal<double>(), v_half)));
-    v_dev = v_half - v[fall_index];
-    delta_v = v[fall_index] - v[fall_index - 1];
-    delta_t = t[fall_index] - t[fall_index - 1];
-    t_dev_fall = delta_t * v_dev / delta_v;
-    spike_width1.push_back(t[fall_index] + t_dev_rise - t[rise_index] +
-                           t_dev_fall);
-  }
-  return spike_width1.size();
-}
-
-int LibV1::spike_width1(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "spike_half_width", nSize);
-  if (retVal)
-    return nSize;
-
-  vector<int> PeakIndex, minAHPIndex;
-  vector<double> V, t, dv1, dv2, spike_width1;
-  vector<double> stim_start;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stim_start);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndex);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
-  if (retVal < 0) return -1;
-  if (PeakIndex.size() <= 1) {
-    GErrorStr += "\nError: More than one spike is needed for spikewidth "
-        "calculation.\n";
-    return -1;
-  }
-  //
-  // Take derivative of voltage from 1st AHPmin to the peak of the spike
-  // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
-  retVal = __spike_width1(t, V, PeakIndex, minAHPIndex, stim_start[0],
-                          spike_width1);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "spike_half_width",
-                 spike_width1);
   }
   return retVal;
 }
@@ -1450,11 +1107,6 @@ int LibV1::time_constant(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "time_constant", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> v;
   vector<double> t;
@@ -1516,11 +1168,6 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "voltage_deflection", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> v;
   vector<double> t;
@@ -1555,11 +1202,6 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "ohmic_input_resistance", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> voltage_deflection;
   retVal = getVec(DoubleFeatureData, StringData,
@@ -1618,11 +1260,6 @@ int LibV1::maximum_voltage(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "maximum_voltage", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> v;
   vector<double> t;
@@ -1651,11 +1288,6 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "minimum_voltage", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> v;
   vector<double> t;
@@ -1696,11 +1328,6 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
   int retVal;
-  int nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "steady_state_voltage", nSize);
-  if (retVal)
-    return nSize;
 
   vector<double> v;
   retVal = getVec(DoubleFeatureData, StringData, "V", v);
@@ -1742,12 +1369,6 @@ int LibV1::single_burst_ratio(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "single_burst_ratio", nsize);
-  if (retval) {
-    return nsize;
-  }
 
   vector<double> isivalues;
   retval = getVec(DoubleFeatureData, StringData, "ISI_values", isivalues);
@@ -1866,13 +1487,6 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData, "AP_width",
-                            nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> t;
   retval = getVec(DoubleFeatureData, StringData, "T", t);
   if (retval < 0) return -1;
@@ -1923,13 +1537,6 @@ int LibV1::doublet_ISI(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "doublet_ISI", nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> pvt;
   retval = getVec(DoubleFeatureData, StringData, "peak_time", pvt);
   if (retval < 2) {
@@ -1957,12 +1564,6 @@ int LibV1::AHP_depth_slow(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth_slow", nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> voltagebase;
   retval = getVec(DoubleFeatureData, StringData, "voltage_base",
                         voltagebase);
@@ -1996,12 +1597,6 @@ int LibV1::AHP_depth(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData, "AHP_depth", nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> voltagebase;
   retval = getVec(DoubleFeatureData, StringData, "voltage_base",
                         voltagebase);
@@ -2035,13 +1630,6 @@ int LibV1::AP_amplitude_diff(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "AP_amplitude_diff", nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> apamplitude;
   retval = getVec(DoubleFeatureData, StringData, "AP_amplitude",
                         apamplitude);
@@ -2071,13 +1659,6 @@ int LibV1::AHP_depth_diff(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
   int retval;
-  int nsize;
-  retval = CheckInMap(DoubleFeatureData, StringData,
-                            "AHP_depth_diff", nsize);
-  if (retval) {
-    return nsize;
-  }
-
   vector<double> ahpdepth;
   retval = getVec(DoubleFeatureData, StringData, "AHP_depth",
                         ahpdepth);

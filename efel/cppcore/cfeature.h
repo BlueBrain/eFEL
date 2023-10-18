@@ -44,18 +44,19 @@ class cFeature {
 
  public:
   std::map<string, vector<featureStringPair > > fptrlookup;
-  vector<int>& getmapIntData(string strName);
-  vector<double>& getmapDoubleData(string strName);
-
   eFELLogger logger;
 
   cFeature(const string& depFile, const string& outdir);
+  template <typename T>
+  const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData);
+  const vector<int> getmapIntData(string strName);
+  const vector<double> getmapDoubleData(string strName);
   int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
+  template <typename T>
+  int getFeature(string strName, vector<T>& vec);
   int setFeatureInt(string strName, vector<int>& intVec);
-  int getFeatureInt(string strName, vector<int>& vec);
   int setFeatureDouble(string strName, vector<double>& DoubleVec);
-  int getFeatureDouble(string strName, vector<double>& vec);
   int setFeatureString(const string& key, const string& value);
   int getFeatureString(const string& key, string& value);
   void getTraces(const string& wildcard, vector<string>& traces);

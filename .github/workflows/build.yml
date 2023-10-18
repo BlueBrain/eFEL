@@ -14,7 +14,7 @@ jobs:
   tag:
     name: Bump version, push tag and make a release
     needs: call-test-workflow
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
     steps:
@@ -54,13 +54,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest, windows-latest]
+        os: [ubuntu-22.04, macos-latest, windows-latest]
         python: [cp38, cp39, cp310, cp311]
         arch: [x86_64, amd64]
         exclude:
           - os: macos-latest
             arch: amd64
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             arch: amd64
           - os: windows-latest
             arch: x86_64
@@ -90,7 +90,7 @@ jobs:
   
   tarball:
     name: Build tarball
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [call-test-workflow, tag]
     steps:
       - uses: actions/checkout@v3
@@ -111,7 +111,7 @@ jobs:
 
   publish:
     name: Release and Publish on PyPI
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [call-test-workflow, tag, wheels, tarball]
     steps:
       - uses: actions/checkout@v3
