@@ -23,7 +23,6 @@
 #include <list>
 #include <math.h>
 
-using std::bind2nd;
 using std::find_if;
 using std::greater_equal;
 using std::less_equal;

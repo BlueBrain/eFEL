@@ -24,7 +24,6 @@
 #include <iostream>
 #include <math.h>
 
-using std::bind2nd;
 using std::find_if;
 using std::greater_equal;
 using std::min_element;
@@ -48,9 +47,7 @@ static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
     }
     vpeak.resize(pi[i] - apbi[i]);
     transform(v.begin() + apbi[i], v.begin() + pi[i], vpeak.begin(),
-              bind2nd(std::minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), 
-              static_cast<double(*)(double)>(fabs));
+              [halfheight](double val) { return fabs(val - halfheight); });
     apri[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               apbi[i];
   }
@@ -87,9 +84,7 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),
-              bind2nd(std::minus<double>(), halfheight));
-    transform(vpeak.begin(), vpeak.end(), vpeak.begin(), 
-              static_cast<double(*)(double)>(fabs));
+              [halfheight](double val) { return fabs(val - halfheight); });
     apfi[i] = distance(vpeak.begin(), min_element(vpeak.begin(), vpeak.end())) +
               pi[i];
   }
@@ -1264,10 +1259,13 @@ int LibV2::E27(mapStr2intVec& IntFeatureData,
 static int __steady_state_hyper(const vector<double>& v,
                                 const vector<double>& t, double stimend,
                                 vector<double>& steady_state_hyper) {
-  int i_end =
-      distance(t.begin(), find_if(t.begin(), t.end(),
-                                  bind2nd(greater_equal<double>(), stimend))) -
-      5;
+  // Find the iterator pointing to the first time value greater than or equal to stimend
+  auto it_stimend = find_if(t.begin(), t.end(), 
+                            [stimend](double t_val) { return t_val >= stimend; });
+
+  // Calculate the index, ensuring you account for the offset of -5
+  int i_end = distance(t.begin(), it_stimend) - 5;
+
 
   const int offset = 30;
   if (i_end < 0 || i_end < offset) {

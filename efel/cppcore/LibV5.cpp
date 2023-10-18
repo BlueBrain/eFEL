@@ -356,10 +356,9 @@ static int __min_AHP_indices(const vector<double>& t, const vector<double>& v,
   unsigned end_index = 0;
 
   if (strict_stiminterval) {
-    end_index =
-        distance(t.begin(),
-                 find_if(t.begin(), t.end(),
-                         std::bind2nd(std::greater_equal<double>(), stim_end)));
+    end_index = distance(t.begin(), find_if(t.begin(), t.end(), [stim_end](double t_val) {
+      return t_val >= stim_end;
+    }));
   } else {
     end_index = distance(t.begin(), t.end());
   }
@@ -484,7 +483,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
   int start_index =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
-                       std::bind2nd(std::greater_equal<double>(), stim_start)));
+                       [stim_start](double t_val){ return t_val >= stim_start; }));
   vector<int> min_ahp_indices_plus(min_ahp_indices.size() + 1, start_index);
   copy(min_ahp_indices.begin(), min_ahp_indices.end(),
        min_ahp_indices_plus.begin() + 1);
@@ -500,7 +499,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
     int rise_index = distance(
         v.begin(), find_if(v.begin() + min_ahp_indices_plus[i - 1],
                            v.begin() + peak_indices[i - 1],
-                           std::bind2nd(std::greater_equal<double>(), v_half)));
+                           [v_half](double v_val){ return v_val >= v_half; }));
     v_dev = v_half - v[rise_index];
     delta_v = v[rise_index] - v[rise_index - 1];
     delta_t = t[rise_index] - t[rise_index - 1];
@@ -508,7 +507,7 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
     int fall_index = distance(
         v.begin(), find_if(v.begin() + peak_indices[i - 1],
                            v.begin() + min_ahp_indices_plus[i],
-                           std::bind2nd(std::less_equal<double>(), v_half)));
+                           [v_half](double v_val){ return v_val <= v_half; }));
     v_dev = v_half - v[fall_index];
     delta_v = v[fall_index] - v[fall_index - 1];
     delta_t = t[fall_index] - t[fall_index - 1];
@@ -577,10 +576,9 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 
   // restrict to time interval where stimulus is applied
   vector<int> minima, peak_indices;
-  int stimbeginindex =
-      distance(t.begin(),
-               find_if(t.begin(), t.end(),
-                       std::bind2nd(std::greater_equal<double>(), stimstart)));
+  auto stimbeginindex = std::distance(t.begin(),
+      std::find_if(t.begin(), t.end(),
+          [stimstart](double time){ return time >= stimstart; }));
   
   if (stimbeginindex > 1){
     // to avoid skipping AP_begin when it is exactly at stimbeginindex
@@ -622,29 +620,29 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     // Detect where the derivate crosses derivativethreshold, and make sure
     // this happens in a window of 'width' sampling point
     do {
-      begin = distance(
-          dvdt.begin(),
-          find_if(
-              // use reverse iterator to get last occurence
-              // and avoid false positive long before the spike
-              dvdt.rbegin() + v.size() - newbegin,
-              dvdt.rbegin() + v.size() - minima[i],
-              std::bind2nd(std::less_equal<double>(), derivativethreshold)).base());
-      // cover edge case to avoid going out of index in the while condition
-      if (begin > endindex - width){
-        begin = endindex - width;
-      }
-      // printf("%d %d\n", newbegin, minima[i+1]);
-      if (begin == minima[i]) {
-        // printf("Skipping %d %d\n", newbegin, minima[i+1]);
-        // could not find a spike in between these minima
-        skip = true;
-        break;
-      }
-      newbegin = begin - 1;
-    } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
-                     std::bind2nd(std::less<double>(), derivativethreshold)) !=
-             dvdt.begin() + begin + width);
+        begin = distance(
+            dvdt.begin(),
+            find_if(
+                // use reverse iterator to get last occurence
+                // and avoid false positive long before the spike
+                dvdt.rbegin() + v.size() - newbegin,
+                dvdt.rbegin() + v.size() - minima[i],
+                [derivativethreshold](double val) { return val <= derivativethreshold; }).base());
+        // cover edge case to avoid going out of index in the while condition
+        if (begin > endindex - width){
+          begin = endindex - width;
+        }
+        // printf("%d %d\n", newbegin, minima[i+1]);
+        if (begin == minima[i]) {
+          // printf("Skipping %d %d\n", newbegin, minima[i+1]);
+          // could not find a spike in between these minima
+          skip = true;
+          break;
+        }
+        newbegin = begin - 1;
+      } while (find_if(dvdt.begin() + begin, dvdt.begin() + begin + width,
+                       [derivativethreshold](double val) { return val < derivativethreshold; }) !=
+               dvdt.begin() + begin + width);
     if (skip) {
       continue;
     }
@@ -732,7 +730,7 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
     apei[i] = std::distance(
         dvdt.begin(),
         std::find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
-                std::bind2nd(std::greater_equal<double>(), derivativethreshold)));
+                [derivativethreshold](double x){ return x >= derivativethreshold; }));
   }
   return apei.size();
 }
@@ -802,18 +800,19 @@ int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
 }
 
 static int __number_initial_spikes(vector<double>& peak_times, double stimstart,
-                                   double stimend, double initial_perc,
-                                   vector<int>& number_initial_spikes) {
+                   double stimend, double initial_perc,
+                   vector<int>& number_initial_spikes) {
   double initialLength = (stimend - stimstart) * initial_perc;
 
   int startIndex =
-      distance(peak_times.begin(),
-               find_if(peak_times.begin(), peak_times.end(),
-                       std::bind2nd(std::greater_equal<double>(), stimstart)));
+    distance(peak_times.begin(),
+         find_if(peak_times.begin(), peak_times.end(),
+             [stimstart](double t){ return t >= stimstart; }));
   int endIndex = distance(peak_times.begin(),
-                          find_if(peak_times.begin(), peak_times.end(),
-                                  std::bind2nd(std::greater_equal<double>(),
-                                               stimstart + initialLength)));
+              find_if(peak_times.begin(), peak_times.end(),
+                  [stimstart, initialLength](double t){
+                    return t >= stimstart + initialLength;
+                  }));
 
   number_initial_spikes.push_back(endIndex - startIndex);
 
@@ -1193,11 +1192,10 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   // because AP_begin_indices are all after stim start
   // if not done, could cause cases where AP_begin_indices[i] > min_ahp_indices[i]
   // leading to segmentation faults
-  int stimbeginindex =
-      distance(t.begin(),
-               find_if(t.begin(), t.end(),
-                       std::bind2nd(std::greater_equal<double>(), stimstart)));
-
+  auto it = std::find_if(t.begin(), t.end(), [stimstart](double val) {
+    return val >= stimstart;
+  });
+  int stimbeginindex = std::distance(t.begin(), it);
   vector<int> strict_min_ahp_indices;
   for (size_t i = 0; i < min_ahp_indices.size(); i++) {
     if (min_ahp_indices[i] > stimbeginindex) {
@@ -1212,9 +1210,9 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
     // the falling edge
     int rise_index = AP_begin_indices[i];
     int fall_index = distance(
-        v.begin(),
-        find_if(v.begin() + rise_index + 1, v.begin() + strict_min_ahp_indices[i],
-                std::bind2nd(std::less_equal<double>(), v_start)));
+      v.begin(),
+      find_if(v.begin() + rise_index + 1, v.begin() + strict_min_ahp_indices[i],
+        [v_start](const auto& val){ return val <= v_start; }));
     // v_dev = v_start - v[fall_index];
     // delta_v = v[fall_index] - v[fall_index - 1];
     // delta_t = t[fall_index] - t[fall_index - 1];
@@ -2048,11 +2046,11 @@ int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   size_t start_index =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
-                       std::bind2nd(std::greater_equal<double>(), start_time)));
+                       [start_time](double x){ return x >= start_time; }));
   size_t stop_index =
       distance(t.begin(),
                find_if(t.begin(), t.end(),
-                       std::bind2nd(std::greater_equal<double>(), stimEnd[0])));
+                       [stimEnd](double x){ return x >= stimEnd[0]; }));
 
   size_t mean_size = 0;
   double mean = 0.0;
@@ -2230,7 +2228,7 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
 size_t get_index(const vector<double>& times, double t) {
   return distance(times.begin(),
                   find_if(times.begin(), times.end(),
-                          std::bind2nd(std::greater_equal<double>(), t)));
+                          [t](double x){ return x >= t; }));
 }
 
 double __decay_time_constant_after_stim(const vector<double>& times,
@@ -2400,20 +2398,20 @@ static int __sag_time_constant(const vector<double>& times,
   // minimal required length of each decay (indices)
   size_t min_length = 10;
 
-  // get start index
-  const size_t decayStartIdx =
-      distance(voltage.begin(),
-          find_if(voltage.begin(), voltage.end(),
-                  std::bind2nd(std::less_equal<double>(), minimum_voltage)));
+    // get start index
+    const size_t decayStartIdx =
+      std::distance(voltage.begin(),
+        std::find_if(voltage.begin(), voltage.end(),
+            [minimum_voltage](double v){ return v <= minimum_voltage; }));
 
 
-  // voltage at which 90% of the sag amplitude has decayed
-  double steady_state_90 = steady_state_v - sag_amplitude * 0.1;
-  // get end index
-  const size_t decayEndIdx =
-      distance(voltage.begin(),
-          find_if(voltage.begin() + decayStartIdx, voltage.end(),
-                  std::bind2nd(std::greater_equal<double>(), steady_state_90)));
+    // voltage at which 90% of the sag amplitude has decayed
+    double steady_state_90 = steady_state_v - sag_amplitude * 0.1;
+    // get end index
+    const size_t decayEndIdx =
+      std::distance(voltage.begin(),
+        std::find_if(voltage.begin() + decayStartIdx, voltage.end(),
+            [steady_state_90](double v){ return v >= steady_state_90; }));
 
   // voltage reference by which the voltage (i the decay interval)
   // is going to be substracted
@@ -3028,10 +3026,8 @@ static int __min_between_peaks_indices(const vector<double>& t, const vector<dou
   unsigned end_index = 0;
 
   if (strict_stiminterval) {
-    end_index =
-        distance(t.begin(),
-                 find_if(t.begin(), t.end(),
-                         std::bind2nd(std::greater_equal<double>(), stim_end)));
+    end_index = distance(t.begin(), find_if(t.begin(), t.end(),
+      [stim_end](double t_val) { return t_val >= stim_end; }));
   } else {
     end_index = distance(t.begin(), t.end());
   }
@@ -3146,17 +3142,17 @@ static int __AP_width_between_threshold(const vector<double>& t, const vector<do
   vector<int> indices(min_between_peaks_indices.size() + 1);
   int start_index = distance(
       t.begin(),
-      find_if(t.begin(), t.end(), bind2nd(std::greater_equal<double>(), stimstart)));
+      find_if(t.begin(), t.end(), [stimstart](double x){return x >= stimstart;}));
   indices[0] = start_index;
   copy(min_between_peaks_indices.begin(), min_between_peaks_indices.end(), indices.begin() + 1);
 
   for (size_t i = 0; i < indices.size() - 1; i++) {
     int onset_index = distance(
         v.begin(), find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
-                           bind2nd(std::greater_equal<double>(), threshold)));
+                           [threshold](double x){return x >= threshold;}));
     int end_index = distance(
         v.begin(), find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
-                           bind2nd(std::less_equal<double>(), threshold)));
+                           [threshold](double x){return x <= threshold;}));
     if (end_index != indices[i + 1]){
       ap_width_threshold.push_back(t[end_index] - t[onset_index]);
     }
@@ -3555,10 +3551,7 @@ static int __postburst_min_indices(vector<double>& t,
                                    vector<double>& postburst_min_values,
                                    const double stim_end) {
   unsigned postburst_min_index, stim_end_index, end_index;
-  stim_end_index =
-      distance(t.begin(),
-                find_if(t.begin(), t.end(),
-                        std::bind2nd(std::greater_equal<double>(), stim_end)));
+  stim_end_index = distance(t.begin(), find_if(t.begin(), t.end(), [stim_end](double x) { return x >= stim_end; }));
   end_index = distance(t.begin(), t.end());
   for (size_t i = 0; i < burst_end_indices.size(); i++) {
     if (burst_end_indices[i] + 1 < peak_indices.size()){
