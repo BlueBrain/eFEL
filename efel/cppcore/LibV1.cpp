@@ -30,9 +30,6 @@
 #include <iomanip>
 
 using std::find_if;
-using std::greater;
-using std::greater_equal;
-using std::less_equal;
 using std::list;
 using std::min_element;
 using std::max_element;

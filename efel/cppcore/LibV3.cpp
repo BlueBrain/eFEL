@@ -24,8 +24,6 @@
 #include <math.h>
 
 using std::find_if;
-using std::greater_equal;
-using std::less_equal;
 using std::list;
 using std::min_element;
 

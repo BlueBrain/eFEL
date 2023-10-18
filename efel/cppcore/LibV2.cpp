@@ -25,7 +25,6 @@
 #include <math.h>
 
 using std::find_if;
-using std::greater_equal;
 using std::min_element;
 using std::max_element;
 using std::transform;
