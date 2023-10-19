@@ -27,6 +27,7 @@
 #include <iterator>
 
 using std::distance;
+using std::find_if;
 
 
 // slope of loglog of ISI curve
@@ -580,7 +581,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
   // restrict to time interval where stimulus is applied
   vector<int> minima, peak_indices;
   auto stimbeginindex = distance(t.begin(),
-      std::find_if(t.begin(), t.end(),
+      find_if(t.begin(), t.end(),
           [stimstart](double time){ return time >= stimstart; }));
   
   if (stimbeginindex > 1){
@@ -732,7 +733,7 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
     // assure that the width of the slope is bigger than 4
     apei[i] = distance(
         dvdt.begin(),
-        std::find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
+        find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
                 [derivativethreshold](double x){ return x >= derivativethreshold; }));
   }
   return apei.size();
@@ -1195,7 +1196,7 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   // because AP_begin_indices are all after stim start
   // if not done, could cause cases where AP_begin_indices[i] > min_ahp_indices[i]
   // leading to segmentation faults
-  auto it = std::find_if(t.begin(), t.end(), [stimstart](double val) {
+  auto it = find_if(t.begin(), t.end(), [stimstart](double val) {
     return val >= stimstart;
   });
   int stimbeginindex = distance(t.begin(), it);
@@ -2404,7 +2405,7 @@ static int __sag_time_constant(const vector<double>& times,
     // get start index
     const size_t decayStartIdx =
       distance(voltage.begin(),
-        std::find_if(voltage.begin(), voltage.end(),
+        find_if(voltage.begin(), voltage.end(),
             [minimum_voltage](double v){ return v <= minimum_voltage; }));
 
 
@@ -2413,7 +2414,7 @@ static int __sag_time_constant(const vector<double>& times,
     // get end index
     const size_t decayEndIdx =
       distance(voltage.begin(),
-        std::find_if(voltage.begin() + decayStartIdx, voltage.end(),
+        find_if(voltage.begin() + decayStartIdx, voltage.end(),
             [steady_state_90](double v){ return v >= steady_state_90; }));
 
   // voltage reference by which the voltage (i the decay interval)
