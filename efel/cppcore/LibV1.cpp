@@ -1004,13 +1004,13 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   // find start of the decay
   int i_start = 0;
   while (find_if(dvdt.begin() + i_start, dvdt.begin() + i_start + 5,
-                [min_derivative](double val) { return val > -min_derivative; }) !=
-        dvdt.begin() + i_start + 5) {
-      if (dvdt.begin() + i_start + 5 == dvdt.end()) {
-        GErrorStr += "Could not find the decay.\n";
-        return -1;
-      }
-      i_start++;
+    [min_derivative](double val) { return val > -min_derivative; }) != dvdt.begin() + i_start + 5)
+  {
+    if (dvdt.begin() + i_start + 5 == dvdt.end()) {
+      GErrorStr += "Could not find the decay.\n";
+      return -1;
+    }
+    i_start++;
   }
   // find the flat
   // bool foundflat = false;
