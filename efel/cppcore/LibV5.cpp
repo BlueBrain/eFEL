@@ -26,6 +26,9 @@
 #include <functional>
 #include <iterator>
 
+using std::distance;
+
+
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
                            vector<double>& slope, bool skip, double spikeSkipf,
@@ -576,7 +579,7 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 
   // restrict to time interval where stimulus is applied
   vector<int> minima, peak_indices;
-  auto stimbeginindex = std::distance(t.begin(),
+  auto stimbeginindex = distance(t.begin(),
       std::find_if(t.begin(), t.end(),
           [stimstart](double time){ return time >= stimstart; }));
   
@@ -723,11 +726,11 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   picopy.push_back(v.size() - 1);
 
   for (size_t i = 0; i < apei.size(); i++) {
-    max_slope = std::distance(
+    max_slope = distance(
         dvdt.begin(),
         std::min_element(dvdt.begin() + picopy[i] + 1, dvdt.begin() + picopy[i + 1]));
     // assure that the width of the slope is bigger than 4
-    apei[i] = std::distance(
+    apei[i] = distance(
         dvdt.begin(),
         std::find_if(dvdt.begin() + max_slope, dvdt.begin() + picopy[i + 1],
                 [derivativethreshold](double x){ return x >= derivativethreshold; }));
@@ -1195,7 +1198,7 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
   auto it = std::find_if(t.begin(), t.end(), [stimstart](double val) {
     return val >= stimstart;
   });
-  int stimbeginindex = std::distance(t.begin(), it);
+  int stimbeginindex = distance(t.begin(), it);
   vector<int> strict_min_ahp_indices;
   for (size_t i = 0; i < min_ahp_indices.size(); i++) {
     if (min_ahp_indices[i] > stimbeginindex) {
@@ -2400,7 +2403,7 @@ static int __sag_time_constant(const vector<double>& times,
 
     // get start index
     const size_t decayStartIdx =
-      std::distance(voltage.begin(),
+      distance(voltage.begin(),
         std::find_if(voltage.begin(), voltage.end(),
             [minimum_voltage](double v){ return v <= minimum_voltage; }));
 
@@ -2409,7 +2412,7 @@ static int __sag_time_constant(const vector<double>& times,
     double steady_state_90 = steady_state_v - sag_amplitude * 0.1;
     // get end index
     const size_t decayEndIdx =
-      std::distance(voltage.begin(),
+      distance(voltage.begin(),
         std::find_if(voltage.begin() + decayStartIdx, voltage.end(),
             [steady_state_90](double v){ return v >= steady_state_90; }));
 
