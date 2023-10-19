@@ -70,20 +70,6 @@ class cFeature {
   double getDistance(string strName, double mean, double std, 
           bool trace_check=true, double error_dist=250);
 
-  // calculation of GA errors
-  template<typename T>
-  double calc_error_bio(const vector<T>& v, double bio_mean, double bio_sd)
-  {
-    if (v.size() != 0) {
-      double error = 0.;
-      for (size_t i = 0; i < v.size(); i++) {
-        error += fabs(v[i] - bio_mean);
-      }
-      return error / bio_sd / v.size();
-    } else {
-      return 250.;
-    }
-  }
 };
 
 #endif
