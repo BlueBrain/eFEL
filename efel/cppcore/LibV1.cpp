@@ -29,11 +29,8 @@
 #include <sstream>
 #include <iomanip>
 
-using std::bind2nd;
+using std::distance;
 using std::find_if;
-using std::greater;
-using std::greater_equal;
-using std::less_equal;
 using std::list;
 using std::min_element;
 using std::max_element;
@@ -378,7 +375,7 @@ static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                 distance(t.begin(),
                          find_if(t.begin() + peakindices[i + 1],
                                  t.begin() + peakindices[i + 2],
-                                 bind2nd(greater_equal<double>(), t_start))),
+                                 [t_start](double val) { return val >= t_start; })),
             v.begin() + peakindices[i + 2]));
   }
   return adas_indices.size();
@@ -983,10 +980,11 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   // int stimendindex;
   // for(stimendindex = 0; t[stimendindex] < stimEnd; stimendindex++) ;
   // int stimmiddleindex = (stimstartindex + stimendindex) / 2;
-  int stimmiddleindex = distance(
-      t.begin(),
-      find_if(t.begin() + stimstartindex, t.end(),
-              bind2nd(greater_equal<double>(), (stimStart + stimEnd) / 2.)));
+  double mid_stim = (stimStart + stimEnd) / 2.;
+  auto it_mid_stim = find_if(t.begin() + stimstartindex, t.end(),
+                            [mid_stim](double val) { return val >= mid_stim; });
+  int stimmiddleindex = distance(t.begin(), it_mid_stim);
+
   if (stimstartindex >= v.size() || stimmiddleindex < 0 ||
       static_cast<size_t>(stimmiddleindex) >= v.size()) {
     return -1;
@@ -1006,8 +1004,8 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   // find start of the decay
   int i_start = 0;
   while (find_if(dvdt.begin() + i_start, dvdt.begin() + i_start + 5,
-                 bind2nd(greater<double>(), -min_derivative)) !=
-         dvdt.begin() + i_start + 5) {
+    [min_derivative](double val) { return val > -min_derivative; }) != dvdt.begin() + i_start + 5)
+  {
     if (dvdt.begin() + i_start + 5 == dvdt.end()) {
       GErrorStr += "Could not find the decay.\n";
       return -1;
@@ -1441,11 +1439,9 @@ static int __AP_width(const vector<double>& t, const vector<double>& v,
   if (strict_stiminterval){
     int start_index = distance(
         t.begin(),
-        find_if(t.begin(), t.end(), bind2nd(greater_equal<double>(), stimstart)));
-    int end_index =
-        distance(t.begin(),
-                 find_if(t.begin(), t.end(),
-                         std::bind2nd(std::greater_equal<double>(), stimend)));
+        find_if(t.begin(), t.end(), [stimstart](double x){ return x >= stimstart; }));
+    int end_index = distance(t.begin(), find_if(t.begin(), t.end(),
+      [stimend](double x){ return x >= stimend; }));
     indices.push_back(start_index);
     for (size_t i = 0; i < minahpindices.size(); i++) {
       if (start_index < minahpindices[i] && minahpindices[i] < end_index) {
@@ -1470,14 +1466,14 @@ static int __AP_width(const vector<double>& t, const vector<double>& v,
     v.begin() + indices[i + 1], bind2nd(less_equal<double>(), v_hm)));
     apwidth.push_back(t[hm_index2] - t[hm_index1]);
     */
-    int onset_index = distance(
-        v.begin(), find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
-                           bind2nd(greater_equal<double>(), threshold)));
+    auto onset_index = distance(
+      v.begin(), find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
+                 [threshold](double x){ return x >= threshold; }));
     // int end_index = distance(v.begin(), find_if(v.begin() + peakindices[i],
     // v.begin() + indices[i + 1], bind2nd(less_equal<double>(), threshold)));
-    int end_index = distance(
-        v.begin(), find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
-                           bind2nd(less_equal<double>(), threshold)));
+    auto end_index = distance(
+      v.begin(), find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
+                 [threshold](double x){ return x <= threshold; }));
     apwidth.push_back(t[end_index] - t[onset_index]);
   }
   return apwidth.size();

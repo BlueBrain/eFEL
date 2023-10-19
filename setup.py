@@ -69,7 +69,7 @@ if os.environ.get('EFEL_COVERAGE_BUILD'):
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
                     include_dirs=['efel/cppcore/'],
-                    extra_compile_args=coverage_flags,
+                    extra_compile_args=coverage_flags + ['-std=c++17'],
                     extra_link_args=coverage_flags)
 
 setup(

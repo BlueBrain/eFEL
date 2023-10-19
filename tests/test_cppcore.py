@@ -200,6 +200,9 @@ class TestCppcore:
             efel.cppcore.getFeature(feature_name, feature_values)
             with (Path(tempdir) / 'fllog.txt').open() as fd:
                 contents = fd.read()
+            # re-call efel's Initialize with current dir to remove pointer to tempdir.
+            # this pointer was preventing the deletion of tempdir on windows.
+            efel.cppcore.Initialize(efel.getDependencyFileLocation(), '.')
         assert f"Calculated feature {feature_name}" in contents
         assert f"Reusing computed value of {feature_name}" in contents
         # make sure Calculated feature text occurs once
