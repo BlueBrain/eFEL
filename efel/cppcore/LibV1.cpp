@@ -29,6 +29,7 @@
 #include <sstream>
 #include <iomanip>
 
+using std::distance;
 using std::find_if;
 using std::list;
 using std::min_element;
@@ -1465,13 +1466,13 @@ static int __AP_width(const vector<double>& t, const vector<double>& v,
     v.begin() + indices[i + 1], bind2nd(less_equal<double>(), v_hm)));
     apwidth.push_back(t[hm_index2] - t[hm_index1]);
     */
-    auto onset_index = std::distance(
-      v.begin(), std::find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
+    auto onset_index = distance(
+      v.begin(), find_if(v.begin() + indices[i], v.begin() + indices[i + 1],
                  [threshold](double x){ return x >= threshold; }));
     // int end_index = distance(v.begin(), find_if(v.begin() + peakindices[i],
     // v.begin() + indices[i + 1], bind2nd(less_equal<double>(), threshold)));
-    auto end_index = std::distance(
-      v.begin(), std::find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
+    auto end_index = distance(
+      v.begin(), find_if(v.begin() + onset_index, v.begin() + indices[i + 1],
                  [threshold](double x){ return x <= threshold; }));
     apwidth.push_back(t[end_index] - t[onset_index]);
   }
