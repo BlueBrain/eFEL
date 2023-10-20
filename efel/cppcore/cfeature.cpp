@@ -461,33 +461,6 @@ int cFeature::getFeatureString(const string& key, string& value) {
     return -1;
   }
 }
-/*
- * not needed
-int cFeature::ifExist(string strName, map<string, vector< int > > &mapIntData){
-    map<string, vector< int > >::iterator mapItrInt;
-    int n = mapIntData.size();
-    string str;
-    for(mapItrInt = mapIntData.begin(); mapItrInt != mapIntData.end();
-mapItrInt++){
-        str = mapItrInt->first;
-        if( str == strName) return 1;
-    }
-    return 0;
-}
-
-int cFeature::ifExist(string strName, map<string, vector< double > >
-&mapDoubleData){
-    map<string, vector< double > >::iterator mapItrDouble;
-    int n = mapDoubleData.size();
-    string str;
-    for(mapItrDouble = mapDoubleData.begin(); mapItrDouble !=
-mapDoubleData.end(); mapItrDouble++){
-        str = mapItrDouble->first;
-        if( str == strName) return 1;
-    }
-    return 0;
-}
-*/
 
 int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   if (mapDoubleData.find(strName) != mapDoubleData.end()) {
@@ -606,10 +579,6 @@ double cFeature::getDistance(string strName, double mean, double std,
 }
 
 string cFeature::featuretype(string featurename) {
-  int npos = featurename.find(";");
-  if (npos != string::npos) {
-    featurename = featurename.substr(0, npos);
-  }
   if (featurename == "__test_efel_assertion__")  // for testing only
     throw EfelAssertionError("Test efel assertion is successfully triggered.");
   string type = featuretypes[featurename];

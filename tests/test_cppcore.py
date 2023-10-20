@@ -200,6 +200,7 @@ class TestCppcore:
             efel.cppcore.getFeature(feature_name, feature_values)
             with (Path(tempdir) / 'fllog.txt').open() as fd:
                 contents = fd.read()
+                # breakpoint()
             # re-call efel's Initialize with current dir to remove pointer to tempdir.
             # this pointer was preventing the deletion of tempdir on windows.
             efel.cppcore.Initialize(efel.getDependencyFileLocation(), '.')
