@@ -160,7 +160,7 @@ class TestCppcore:
         return_value = efel.cppcore.getFeature("AP_amplitude", feature_values)
         assert return_value == -1
 
-    @pytest.mark.xfail(raises=TypeError)
+    @pytest.mark.xfail(raises=RuntimeError)
     def test_getFeature_non_existant(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel
@@ -209,3 +209,15 @@ class TestCppcore:
         assert contents.count(f"Calculated feature {feature_name}") == 1
         # make sure Reusing computed value of text occurs twice
         assert contents.count(f"Reusing computed value of {feature_name}") == 2
+
+
+def test_efel_assertion_error():
+    """Testing if C++ assertion error is propagated to Python correctly."""
+    import efel
+    efel.reset()
+    trace = {
+        "stim_start": [25],
+        "stim_end": [75],
+    }
+    with pytest.raises(AssertionError):
+        efel.getFeatureValues([trace], ["__test_efel_assertion__"])

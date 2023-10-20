@@ -40,6 +40,6 @@ add_library(efel SHARED ${FEATURESRCS})
 install(TARGETS efel LIBRARY DESTINATION lib)
 
 install(FILES efel.h cfeature.h FillFptrTable.h LibV1.h LibV2.h LibV3.h
-    LibV5.h mapoperations.h Utils.h DependencyTree.h eFELLogger.h
+    LibV5.h mapoperations.h Utils.h DependencyTree.h eFELLogger.h EfelExceptions.h
     types.h
     DESTINATION include)
