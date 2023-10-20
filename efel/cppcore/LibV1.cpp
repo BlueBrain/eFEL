@@ -434,7 +434,6 @@ static int __burst_ISI_indices(double BurstFactor, vector<int>& PeakIndex,
                                vector<double>& ISIValues,
                                vector<int>& BurstIndex) {
   vector<double> ISIpcopy;
-  vector<double>::iterator it1, it2;
   int n, count = -1;
   double dMedian;
 
