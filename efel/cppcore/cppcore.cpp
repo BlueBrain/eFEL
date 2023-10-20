@@ -117,27 +117,39 @@ _getfeature(PyObject* self, PyObject* args, const string &type) {
     return NULL;
   }
 
-  string feature_type = pFeature->featuretype(string(feature_name));
+  string feature_type;
+  try
+  {
+    feature_type = pFeature->featuretype(string(feature_name));
+  }
+  catch(const std::runtime_error& e)
+  {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    return NULL;
+  }
 
-  if (!type.empty() && feature_type != type){
+  if (!type.empty() && feature_type != type){  // when types do not match
     PyErr_SetString(PyExc_TypeError, "Feature type does not match");
     return NULL;
   }
 
-  if (feature_type == "int") {
-    vector<int> values;
-    return_value = pFeature->getFeature<int>(string(feature_name), values);
-    PyList_from_vectorint(values, py_values);
-  } else if (feature_type == "double") {
-    vector<double> values;
-    return_value = pFeature->getFeature<double>(string(feature_name), values);
-    PyList_from_vectordouble(values, py_values);
-  } else {
-    PyErr_SetString(PyExc_TypeError, "Unknown feature name");
+  try {
+    if (feature_type == "int") {
+      vector<int> values;
+      return_value = pFeature->getFeature<int>(string(feature_name), values);
+      PyList_from_vectorint(values, py_values);
+      return Py_BuildValue("i", return_value);
+    } else { // double
+      vector<double> values;
+      return_value = pFeature->getFeature<double>(string(feature_name), values);
+      PyList_from_vectordouble(values, py_values);
+      return Py_BuildValue("i", return_value);
+    }
+  }
+  catch(const std::runtime_error& e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
     return NULL;
   }
-
-  return Py_BuildValue("i", return_value);
 }
 
 

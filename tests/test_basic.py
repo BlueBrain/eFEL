@@ -183,7 +183,7 @@ def test_nonexisting_feature():
     trace['stim_end'] = [75]
 
     pytest.raises(
-        TypeError,
+        RuntimeError,
         efel.getFeatureValues,
         [trace],
         ['nonexisting_feature'])

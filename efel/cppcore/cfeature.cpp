@@ -374,12 +374,7 @@ int cFeature::calc_features(const string& name) {
   map<string, vector<featureStringPair> >::const_iterator lookup_it(
       fptrlookup.find(name));
   if (lookup_it == fptrlookup.end()) {
-    fprintf(stderr,
-            "\nFeature [ %s ] dependency file entry or pointer table entry is "
-            "missing. Exiting\n",
-            name.c_str());
-    fflush(stderr);
-    exit(1);
+      throw std::runtime_error("Feature dependency file entry or pointer table entry is missing.");
   }
 
   bool last_failed = false;
@@ -581,17 +576,12 @@ double cFeature::getDistance(string strName, double mean, double std,
       }
   }
 
-  // check datatype of feature
   featureType = featuretype(strName);
-  if (featureType.empty()) {
-    printf("Error : Feature [%s] not found. Exiting..\n", strName.c_str());
-    exit(1);
-  }
 
   if (featureType == "int") {
     retVal = getFeature<int>(strName, feature_veci);
     intFlag = 1;
-  } else {
+  } else { // double
     retVal = getFeature<double>(strName, feature_vec);
     intFlag = 0;
   }
@@ -634,12 +624,12 @@ double cFeature::getDistance(string strName, double mean, double std,
 
 string cFeature::featuretype(string featurename) {
   int npos = featurename.find(";");
-  if (npos >= 0) {
+  if (npos != string::npos) {
     featurename = featurename.substr(0, npos);
   }
-  string type(featuretypes[featurename]);
-  if (type.empty()) {
-    GErrorStr += featurename + "missing in featuretypes map.\n";
+  string type = featuretypes[featurename];
+  if (type != "int" && type != "double") {
+    throw std::runtime_error("Unknown feature name: " + featurename);
   }
   return type;
 }

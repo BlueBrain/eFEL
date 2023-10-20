@@ -160,7 +160,7 @@ class TestCppcore:
         return_value = efel.cppcore.getFeature("AP_amplitude", feature_values)
         assert return_value == -1
 
-    @pytest.mark.xfail(raises=TypeError)
+    @pytest.mark.xfail(raises=RuntimeError)
     def test_getFeature_non_existant(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeature"""
         import efel
