@@ -209,3 +209,15 @@ class TestCppcore:
         assert contents.count(f"Calculated feature {feature_name}") == 1
         # make sure Reusing computed value of text occurs twice
         assert contents.count(f"Reusing computed value of {feature_name}") == 2
+
+
+def test_efel_assertion_error():
+    """Testing if c++ assertion error is propagated to python acorrectly."""
+    import efel
+    efel.reset()
+    trace = {
+        "stim_start": [25],
+        "stim_end": [75],
+    }
+    with pytest.raises(AssertionError):
+        efel.getFeatureValues([trace], ["__test_efel_assertion__"])

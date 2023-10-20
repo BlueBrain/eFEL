@@ -114,25 +114,18 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
 
   int return_value;
   if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
-    return NULL;
-  }
-
-  string feature_type;
-  try {
-    feature_type = pFeature->featuretype(string(feature_name));
-  }
-  catch(const std::runtime_error& e)
-  {
-    PyErr_SetString(PyExc_RuntimeError, e.what());
-    return NULL;
-  }
-
-  if (!input_type.empty() && feature_type != input_type){  // when types do not match
-    PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+    PyErr_SetString(PyExc_TypeError, "Unexpected argument type provided.");
     return NULL;
   }
 
   try {
+    string feature_type = pFeature->featuretype(string(feature_name));
+
+    if (!input_type.empty() && feature_type != input_type){  // when types do not match
+      PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+      return NULL;
+    }
+
     if (feature_type == "int") {
       vector<int> values;
       return_value = pFeature->getFeature<int>(string(feature_name), values);

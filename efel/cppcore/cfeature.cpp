@@ -627,10 +627,11 @@ string cFeature::featuretype(string featurename) {
   if (npos != string::npos) {
     featurename = featurename.substr(0, npos);
   }
+  if (featurename == "__test_efel_assertion__")  // for testing only
+    throw EfelAssertionError("Test efel assertion is successfully triggered.");
   string type = featuretypes[featurename];
-  if (type != "int" && type != "double") {
+  if (type != "int" && type != "double")
     throw std::runtime_error("Unknown feature name: " + featurename);
-  }
   return type;
 }
 
