@@ -374,9 +374,9 @@ int cFeature::calc_features(const string& name) {
   map<string, vector<featureStringPair> >::const_iterator lookup_it(
       fptrlookup.find(name));
   if (lookup_it == fptrlookup.end()) {
-      throw std::runtime_error("Feature dependency file entry or pointer table entry is missing.");
+    throw std::runtime_error("Feature dependency file entry or pointer table "
+                             "entry for '" + name + "' is missing.");
   }
-
   bool last_failed = false;
 
   for (vector<featureStringPair>::const_iterator pfptrstring =
