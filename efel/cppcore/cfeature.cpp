@@ -74,23 +74,6 @@ const vector<double> cFeature::getmapDoubleData(string strName) {
     return getMapData(strName, mapDoubleData);
 }
 
-int cFeature::setVersion(string strDepFile) {
-  FptrTable.clear();
-  /*
-  map<string, vector< pair< fptr, string > > >::iterator mapVecItr;
-  vector< pair< fptr, string > > *vecFptr;
-  for(mapVecItr = pFeature->fptrlookup.begin(); mapVecItr !=
-  pFeature->fptrlookup.end(); mapVecItr++){
-      vecFptr   = &(mapVecItr->second);
-      vecFptr->clear();
-  }
-  */
-  fptrlookup.clear();
-  cTree DepTree(strDepFile.c_str());
-  DepTree.setFeaturePointers(mapFptrLib, &FptrTable, &fptrlookup);
-  return 1;
-}
-
 void cFeature::fillfeaturetypes() {
   // initialize feature type information
   featuretypes["peak_indices"] = "int";

@@ -21,7 +21,6 @@
 #define FEATURELIB_API
 extern "C" {
 FEATURELIB_API int Initialize(const char *strDepFile, const char *outdir);
-FEATURELIB_API int setVersion(const char *strDepFile);
 FEATURELIB_API int setFeatureInt(const char *strName, int *A, unsigned nValue);
 FEATURELIB_API int setFeatureDouble(const char *strName, double *A, unsigned nValue);
 FEATURELIB_API int getTotalIntData();

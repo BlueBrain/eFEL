@@ -35,10 +35,6 @@ int Initialize(const char *strDepFile, const char *outdir) {
   }
 }
 
-int setVersion(const char *strDepFile) {
-  return pFeature->setVersion(string(strDepFile));
-}
-
 int FeaturePrint(const char *strFile) {
   pFeature->printFeature(strFile);
   return 1;
