@@ -118,8 +118,7 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
   }
 
   string feature_type;
-  try
-  {
+  try {
     feature_type = pFeature->featuretype(string(feature_name));
   }
   catch(const std::runtime_error& e)
@@ -146,8 +145,16 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
       return Py_BuildValue("i", return_value);
     }
   }
+  catch(EfelAssertionError& e) {  // more specialised exception
+    PyErr_SetString(PyExc_AssertionError, e.what());
+    return NULL;
+  }
   catch(const std::runtime_error& e) {
     PyErr_SetString(PyExc_RuntimeError, e.what());
+    return NULL;
+  }
+  catch(...) {
+    PyErr_SetString(PyExc_RuntimeError, "Unknown error");
     return NULL;
   }
 }
