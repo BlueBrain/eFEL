@@ -53,5 +53,5 @@ push: clean install test doc doc_upload
 format:	
 	clang-format -i -style="google" efel/cppcore/*.cpp
 graph:
-	pip install pygraphviz==1.3.1
-	utils/efel_graph_dependency -i efel/DependencyV5.txt --graph dependencies.png --graph-deps
+	pip install pygraphviz==1.11
+	python utils/efel_graph_dependency.py -i efel/DependencyV5.txt --graph dependencies.png --graph-deps
