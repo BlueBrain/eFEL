@@ -108,7 +108,7 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
 }
 
 static PyObject*
-_getfeature(PyObject* self, PyObject* args, const string &type) {
+_getfeature(PyObject* self, PyObject* args, const string &input_type) {
   char* feature_name;
   PyObject* py_values;
 
@@ -128,7 +128,7 @@ _getfeature(PyObject* self, PyObject* args, const string &type) {
     return NULL;
   }
 
-  if (!type.empty() && feature_type != type){  // when types do not match
+  if (!input_type.empty() && feature_type != input_type){  // when types do not match
     PyErr_SetString(PyExc_TypeError, "Feature type does not match");
     return NULL;
   }
