@@ -212,7 +212,7 @@ class TestCppcore:
 
 
 def test_efel_assertion_error():
-    """Testing if c++ assertion error is propagated to python acorrectly."""
+    """Testing if C++ assertion error is propagated to Python correctly."""
     import efel
     efel.reset()
     trace = {
