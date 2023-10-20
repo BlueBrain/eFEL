@@ -623,6 +623,10 @@ double cFeature::getDistance(string strName, double mean, double std,
 }
 
 string cFeature::featuretype(string featurename) {
+  int npos = featurename.find(";");
+  if (npos != string::npos) {
+    featurename = featurename.substr(0, npos);
+  }
   if (featurename == "__test_efel_assertion__")  // for testing only
     throw EfelAssertionError("Test efel assertion is successfully triggered.");
   string type = featuretypes[featurename];
