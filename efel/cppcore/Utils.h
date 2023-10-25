@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <numeric>
 #include <vector>
+#include <sstream>
+#include <string>
 #include <utility>
 #include "EfelExceptions.h"
 
@@ -86,8 +88,9 @@ inline void
 efel_assert(bool assertion, const char *message, const char *file, const int line)
 {
   if(!assertion){
-    using std::string, std::to_string;
-    string errorMsg = "Assertion fired(" + string(file) + ":" + to_string(line) + "): " + string(message);
+    std::ostringstream os;
+    os << "Assertion fired(" << file << ":" << line << "): " << message;
+    std::string errorMsg = os.str();
     throw EfelAssertionError(errorMsg);
   }
 }
