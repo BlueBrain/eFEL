@@ -221,15 +221,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["voltage_after_stim"] = "double";
   featuretypes["AP2_AP1_begin_width_diff"] = "double";
 
-  featuretypes["BPAPHeightLoc1"] = "double";
-  featuretypes["BPAPAmplitudeLoc1"] = "double";
-  featuretypes["BPAPAmplitudeLoc2"] = "double";
-  featuretypes["BPAPHeightLoc2"] = "double";
-  featuretypes["check_AISInitiation"] = "double";
   featuretypes["AP_phaseslope"] = "double";
-  featuretypes["AP_phaseslope_AIS"] = "double";
-  featuretypes["BAC_width"] = "double";
-  featuretypes["BAC_maximum_voltage"] = "double";
   featuretypes["all_ISI_values"] = "double";
   featuretypes["AP_amplitude_from_voltagebase"] = "double";
   featuretypes["min_voltage_between_spikes"] = "double";

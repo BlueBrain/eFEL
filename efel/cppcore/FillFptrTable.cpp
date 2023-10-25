@@ -181,17 +181,7 @@ int FillFptrTable() {
 
   FptrTableV5["AP2_AP1_begin_width_diff"] = &LibV5::AP2_AP1_begin_width_diff;
 
-  FptrTableV5["BPAPHeightLoc1"] = &LibV5::BPAPHeightLoc1;
-  FptrTableV5["BPAPAmplitudeLoc1"] = &LibV5::BPAPAmplitudeLoc1;
-  FptrTableV5["BPAPAmplitudeLoc2"] = &LibV5::BPAPAmplitudeLoc2;
-  FptrTableV5["BPAPHeightLoc2"] = &LibV5::BPAPHeightLoc2;
-
-  FptrTableV5["check_AISInitiation"] = &LibV5::check_AISInitiation;
   FptrTableV5["AP_phaseslope"] = &LibV5::AP_phaseslope;
-  FptrTableV5["AP_phaseslope_AIS"] = &LibV5::AP_phaseslope_AIS;
-
-  FptrTableV5["BAC_width"] = &LibV5::BAC_width;
-  FptrTableV5["BAC_maximum_voltage"] = &LibV5::BAC_maximum_voltage;
 
   FptrTableV5["all_ISI_values"] = &LibV5::all_ISI_values;
 

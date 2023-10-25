@@ -97,23 +97,13 @@ def get_allfeature_values():
         'stim_end': [1419.995]
     }
 
-    bpap_featurenames = [
-        'BPAPHeightLoc1',
-        'BPAPHeightLoc2',
-        'BPAPAmplitudeLoc1',
-        'BPAPAmplitudeLoc2'
-    ]
-
-    bac_featurenames = ['BAC_width']
     db_featurenames = ['depol_block', 'depol_block_bool']
 
     soma_featurenames = [
         x
         for x in all_featurenames
         if x
-        not in bpap_featurenames
-        + bac_featurenames
-        + db_featurenames
+        not in db_featurenames
         + ["current", "current_base", "impedance"]
     ]
 
@@ -124,16 +114,6 @@ def get_allfeature_values():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         feature_values.update(efel.getFeatureValues([trace_db], db_featurenames)[0])
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        efel.setThreshold(-30)
-        feature_values.update(efel.getFeatureValues(traces, bpap_featurenames)[0])
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        efel.setThreshold(-55)
-        feature_values.update(efel.getFeatureValues(traces, bac_featurenames)[0])
 
     for feature_name in feature_values:
         if feature_values[feature_name] is not None:

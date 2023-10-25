@@ -2072,11 +2072,11 @@ def test_getmeanfeaturevalues():
     feature_values = \
         efel.getFeatureValues(
             [trace],
-            ['AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
+            ['AP_amplitude'], raise_warnings=False)
 
     mean_feature_values = efel.getMeanFeatureValues(
         [trace], [
-            'AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
+            'AP_amplitude'], raise_warnings=False)
 
     assert (numpy.mean(feature_values[0]['AP_amplitude']) ==
             mean_feature_values[0]['AP_amplitude'])

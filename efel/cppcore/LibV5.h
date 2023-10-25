@@ -170,23 +170,7 @@ int AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData);
 
-int BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPHeightLoc2(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-int check_AISInitiation(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
 int AP_phaseslope(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
-int AP_phaseslope_AIS(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
-int BAC_width(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-int BAC_maximum_voltage(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
 
 int all_ISI_values(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);

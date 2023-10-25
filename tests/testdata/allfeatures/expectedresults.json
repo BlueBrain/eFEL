@@ -251,7 +251,6 @@
         40.98143755958056
     ],
     "AP_phaseslope": null,
-    "AP_phaseslope_AIS": null,
     "AP_rise_indices": [
         7074,
         9104,
@@ -296,9 +295,6 @@
     ],
     "APlast_width": [
         3.1545523959582193
-    ],
-    "BAC_maximum_voltage": [
-        -50.69687269736847
     ],
     "BPAPatt2": null,
     "BPAPatt3": null,
@@ -386,9 +382,6 @@
     ],
     "burst_number": [
         2
-    ],
-    "check_AISInitiation": [
-        1.0
     ],
     "decay_time_constant_after_stim": [
         13.45188514197874
@@ -60601,21 +60594,6 @@
     "depol_block": null,
     "depol_block_bool": [
         1
-    ],
-    "BPAPHeightLoc1": [
-        44.759481866542046
-    ],
-    "BPAPHeightLoc2": [
-        36.96503266314145
-    ],
-    "BPAPAmplitudeLoc1": [
-        33.683406087334944
-    ],
-    "BPAPAmplitudeLoc2": [
-        25.779005513879177
-    ],
-    "BAC_width": [
-        5.9000000000013415
     ],
     "min_between_peaks_indices": [
         7115,

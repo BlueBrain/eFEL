@@ -133,15 +133,7 @@ LibV5:is_not_stuck #LibV1:peak_time #LibV1:interpolate
 LibV5:mean_AP_amplitude #LibV1:AP_amplitude #LibV1:interpolate 
 LibV5:voltage_after_stim #LibV1:interpolate 
 LibV5:AP2_AP1_begin_width_diff 	    #LibV5:AP_begin_width #LibV1:interpolate 
-LibV5:BPAPHeightLoc1 #LibV1:peak_voltage;location_dend1 #LibV5:voltage_base;location_dend1 #LibV1:interpolate 
-LibV5:BPAPHeightLoc2 #LibV1:peak_voltage;location_dend2 #LibV5:voltage_base;location_dend2 #LibV1:interpolate 
-LibV5:BPAPAmplitudeLoc1 #LibV1:peak_voltage;location_dend1 #LibV5:AP_begin_voltage;location_dend1 #LibV1:interpolate 
-LibV5:BPAPAmplitudeLoc2 #LibV1:peak_voltage;location_dend2 #LibV5:AP_begin_voltage;location_dend2 #LibV1:interpolate 
-LibV5:check_AISInitiation #LibV5:AP_begin_time #LibV5:AP_begin_time;location_AIS #LibV1:interpolate 
 LibV5:AP_phaseslope #LibV5:AP_begin_indices #LibV1:interpolate 
-LibV5:AP_phaseslope_AIS #LibV5:AP_phaseslope;location_AIS #LibV1:interpolate 
-LibV5:BAC_width #LibV1:AP_width;location_epsp #LibV1:interpolate 
-LibV5:BAC_maximum_voltage #LibV1:maximum_voltage;location_epsp #LibV1:interpolate 
 LibV5:all_ISI_values #LibV1:peak_time #LibV1:interpolate 
 LibV5:AP_amplitude_from_voltagebase #LibV5:voltage_base #LibV1:peak_voltage    #LibV1:interpolate 
 LibV5:min_voltage_between_spikes #LibV5:peak_indices #LibV1:interpolate 
