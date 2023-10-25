@@ -1,4 +1,28 @@
 {
+    "ADP_peak_amplitude": [
+        0.0,
+        2.6873666528663236,
+        0.48122323161050673,
+        0.06877493979540361,
+        0.0,
+        2.99957475153942
+    ],
+    "ADP_peak_indices": [
+        7115,
+        9317,
+        14162,
+        17198,
+        23943,
+        27000
+    ],
+    "ADP_peak_values": [
+        -47.716407064147894,
+        -41.60422947192351,
+        -42.066708105903004,
+        -41.97919073015028,
+        -41.12299346923828,
+        -38.12341871769886
+    ],
     "AHP1_depth_from_peak": [
         66.46542716365163
     ],
@@ -41,6 +65,12 @@
         47.89120031255262,
         44.685313698492095,
         45.59806337795396
+    ],
+    "AHP_depth_slow": [
+        28.81047723194662,
+        32.02907786238346,
+        32.65404519917785,
+        33.435288866699345
     ],
     "AHP_slow_time": [
         0.14554275318387552,
@@ -291,6 +321,14 @@
         3.2999999999969987,
         3.2999999999969987
     ],
+    "AP_width_between_threshold": [
+        1.7000000000003865,
+        2.700000000000614,
+        2.8999999999973625,
+        2.9999999999972715,
+        3.2999999999969987,
+        3.2999999999969987
+    ],
     "APlast_amp": [
         37.848929573728334
     ],
@@ -380,6 +418,12 @@
     "burst_ISI_indices": [
         3
     ],
+    "burst_begin_indices": [
+        4
+    ],
+    "burst_end_indices": [
+        5
+    ],
     "burst_mean_freq": [
         3.9840637450221186,
         7.990411506199836
@@ -393,7 +437,6 @@
     "decay_time_constant_after_stim": [
         13.45188514197874
     ],
-    "multiple_decay_time_constant_after_stim": null,
     "depolarized_base": [
         -43.027576049717304,
         -40.91599220132688,
@@ -417,6 +460,21 @@
         -2.3296693271049533,
         -2.3944223175083863
     ],
+    "interburst_15percent_indices": null,
+    "interburst_15percent_values": null,
+    "interburst_20percent_indices": null,
+    "interburst_20percent_values": null,
+    "interburst_25percent_indices": null,
+    "interburst_25percent_values": null,
+    "interburst_30percent_indices": null,
+    "interburst_30percent_values": null,
+    "interburst_40percent_indices": null,
+    "interburst_40percent_values": null,
+    "interburst_60percent_indices": null,
+    "interburst_60percent_values": null,
+    "interburst_duration": null,
+    "interburst_min_indices": [],
+    "interburst_min_values": [],
     "interburst_voltage": [
         -38.820613862535545
     ],
@@ -478,6 +536,22 @@
         -41.12299346923828,
         -41.12299346923828
     ],
+    "min_between_peaks_indices": [
+        7115,
+        9833,
+        14285,
+        17215,
+        23960,
+        28300
+    ],
+    "min_between_peaks_values": [
+        -47.716407064147894,
+        -45.90401077270508,
+        -42.68541014226824,
+        -42.06044280547385,
+        -41.279199137952354,
+        -80.43351009404397
+    ],
     "min_voltage_between_spikes": [
         -47.716407064147894,
         -45.90401077270508,
@@ -488,6 +562,7 @@
     "minimum_voltage": [
         -75.87104945779376
     ],
+    "multiple_decay_time_constant_after_stim": null,
     "number_initial_spikes": [
         1
     ],
@@ -517,6 +592,30 @@
         3.562320229253816,
         4.475069908715679
     ],
+    "postburst_adp_peak_indices": [
+        26438
+    ],
+    "postburst_adp_peak_values": [
+        -41.12299346923828
+    ],
+    "postburst_fast_ahp_indices": [
+        26438
+    ],
+    "postburst_fast_ahp_values": [
+        -41.12299346923828
+    ],
+    "postburst_min_indices": [
+        26465
+    ],
+    "postburst_min_values": [
+        -41.52919675004766
+    ],
+    "postburst_slow_ahp_indices": [
+        26465
+    ],
+    "postburst_slow_ahp_values": [
+        -41.52919675004766
+    ],
     "sag_amplitude": null,
     "sag_ratio1": null,
     "sag_ratio2": [
@@ -541,12 +640,6 @@
         2.6602184713542556,
         2.8238770245407068
     ],
-    "spikes_per_burst": [
-        2
-    ],
-    "spikes_per_burst_diff": [],
-    "spikes_in_burst1_burst2_diff": null,
-    "spikes_in_burst1_burstlast_diff": null,
     "steady_state_hyper": [
         -39.7063975216648
     ],
@@ -556,6 +649,13 @@
     "steady_state_voltage_stimend": [
         -38.28601014909481
     ],
+    "strict_burst_mean_freq": [
+        7.990411506199836
+    ],
+    "strict_burst_number": [
+        1
+    ],
+    "strict_interburst_voltage": [],
     "time": [
         0.0,
         0.1,
@@ -30563,8 +30663,18 @@
     "time_to_first_spike": [
         8.000000000092427
     ],
+    "time_to_interburst_min": [],
     "time_to_last_spike": [
         1937.7999999986964
+    ],
+    "time_to_postburst_adp_peak": [
+        5.999999999994543
+    ],
+    "time_to_postburst_fast_ahp": [
+        5.999999999994543
+    ],
+    "time_to_postburst_slow_ahp": [
+        8.699999999992087
     ],
     "time_to_second_spike": [
         211.30000000013865
@@ -60598,6 +60708,12 @@
     "initburst_sahp": null,
     "initburst_sahp_vb": null,
     "initburst_sahp_ssse": null,
+    "spikes_per_burst": [
+        2
+    ],
+    "spikes_per_burst_diff": [],
+    "spikes_in_burst1_burst2_diff": null,
+    "spikes_in_burst1_burstlast_diff": null,
     "depol_block": null,
     "depol_block_bool": [
         1
@@ -60616,104 +60732,5 @@
     ],
     "BAC_width": [
         5.9000000000013415
-    ],
-    "min_between_peaks_indices": [
-        7115,
-        9833,
-        14285,
-        17215,
-        23960,
-        28300
-    ],
-    "min_between_peaks_values": [
-        -47.716407064147894,
-        -45.90401077270508,
-        -42.68541014226824,
-        -42.06044280547385,
-        -41.279199137952354,
-        -80.43351009404397
-    ],
-    "AP_width_between_threshold": [
-        1.7000000000003865,
-        2.700000000000614,
-        2.8999999999973625,
-        2.9999999999972715,
-        3.2999999999969987,
-        3.2999999999969987
-    ],
-    "burst_begin_indices": [
-        4
-    ],
-    "burst_end_indices": [
-        5
-    ],
-    "strict_burst_number": [
-        1
-    ],
-    "strict_burst_mean_freq": [
-        7.99041151
-    ],
-    "strict_interburst_voltage": [],
-    "ADP_peak_amplitude": [
-        0.0,
-        2.6873666528663236,
-        0.48122323161050673,
-        0.06877493979540361,
-        0.0,
-        2.99957475153942
-    ],
-    "ADP_peak_indices": [
-        7115,
-        9317,
-        14162,
-        17198,
-        23943,
-        27000
-    ],
-    "ADP_peak_values": [
-        -47.716407064147894,
-        -41.60422947192351,
-        -42.066708105903004,
-        -41.97919073015028,
-        -41.12299346923828,
-        -38.12341871769886
-    ],
-    "interburst_min_indices": [],
-    "interburst_min_values": [],
-    "postburst_min_indices": [
-        26465
-    ],
-    "postburst_min_values": [
-        -41.52919675004766
-    ],
-    "postburst_slow_ahp_indices": [
-        26465
-    ],
-    "postburst_slow_ahp_values": [
-        -41.52919675004766
-    ],
-    "time_to_interburst_min": [],
-    "time_to_postburst_slow_ahp": [8.699999999992087],
-    "AHP_depth_slow": [
-        28.81047723194662,
-        32.02907786238346,
-        32.65404519917785,
-        33.435288866699345
-    ],
-    "postburst_fast_ahp_indices": [26438],
-    "postburst_fast_ahp_values": [-41.12299347],
-    "postburst_adp_peak_indices": [26438],
-    "postburst_adp_peak_values": [-41.12299347],
-    "time_to_postburst_fast_ahp": [5.99999999999],
-    "time_to_postburst_adp_peak": [5.99999999999],
-    "interburst_10percent_indices": null,
-    "interburst_10percent_values": null,
-    "interburst_15percent_indices": null,
-    "interburst_15percent_values": null,
-    "interburst_20percent_indices": null,
-    "interburst_20percent_values": null,
-    "interburst_25percent_indices": null,
-    "interburst_25percent_values": null,
-    "interburst_30percent_indices": null,
-    "interburst_30percent_values": null
+    ]
 }
