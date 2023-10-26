@@ -3700,11 +3700,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
 int LibV5::postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(IntFeatureData, StringData,
-                      "postburst_slow_ahp_indices", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   double stim_end;
   vector<int> peak_indices, burst_end_indices, postburst_slow_ahp_indices;
@@ -3750,11 +3746,7 @@ int LibV5::postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
 int LibV5::postburst_slow_ahp_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "postburst_slow_ahp_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
@@ -3794,11 +3786,7 @@ int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
 int LibV5::time_to_postburst_slow_ahp(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "time_to_postburst_slow_ahp", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> time_to_postburst_slow_ahp, peak_time, time;
   vector<int> postburst_slow_ahp_indices, burst_end_indices;
@@ -3881,10 +3869,7 @@ static int __postburst_fast_ahp_indices(const vector<double>& t, const vector<do
 int LibV5::postburst_fast_ahp_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "postburst_fast_ahp_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   double stim_end;
   vector<int> postburst_fast_ahp_indices, strict_stiminterval_vec, peak_indices, burst_end_indices;
@@ -3943,11 +3928,7 @@ int LibV5::postburst_fast_ahp_indices(mapStr2intVec& IntFeatureData,
 int LibV5::postburst_fast_ahp_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "postburst_fast_ahp_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 static int __postburst_adp_peak_indices(const vector<double>& t, const vector<double>& v,
@@ -3986,10 +3967,7 @@ static int __postburst_adp_peak_indices(const vector<double>& t, const vector<do
 int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "postburst_adp_peak_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   double stim_end;
   vector<int> postburst_adp_peak_indices, postburst_fast_ahp_indices, postburst_slow_ahp_indices;
@@ -4039,21 +4017,13 @@ int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
 int LibV5::postburst_adp_peak_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "postburst_adp_peak_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 int LibV5::time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "time_to_postburst_fast_ahp", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> time_to_postburst_fast_ahp, peak_time, time;
   vector<int> postburst_fast_ahp_indices, burst_end_indices;
@@ -4088,11 +4058,7 @@ int LibV5::time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,
 int LibV5::time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal = CheckInMap(DoubleFeatureData, StringData,
-                            "time_to_postburst_adp_peak", nSize);
-  if (retVal)
-    return nSize;
+  int retVal;
 
   vector<double> time_to_postburst_adp_peak, peak_time, time;
   vector<int> postburst_adp_peak_indices, burst_end_indices;
@@ -4161,10 +4127,7 @@ static int __interburst_15percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_15percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_15percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_15percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_15percent_values;
@@ -4212,11 +4175,7 @@ int LibV5::interburst_15percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_15percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_15percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 // index and voltage value at 20% of the duration of the interburst after fast AHP
@@ -4249,10 +4208,7 @@ static int __interburst_20percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_20percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_20percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_20percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_20percent_values;
@@ -4300,11 +4256,7 @@ int LibV5::interburst_20percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_20percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_20percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 // index and voltage value at 25% of the duration of the interburst after fast AHP
@@ -4337,10 +4289,7 @@ static int __interburst_25percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_25percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_25percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_25percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_25percent_values;
@@ -4388,11 +4337,7 @@ int LibV5::interburst_25percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_25percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_25percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 // index and voltage value at 30% of the duration of the interburst after fast AHP
@@ -4425,10 +4370,7 @@ static int __interburst_30percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_30percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_30percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_30percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_30percent_values;
@@ -4476,11 +4418,7 @@ int LibV5::interburst_30percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_30percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_30percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 
@@ -4514,10 +4452,7 @@ static int __interburst_40percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_40percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_40percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_40percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_40percent_values;
@@ -4565,11 +4500,7 @@ int LibV5::interburst_40percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_40percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_40percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 // index and voltage value at 60% of the duration of the interburst after fast AHP
@@ -4602,10 +4533,7 @@ static int __interburst_60percent_indices(const vector<double>& t, const vector<
 int LibV5::interburst_60percent_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_60percent_indices", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> interburst_60percent_indices, postburst_fast_ahp_indices, peak_indices, burst_end_indices;
   vector<double> v, t, interburst_60percent_values;
@@ -4653,11 +4581,7 @@ int LibV5::interburst_60percent_indices(mapStr2intVec& IntFeatureData,
 int LibV5::interburst_60percent_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal, nSize;
-  retVal =
-      CheckInMap(DoubleFeatureData, StringData, "interburst_60percent_values", nSize);
-  if (retVal >= 0) return nSize;
-  return -1;
+  return 1;
 }
 
 static int __interburst_duration(const vector<double>& peak_time,
@@ -4677,10 +4601,7 @@ static int __interburst_duration(const vector<double>& peak_time,
 int LibV5::interburst_duration(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal, nSize;
-
-  retVal = CheckInMap(IntFeatureData, StringData, "interburst_duration", nSize);
-  if (retVal) return nSize;
+  int retVal;
 
   vector<int> burst_end_indices;
   vector<double> peak_time, interburst_duration;
