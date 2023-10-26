@@ -3924,7 +3924,10 @@ def test_time_to_postburst_slow_ahp():
             "time_to_postburst_slow_ahp"
         ]
 
-        if peak_time is None or burst_end_indices is None:
+        if (
+            postburst_slow_ahp_indices is None or len(postburst_slow_ahp_indices) == 0
+            or burst_end_indices is None or len(burst_end_indices) == 0
+        ):
             time_to_postburst_slow_ahp_py = None
         else:
             time_to_postburst_slow_ahp_py = interp_time[

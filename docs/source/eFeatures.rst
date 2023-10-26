@@ -555,7 +555,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             ))
 
 `LibV5`_ : postburst_slow_ahp_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slow AHP voltage after the end of a burst.
 
@@ -585,7 +585,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 postburst_slow_ahp.append(numpy.min(v[i_start:]))
 
 `LibV5`_ : time_to_interburst_min
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time between the last spike of a burst and the minimum between that spike and the next.
 
@@ -607,7 +607,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     ]
 
 `LibV5`_ : time_to_postburst_slow_ahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time between the last spike of a burst and the slow ahp afterwards.
 
@@ -627,7 +627,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
 `LibV5`_ : postburst_fast_ahp_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The fast AHP voltage after the end of a burst.
 
@@ -663,7 +663,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return postburst_fahp
 
 `LibV5`_ : postburst_adp_peak_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The small ADP peak after the fast AHP after the end of a burst.
 
@@ -690,7 +690,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return adp_peak_values
 
 `LibV5`_ : time_to_postburst_fast_ahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time to the fast AHP after the end of a burst.
 
@@ -707,7 +707,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
 
 `LibV5`_ : time_to_postburst_adp_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time to the small ADP peak after the fast AHP after the end of a burst.
 
@@ -738,7 +738,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
 
 `LibV5`_ : interburst_15percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 15% of the interburst duration after the fast AHP.
 
@@ -761,7 +761,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_15percent_values.append(v[index_at_15percent])
 
 `LibV5`_ : interburst_20percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 20% of the interburst duration after the fast AHP.
 
@@ -784,7 +784,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_20percent_values.append(v[index_at_20percent])
 
 `LibV5`_ : interburst_25percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 25% of the interburst duration after the fast AHP.
 
@@ -807,7 +807,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_25percent_values.append(v[index_at_25percent])
 
 `LibV5`_ : interburst_30percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 30% of the interburst duration after the fast AHP.
 
@@ -830,7 +830,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_30percent_values.append(v[index_at_30percent])
 
 `LibV5`_ : interburst_40percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 40% of the interburst duration after the fast AHP.
 
@@ -853,7 +853,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_40percent_values.append(v[index_at_40percent])
 
 `LibV5`_ : interburst_60percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after 60% of the interburst duration after the fast AHP.
 
@@ -876,7 +876,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             interburst_60percent_values.append(v[index_at_60percent])
 
 `LibV5`_ : interburst_duration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Duration between the last spike of each burst and the next spike.
 
@@ -897,7 +897,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     ]
 
 `LibV1`_ : single_burst_ratio
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.
