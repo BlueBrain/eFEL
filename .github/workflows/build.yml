@@ -10,37 +10,73 @@ on:
 jobs:
   call-test-workflow:
     uses: BlueBrain/eFEL/.github/workflows/test.yml@master
+
+  tag:
+    name: Bump version, push tag and make a release
+    needs: call-test-workflow
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        id: tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: patch
+
+      - name: Get and store tag from 'Bump version and push tag' step
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        run: echo "TAG_NAME=${{ steps.tag.outputs.new_tag }}" >> $GITHUB_ENV
+      - name: Get and store tag from triggered tag push
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
+          generate_release_notes: true
   
   wheels:
-    needs: call-test-workflow
+    needs: [call-test-workflow, tag]
     name: Build wheels for ${{ matrix.python }} ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest, windows-latest]
-        python: [cp37, cp38, cp39, cp310, cp311]
+        os: [ubuntu-22.04, macos-latest, windows-latest]
+        python: [cp38, cp39, cp310, cp311]
         arch: [x86_64, amd64]
         exclude:
           - os: macos-latest
             arch: amd64
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             arch: amd64
           - os: windows-latest
             arch: x86_64
 
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
-      CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1
-      CIBW_TEST_COMMAND: pytest -sx {project}/efel/tests
+      CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1 pytest-xdist>=3.3.1
+      CIBW_TEST_COMMAND: pytest -sx -n auto {project}/tests
       CIBW_SKIP: "*-musllinux_*"
       
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install cibuildwheel
@@ -54,14 +90,14 @@ jobs:
   
   tarball:
     name: Build tarball
-    runs-on: ubuntu-20.04
-    needs: call-test-workflow
+    runs-on: ubuntu-22.04
+    needs: [call-test-workflow, tag]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Build a source tarball
@@ -74,15 +110,15 @@ jobs:
 
 
   publish:
-    name: Publish on PyPI
-    runs-on: ubuntu-20.04
-    needs: [call-test-workflow, wheels, tarball]
+    name: Release and Publish on PyPI
+    runs-on: ubuntu-22.04
+    needs: [call-test-workflow, tag, wheels, tarball]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -97,7 +133,7 @@ jobs:
           find artifacts -type f \( -iname \*.whl -o -iname \*.tar.gz \) -exec mv {} dist \;
 
       - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}

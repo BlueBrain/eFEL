@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy
 import efel.cppcore
+from numpy.fft import *
 
 
 all_pyfeatures = [
@@ -43,7 +44,8 @@ all_pyfeatures = [
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
-    'spikes_in_burst1_burstlast_diff'
+    'spikes_in_burst1_burstlast_diff',
+    'impedance',
 ]
 
 
@@ -57,6 +59,40 @@ def time():
     return _get_cpp_feature("time")
 
 
+def impedance():
+    from scipy.ndimage.filters import gaussian_filter1d
+
+    dt = _get_cpp_data("interp_step")
+    Z_max_freq = _get_cpp_data("impedance_max_freq")
+    voltage_trace = voltage()
+    holding_voltage = _get_cpp_feature("voltage_base")
+    normalized_voltage = voltage_trace - holding_voltage
+    current_trace = current()
+    if current_trace is not None:
+        holding_current = _get_cpp_feature("current_base")
+        normalized_current = current_trace - holding_current
+        spike_count = _get_cpp_feature("Spikecount")
+        if spike_count < 1:  # if there is no spikes in ZAP
+            fft_volt = numpy.fft.fft(normalized_voltage)
+            fft_cur = numpy.fft.fft(normalized_current)
+            if any(fft_cur) == 0:
+                return None
+            # convert dt from ms to s to have freq in Hz
+            freq = numpy.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
+            Z = fft_volt / fft_cur
+            norm_Z = abs(Z) / max(abs(Z))
+            select_idxs = numpy.swapaxes(
+                numpy.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1
+            )[0]
+            smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
+            ind_max = numpy.argmax(smooth_Z)
+            return freq[ind_max]
+        else:
+            return None
+    else:
+        return None
+
+
 def current():
     """Get current trace"""
     return _get_cpp_feature("current")
@@ -66,7 +102,6 @@ def ISIs():
     """Get all ISIs"""
 
     peak_times = _get_cpp_feature("peak_time")
-
     return numpy.diff(peak_times)
 
 
@@ -241,7 +276,7 @@ def depol_block():
             [time[up_indexes[k]] - time[down_idx] for k,
              down_idx in enumerate(down_indexes)])
 
-        # if it stays in hyperpolarzed stage for more than min_duration,
+        # if it stays in hyperpolarized stage for more than min_duration,
         # flag as depolarization block
         if max_hyperpol_duration > block_min_duration:
             return None

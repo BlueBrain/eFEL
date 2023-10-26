@@ -44,18 +44,19 @@ class cFeature {
 
  public:
   std::map<string, vector<featureStringPair > > fptrlookup;
-  vector<int>& getmapIntData(string strName);
-  vector<double>& getmapDoubleData(string strName);
-
   eFELLogger logger;
 
   cFeature(const string& depFile, const string& outdir);
+  template <typename T>
+  const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData);
+  const vector<int> getmapIntData(string strName);
+  const vector<double> getmapDoubleData(string strName);
   int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
+  template <typename T>
+  int getFeature(string strName, vector<T>& vec);
   int setFeatureInt(string strName, vector<int>& intVec);
-  int getFeatureInt(string strName, vector<int>& vec);
   int setFeatureDouble(string strName, vector<double>& DoubleVec);
-  int getFeatureDouble(string strName, vector<double>& vec);
   int setFeatureString(const string& key, const string& value);
   int getFeatureString(const string& key, string& value);
   void getTraces(const string& wildcard, vector<string>& traces);
@@ -69,20 +70,6 @@ class cFeature {
   double getDistance(string strName, double mean, double std, 
           bool trace_check=true, double error_dist=250);
 
-  // calculation of GA errors
-  template<typename T>
-  double calc_error_bio(const vector<T>& v, double bio_mean, double bio_sd)
-  {
-    if (v.size() != 0) {
-      double error = 0.;
-      for (size_t i = 0; i < v.size(); i++) {
-        error += fabs(v[i] - bio_mean);
-      }
-      return error / bio_sd / v.size();
-    } else {
-      return 250.;
-    }
-  }
 };
 
 #endif

@@ -20,23 +20,17 @@
 int FillFptrTable() {
   //****************** for FptrTableV1 *****************************
   FptrTableV1["interpolate"] = &LibV1::interpolate;
-  FptrTableV1["peak_indices"] = &LibV1::peak_indices;
   FptrTableV1["ISI_values"] = &LibV1::ISI_values;
   FptrTableV1["peak_voltage"] = &LibV1::peak_voltage;
   FptrTableV1["mean_frequency"] = &LibV1::firing_rate;
   FptrTableV1["peak_time"] = &LibV1::peak_time;
   FptrTableV1["time_to_first_spike"] = &LibV1::first_spike_time;
-  FptrTableV1["min_AHP_indices"] = &LibV1::min_AHP_indices;
-  FptrTableV1["min_AHP_values"] = &LibV1::min_AHP_values;
-  FptrTableV1["voltage_base"] = &LibV1::rest_voltage_value;
   FptrTableV1["burst_ISI_indices"] = &LibV1::burst_ISI_indices;
   FptrTableV1["adaptation_index"] = &LibV1::adaptation_index;
   FptrTableV1["trace_check"] = &LibV1::trace_check;
-  FptrTableV1["spike_half_width"] = &LibV1::spike_width1;
   FptrTableV1["spike_width2"] = &LibV1::spike_width2;
   FptrTableV1["burst_mean_freq"] = &LibV1::burst_mean_freq;
   FptrTableV1["interburst_voltage"] = &LibV1::interburst_voltage;
-  FptrTableV1["AHP_depth_abs"] = &LibV1::AHP_depth_abs;
   // passive properties
   FptrTableV1["time_constant"] = &LibV1::time_constant;
   FptrTableV1["voltage_deflection"] = &LibV1::voltage_deflection;
@@ -65,23 +59,13 @@ int FillFptrTable() {
 
   //****************** for FptrTableV2 *****************************
   /*
-  FptrTableV2["peak_indices"]         = &LibV2::peak_indices;
-  FptrTableV2["ISI_values"]           = &LibV2::ISI_values;
-  FptrTableV2["peak_voltage"]         = &LibV2::peak_voltage;
-  FptrTableV2["firing_rate"]          = &LibV2::firing_rate;
-  FptrTableV2["peak_time"]    = &LibV2::peak_time;
-  FptrTableV2["first_spike_time"]     = &LibV2::first_spike_time;
   FptrTableV2["AHP_min_indices"]      = &LibV2::AHP_min_indices;
   FptrTableV2["AHP_values"]           = &LibV2::AHP_values;
-  FptrTableV2["rest_voltage_value"]   = &LibV2::rest_voltage_value;
   FptrTableV2["burst_vector"]         = &LibV2::burst_vector;
-  FptrTableV2["adaptation_index"]     = &LibV2::adaptation_index;
   */
 
   // AP parameter
-  FptrTableV2["AP_begin_indices"] = &LibV2::AP_begin_indices;
   FptrTableV2["AP_rise_indices"] = &LibV2::AP_rise_indices;
-  FptrTableV2["AP_end_indices"] = &LibV2::AP_end_indices;
   FptrTableV2["AP_fall_indices"] = &LibV2::AP_fall_indices;
   // eFeatures
   FptrTableV2["AP_duration"] = &LibV2::AP_duration;
@@ -139,38 +123,10 @@ int FillFptrTable() {
   //****************** end of FptrTableV2 *****************************
 
   //******************  FptrTableV3 *****************************
-  FptrTableV3["interpolate"] = &LibV3::interpolate;
-  FptrTableV3["trace_check"] = &LibV3::trace_check;
-  FptrTableV3["peak_indices"] = &LibV3::peak_indices;
-  FptrTableV3["ISI_values"] = &LibV3::ISI_values;
-  FptrTableV3["ISI_CV"] = &LibV3::ISI_CV;
-  FptrTableV3["peak_voltage"] = &LibV3::peak_voltage;
-  FptrTableV3["mean_frequency"] = &LibV3::firing_rate;
-  FptrTableV3["peak_time"] = &LibV3::peak_time;
-  FptrTableV3["time_to_first_spike"] = &LibV3::first_spike_time;
-  FptrTableV3["spike_half_width"] = &LibV3::spike_width1;
-  FptrTableV3["min_AHP_indices"] = &LibV3::min_AHP_indices;
-  FptrTableV3["min_AHP_values"] = &LibV3::min_AHP_values;
-  FptrTableV3["AHP_depth_abs"] = &LibV3::AHP_depth_abs;
-  FptrTableV3["voltage_base"] = &LibV3::rest_voltage_value;
-  FptrTableV3["adaptation_index2"] = &LibV3::adaptation_index2;
-  FptrTableV3["AP_height"] = &LibV3::AP_height;
-  FptrTableV3["AP_amplitude"] = &LibV3::AP_amplitude;
-  FptrTableV3["AP_width"] = &LibV3::AP_width;
-  FptrTableV3["doublet_ISI"] = &LibV3::doublet_ISI;
-
-  FptrTableV3["AP_begin_indices"] = &LibV3::AP_begin_indices;
-  FptrTableV3["AP_rise_indices"] = &LibV3::AP_rise_indices;
-  FptrTableV3["AP_end_indices"] = &LibV3::AP_end_indices;
-  FptrTableV3["AP_fall_indices"] = &LibV3::AP_fall_indices;
   // eFeatures
-  FptrTableV3["AP_duration"] = &LibV3::AP_duration;
-
   FptrTableV3["depolarized_base"] = &LibV3::depolarized_base;
 
   //****************** end of FptrTableV3 *****************************
-
-  FptrTableV4["peak_indices"] = &LibV4::peak_indices;
 
   //******************  FptrTableV5 *****************************
 

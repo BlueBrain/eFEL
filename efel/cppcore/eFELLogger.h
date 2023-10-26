@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 
 class eFELLogger
 {
@@ -34,6 +35,13 @@ public:
       string filename = outdir + "/fllog.txt";
       logfile.open(filename.c_str(), std::fstream::out | std::fstream::app);
       logging = true;
+    }
+  }
+
+  ~eFELLogger() 
+  {
+    if (logfile.is_open()) {
+        logfile.close();
     }
   }
 

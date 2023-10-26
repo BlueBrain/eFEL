@@ -24,9 +24,6 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  along with this library; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-
-from __future__ import division
-
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
 import os
@@ -101,6 +98,7 @@ def reset():
     setDoubleSetting("precision_threshold", 1e-10)
     setDoubleSetting("sahp_start", 5.0)
     setIntSetting("ignore_first_ISI", 1)
+    setDoubleSetting("impedance_max_freq", 50.0)
 
     _initialise()
 

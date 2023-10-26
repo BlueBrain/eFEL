@@ -163,6 +163,17 @@ def test_setDependencyFileLocation_wrongpath():
         efel.setDependencyFileLocation, "thisfiledoesntexist")
 
 
+def test_setDependencyFileLocation():
+    """basic: Test if setDependencyFileLocation works"""
+    import efel
+    efel.reset()
+    dep_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'DependencyV5_LibV5peakindices.txt')
+    efel.setDependencyFileLocation(dep_file)
+    result = efel.getDependencyFileLocation()
+    assert result == dep_file
+
+
 def test_nonexisting_feature():
     """basic: Test nonexisting feature"""
 
@@ -176,7 +187,7 @@ def test_nonexisting_feature():
     trace['stim_end'] = [75]
 
     pytest.raises(
-        TypeError,
+        RuntimeError,
         efel.getFeatureValues,
         [trace],
         ['nonexisting_feature'])
@@ -1437,42 +1448,6 @@ def test_spikecount_stimint1():
     assert (
         spikecount ==
         spikecount_stimint + 2)
-
-
-def test_spikecount_libv4peakindices():
-    """basic: Test Spikecount in combination with LibV4 peak_indices"""
-
-    import efel
-    efel.reset()
-
-    stim_start = 500.0
-    stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
-    trace = {}
-
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
-
-    features = ['peak_indices', 'Spikecount']
-
-    test_peak = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'DependencyV5_LibV4peakindices.txt')
-    efel.setDependencyFileLocation(test_peak)
-
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            features)
-
-    peak_indices = feature_values[0]['peak_indices']
-    spikecount = feature_values[0]['Spikecount'][0]
-    assert len(peak_indices) == 5
-    assert len(peak_indices) == spikecount
 
 
 def test_ohmic_inputresistance():
@@ -4488,11 +4463,7 @@ def test_interburst_duration():
             trace['stim_start'] = [700]
             trace['stim_end'] = [2700]
 
-        features = [
-            "burst_end_indices",
-            "peak_time",
-            "interburst_duration",
-        ]
+        features = ["burst_end_indices", "peak_time", "interburst_duration"]
 
         feature_values = efel.getFeatureValues(
             [trace],
@@ -4500,15 +4471,9 @@ def test_interburst_duration():
             raise_warnings=False
         )
 
-        burst_endi = feature_values[0][
-            "burst_end_indices"
-        ]
-        peak_time = feature_values[0][
-            "peak_time"
-        ]
-        inter_dur = feature_values[0][
-            "interburst_duration"
-        ]
+        burst_endi = feature_values[0]["burst_end_indices"]
+        peak_time = feature_values[0]["peak_time"]
+        inter_dur = feature_values[0]["interburst_duration"]
 
         inter_dur_py = None
         if burst_endi is not None:

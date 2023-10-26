@@ -24,13 +24,11 @@
 #include "LibV1.h"
 #include "LibV2.h"
 #include "LibV3.h"
-#include "LibV4.h"
 #include "LibV5.h"
 
 extern feature2function FptrTableV1;
 extern feature2function FptrTableV2;
 extern feature2function FptrTableV3;
-extern feature2function FptrTableV4;
 extern feature2function FptrTableV5;
 
 int FillFptrTable();

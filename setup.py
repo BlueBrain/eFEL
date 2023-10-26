@@ -1,7 +1,5 @@
 """ eFEL setup """
 
-# pylint: disable=C0325
-
 """
 Copyright (c) 2015, EPFL/Blue Brain Project
 
@@ -21,10 +19,8 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-try:
-    from setuptools import setup, Extension
-except ImportError:
-    from distutils.core import setup, Extension  # pylint: disable=E0611,F0401
+
+from setuptools import setup, Extension
 
 import os
 import versioneer
@@ -37,7 +33,6 @@ cppcore_sources = ['cppcore.cpp',
                    'LibV1.cpp',
                    'LibV2.cpp',
                    'LibV3.cpp',
-                   'LibV4.cpp',
                    'LibV5.cpp',
                    'FillFptrTable.cpp',
                    'DependencyTree.cpp',
@@ -48,7 +43,6 @@ cppcore_headers = ['Utils.h',
                    'LibV1.h',
                    'LibV2.h',
                    'LibV3.h',
-                   'LibV4.h',
                    'LibV5.h',
                    'FillFptrTable.h',
                    'DependencyTree.h',
@@ -67,16 +61,24 @@ cppcore_headers = [
         'cppcore',
         filename) for filename in cppcore_headers]
 
+
+coverage_flags = []
+if os.environ.get('EFEL_COVERAGE_BUILD'):
+    coverage_flags = ['-fprofile-arcs', '-ftest-coverage']
+
 cppcore = Extension('efel.cppcore',
                     sources=cppcore_sources,
-                    include_dirs=['efel/cppcore/'])
+                    include_dirs=['efel/cppcore/'],
+                    extra_compile_args=coverage_flags + ['-std=c++17'],
+                    extra_link_args=coverage_flags)
+
 setup(
     name="efel",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    install_requires=['numpy>=1.6', 'six'],
+    install_requires=['numpy>=1.6'],
     extras_require={'neo': ['neo[neomatlabio]>=0.5.1']},
-    packages=['efel', 'efel.pyfeatures'],
+    packages=['efel', 'efel.pyfeatures', 'efel.units'],
     author="BlueBrain Project, EPFL",
     maintainer="Werner Van Geit",
     maintainer_email="werner.vangeit@epfl.ch",
@@ -90,11 +92,11 @@ setup(
     "features to be calculated. The library will then extract the requested "
     "features and return the values to the user.",
     license="LGPLv3",
-    keywords=(
+    keywords=[
         'feature',
         'extraction',
         'electrophysiology',
-        'BlueBrainProject'),
+        'BlueBrainProject'],
     url='https://github.com/BlueBrain/eFEL',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -108,7 +110,6 @@ setup(
         'Topic :: Utilities'],
     package_data={
         '': ['DependencyV5.txt',
-             'VERSION.txt',
              'README.md',
-             'GITHASH.txt'] + cppcore_headers},
+             'units/units.json'] + cppcore_headers},
     ext_modules=[cppcore])

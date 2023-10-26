@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 '''graph the dependency graph'''
 
 import argparse
@@ -83,15 +82,19 @@ def output_graphivz(feature_library, filename, draw_dependencies=False,
         import sys
         sys.exit('Need to have the "pygraphviz" package installed')
     G = pygraphviz.AGraph(name='Dependencies', directed=True)
+    # below attributes are for the aesthetics
     G.graph_attr['overlap'] = 'false'
-    G.graph_attr['rankdir'] = 'TB'
+    G.graph_attr['rankdir'] = 'LR'
+    G.graph_attr['ranksep'] = '2.5'
+    G.graph_attr['nodesep'] = '0'
+
 
     for library, color in zip(sorted(feature_library.keys()), COLORS):
         if 'Default' == library:
             continue
         G.add_node(library, shape='circle', color=color)
         sg = G.add_subgraph(name=library, style="")
-        for name, feature in feature_library[library].iteritems():
+        for name, feature in feature_library[library].items():
             full_name = library + ':' + name
             sg.add_node(full_name, label=name, shape='box', color=color)
             sg.add_edge(library, full_name, color=color)

@@ -41,9 +41,6 @@ void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Str
 template <class T>
 int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v);
-template <class T>
-int CheckInMap(std::map<std::string, std::vector<T> >& FeatureData,
-                     mapStr2Str& StringData, string strFeature, int& nSize);
 // eCode feature convenience function
 int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
                        const string& feature, const string& stimulus_name,

@@ -131,6 +131,16 @@ traces_data = {
         'v_col': 3,
         'stim_start': 700.0,
         'stim_end': 2700.0},
+    'impedance': {
+        'url': 'file://%s' % os.path.join(
+            os.path.abspath(testdata_dir),
+            'basic',
+            'impedance.txt'),
+        't_col': 1,
+        'v_col': 2,
+        'i_col': 3,
+        'stim_start': 100.0,
+        'stim_end': 51000.0}
 }
 
 
@@ -151,6 +161,9 @@ def _load_trace(trace_name):
         'stim_start': [trace_data['stim_start']],
         'stim_end': [trace_data['stim_end']],
     }
+
+    if trace_name == "current":
+        trace['T'] = trace['T'] * 1000.0  # s -> ms
 
     if 'i_col' in trace_data:
         trace['I'] = efel.io.load_fragment('%s#col=%d' %
@@ -331,18 +344,6 @@ def test_pydistance_featurefail():
         trace_check=True), 250.0)
 
 
-def test_current():
-    """pyfeatures: Test current feature"""
-
-    feature_name = 'current'
-    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                      'basic',
-                                      'current.txt'))
-    current = data[:, 1]
-    expected_values = {'current': current}
-    _test_expected_value(feature_name, expected_values)
-
-
 def test_interpolate_current():
     """pyfeatures: Test interpolation of current"""
 
@@ -357,16 +358,30 @@ def test_interpolate_current():
     data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
                                       'basic',
                                       'current.txt'))
-    time = data[:, 0]
+    time = data[:, 0] * 1000.0  # -> ms
     current = data[:, 1]
     voltage = data[:, 2]
 
     feature_name = ['time', 'current', 'voltage']
     trace = _load_trace('current')
-    feature_values = efel.getFeatureValues([trace], ['current'])
-    interp_time, interp_current = interpolate(time, current, new_dt=0.00025)
+    feature_values = efel.getFeatureValues([trace], feature_name)
+    feature_time = feature_values[0]["time"]
+    feature_current = feature_values[0]["current"]
+    feature_voltage = feature_values[0]["voltage"]
+    interp_time, interp_current = interpolate(time, current, new_dt=0.1)
+    _, interp_voltage = interpolate(time, voltage, new_dt=0.1)
 
-    assert len(interp_time) == len(time)
-    assert len(interp_current) == len(current)
-    assert len(voltage) == len(current)
-    assert numpy.allclose(interp_current, current)
+    assert len(interp_time) == len(feature_time)
+    assert len(interp_current) == len(feature_current)
+    assert len(interp_voltage) == len(feature_voltage)
+    assert len(feature_voltage) == len(feature_current)
+    assert numpy.allclose(interp_current, feature_current, atol=1e-6)
+
+
+def test_impedance():
+    """pyfeatures: Test impedance feature"""
+
+    feature_name = "impedance"
+
+    expected_values = {feature_name: 4.615384615384615}
+    _test_expected_value(feature_name, expected_values)

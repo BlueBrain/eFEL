@@ -40,11 +40,6 @@
 #include <cfeature.h>
 #include <efel.h>
 
-#if PY_MAJOR_VERSION >= 3
-#define IS_PY3K
-#endif
-
-
 extern cFeature* pFeature;
 
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
@@ -113,36 +108,48 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
 }
 
 static PyObject*
-_getfeature(PyObject* self, PyObject* args, const string &type) {
+_getfeature(PyObject* self, PyObject* args, const string &input_type) {
   char* feature_name;
   PyObject* py_values;
 
   int return_value;
   if (!PyArg_ParseTuple(args, "sO!", &feature_name, &PyList_Type, &py_values)) {
+    PyErr_SetString(PyExc_TypeError, "Unexpected argument type provided.");
     return NULL;
   }
 
-  string feature_type = pFeature->featuretype(string(feature_name));
+  try {
+    string feature_type = pFeature->featuretype(string(feature_name));
 
-  if (!type.empty() && feature_type != type){
-    PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+    if (!input_type.empty() && feature_type != input_type){  // when types do not match
+      PyErr_SetString(PyExc_TypeError, "Feature type does not match");
+      return NULL;
+    }
+
+    if (feature_type == "int") {
+      vector<int> values;
+      return_value = pFeature->getFeature<int>(string(feature_name), values);
+      PyList_from_vectorint(values, py_values);
+      return Py_BuildValue("i", return_value);
+    } else { // double
+      vector<double> values;
+      return_value = pFeature->getFeature<double>(string(feature_name), values);
+      PyList_from_vectordouble(values, py_values);
+      return Py_BuildValue("i", return_value);
+    }
+  }
+  catch(EfelAssertionError& e) {  // more specialised exception
+    PyErr_SetString(PyExc_AssertionError, e.what());
     return NULL;
   }
-
-  if (feature_type == "int") {
-    vector<int> values;
-    return_value = pFeature->getFeatureInt(string(feature_name), values);
-    PyList_from_vectorint(values, py_values);
-  } else if (feature_type == "double") {
-    vector<double> values;
-    return_value = pFeature->getFeatureDouble(string(feature_name), values);
-    PyList_from_vectordouble(values, py_values);
-  } else {
-    PyErr_SetString(PyExc_TypeError, "Unknown feature name");
+  catch(const std::runtime_error& e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
     return NULL;
   }
-
-  return Py_BuildValue("i", return_value);
+  catch(...) {
+    PyErr_SetString(PyExc_RuntimeError, "Unknown error");
+    return NULL;
+  }
 }
 
 
@@ -326,7 +333,6 @@ static PyMethodDef CppCoreMethods[] = {
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
-#if PY_MAJOR_VERSION >= 3
 struct module_state {
   PyObject* error;
 };
@@ -351,8 +357,3 @@ extern "C" PyObject* PyInit_cppcore(void) {
   PyObject* module = PyModule_Create(&moduledef);
   return module;
 }
-#else
-PyMODINIT_FUNC initcppcore(void) {
-  (void)Py_InitModule("cppcore", CppCoreMethods);
-}
-#endif

@@ -45,7 +45,15 @@
     <td>Gitter</td>
     <td>
         <a href="https://gitter.im/bluebrain/efel">
-        <img src="https://badges.gitter.im/Join%20Chat.svg"
+        <img src="https://badges.gitter.im/Join%20Chat.svg" />
+    </a>
+    </td>
+</tr>
+<tr>
+    <td>Citation</td>
+    <td>
+        <a href="https://doi.org/10.5281/zenodo.593869">
+        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.8146607.svg" alt="DOI"/>
     </a>
     </td>
 </tr>
@@ -68,21 +76,36 @@ At the moment we provide a way to automatically compile and install the library
 as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
 library can be found [here](http://efel.readthedocs.io/en/latest/installation.html#installing-the-c-standalone-library).
 
-News
-====
 
-* 2023/01/04: We dropped support for Python 3.6. The eFEL code isn't automatically tested on 3.6 anymore.
+Citation
+========
 
-* 2021/08/25: We dropped support for Python 2.7. The eFEL code isn't automatically tested on 2.7 anymore.
+When you use this eFEL software for your research, we ask you to cite the following publications (this includes poster presentations):
 
-* 2016/01/17: We dropped support for Python 2.6. We're following the numpy and coverage module who also dropped support recently.
-For the moment eFEL still works with Python 2.6, you will just have to install the right (older) versions of the dependencies.
-The eFEL code isn't automatically tested on 2.6 anymore.
+```
+    @article{efel, 
+        title={eFEL}, 
+        DOI={10.5281/zenodo.593869},
+        url={https://doi.org/10.5281/zenodo.593869} 
+        abstractNote={The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.}, 
+        publisher={Zenodo}, 
+        author={Ranjan, Rajnish and
+                Van Geit, Werner and
+                Moor, Ruben and
+                Rössert, Christian and
+                Riquelme, Juan Luis and
+                Damart, Tanguy and
+                Jaquier, Aurélien and
+                Tuncel, Anil},
+        year={2023}, 
+        month={Jul} 
+    }
+```
 
 Requirements
 ============
 
-* [Python 3.7+](https://www.python.org/download/releases/3.4.3/)
+* [Python 3.8+](https://www.python.org/downloads/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
@@ -192,8 +215,8 @@ def main():
     for trace_results in traces_results:
         # trace_result is a dictionary, with as keys the requested features
         for feature_name, feature_values in trace_results.items():
-            print "Feature %s has the following values: %s" % \
-                (feature_name, ', '.join([str(x) for x in feature_values]))
+            print("Feature %s has the following values: %s" %
+                (feature_name, ', '.join([str(x) for x in feature_values])))
 
 
 if __name__ == '__main__':

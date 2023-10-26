@@ -36,7 +36,6 @@ cFeature::cFeature(const string& strDepFile, const string& outdir)
   mapFptrLib["LibV1"] = &FptrTableV1;
   mapFptrLib["LibV2"] = &FptrTableV2;
   mapFptrLib["LibV3"] = &FptrTableV3;
-  mapFptrLib["LibV4"] = &FptrTableV4;
   mapFptrLib["LibV5"] = &FptrTableV5;
 
   fillfeaturetypes();
@@ -56,6 +55,23 @@ cFeature::cFeature(const string& strDepFile, const string& outdir)
   time(&rawtime);
   logger << "\n" << ctime(&rawtime) << "Initializing new session." << endl;
   logger << "Using dependency file: " << strDepFile << endl;
+}
+
+template <typename T>
+const vector<T> cFeature::getMapData(const string& strName, const map<string, vector<T>>& mapData) {
+    auto mapItr = mapData.find(strName);
+    if (mapItr == mapData.end()) {
+        return vector<T>{}; // Return an empty vector without modifying the map
+    }
+    return mapItr->second;
+}
+
+const vector<int> cFeature::getmapIntData(string strName) {
+    return getMapData(strName, mapIntData);
+}
+
+const vector<double> cFeature::getmapDoubleData(string strName) {
+    return getMapData(strName, mapDoubleData);
 }
 
 int cFeature::setVersion(string strDepFile) {
@@ -303,29 +319,6 @@ void cFeature::get_feature_names(vector<string>& feature_names) {
   }
 }
 
-vector<int>& cFeature::getmapIntData(string strName) {
-  map<string, vector<int> >::iterator mapstr2IntItr;
-  mapstr2IntItr = mapIntData.find(strName);
-  if (mapstr2IntItr == mapIntData.end()) {
-    GErrorStr += "Feature [" + strName + "] data is missing\n";
-    vector<int> empty_vec;
-    mapIntData[strName] = empty_vec;
-    return mapIntData[strName];
-  }
-  return mapstr2IntItr->second;
-}
-vector<double>& cFeature::getmapDoubleData(string strName) {
-  map<string, vector<double> >::iterator mapstr2DoubleItr;
-  mapstr2DoubleItr = mapDoubleData.find(strName);
-  if (mapstr2DoubleItr == mapDoubleData.end()) {
-    GErrorStr += "Feature [" + strName + "] data is missing\n";
-    vector<double> empty_vec;
-    mapDoubleData[strName] = empty_vec;
-    return mapDoubleData[strName];
-  }
-  return mapstr2DoubleItr->second;
-}
-
 /*
 int cFeature::getmapfptrVec(string strName, vector<fptr> &vFptr){
     map<string, vector< fptr > >::iterator mapFptrItr;
@@ -403,14 +396,9 @@ int cFeature::calc_features(const string& name) {
   map<string, vector<featureStringPair> >::const_iterator lookup_it(
       fptrlookup.find(name));
   if (lookup_it == fptrlookup.end()) {
-    fprintf(stderr,
-            "\nFeature [ %s ] dependency file entry or pointer table entry is "
-            "missing. Exiting\n",
-            name.c_str());
-    fflush(stderr);
-    exit(1);
+    throw std::runtime_error("Feature dependency file entry or pointer table "
+                             "entry for '" + name + "' is missing.");
   }
-
   bool last_failed = false;
 
   for (vector<featureStringPair>::const_iterator pfptrstring =
@@ -466,33 +454,35 @@ int cFeature::calc_features(const string& name) {
   }
 }
 
-int cFeature::getFeatureInt(string strName, vector<int>& vec) {
-  logger << "Going to calculate feature " << strName << " ..." << endl;
-  if (calc_features(strName) < 0) {
-    logger << "Failed to calculate feature " << strName << ": " << GErrorStr
-              << endl;
-    return -1;
-  }
-  vec = getmapIntData(strName);
+template <typename T>
+int cFeature::getFeature(string strName, vector<T>& vec) {
+    const map<string, vector<T>>* dataMap;
+    if constexpr (std::is_same_v<T, int>)
+        dataMap = &mapIntData;
+    else  // cppcore sends only int or double, no other types
+        dataMap = &mapDoubleData;
 
-  logger << "Calculated feature " << strName << ":" << vec << endl;
+    // 1) Check if the feature is in the map.
+    vec = getMapData<T>(strName, *dataMap);
+    if (!vec.empty()) {
+        logger << "Reusing computed value of " << strName << "." << endl;
+        return vec.size();
+    } else {
+        // 2) If it's not in the map, compute.
+        logger << "Going to calculate feature " << strName << " ..." << endl;
+        if (calc_features(strName) < 0) {
+            logger << "Failed to calculate feature " << strName << ": " << GErrorStr << endl;
+            return -1;
+        }
+        vec = getMapData<T>(strName, *dataMap);
+        if (vec.empty())
+            GErrorStr += "Feature [" + strName + "] data is missing\n";
 
-  return vec.size();
+        logger << "Calculated feature " << strName << ":" << vec << endl;
+        return vec.size();
+    }
 }
 
-int cFeature::getFeatureDouble(string strName, vector<double>& vec) {
-  logger << "Going to calculate feature " << strName << " ..." << endl;
-  if (calc_features(strName) < 0) {
-    logger << "Failed to calculate feature " << strName << ": " << GErrorStr
-              << endl;
-    return -1;
-  }
-  vec = getmapDoubleData(strName);
-
-  logger << "Calculated feature " << strName << ":" << vec << endl;
-
-  return vec.size();
-}
 
 int cFeature::setFeatureString(const string& key, const string& value) {
   logger << "Set " << key << ": " << value << endl;
@@ -602,24 +592,19 @@ double cFeature::getDistance(string strName, double mean, double std,
   // Check if a the trace doesn't contain any spikes outside of the stimulus
   // interval
   if (trace_check) {
-      retVal = getFeatureInt("trace_check", feature_veci);
+      retVal = getFeature<int>("trace_check", feature_veci);
       if (retVal < 0) {
           return error_dist;
       }
   }
 
-  // check datatype of feature
   featureType = featuretype(strName);
-  if (featureType.empty()) {
-    printf("Error : Feature [%s] not found. Exiting..\n", strName.c_str());
-    exit(1);
-  }
 
   if (featureType == "int") {
-    retVal = getFeatureInt(strName, feature_veci);
+    retVal = getFeature<int>(strName, feature_veci);
     intFlag = 1;
-  } else {
-    retVal = getFeatureDouble(strName, feature_vec);
+  } else { // double
+    retVal = getFeature<double>(strName, feature_vec);
     intFlag = 0;
   }
   // printf("\n Calculating distance for [%s] values [", strName.c_str());
@@ -661,13 +646,14 @@ double cFeature::getDistance(string strName, double mean, double std,
 
 string cFeature::featuretype(string featurename) {
   int npos = featurename.find(";");
-  if (npos >= 0) {
+  if (npos != string::npos) {
     featurename = featurename.substr(0, npos);
   }
-  string type(featuretypes[featurename]);
-  if (type.empty()) {
-    GErrorStr += featurename + "missing in featuretypes map.\n";
-  }
+  if (featurename == "__test_efel_assertion__")  // for testing only
+    throw EfelAssertionError("Test efel assertion is successfully triggered.");
+  string type = featuretypes[featurename];
+  if (type != "int" && type != "double")
+    throw std::runtime_error("Unknown feature name: " + featurename);
   return type;
 }
 

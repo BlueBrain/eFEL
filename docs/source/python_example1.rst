@@ -65,8 +65,8 @@ The code and example trace are available
         for trace_results in traces_results:
             # trace_result is a dictionary, with as keys the requested eFeatures
             for feature_name, feature_values in trace_results.items():
-                print "Feature %s has the following values: %s" % \
-                    (feature_name, ', '.join([str(x) for x in feature_values]))
+                print("Feature %s has the following values: %s" % \
+                    (feature_name, ', '.join([str(x) for x in feature_values])))
 
 
     if __name__ == '__main__':
@@ -80,6 +80,6 @@ The output of this example is::
 This means that the eFEL found 5 action potentials in the voltage trace. The
 amplitudes of these APs are the result of the 'AP_amplitude' feature.
 
-The voltage before the start of the stimulis is measured by 'voltage_base'.
+The voltage before the start of the stimulus is measured by 'voltage_base'.
 
 Results are in mV.
