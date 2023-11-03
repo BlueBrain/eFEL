@@ -42,7 +42,6 @@ class cTree {
   list<string> ChildList;
   cTree() {};
   cTree(const char *strFileName);
-  int getDependencyList(string str);
   int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
                          feature2function *FptrTable,
                          map<string, vector<feature_function > > *FptrLookup);

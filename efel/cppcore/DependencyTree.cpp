@@ -47,11 +47,6 @@ cTree::cTree(const char *strFileName) {
   }
   getAllParents(vecFeature);
 }
-int cTree::getDependencyList(string) {
-  for (unsigned i = 0; i < strDependencyFile.size(); i++) {
-  }
-  return 1;
-}
 
 /**
  *
