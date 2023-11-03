@@ -27,24 +27,20 @@ static void removeAllWhiteSpace(string &str) {
 }
 
 cTree::cTree(const char *strFileName) {
-  string line;
-
   std::ifstream input(strFileName);
-  if (input.is_open()) {
 
-    std::getline(input, line);
-    removeAllWhiteSpace(line);
-    if (!line.empty())
-      strDependencyFile.push_back(line);
-    while (!(input.fail() || input.eof())) {
-      std::getline(input, line);
-      removeAllWhiteSpace(line);
-      if (!line.empty())
-        strDependencyFile.push_back(line);
-    }
-  } else {
-    ErrorStr = ErrorStr + string("\nCould not open the file ") + strFileName;
+  if (!input) {
+    ErrorStr += "\nCould not open the file " + string(strFileName);
+    return;
   }
+
+  for (string line; std::getline(input, line); ) {
+    removeAllWhiteSpace(line);
+    if (!line.empty()) {
+      strDependencyFile.push_back(std::move(line));
+    }
+  }
+
   getAllParents(vecFeature);
 }
 
