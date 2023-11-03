@@ -41,14 +41,4 @@ void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Str
 template <class T>
 int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v);
-// eCode feature convenience function
-int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                       const string& feature, const string& stimulus_name,
-                       int i_elem, vector<double>& mean);
-int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                      const string& feature, const string& stimulus_name,
-                      double mean, int i_elem, vector<double>& std);
-void getTraces(mapStr2doubleVec& DoubleFeatureData, const string& wildcard,
-               vector<string>& traces);
-
 #endif

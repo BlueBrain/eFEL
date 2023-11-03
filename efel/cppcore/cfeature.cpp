@@ -241,17 +241,6 @@ void cFeature::get_feature_names(vector<string>& feature_names) {
   }
 }
 
-/*
-int cFeature::getmapfptrVec(string strName, vector<fptr> &vFptr){
-    map<string, vector< fptr > >::iterator mapFptrItr;
-    mapFptrItr= FptrLookup.find(strName);
-    if(mapFptrItr == FptrLookup.end()) {GErrorStr = GErrorStr + string("Feature
-[") + strName + "] dependency is missing\n"; return -1;}
-    vFptr = mapFptrItr->second;
-    return 1;
-}
-*/
-
 int cFeature::printMapMember(FILE* fp) {
   map<string, vector<int> >::iterator mapstr2IntItr;
   fprintf(fin, "\n\n\n IntData.....");
@@ -273,107 +262,34 @@ int cFeature::setFeatureInt(string strName, vector<int>& v) {
   return 1;
 }
 
-/*
- *  Take a wildcard string as an argument:
- *  wildcards seperated by ';' e.g. "APWaveForm;soma"
- *  Find traces containing every required wildcard in the name
- *  e.g. "V;APWaveForm200;soma", "V;APWaveForm240;soma"
- *  Finally return a vector of all parameter strings
- *  e.g. (";APWaveForm200;soma", ";APWaveForm240;soma", ...)
- */
-void cFeature::getTraces(const string& wildcards, vector<string>& params) {
-  map<string, vector<double> >::const_iterator map_it;
-  string featurename;
-  params.clear();
-  for (map_it = mapDoubleData.begin(); map_it != mapDoubleData.end();
-       ++map_it) {
-    featurename = map_it->first;
-    // find traces
-    if (featurename.find("V;") != string::npos) {
-      bool match = true;
-      int nextpos;
-      int oldpos = 1;
-      do {
-        string param;
-        nextpos = wildcards.find(";", oldpos + 1);
-        if (nextpos == -1) {
-          nextpos = wildcards.size();
-        }
-        param = wildcards.substr(oldpos, nextpos - oldpos - 1);
-        if (featurename.find(param) == string::npos) {
-          match = false;
-          break;
-        }
-        oldpos = nextpos;
-      } while (nextpos != (int)wildcards.size());
-      if (match) {
-        params.push_back(featurename.substr(1));
-      }
+int cFeature::calc_features(const std::string& name) {
+    // stimulus extension
+    auto lookup_it = fptrlookup.find(name);
+    // print lookup_it
+    std::cout<<"lookup_it first: "<<lookup_it->first<<std::endl;
+    
+    if (lookup_it == fptrlookup.end()) {
+        throw std::runtime_error("Feature dependency file entry or pointer table entry for '" + name + "' is missing.");
     }
-  }
-}
 
-int cFeature::calc_features(const string& name) {
-  // stimulus extension
-  map<string, vector<featureStringPair> >::const_iterator lookup_it(
-      fptrlookup.find(name));
-  if (lookup_it == fptrlookup.end()) {
-    throw std::runtime_error("Feature dependency file entry or pointer table "
-                             "entry for '" + name + "' is missing.");
-  }
-  bool last_failed = false;
+    bool last_failed = false;
 
-  for (vector<featureStringPair>::const_iterator pfptrstring =
-           lookup_it->second.begin();
-       pfptrstring != lookup_it->second.end(); ++pfptrstring) {
-    // set parameters, for now only the wildcard 'stimulusname'
-    //
-    feature_function function = pfptrstring->first;
-    string wildcard = pfptrstring->second;
-    if (wildcard.empty()) {
-      // make sure that
-      //  - the feature is called only once
-      //  - the feature operates on "V" and "T" if it operates on traces at all
-      setFeatureString("params", "");
-      if (function(mapIntData, mapDoubleData, mapStrData) < 0) {
-        // GErrorStr += "\nFeature [" + name + "] called twice, or doesn't
-        // operate on V and T.";
-        // return -1;i
-        last_failed = true;
-      } else {
-        last_failed = false;
-      }
-    } else {
-      // make sure that
-      //  -the feature is called once for every trace according to the wildcard
-      //  -the feature operates on each trace
-      vector<string> params;
-      // TODO
-      // read stimulus configuration file and parse additional parameters
-      // such as number of required traces
-      getTraces(wildcard, params);
-      if (params.empty()) {
-        GErrorStr += "\nMissing trace with wildcards " + wildcard;
-        return -1;
-      }
-      for (unsigned i = 0; i < params.size(); i++) {
-        // setting the "params" entry here makes sure that the required features
-        // require specific traces also
-        setFeatureString("params", params[i]);
+    int i = 0;
+    for (const auto& pfptrstring : lookup_it->second) {
+      std::cout<<i<<std::endl;
+      i++;
+      std::cout<<"pfptrstring first: "<<pfptrstring<<std::endl;
+        feature_function function = pfptrstring;
+        setFeatureString("params", "");
+
         if (function(mapIntData, mapDoubleData, mapStrData) < 0) {
-          last_failed = true;
+            last_failed = true;
         } else {
-          last_failed = false;
+            last_failed = false;
         }
-      }
     }
-  }
-  if (last_failed) {
-    return -1;
-  } else {
-    // success
-    return 0;
-  }
+
+    return last_failed ? -1 : 0;  // -1 if the last attempt failed, 0 otherwise
 }
 
 template <typename T>

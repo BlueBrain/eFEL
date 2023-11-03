@@ -45,14 +45,10 @@ class cTree {
   int getDependencyList(string str);
   int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
                          feature2function *FptrTable,
-                         map<string, vector<feature_function> > *FptrLookup);
-
-  int setFeaturePointers(map<string, feature2function *> &mapFptrLib,
-                         feature2function *FptrTable,
-                         map<string, vector<featureStringPair > > *FptrLookup);
+                         map<string, vector<feature_function > > *FptrLookup);
   int getChilds(string strLine, list<string> &childs);
-  int getDependency(string strLine, string parent_stim);
-  int AddUniqueItem(string strFeature, list<string> &lstFinal);
+  int getDependency(const std::string& strLine);
+  bool AddUniqueItem(const std::string& strFeature);
   int getAllParents(vector<string> &vecFeature);
 };
 
