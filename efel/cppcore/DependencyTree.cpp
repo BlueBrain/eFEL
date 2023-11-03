@@ -27,7 +27,7 @@ static void removeAllWhiteSpace(string &str) {
 }
 
 cTree::cTree(const char *strFileName) {
-  std::string line;
+  string line;
 
   std::ifstream input(strFileName);
   if (input.is_open()) {
@@ -170,8 +170,9 @@ int cTree::getChilds(string str, list<string> &childs) {
   return 1;
 }
 
-int cTree::getDependency(const std::string& strLine) {
-  std::list<std::string> tmpChild;
+
+int cTree::getDependency(const string& strLine) {
+  std::list<string> tmpChild;
 
   getChilds(strLine, tmpChild);
   for (const auto& childFeature : tmpChild) {
@@ -181,11 +182,9 @@ int cTree::getDependency(const std::string& strLine) {
   return 0;
 }
 
-bool cTree::AddUniqueItem(const std::string& strFeature) {
+void cTree::AddUniqueItem(const string& strFeature) {
   auto it = std::find(FinalList.begin(), FinalList.end(), strFeature);
   if (it == FinalList.end()) {
     FinalList.push_back(strFeature);
-    return true;  // Item was added
   }
-  return false;  // Item was not added (already present)
 }

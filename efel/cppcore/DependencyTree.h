@@ -47,8 +47,8 @@ class cTree {
                          feature2function *FptrTable,
                          map<string, vector<feature_function > > *FptrLookup);
   int getChilds(string strLine, list<string> &childs);
-  int getDependency(const std::string& strLine);
-  bool AddUniqueItem(const std::string& strFeature);
+  int getDependency(const string& strLine);
+  void AddUniqueItem(const string& strFeature);
   int getAllParents(vector<string> &vecFeature);
 };
 
