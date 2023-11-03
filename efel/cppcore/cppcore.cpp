@@ -38,9 +38,22 @@
 
 #include <cstddef>
 #include <cfeature.h>
-#include <efel.h>
 
-extern cFeature* pFeature;
+cFeature *pFeature = NULL;
+
+
+int Initialize(const char *strDepFile, const char *outdir) {
+  if (pFeature != NULL) {
+    delete pFeature;
+  }
+
+  pFeature = new cFeature(string(strDepFile), string(outdir));
+  if (pFeature == NULL) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
 
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
 
@@ -296,7 +309,15 @@ static PyObject* featuretype(PyObject* self, PyObject* args) {
 }
 
 static PyObject* getgerrorstr(PyObject* self, PyObject* args) {
-  return Py_BuildValue("s", pFeature->getGError().c_str());
+  if (!pFeature) {
+    PyErr_SetString(PyExc_RuntimeError, "Feature system is not initialized.");
+    return NULL;
+  }
+  string errorStr = GErrorStr + pFeature->getGError();
+  GErrorStr.clear();
+
+
+  return Py_BuildValue("s", errorStr.c_str());
 }
 
 static PyMethodDef CppCoreMethods[] = {
