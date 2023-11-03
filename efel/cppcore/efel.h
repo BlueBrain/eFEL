@@ -21,17 +21,6 @@
 #define FEATURELIB_API
 extern "C" {
 FEATURELIB_API int Initialize(const char *strDepFile, const char *outdir);
-FEATURELIB_API int setFeatureInt(const char *strName, int *A, unsigned nValue);
-FEATURELIB_API int setFeatureDouble(const char *strName, double *A, unsigned nValue);
-FEATURELIB_API int getTotalIntData();
-FEATURELIB_API int getTotalDoubleData();
-FEATURELIB_API int FeaturePrint(const char *strName);
-FEATURELIB_API int getFeatureInt(const char *strName, int **A);
-FEATURELIB_API int getFeatureDouble(const char *strName, double **A);
-FEATURELIB_API int setFeatureString(const char *key, const char *value);
-FEATURELIB_API int getFeatureString(const char *key, char **value);
-FEATURELIB_API int printFptr();
 FEATURELIB_API char *getgError();
-FEATURELIB_API double getDistance(const char *strName, double mean, double std, bool trace_check);
 }
 #endif

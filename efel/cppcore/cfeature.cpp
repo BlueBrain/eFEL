@@ -241,20 +241,6 @@ void cFeature::get_feature_names(vector<string>& feature_names) {
   }
 }
 
-int cFeature::printMapMember(FILE* fp) {
-  map<string, vector<int> >::iterator mapstr2IntItr;
-  fprintf(fin, "\n\n\n IntData.....");
-  for (mapstr2IntItr = mapIntData.begin(); mapstr2IntItr != mapIntData.end();
-       mapstr2IntItr++)
-    fprintf(fin, "\n\t%s", mapstr2IntItr->first.c_str());
-  fprintf(fin, "\n\n DoubleData..........");
-  map<string, vector<double> >::iterator mapstr2DoubleItr;
-  for (mapstr2DoubleItr = mapDoubleData.begin();
-       mapstr2DoubleItr != mapDoubleData.end(); mapstr2DoubleItr++)
-    fprintf(fin, "\n\t%s", mapstr2DoubleItr->first.c_str());
-  return 1;
-}
-
 int cFeature::setFeatureInt(string strName, vector<int>& v) {
   logger << "Set " << strName << ":" << v << endl;
   // printf ("Setting int feature [%s] = %d\n", strName.c_str(),v[0]);
@@ -353,41 +339,6 @@ int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   // log data output
   logger << "Set " << strName << ":" << v << endl;
 
-  return 1;
-}
-
-int cFeature::printFeature(const char* strFileName) {
-  FILE* fp = fopen(strFileName, "w");
-  if (fp) {
-    map<string, vector<int> >::iterator mapItrInt;
-    int n = mapIntData.size();
-    fprintf(fp, "\n mapIntData.. Total element = [%d]", n);
-    for (mapItrInt = mapIntData.begin(); mapItrInt != mapIntData.end();
-         mapItrInt++) {
-      string str = mapItrInt->first;
-      vector<int>* v = &(mapItrInt->second);
-      fprintf(fp, "\n ParameterName = [%s] size = [%d]\n\t", str.c_str(),
-              (int)v->size());
-      for (unsigned j = 0; j < v->size(); j++) {
-        fprintf(fp, "[%d]", v->at(j));
-      }
-    }
-
-    map<string, vector<double> >::iterator mapItrDouble;
-    n = mapDoubleData.size();
-    fprintf(fp, "\n mapDoubleData.. Total element = [%d]", n);
-    for (mapItrDouble = mapDoubleData.begin();
-         mapItrDouble != mapDoubleData.end(); mapItrDouble++) {
-      string str = mapItrDouble->first;
-      vector<double>* v = &(mapItrDouble->second);
-      fprintf(fp, "\n ParameterName = [%s] size = [%d]\n\t", str.c_str(),
-              (int)v->size());
-      for (unsigned j = 0; j < v->size(); j++) {
-        fprintf(fp, "[%f]", v->at(j));
-      }
-    }
-    fclose(fp);
-  }
   return 1;
 }
 

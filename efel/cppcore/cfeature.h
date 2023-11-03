@@ -51,7 +51,6 @@ class cFeature {
   const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData);
   const vector<int> getmapIntData(string strName);
   const vector<double> getmapDoubleData(string strName);
-  int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
   template <typename T>
   int getFeature(string strName, vector<T>& vec);
@@ -59,8 +58,6 @@ class cFeature {
   int setFeatureDouble(string strName, vector<double>& DoubleVec);
   int setFeatureString(const string& key, const string& value);
   int getFeatureString(const string& key, string& value);
-  int printFeature(const char* strFileName);
-  int printMapMember(FILE* fp);
 
   string featuretype(string featurename);
   string getGError();
