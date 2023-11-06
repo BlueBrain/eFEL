@@ -24,7 +24,6 @@
 
 #include <time.h>
 
-using std::cout;
 using std::endl;
 
 
@@ -251,20 +250,13 @@ int cFeature::setFeatureInt(string strName, vector<int>& v) {
 int cFeature::calc_features(const std::string& name) {
     // stimulus extension
     auto lookup_it = fptrlookup.find(name);
-    // print lookup_it
-    std::cout<<"lookup_it first: "<<lookup_it->first<<std::endl;
-    
     if (lookup_it == fptrlookup.end()) {
         throw std::runtime_error("Feature dependency file entry or pointer table entry for '" + name + "' is missing.");
     }
 
     bool last_failed = false;
 
-    int i = 0;
     for (const auto& pfptrstring : lookup_it->second) {
-      std::cout<<i<<std::endl;
-      i++;
-      std::cout<<"pfptrstring first: "<<pfptrstring<<std::endl;
         feature_function function = pfptrstring;
         setFeatureString("params", "");
 
@@ -294,7 +286,15 @@ int cFeature::getFeature(string strName, vector<T>& vec) {
     } else {
         // 2) If it's not in the map, compute.
         logger << "Going to calculate feature " << strName << " ..." << endl;
-        if (calc_features(strName) < 0) {
+        int retVal = 0;
+        try{
+          retVal = calc_features(strName);
+        }
+        catch (const std::out_of_range& e) {
+          GErrorStr += e.what();
+          return -1;
+        }
+        if (retVal < 0) {
             logger << "Failed to calculate feature " << strName << ": " << GErrorStr << endl;
             return -1;
         }

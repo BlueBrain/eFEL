@@ -155,7 +155,11 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
     PyErr_SetString(PyExc_AssertionError, e.what());
     return NULL;
   }
-  catch(const std::runtime_error& e) {
+  catch(const std::out_of_range& e) {  // feature exists but its dependency is missing
+    PyErr_SetString(PyExc_KeyError, e.what());
+    return NULL;
+  }
+  catch(const std::runtime_error& e) {  // e.g. feature does not exist
     PyErr_SetString(PyExc_RuntimeError, e.what());
     return NULL;
   }

@@ -22,6 +22,7 @@
 
 #include "types.h"
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,10 @@ using std::vector;
 
 extern string GErrorStr;
 
+template <typename T>
+std::map<std::string, std::vector<T>> getFeatures(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::vector<std::string>& requestedFeatures);
 template<typename T>
 int getParam(std::map<std::string, std::vector<T>>& featureData,
                const std::string& param, std::vector<T>& vec);
