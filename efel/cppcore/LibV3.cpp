@@ -65,31 +65,23 @@ static int __depolarized_base(const vector<double>& t, const vector<double>& v,
 int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal;
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retVal < 0) return -1;
-  vector<double> stimend;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
-  if (retVal < 0) return -1;
-  vector<int> apendi;
-  retVal = getVec(IntFeatureData, StringData, "AP_end_indices", apendi);
-  if (retVal < 0) return -1;
-  vector<int> apbi;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
-  if (retVal < 0) return -1;
+    // Retrieve all required double and int features at once
+    const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
+    const auto& intFeatures = getFeatures(IntFeatureData, {"AP_end_indices", "AP_begin_indices"});
 
-  vector<double> dep_base;
-  retVal = __depolarized_base(t, v, stimstart[0], stimend[0], apbi, apendi,
-                              dep_base);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
-  }
-  return retVal;
+    vector<double> dep_base;
+    int retVal = __depolarized_base(
+        doubleFeatures.at("T"),
+        doubleFeatures.at("V"),
+        doubleFeatures.at("stim_start").front(),
+        doubleFeatures.at("stim_end").front(),
+        intFeatures.at("AP_begin_indices"),
+        intFeatures.at("AP_end_indices"),
+        dep_base
+    );
+
+    if (retVal >= 0) {
+        setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
+    }
+    return retVal;
 }
