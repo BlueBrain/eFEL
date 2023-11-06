@@ -772,23 +772,21 @@ static int __steady_state_hyper(const vector<double>& v,
 int LibV2::steady_state_hyper(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retval;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<double> stimend;
-  retval = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
-  if (retval < 0) return -1;
-  vector<double> steady_state_hyper;
-  retval = __steady_state_hyper(v, t, stimend[0], steady_state_hyper);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "steady_state_hyper",
-                 steady_state_hyper);
-  }
-  return retval;
+    // Retrieve all required features at once
+    const auto& features = getFeatures(DoubleFeatureData, {"V", "T", "stim_end"});
+
+    vector<double> steady_state_hyper;
+    int retval = __steady_state_hyper(
+        features.at("V"),
+        features.at("T"),
+        features.at("stim_end").front(),
+        steady_state_hyper
+    );
+
+    if (retval >= 0) {
+        setVec(DoubleFeatureData, StringData, "steady_state_hyper", steady_state_hyper);
+    }
+    return retval;
 }
 
 
