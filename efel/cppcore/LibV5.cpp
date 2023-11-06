@@ -80,17 +80,14 @@ static int __ISI_log_slope(const vector<double>& isiValues,
 int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  vector<double> isivalues;
+  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
+  const auto& isivalues = doubleFeatures.at("ISI_values");
   vector<double> slope;
-  if (getVec(DoubleFeatureData, StringData, "ISI_values", isivalues) <=
-      0) {
-    return -1;
-  }
   bool semilog = false;
-  int retval = __ISI_log_slope(isivalues, slope, false, 0, 0, semilog);
+  int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "ISI_log_slope", slope);
-    return slope.size();
+    return static_cast<int>(slope.size());
   } else {
     return retval;
   }
@@ -99,17 +96,14 @@ int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
 int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  vector<double> isivalues;
+  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});  
+  const auto& isivalues = doubleFeatures.at("ISI_values");
   vector<double> slope;
-  if (getVec(DoubleFeatureData, StringData, "ISI_values", isivalues) <=
-      0) {
-    return -1;
-  }
   bool semilog = true;
-  int retval = __ISI_log_slope(isivalues, slope, false, 0, 0, semilog);
+  int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "ISI_semilog_slope", slope);
-    return slope.size();
+    return static_cast<int>(slope.size());
   } else {
     return retval;
   }
@@ -118,36 +112,26 @@ int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
 int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal;
-  vector<int> maxnSpike;
-  vector<double> spikeSkipf;
+  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
+  const auto doubleParams = getFeatures(DoubleFeatureData, {"spike_skipf"});
+  const auto intParams = getFeatures(IntFeatureData, {"max_spike_skip"});
 
-  vector<double> isivalues;
-  vector<double> slope;
-  if (getVec(DoubleFeatureData, StringData, "ISI_values", isivalues) <=
-      0) {
-    return -1;
-  }
-  retVal = getParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
-  {
-    if (retVal <= 0) return -1;
-  };
-  // spikeSkipf is a fraction hence value should lie between >=0 and <1. [0 1)
-  if ((spikeSkipf[0] < 0) || (spikeSkipf[0] >= 1)) {
+  const auto& isivalues = doubleFeatures.at("ISI_values");
+  const auto spikeSkipf = doubleParams.at("spike_skipf").front();
+  const auto maxnSpike = intParams.at("max_spike_skip").front();
+
+  // Check the validity of spikeSkipf value
+  if (spikeSkipf < 0 || spikeSkipf >= 1) {
     GErrorStr += "\nspike_skipf should lie between [0 1).\n";
     return -1;
   }
-  retVal = getParam(IntFeatureData, "max_spike_skip", maxnSpike);
-  {
-    if (retVal <= 0) return -1;
-  };
 
+  vector<double> slope;
   bool semilog = false;
-  retVal = __ISI_log_slope(isivalues, slope, true, spikeSkipf[0], maxnSpike[0],
-                           semilog);
+  int retVal = __ISI_log_slope(isivalues, slope, true, spikeSkipf, maxnSpike, semilog);
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "ISI_log_slope_skip", slope);
-    return slope.size();
+    return static_cast<int>(slope.size());
   } else {
     return retVal;
   }
@@ -157,49 +141,29 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
 int LibV5::time_to_second_spike(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
-  int retVal;
-  vector<double> second_spike;
-  vector<double> peaktime;
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time", peaktime);
-  if (retVal < 2) {
-    GErrorStr += "\n Two spikes required for time_to_second_spike.\n";
-    return -1;
+  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time", "stim_start"});
+  const auto& peaktime = doubleFeatures.at("peak_time");
+  const auto& stimstart = doubleFeatures.at("stim_start");
+  if (peaktime.size() < 2) {
+      GErrorStr += "\n Two spikes required for time_to_second_spike.\n";
+      return -1;
   }
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retVal <= 0) return -1;
-
-  second_spike.push_back(peaktime[1] - stimstart[0]);
-  setVec(DoubleFeatureData, StringData, "time_to_second_spike",
-               second_spike);
-  return second_spike.size();
+  vector<double> second_spike = {peaktime[1] - stimstart[0]};
+  setVec(DoubleFeatureData, StringData, "time_to_second_spike", second_spike);
+  return 1;
 }
 
 // time from stimulus start to last spike
 int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal;
+  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time", "stim_start"});
+  const auto& peaktime = doubleFeatures.at("peak_time");
+  const auto& stimstart = doubleFeatures.at("stim_start");
 
-  vector<double> last_spike;
-  vector<double> peaktime;
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time", peaktime);
-  if (retVal < 0) {
-    GErrorStr += "\n Error in peak_time calculation in time_to_last_spike.\n";
-    return -1;
-  } else if (retVal == 0) {
-    last_spike.push_back(0.0);
-    setVec(DoubleFeatureData, StringData, "time_to_last_spike",
-                 last_spike);
-  } else {
-    retVal =
-        getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-    if (retVal <= 0) return -1;
-    last_spike.push_back(peaktime[peaktime.size() - 1] - stimstart[0]);
-    setVec(DoubleFeatureData, StringData, "time_to_last_spike",
-                 last_spike);
-  }
+  vector<double> last_spike = {peaktime.back() - stimstart[0]};
+
+  setVec(DoubleFeatureData, StringData, "time_to_last_spike", last_spike);
   return 1;
 }
 

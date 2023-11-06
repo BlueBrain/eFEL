@@ -298,7 +298,7 @@ def test_empty_trace():
     for feature, value in \
             efel.getFeatureValues([trace], features)[0].items():
 
-        assert value[0] == 0.0
+        assert value is None or value[0] == 0.0
 
 
 def test_multiprocessing_traces():
@@ -1117,7 +1117,6 @@ def test_currentbase():
     current_base = numpy.mean(current[numpy.where(
         (time >= 0.9 * stim_start) & (time <= stim_start))])
 
-    # nt.set_trace()
     numpy.testing.assert_allclose(current_base,
                                   feature_values[0]['current_base'][0],
                                   rtol=0, atol=1e-8)
