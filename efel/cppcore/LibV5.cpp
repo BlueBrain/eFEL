@@ -174,69 +174,33 @@ double calculateInvISI(const std::vector<double>& all_isi_values_vec, size_t ind
   return 0.0;
 }
 
-// 1.0 over first ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_first_ISI(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  // Retrieve all_ISI_values using the getFeatures function
+int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData,
+                           size_t index) {
   const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
   const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
   
-  double inv_first_ISI = calculateInvISI(all_isi_values_vec, 0); // 0 for first ISI
-  vector<double> inv_first_ISI_vec = {inv_first_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_first_ISI", inv_first_ISI_vec);
-  return 1;
-}
+  double inv_ISI = calculateInvISI(all_isi_values_vec, index);
+  std::string featureName;
 
-// 1.0 over second ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_second_ISI(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
-  
-  double inv_second_ISI = calculateInvISI(all_isi_values_vec, 1); // 1 for second ISI
-  vector<double> inv_second_ISI_vec = {inv_second_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_second_ISI", inv_second_ISI_vec);
-  return 1;
-}
+  switch (index) {
+    case 0: featureName = "inv_first_ISI"; break;
+    case 1: featureName = "inv_second_ISI"; break;
+    case 2: featureName = "inv_third_ISI"; break;
+    case 3: featureName = "inv_fourth_ISI"; break;
+    case 4: featureName = "inv_fifth_ISI"; break;
+    default:
+      if (index == all_isi_values_vec.size() - 1) {
+        featureName = "inv_last_ISI";
+      } else {
+        featureName = "inv_" + std::to_string(index + 1) + "th_ISI";
+      }
+      break;
+  }
 
-// 1.0 over third ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_third_ISI(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
-  
-  double inv_third_ISI = calculateInvISI(all_isi_values_vec, 2); // 2 for third ISI
-  vector<double> inv_third_ISI_vec = {inv_third_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_third_ISI", inv_third_ISI_vec);
-  return 1;
-}
-
-// 1.0 over fourth ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_fourth_ISI(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
-  
-  double inv_fourth_ISI = calculateInvISI(all_isi_values_vec, 3); // 3 for fourth ISI
-  vector<double> inv_fourth_ISI_vec = {inv_fourth_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_fourth_ISI", inv_fourth_ISI_vec);
-  return 1;
-}
-
-// 1.0 over fifth ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_fifth_ISI(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
-  
-  double inv_fifth_ISI = calculateInvISI(all_isi_values_vec, 4); // 4 for fifth ISI
-  vector<double> inv_fifth_ISI_vec = {inv_fifth_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_fifth_ISI", inv_fifth_ISI_vec);
+  vector<double> inv_ISI_vec = {inv_ISI};
+  setVec(DoubleFeatureData, StringData, featureName, inv_ISI_vec);
   return 1;
 }
 

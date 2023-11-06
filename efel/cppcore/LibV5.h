@@ -45,16 +45,10 @@ int time_to_last_spike(mapStr2intVec& IntFeatureData,
 int inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int inv_first_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_second_ISI(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_third_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_fourth_ISI(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_fifth_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int inv_ISI_generic(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData,
+                           size_t index);
 int inv_last_ISI(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
