@@ -30,10 +30,9 @@ using std::vector;
 
 extern string GErrorStr;
 
-int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
-                vector<int>& vec);
-int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
-                   vector<double>& vec);
+template<typename T>
+int getParam(std::map<std::string, std::vector<T>>& featureData,
+               const std::string& param, std::vector<T>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 template <class T>
 void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,

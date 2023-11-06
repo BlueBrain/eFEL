@@ -56,7 +56,7 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   retVal = getVec(DoubleFeatureData, StringData, "T", T);
   if (retVal <= 0) return -1;
   // interp_step is a stimulus independent parameter
-  retVal = getDoubleParam(DoubleFeatureData, "interp_step", InterpStepVec);
+  retVal = getParam(DoubleFeatureData, "interp_step", InterpStepVec);
   if (retVal <= 0)
     InterpStep = 0.1;
   else
@@ -118,7 +118,7 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
 
   int IgnoreFirstISI;
   vector<int> retIgnore;
-  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  retVal = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
   if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
     IgnoreFirstISI = 0;
   }
@@ -473,7 +473,7 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
   }
   retVal = getVec(DoubleFeatureData, StringData, "ISI_values", ISIValues);
   if (retVal < 0) return -1;
-  retVal = getDoubleParam(DoubleFeatureData, "burst_factor", tVec);
+  retVal = getParam(DoubleFeatureData, "burst_factor", tVec);
   if (retVal < 0)
     BurstFactor = 2;
   else
@@ -530,7 +530,7 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
                      BurstIndex);
   if (retVal < 0) return -1;
 
-  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  retVal = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
   if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
     IgnoreFirstISI = 0;
   }
@@ -613,7 +613,7 @@ int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
   retVal = getVec(DoubleFeatureData, StringData, "V", V);
   if (retVal < 0) return -1;
 
-  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  retVal = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
   if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
     IgnoreFirstISI = 0;
   }
@@ -697,16 +697,16 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
   if (retVal < 0) return -1;
   retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
   if (retVal < 0) return -1;
-  retVal = getDoubleParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
+  retVal = getParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
   if (retVal < 0) return -1;
   // spikeSkipf is a fraction hence value should lie between >=0 and <1. [0 1)
   if ((spikeSkipf[0] < 0) || (spikeSkipf[0] >= 1)) {
     GErrorStr += "\nspike_skipf should lie between [0 1).\n";
     return -1;
   }
-  retVal = getIntParam(IntFeatureData, "max_spike_skip", maxnSpike);
+  retVal = getParam(IntFeatureData, "max_spike_skip", maxnSpike);
   if (retVal < 0) return -1;
-  retVal = getDoubleParam(DoubleFeatureData, "offset", OffSetVec);
+  retVal = getParam(DoubleFeatureData, "offset", OffSetVec);
   if (retVal < 0)
     Offset = 0;
   else
@@ -792,7 +792,7 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
   };
   vector<double> OffSetVec;
   double Offset;
-  retval = getDoubleParam(DoubleFeatureData, "offset", OffSetVec);
+  retval = getParam(DoubleFeatureData, "offset", OffSetVec);
   if (retval < 0)
     Offset = 0;
   else
@@ -1205,7 +1205,7 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
                         "voltage_deflection", voltage_deflection);
   if (retVal < 0) return -1;
   vector<double> stimulus_current;
-  retVal = getDoubleParam(DoubleFeatureData, "stimulus_current",
+  retVal = getParam(DoubleFeatureData, "stimulus_current",
                           stimulus_current);
   if (retVal < 0) return -1;
   vector<double> oir;
@@ -1489,7 +1489,7 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   retval = getVec(DoubleFeatureData, StringData, "V", v);
   if (retval < 0) return -1;
   vector<double> threshold;
-  retval = getDoubleParam(DoubleFeatureData, "Threshold", threshold);
+  retval = getParam(DoubleFeatureData, "Threshold", threshold);
   if (retval < 0) return -1;
   vector<double> stimstart;
   retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
@@ -1509,7 +1509,7 @@ int LibV1::AP_width(mapStr2intVec& IntFeatureData,
   if (retval < 0) return -1;
   bool strict_stiminterval;
   vector<int> strict_stiminterval_vec;
-  retval = getIntParam(IntFeatureData, "strict_stiminterval",
+  retval = getParam(IntFeatureData, "strict_stiminterval",
                        strict_stiminterval_vec);
   if (retval <= 0) {
     strict_stiminterval = false;

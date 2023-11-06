@@ -128,7 +128,7 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
       0) {
     return -1;
   }
-  retVal = getDoubleParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
+  retVal = getParam(DoubleFeatureData, "spike_skipf", spikeSkipf);
   {
     if (retVal <= 0) return -1;
   };
@@ -137,7 +137,7 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
     GErrorStr += "\nspike_skipf should lie between [0 1).\n";
     return -1;
   }
-  retVal = getIntParam(IntFeatureData, "max_spike_skip", maxnSpike);
+  retVal = getParam(IntFeatureData, "max_spike_skip", maxnSpike);
   {
     if (retVal <= 0) return -1;
   };
@@ -418,7 +418,7 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
   }
 
   // Get strict_stiminterval
-  retVal = getIntParam(IntFeatureData, "strict_stiminterval",
+  retVal = getParam(IntFeatureData, "strict_stiminterval",
                        strict_stiminterval_vec);
   if (retVal <= 0) {
     strict_stiminterval = false;
@@ -682,7 +682,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
 
   // Get DerivativeThreshold
   vector<double> dTh;
-  retVal = getDoubleParam(DoubleFeatureData, "DerivativeThreshold", dTh);
+  retVal = getParam(DoubleFeatureData, "DerivativeThreshold", dTh);
   if (retVal <= 0) {
     // derivative at peak start according to eCode specification 10mV/ms
     // according to Shaul 12mV/ms
@@ -691,7 +691,7 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
 
   // Get DerivativeWindow
   vector<int> derivative_window;
-  retVal = getIntParam(IntFeatureData, "DerivativeWindow", derivative_window);
+  retVal = getParam(IntFeatureData, "DerivativeWindow", derivative_window);
   if (retVal <= 0) {
     GErrorStr += "\nDerivativeWindow not set\n";
     return -1;
@@ -757,7 +757,7 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
 
   // Get DerivativeThreshold
   vector<double> dTh;
-  retVal = getDoubleParam(DoubleFeatureData, "DownDerivativeThreshold", dTh);
+  retVal = getParam(DoubleFeatureData, "DownDerivativeThreshold", dTh);
   if (retVal <= 0) {
     // derivative at peak end
     dTh.push_back(-12.0);
@@ -833,7 +833,7 @@ int LibV5::number_initial_spikes(mapStr2intVec& IntFeatureData,
   retVal = getVec(DoubleFeatureData, StringData, "peak_time", peak_times);
   if (retVal < 0) return -1;
 
-  retVal = getDoubleParam(DoubleFeatureData, "initial_perc", initial_perc);
+  retVal = getParam(DoubleFeatureData, "initial_perc", initial_perc);
   if (retVal <= 0) return -1;
   if ((initial_perc[0] < 0) || (initial_perc[0] >= 1)) {
     GErrorStr += "\ninitial_perc should lie between [0 1).\n";
@@ -1879,7 +1879,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 
 
   vector<double> precisionThreshold;
-  retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
+  retVal = getParam(DoubleFeatureData, "precision_threshold",
                           precisionThreshold);
   if (retVal < 0) return -1;
 
@@ -1954,7 +1954,7 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
 
 
   vector<double> precisionThreshold;
-  retVal = getDoubleParam(DoubleFeatureData, "precision_threshold",
+  retVal = getParam(DoubleFeatureData, "precision_threshold",
                           precisionThreshold);
   if (retVal < 0) return -1;
 
@@ -2309,7 +2309,7 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                    voltage_deflection_vb_ssse);
   if (retVal <= 0) return -1;
   vector<double> stimulus_current;
-  retVal = getDoubleParam(DoubleFeatureData, "stimulus_current", 
+  retVal = getParam(DoubleFeatureData, "stimulus_current", 
                           stimulus_current);
 
   if (retVal <= 0) return -1;
@@ -2490,12 +2490,12 @@ int LibV5::peak_indices(mapStr2intVec& IntFeatureData,
     return -1;
   }
 
-  retVal = getDoubleParam(DoubleFeatureData, "Threshold", threshold);
+  retVal = getParam(DoubleFeatureData, "Threshold", threshold);
   if (retVal <= 0) {
     return -1;
   }
 
-  retVal = getIntParam(IntFeatureData, "strict_stiminterval",
+  retVal = getParam(IntFeatureData, "strict_stiminterval",
                        strict_stiminterval_vec);
   if (retVal <= 0) {
     strict_stiminterval = false;
@@ -2852,7 +2852,7 @@ int LibV5::min_between_peaks_indices(mapStr2intVec& IntFeatureData,
   }
 
   // Get strict_stiminterval
-  retVal = getIntParam(IntFeatureData, "strict_stiminterval",
+  retVal = getParam(IntFeatureData, "strict_stiminterval",
                        strict_stiminterval_vec);
   if (retVal <= 0) {
     strict_stiminterval = false;
@@ -2941,7 +2941,7 @@ int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
   retval = getVec(DoubleFeatureData, StringData, "V", v);
   if (retval < 0) return -1;
   vector<double> threshold;
-  retval = getDoubleParam(DoubleFeatureData, "Threshold", threshold);
+  retval = getParam(DoubleFeatureData, "Threshold", threshold);
   if (retval < 0) return -1;
   vector<double> stimstart;
   retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
@@ -3029,13 +3029,13 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
     GErrorStr += "\nError: At least than 3 spikes are needed for burst calculation.\n";
     return -1;
   }
-  retVal = getDoubleParam(DoubleFeatureData, "strict_burst_factor", tVec);
+  retVal = getParam(DoubleFeatureData, "strict_burst_factor", tVec);
   if (retVal < 0)
     burst_factor = 2;
   else
     burst_factor = tVec[0];
 
-  retVal = getIntParam(IntFeatureData, "ignore_first_ISI", retIgnore);
+  retVal = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
   if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
     IgnoreFirstISI = 0;
   }

@@ -25,32 +25,18 @@ extern string GErrorStr;
  * get(Int|Double|Str)Param provides access to the Int, Double, Str map
  *
  */
-int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
-                vector<int>& vec) {
-  mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(param));
-  if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr += "Parameter [" + param + "] is missing in int map."
-                 "In the python interface this can be set using the "
-                 "setIntSetting() function\n";
-    return -1;
-  }
-  vec = mapstr2IntItr->second;
-  return (vec.size());
-}
-
-int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
-                   vector<double>& vec) {
-  mapStr2doubleVec::iterator mapstr2DoubleItr;
-  mapstr2DoubleItr = DoubleFeatureData.find(param);
-  if (mapstr2DoubleItr == DoubleFeatureData.end()) {
-    GErrorStr += "Parameter [" + param +
-                 "] is missing in double map. "
-                 "In the python interface this can be set using the "
-                 "setDoubleSetting() function\n";
-    return -1;
-  }
-  vec = mapstr2DoubleItr->second;
-  return (vec.size());
+template<typename T>
+int getParam(std::map<std::string, std::vector<T>>& featureData,
+               const std::string& param, std::vector<T>& vec) {
+    auto itr = featureData.find(param);
+    if (itr == featureData.end()) {
+        GErrorStr += "Parameter [" + param + "] is missing in the map. "
+                     "In the python interface, this can be set using the "
+                     "appropriate setting function\n";
+        return -1;
+    }
+    vec = itr->second;
+    return static_cast<int>(vec.size());
 }
 
 int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
@@ -100,6 +86,10 @@ int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Stri
   return (v.size());
 }
 
+template int getParam(std::map<std::string, std::vector<double>>& featureData,
+               const std::string& param, std::vector<double>& vec);
+template int getParam(std::map<std::string, std::vector<int>>& featureData,
+                const std::string& param, std::vector<int>& vec);
 template void setVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<double>& value);
 template void setVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
