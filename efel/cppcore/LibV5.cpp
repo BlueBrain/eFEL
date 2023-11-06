@@ -171,7 +171,7 @@ double calculateInvISI(const std::vector<double>& all_isi_values_vec, size_t ind
   if (index < all_isi_values_vec.size()) {
     return 1000.0 / all_isi_values_vec[index];
   }
-  return 0.0;
+  throw std::out_of_range("inverse ISI index out of range");
 }
 
 int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
