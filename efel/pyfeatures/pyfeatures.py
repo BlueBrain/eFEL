@@ -99,10 +99,12 @@ def current():
 
 
 def ISIs():
-    """Get all ISIs"""
-
+    """Get all ISIs."""
     peak_times = _get_cpp_feature("peak_time")
-    return numpy.diff(peak_times)
+    if peak_times is None:
+        return None
+    else:
+        return numpy.diff(peak_times)
 
 
 def initburst_sahp_vb():
@@ -156,6 +158,8 @@ def initburst_sahp():
     last_isi = None
 
     # Loop over ISIs until frequency higher than initburst_freq_threshold
+    if all_isis is None:
+        return None
     for isi_counter, isi in enumerate(all_isis):
         # Convert to Hz
         freq = 1000.0 / isi

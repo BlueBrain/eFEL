@@ -2545,6 +2545,8 @@ def test_burst_mean_freq():
         if i == 1:
             assert burst_mean_freq == burst_mean_freq_py
             assert burst_mean_freq is None
+        elif i == 2:
+            assert burst_mean_freq is None
         else:
             numpy.testing.assert_allclose(burst_mean_freq, burst_mean_freq_py)
             numpy.testing.assert_allclose(burst_mean_freq, expected_value)
