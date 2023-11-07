@@ -80,7 +80,7 @@ int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
         dep_base
     );
 
-    if (retVal >= 0) {
+    if (retVal > 0) {
         setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
     }
     return retVal;
