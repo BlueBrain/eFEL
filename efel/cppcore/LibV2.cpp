@@ -55,22 +55,19 @@ static int __AP_rise_indices(const vector<double>& v, const vector<int>& apbi,
 int LibV2::AP_rise_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<int> apbi;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
-  vector<int> apri;
-  retVal = __AP_rise_indices(v, apbi, pi, apri);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "AP_rise_indices", apri);
-  }
-  return retVal;
+    const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+    const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "peak_indices"});
+    vector<int> apriseindices;
+    int retval = __AP_rise_indices(
+        doubleFeatures.at("V"),
+        intFeatures.at("AP_begin_indices"),
+        intFeatures.at("peak_indices"),
+        apriseindices
+    );
+    if (retval > 0) {
+        setVec(IntFeatureData, StringData, "AP_rise_indices", apriseindices);
+    }
+    return retval;
 }
 
 // *** AP fall indices ***
@@ -92,25 +89,20 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
 int LibV2::AP_fall_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<int> apbi;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
-  if (retVal < 0) return -1;
-  vector<int> apei;
-  retVal = getVec(IntFeatureData, StringData, "AP_end_indices", apei);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
-  vector<int> apfi;
-  retVal = __AP_fall_indices(v, apbi, apei, pi, apfi);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "AP_fall_indices", apfi);
-  }
-  return retVal;
+    const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+    const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "AP_end_indices", "peak_indices"});
+    vector<int> apfallindices;
+    int retval = __AP_fall_indices(
+        doubleFeatures.at("V"),
+        intFeatures.at("AP_begin_indices"),
+        intFeatures.at("AP_end_indices"),
+        intFeatures.at("peak_indices"),
+        apfallindices
+    );
+    if (retval > 0) {
+        setVec(IntFeatureData, StringData, "AP_fall_indices", apfallindices);
+    }
+    return retval;
 }
 
 // eFeatures
@@ -130,26 +122,22 @@ static int __AP_duration(const vector<double>& t,
 int LibV2::AP_duration(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<int> apbeginindices;
-  retval = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     apbeginindices);
-  if (retval < 0) return -1;
-  vector<int> endindices;
-  retval = getVec(IntFeatureData, StringData, "AP_end_indices",
-                     endindices);
-  if (retval < 0) return -1;
-  vector<double> apduration;
-  retval = __AP_duration(t, apbeginindices, endindices, apduration);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_duration", apduration);
-  }
-  return retval;
+    const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T"});
+    const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "AP_end_indices"});
+
+    vector<double> apduration;
+    int retval = __AP_duration(
+        doubleFeatures.at("T"),
+        intFeatures.at("AP_begin_indices"),
+        intFeatures.at("AP_end_indices"),
+        apduration
+    );
+
+    if (retval > 0) {
+        setVec(DoubleFeatureData, StringData, "AP_duration", apduration);
+    }
+    return retval;
 }
-// end of AP_duration
 
 // *** AP_duration_half_width according to E8 and E16 ***
 static int __AP_duration_half_width(const vector<double>& t,
@@ -165,28 +153,22 @@ static int __AP_duration_half_width(const vector<double>& t,
 int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<int> apriseindices;
-  retval = getVec(IntFeatureData, StringData, "AP_rise_indices",
-                     apriseindices);
-  if (retval < 0) return -1;
-  vector<int> apfallindices;
-  retval = getVec(IntFeatureData, StringData, "AP_fall_indices",
-                     apfallindices);
-  if (retval < 0) return -1;
+  // Fetching all required features in one go.
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_rise_indices", "AP_fall_indices"});
+
   vector<double> apdurationhalfwidth;
-  retval = __AP_duration_half_width(t, apriseindices, apfallindices,
-                                    apdurationhalfwidth);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_duration_half_width",
-                 apdurationhalfwidth);
+  int retval = __AP_duration_half_width(
+      doubleFeatures.at("T"),
+      intFeatures.at("AP_rise_indices"),
+      intFeatures.at("AP_fall_indices"),
+      apdurationhalfwidth
+  );
+  if (retval > 0) {
+      setVec(DoubleFeatureData, StringData, "AP_duration_half_width", apdurationhalfwidth);
   }
   return retval;
 }
-// end of AP_duration_half_width
 
 // *** AP_rise_time according to E9 and E17 ***
 static int __AP_rise_time(const vector<double>& t, 
@@ -231,54 +213,27 @@ static int __AP_rise_time(const vector<double>& t,
 int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<int> apbeginindices;
-  retval = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     apbeginindices);
-  if (retval < 0) return -1;
-  vector<int> peakindices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices",
-                     peakindices);
-  if (retval < 0) return -1;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<double> AP_amplitude;
-  retval =
-      getVec(DoubleFeatureData, StringData, "AP_amplitude", AP_amplitude);
-  if (retval < 0) {
-    GErrorStr += "Error calculating AP_amplitude for mean_AP_amplitude";
-    return -1;
-  } else if (retval == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  } else if (AP_amplitude.size() == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  }
-  // Get rise begin percentage
-  vector<double> risebeginperc;
-  retval = getVec(DoubleFeatureData, StringData, "rise_start_perc", risebeginperc);
-  if (retval <= 0) {
-    risebeginperc.push_back(0.0);
-  }
-  // Get rise end percentage
-  vector<double> riseendperc;
-  retval = getVec(DoubleFeatureData, StringData, "rise_end_perc", riseendperc);
-  if (retval <= 0) {
-    riseendperc.push_back(1.0);
-  }
+  // Fetching all required features in one go.
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, 
+                                    {"T", "V", "AP_amplitude", "rise_start_perc", "rise_end_perc"});
+  const auto& intFeatures = getFeatures(IntFeatureData, 
+                                 {"AP_begin_indices", "peak_indices"});
   vector<double> aprisetime;
-  retval = __AP_rise_time(t, v, apbeginindices, peakindices, AP_amplitude, risebeginperc[0], riseendperc[0], aprisetime);
-  if (retval >= 0) {
+  int retval = __AP_rise_time(
+      doubleFeatures.at("T"),
+      doubleFeatures.at("V"),
+      intFeatures.at("AP_begin_indices"),
+      intFeatures.at("peak_indices"),
+      doubleFeatures.at("AP_amplitude"),
+      doubleFeatures.at("rise_start_perc").empty() ? 0.0 : doubleFeatures.at("rise_start_perc").front(),
+      doubleFeatures.at("rise_end_perc").empty() ? 1.0 : doubleFeatures.at("rise_end_perc").front(),
+      aprisetime
+  );
+  if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_rise_time", aprisetime);
   }
   return retval;
 }
-// end of AP_rise_time
 
 // *** AP_fall_time according to E10 and E18 ***
 static int __AP_fall_time(const vector<double>& t,
@@ -294,26 +249,21 @@ static int __AP_fall_time(const vector<double>& t,
 int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<int> peakindices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices",
-                     peakindices);
-  if (retval < 0) return -1;
-  vector<int> apendindices;
-  retval = getVec(IntFeatureData, StringData, "AP_end_indices",
-                     apendindices);
-  if (retval < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "AP_end_indices"});
+
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<int>& peakindices = intFeatures.at("peak_indices");
+  const vector<int>& apendindices = intFeatures.at("AP_end_indices");
+
   vector<double> apfalltime;
-  retval = __AP_fall_time(t, peakindices, apendindices, apfalltime);
-  if (retval >= 0) {
+  int retval = __AP_fall_time(t, peakindices, apendindices, apfalltime);
+
+  if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_time", apfalltime);
-  }
+  } 
   return retval;
 }
-// end of AP_fall_time
 
 // *** AP_rise_rate according to E11 and E19 ***
 static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
@@ -330,26 +280,19 @@ static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
 int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<int> apbeginindices;
-  retval = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     apbeginindices);
-  if (retval < 0) return -1;
-  vector<int> peakindices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices",
-                     peakindices);
-  if (retval < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "peak_indices"});
+  
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<double>& v = doubleFeatures.at("V");
+  const vector<int>& apbeginindices = intFeatures.at("AP_begin_indices");
+  const vector<int>& peakindices = intFeatures.at("peak_indices");
+
   vector<double> apriserate;
-  retval = __AP_rise_rate(t, v, apbeginindices, peakindices, apriserate);
-  if (retval >= 0) {
+  int retval = __AP_rise_rate(t, v, apbeginindices, peakindices, apriserate);
+  if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_rise_rate", apriserate);
-  }
+  } 
   return retval;
 }
 // end of AP_rise_rate
@@ -369,28 +312,22 @@ static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
 int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<int> peakindices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices", peakindices);
-  if (retval < 0) return -1;
-  vector<int> apendindices;
-  retval = getVec(IntFeatureData, StringData, "AP_end_indices",
-                     apendindices);
-  if (retval < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "AP_end_indices"});
+  
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<double>& v = doubleFeatures.at("V");
+  const vector<int>& peakindices = intFeatures.at("peak_indices");
+  const vector<int>& apendindices = intFeatures.at("AP_end_indices");
+  
   vector<double> apfallrate;
-  retval = __AP_fall_rate(t, v, peakindices, apendindices, apfallrate);
-  if (retval >= 0) {
+  int retval = __AP_fall_rate(t, v, peakindices, apendindices, apfallrate);
+
+  if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_rate", apfallrate);
   }
   return retval;
 }
-// end of AP_fall_rate
 
 // *** fast_AHP according to E13 and E21 ***
 static int __fast_AHP(const vector<double>& v,
@@ -409,26 +346,21 @@ static int __fast_AHP(const vector<double>& v,
 int LibV2::fast_AHP(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
-  int retval;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<int> apbeginindices;
-  retval = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     apbeginindices);
-  if (retval < 0) return -1;
-  vector<int> minahpindices;
-  retval = getVec(IntFeatureData, StringData, "min_AHP_indices",
-                     minahpindices);
-  if (retval < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "min_AHP_indices"});
+  
+  const vector<double>& v = doubleFeatures.at("V");
+  const vector<int>& apbeginindices = intFeatures.at("AP_begin_indices");
+  const vector<int>& minahpindices = intFeatures.at("min_AHP_indices");
+  
   vector<double> fastahp;
-  retval = __fast_AHP(v, apbeginindices, minahpindices, fastahp);
-  if (retval >= 0) {
+  int retval = __fast_AHP(v, apbeginindices, minahpindices, fastahp);
+
+  if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
   }
   return retval;
 }
-// end of fast_AHP
 
 // *** AP_amplitude_change according to E22 ***
 static int __AP_amplitude_change(const vector<double>& apamplitude,
@@ -446,20 +378,17 @@ static int __AP_amplitude_change(const vector<double>& apamplitude,
 int LibV2::AP_amplitude_change(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData) {
-  int retval;
-  vector<double> apamplitude;
-  retval = getVec(DoubleFeatureData, StringData, "AP_amplitude",
-                        apamplitude);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"AP_amplitude"});
+  const vector<double>& apamplitude = features.at("AP_amplitude");
+
   vector<double> apamplitudechange;
-  retval = __AP_amplitude_change(apamplitude, apamplitudechange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_amplitude_change",
-                 apamplitudechange);
+  int retval = __AP_amplitude_change(apamplitude, apamplitudechange);
+
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_amplitude_change", apamplitudechange);
   }
   return retval;
 }
-// end of AP_amplitude_change
 
 // *** AP_duration_change according to E23 ***
 static int __AP_duration_change(const vector<double>& apduration,
@@ -476,16 +405,13 @@ static int __AP_duration_change(const vector<double>& apduration,
 int LibV2::AP_duration_change(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retval;
-  vector<double> apduration;
-  retval = getVec(DoubleFeatureData, StringData, "AP_duration",
-                        apduration);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"AP_duration"});
+  const vector<double>& apduration = features.at("AP_duration");
+
   vector<double> apdurationchange;
-  retval = __AP_duration_change(apduration, apdurationchange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_duration_change",
-                 apdurationchange);
+  int retval = __AP_duration_change(apduration, apdurationchange);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_duration_change", apdurationchange);
   }
   return retval;
 }
@@ -509,17 +435,12 @@ static int __AP_duration_half_width_change(
 int LibV2::AP_duration_half_width_change(mapStr2intVec& IntFeatureData,
                                          mapStr2doubleVec& DoubleFeatureData,
                                          mapStr2Str& StringData) {
-  int retval;
-  vector<double> apdurationhalfwidth;
-  retval = getVec(DoubleFeatureData, StringData,
-                        "AP_duration_half_width", apdurationhalfwidth);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"AP_duration_half_width"});
+  const vector<double>& apdurationhalfwidth = features.at("AP_duration_half_width");
   vector<double> apdurationhalfwidthchange;
-  retval = __AP_duration_half_width_change(apdurationhalfwidth,
-                                           apdurationhalfwidthchange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_duration_half_width_change",
-                 apdurationhalfwidthchange);
+  int retval = __AP_duration_half_width_change(apdurationhalfwidth, apdurationhalfwidthchange);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_duration_half_width_change", apdurationhalfwidthchange);
   }
   return retval;
 }
@@ -541,16 +462,12 @@ static int __AP_rise_rate_change(const vector<double>& apriserate,
 int LibV2::AP_rise_rate_change(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData) {
-  int retval;
-  vector<double> apriserate;
-  retval = getVec(DoubleFeatureData, StringData, "AP_rise_rate",
-                        apriserate);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"AP_rise_rate"});
+  const vector<double>& apriserate = features.at("AP_rise_rate");
   vector<double> apriseratechange;
-  retval = __AP_rise_rate_change(apriserate, apriseratechange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_rise_rate_change",
-                 apriseratechange);
+  int retval = __AP_rise_rate_change(apriserate, apriseratechange);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_rise_rate_change", apriseratechange);
   }
   return retval;
 }
@@ -571,20 +488,15 @@ static int __AP_fall_rate_change(const vector<double>& apfallrate,
 int LibV2::AP_fall_rate_change(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData) {
-  int retval;
-  vector<double> apfallrate;
-  retval = getVec(DoubleFeatureData, StringData, "AP_fall_rate",
-                        apfallrate);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"AP_fall_rate"});
+  const vector<double>& apfallrate = features.at("AP_fall_rate");
   vector<double> apfallratechange;
-  retval = __AP_fall_rate_change(apfallrate, apfallratechange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_fall_rate_change",
-                 apfallratechange);
+  int retval = __AP_fall_rate_change(apfallrate, apfallratechange);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_fall_rate_change", apfallratechange);
   }
   return retval;
 }
-// end of AP_fall_rate_change
 
 // *** fast_AHP_change according to E27 ***
 static int __fast_AHP_change(const vector<double>& fastahp,
@@ -601,15 +513,12 @@ static int __fast_AHP_change(const vector<double>& fastahp,
 int LibV2::fast_AHP_change(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retval;
-  vector<double> fastahp;
-  retval = getVec(DoubleFeatureData, StringData, "fast_AHP", fastahp);
-  if (retval < 0) return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"fast_AHP"});
+  const vector<double>& fastahp = features.at("fast_AHP");
   vector<double> fastahpchange;
-  retval = __fast_AHP_change(fastahp, fastahpchange);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "fast_AHP_change",
-                 fastahpchange);
+  int retval = __fast_AHP_change(fastahp, fastahpchange);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "fast_AHP_change", fastahpchange);
   }
   return retval;
 }
@@ -624,24 +533,20 @@ static int __amp_drop_first_second(const vector<double>& peakvoltage,
 int LibV2::amp_drop_first_second(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retval;
-  vector<double> peakvoltage;
-  retval = getVec(DoubleFeatureData, StringData, "peak_voltage",
-                        peakvoltage);
-  if (retval < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of amp_drop_first_second.\n";
+  const auto& features = getFeatures(DoubleFeatureData, {"peak_voltage"});
+  const vector<double> peakvoltage = features.at("peak_voltage");
+
+  if (peakvoltage.size() < 2) {
+    GErrorStr += "At least 2 spikes needed for calculation of amp_drop_first_second.\n";
     return -1;
   }
   vector<double> ampdropfirstsecond;
-  retval = __amp_drop_first_second(peakvoltage, ampdropfirstsecond);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "amp_drop_first_second",
-                 ampdropfirstsecond);
+  int retval = __amp_drop_first_second(peakvoltage, ampdropfirstsecond);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "amp_drop_first_second", ampdropfirstsecond);
   }
   return retval;
 }
-// end of amp_drop_first_second
 
 // *** amp_drop_first_last ***
 static int __amp_drop_first_last(const vector<double>& peakvoltage,
@@ -652,20 +557,17 @@ static int __amp_drop_first_last(const vector<double>& peakvoltage,
 int LibV2::amp_drop_first_last(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData) {
-  int retval;
-  vector<double> peakvoltage;
-  retval = getVec(DoubleFeatureData, StringData, "peak_voltage",
-                        peakvoltage);
-  if (retval < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of amp_drop_first_last.\n";
+  const auto& peakVoltageFeature = getFeatures(DoubleFeatureData, {"peak_voltage"});
+  const vector<double> peakvoltage = peakVoltageFeature.at("peak_voltage");
+
+  if (peakvoltage.size() < 2) {
+    GErrorStr += "At least 2 spikes needed for calculation of amp_drop_first_last.\n";
     return -1;
   }
   vector<double> ampdropfirstlast;
-  retval = __amp_drop_first_last(peakvoltage, ampdropfirstlast);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "amp_drop_first_last",
-                 ampdropfirstlast);
+  int retval = __amp_drop_first_last(peakvoltage, ampdropfirstlast);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "amp_drop_first_last", ampdropfirstlast);
   }
   return retval;
 }
@@ -680,24 +582,20 @@ static int __amp_drop_second_last(const vector<double>& peakvoltage,
 int LibV2::amp_drop_second_last(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
-  int retval;
-  vector<double> peakvoltage;
-  retval = getVec(DoubleFeatureData, StringData, "peak_voltage",
-                        peakvoltage);
-  if (retval < 3) {
-    GErrorStr +=
-        "At least 3 spikes needed for calculation of amp_drop_second_last.\n";
+  const auto& peakVoltageFeatures = getFeatures(DoubleFeatureData, {"peak_voltage"});
+  const vector<double>& peakvoltage = peakVoltageFeatures.at("peak_voltage");
+  // Ensure there are at least 3 spikes for calculation
+  if (peakvoltage.size() < 3) {
+    GErrorStr += "At least 3 spikes needed for calculation of amp_drop_second_last.\n";
     return -1;
   }
   vector<double> ampdropsecondlast;
-  retval = __amp_drop_second_last(peakvoltage, ampdropsecondlast);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "amp_drop_second_last",
-                 ampdropsecondlast);
+  int retval = __amp_drop_second_last(peakvoltage, ampdropsecondlast);
+  if (retval > 0) {
+    setVec(DoubleFeatureData, StringData, "amp_drop_second_last", ampdropsecondlast);
   }
   return retval;
 }
-// end of amp_drop_second_last
 
 // *** max_amp_difference ***
 static int __max_amp_difference(const vector<double>& peakvoltage,
@@ -718,24 +616,21 @@ static int __max_amp_difference(const vector<double>& peakvoltage,
 int LibV2::max_amp_difference(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retval;
-  vector<double> peakvoltage;
-  retval = getVec(DoubleFeatureData, StringData, "peak_voltage",
-                        peakvoltage);
-  if (retval < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of max_amp_difference.\n";
-    return -1;
+  const auto& features = getFeatures(DoubleFeatureData, {"peak_voltage"});
+
+  // Ensure there are at least 2 spikes for calculation
+  if (features.at("peak_voltage").size() < 2) {
+      GErrorStr += "At least 2 spikes needed for calculation of max_amp_difference.\n";
+      return -1;
   }
   vector<double> maxampdifference;
-  retval = __max_amp_difference(peakvoltage, maxampdifference);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "max_amp_difference",
-                 maxampdifference);
+  int retval = __max_amp_difference(features.at("peak_voltage"), maxampdifference);
+
+  if (retval > 0) {
+      setVec(DoubleFeatureData, StringData, "max_amp_difference", maxampdifference);
   }
   return retval;
 }
-// end of max_amp_difference
 
 // steady state of the voltage response during hyperpolarizing stimulus,
 // elementary feature for E29
@@ -783,7 +678,7 @@ int LibV2::steady_state_hyper(mapStr2intVec& IntFeatureData,
         steady_state_hyper
     );
 
-    if (retval >= 0) {
+    if (retval > 0) {
         setVec(DoubleFeatureData, StringData, "steady_state_hyper", steady_state_hyper);
     }
     return retval;
