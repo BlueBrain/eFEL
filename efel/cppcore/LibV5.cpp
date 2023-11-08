@@ -25,6 +25,7 @@
 #include <deque>
 #include <functional>
 #include <iterator>
+#include "EfelExceptions.h"
 
 using std::distance;
 using std::find_if;
@@ -171,7 +172,7 @@ double calculateInvISI(const std::vector<double>& all_isi_values_vec, size_t ind
   if (index < all_isi_values_vec.size()) {
     return 1000.0 / all_isi_values_vec[index];
   }
-  throw std::out_of_range("inverse ISI index out of range");
+  throw FeatureComputationError("inverse ISI index out of range");
 }
 
 int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,

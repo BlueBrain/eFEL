@@ -17,6 +17,7 @@
  */
 
 #include "mapoperations.h"
+# include "EfelExceptions.h"
 
 extern string GErrorStr;
 
@@ -28,11 +29,12 @@ std::map<std::string, std::vector<T>> getFeatures(
     std::map<std::string, std::vector<T>> selectedFeatures;
     for (const auto& featureKey : requestedFeatures) {
         auto it = allFeatures.find(featureKey);
-        if (it != allFeatures.end() && !it->second.empty()) {
-            selectedFeatures.insert(*it);
+        if (it == allFeatures.end()) {
+            throw FeatureComputationError("Feature " + featureKey + " not found");
+        } else if (it->second.empty()) {
+            throw EmptyFeatureError("Feature " + featureKey + " is empty");
         } else {
-            // If the feature is not found or is empty, throw an exception
-            throw std::out_of_range("Feature " + featureKey + " not found or is empty");
+            selectedFeatures.insert(*it);
         }
     }
     return selectedFeatures;

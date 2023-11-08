@@ -28,6 +28,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include "EfelExceptions.h"
 
 using std::distance;
 using std::find_if;
@@ -83,24 +84,16 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
 int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  int retval;
   size_t spikecount_value;
-
-  vector<int> peakindices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices",
-                     peakindices);
-  if (retval < 0) {
-    return -1;
-  } else if (retval == 0) {
-    spikecount_value = 0;
-  } else {
-    spikecount_value = peakindices.size();
+  try {  // handle empty peak_indices
+      const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
+      spikecount_value = intFeatures.at("peak_indices").size();
+  } catch(const EmptyFeatureError& e) {
+      spikecount_value = 0;
   }
   vector<int> spikecount(1, spikecount_value);
-  if (retval >= 0) {
-    setVec(IntFeatureData, StringData, "Spikecount", spikecount);
-  }
-  return retval;
+  setVec(IntFeatureData, StringData, "Spikecount", spikecount);
+    return spikecount_value;
 }
 // end of Spikecount
 

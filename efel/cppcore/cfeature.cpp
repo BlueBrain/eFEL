@@ -290,7 +290,12 @@ int cFeature::getFeature(string strName, vector<T>& vec) {
         try{
           retVal = calc_features(strName);
         }
-        catch (const std::out_of_range& e) {
+        catch (const FeatureComputationError& e) {
+          GErrorStr += e.what();
+          return -1;
+        }
+        catch (const EmptyFeatureError& e)
+        {
           GErrorStr += e.what();
           return -1;
         }
