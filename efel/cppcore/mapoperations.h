@@ -28,21 +28,22 @@
 
 using std::string;
 using std::vector;
+using std::map;
 
 extern string GErrorStr;
 
 template <typename T>
-std::map<std::string, std::vector<T>> getFeatures(
-    const std::map<std::string, std::vector<T>>& allFeatures,
-    const std::vector<std::string>& requestedFeatures);
+map<string, vector<T>> getFeatures(
+    const map<string, vector<T>>& allFeatures,
+    const vector<string>& requestedFeatures);
 template<typename T>
-int getParam(std::map<std::string, std::vector<T>>& featureData,
-               const std::string& param, std::vector<T>& vec);
+int getParam(map<string, vector<T>>& featureData,
+               const string& param, vector<T>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 template <class T>
-void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
+void setVec(map<string, vector<T>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value);
 template <class T>
-int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
+int getVec(map<string, vector<T>>& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<T>& v);
 #endif
