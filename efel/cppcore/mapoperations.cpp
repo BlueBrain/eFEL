@@ -40,6 +40,19 @@ std::map<std::string, std::vector<T>> getFeatures(
     return selectedFeatures;
 }
 
+template <typename T>
+std::vector<T> getFeature(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::string& requestedFeature) {
+    
+    // Use getFeatures to retrieve a map with the single requested feature
+    auto selectedFeatures = getFeatures(allFeatures, {requestedFeature});
+    
+    // Since we requested only one feature, we can directly access the value
+    // The exception handling in getFeatures ensures we have a valid, non-empty vector
+    return selectedFeatures.at(requestedFeature);
+}
+
 
 /*
  * get(Int|Double|Str)Param provides access to the Int, Double, Str map
@@ -124,3 +137,9 @@ template int getVec(std::map<std::string, std::vector<double> >& FeatureData, ma
                  string strFeature, vector<double>& v);
 template int getVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
                  string strFeature, vector<int>& v);
+template std::vector<double> getFeature(
+    const std::map<std::string, std::vector<double>>& allFeatures,
+    const std::string& requestedFeature);
+template std::vector<int> getFeature(
+    const std::map<std::string, std::vector<int>>& allFeatures,
+    const std::string& requestedFeature);

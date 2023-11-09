@@ -81,8 +81,7 @@ static int __ISI_log_slope(const vector<double>& isiValues,
 int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
-  const auto& isivalues = doubleFeatures.at("ISI_values");
+  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
   vector<double> slope;
   bool semilog = false;
   int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
@@ -97,8 +96,7 @@ int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
 int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});  
-  const auto& isivalues = doubleFeatures.at("ISI_values");
+  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
   vector<double> slope;
   bool semilog = true;
   int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
@@ -113,13 +111,9 @@ int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
 int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
-  const auto doubleParams = getFeatures(DoubleFeatureData, {"spike_skipf"});
-  const auto intParams = getFeatures(IntFeatureData, {"max_spike_skip"});
-
-  const auto& isivalues = doubleFeatures.at("ISI_values");
-  const auto spikeSkipf = doubleParams.at("spike_skipf").front();
-  const auto maxnSpike = intParams.at("max_spike_skip").front();
+  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
+  const auto spikeSkipf = getFeature(DoubleFeatureData, {"spike_skipf"}).front();
+  const auto maxnSpike = getFeature(IntFeatureData, {"max_spike_skip"}).front();
 
   // Check the validity of spikeSkipf value
   if (spikeSkipf < 0 || spikeSkipf >= 1) {
@@ -179,9 +173,7 @@ int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData,
                            size_t index) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
-  
+  const auto& all_isi_values_vec = getFeature(DoubleFeatureData, {"all_ISI_values"});
   double inv_ISI = calculateInvISI(all_isi_values_vec, index);
   std::string featureName;
 
@@ -209,8 +201,7 @@ int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
 int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  const auto doubleFeatures = getFeatures(DoubleFeatureData, {"all_ISI_values"});
-  const auto& all_isi_values_vec = doubleFeatures.at("all_ISI_values");
+  const auto& all_isi_values_vec = getFeature(DoubleFeatureData, {"all_ISI_values"});
   
   double inv_last_ISI = calculateInvISI(all_isi_values_vec, all_isi_values_vec.size() - 1); // Last ISI
   vector<double> inv_last_ISI_vec = {inv_last_ISI};
@@ -222,21 +213,13 @@ int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
 int LibV5::inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData) {
-  int retVal;
-
-  vector<double> time_to_first_spike_vec;
-  double inv_time_to_first_spike;
+  vector<double> time_to_first_spike_vec = getFeature(DoubleFeatureData, "time_to_first_spike");
   vector<double> inv_time_to_first_spike_vec;
-  retVal = getVec(DoubleFeatureData, StringData, "time_to_first_spike",
-                        time_to_first_spike_vec);
-  if (retVal < 1) {
-    inv_time_to_first_spike = 0.0;
-  } else {
-    inv_time_to_first_spike = 1000.0 / time_to_first_spike_vec[0];
-  }
+
+  double inv_time_to_first_spike = 1000.0 / time_to_first_spike_vec[0];
   inv_time_to_first_spike_vec.push_back(inv_time_to_first_spike);
-  setVec(DoubleFeatureData, StringData, "inv_time_to_first_spike",
-               inv_time_to_first_spike_vec);
+
+  setVec(DoubleFeatureData, StringData, "inv_time_to_first_spike", inv_time_to_first_spike_vec);
   return 1;
 }
 
@@ -633,36 +616,25 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
+  const auto& T = getFeature(DoubleFeatureData, "T");
+  const auto& V = getFeature(DoubleFeatureData, "V");
+  const auto& peak_indices = getFeature(IntFeatureData, "peak_indices");
 
-  int retVal;
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
-
-  // Get DerivativeThreshold
   vector<double> dTh;
-  retVal = getParam(DoubleFeatureData, "DownDerivativeThreshold", dTh);
-  if (retVal <= 0) {
-    // derivative at peak end
-    dTh.push_back(-12.0);
-  }
+  int retVal = getParam(DoubleFeatureData, "DownDerivativeThreshold", dTh);
+  double downDerivativeThreshold = (retVal <= 0) ? -12.0 : dTh[0];
 
-  vector<int> apei;
-  retVal = __AP_end_indices(t, v, pi, apei, dTh[0]);
+  vector<int> AP_end_indices;
+  retVal = __AP_end_indices(T, V, peak_indices, AP_end_indices, downDerivativeThreshold);
   if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "AP_end_indices", apei);
+    setVec(IntFeatureData, StringData, "AP_end_indices", AP_end_indices);
   }
   return retVal;
 }
 
 
-static int __irregularity_index(vector<double>& isiValues,
+
+static int __irregularity_index(const vector<double>& isiValues,
                                 vector<double>& irregularity_index) {
   double ISISub, iRI;
   iRI = ISISub = 0;
@@ -681,19 +653,16 @@ static int __irregularity_index(vector<double>& isiValues,
 int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal;
-  vector<double> isiValues, irregularity_index;
-  retVal = getVec(DoubleFeatureData, StringData, "ISI_values", isiValues);
-  if (retVal < 0) return -1;
-
-  retVal = __irregularity_index(isiValues, irregularity_index);
-  if (retVal >= 0)
-    setVec(DoubleFeatureData, StringData, "irregularity_index",
-                 irregularity_index);
+  const vector<double>& isiValues = getFeature(DoubleFeatureData, "ISI_values");
+  vector<double> irregularity_index;
+  int retVal = __irregularity_index(isiValues, irregularity_index);
+  if (retVal >= 0) {
+    setVec(DoubleFeatureData, StringData, "irregularity_index", irregularity_index);
+  }
   return retVal;
 }
 
-static int __number_initial_spikes(vector<double>& peak_times, double stimstart,
+static int __number_initial_spikes(const vector<double>& peak_times, double stimstart,
                    double stimend, double initial_perc,
                    vector<int>& number_initial_spikes) {
   double initialLength = (stimend - stimstart) * initial_perc;
@@ -717,32 +686,23 @@ static int __number_initial_spikes(vector<double>& peak_times, double stimstart,
 int LibV5::number_initial_spikes(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  int retVal;
-  vector<double> peak_times, initial_perc;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time", "initial_perc", "stim_start", "stim_end"});
   vector<int> number_initial_spikes;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time", peak_times);
-  if (retVal < 0) return -1;
 
-  retVal = getParam(DoubleFeatureData, "initial_perc", initial_perc);
-  if (retVal <= 0) return -1;
+  const vector<double>& peak_times = doubleFeatures.at("peak_time");
+  const vector<double>& initial_perc = doubleFeatures.at("initial_perc");
+  const vector<double>& stimstart = doubleFeatures.at("stim_start");
+  const vector<double>& stimend = doubleFeatures.at("stim_end");
+
   if ((initial_perc[0] < 0) || (initial_perc[0] >= 1)) {
-    GErrorStr += "\ninitial_perc should lie between [0 1).\n";
-    return -1;
+    throw FeatureComputationError("initial_perc should lie between [0 1).");
   }
 
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retVal < 0) return -1;
-
-  vector<double> stimend;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
-  if (retVal < 0) return -1;
-
-  retVal = __number_initial_spikes(peak_times, stimstart[0], stimend[0],
-                                   initial_perc[0], number_initial_spikes);
-  if (retVal >= 0)
-    setVec(IntFeatureData, StringData, "number_initial_spikes",
-              number_initial_spikes);
+  int retVal = __number_initial_spikes(peak_times, stimstart[0], stimend[0],
+                                       initial_perc[0], number_initial_spikes);
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "number_initial_spikes", number_initial_spikes);
+  }
   return retVal;
 }
 
@@ -750,17 +710,9 @@ int LibV5::number_initial_spikes(mapStr2intVec& IntFeatureData,
 int LibV5::AP1_amp(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_amplitudes, AP1_amp;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_amplitude",
-                        AP_amplitudes);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AP1_amp", AP1_amp);
-    return 0;
-  } else {
-    AP1_amp.push_back(AP_amplitudes[0]);
-  }
-
+  const vector<double>& AP_amplitudes = getFeature(DoubleFeatureData, "AP_amplitude");
+  vector<double> AP1_amp;
+  AP1_amp.push_back(AP_amplitudes[0]);
   setVec(DoubleFeatureData, StringData, "AP1_amp", AP1_amp);
   return 1;
 }
@@ -769,37 +721,21 @@ int LibV5::AP1_amp(mapStr2intVec& IntFeatureData,
 int LibV5::APlast_amp(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  vector<double> AP_amplitudes, APlast_amp;
-  int AP_amplitude_size;
-
-  AP_amplitude_size = getVec(DoubleFeatureData, StringData,
-                                   "AP_amplitude", AP_amplitudes);
-  if (AP_amplitude_size < 1) {
-    setVec(DoubleFeatureData, StringData, "APlast_amp", APlast_amp);
-    return 0;
-  } else {
-    APlast_amp.push_back(AP_amplitudes[AP_amplitude_size - 1]);
-  }
-
+  const vector<double>& AP_amplitudes = getFeature(DoubleFeatureData, "AP_amplitude");
+  vector<double> APlast_amp;
+  APlast_amp.push_back(AP_amplitudes[AP_amplitudes.size() - 1]);
   setVec(DoubleFeatureData, StringData, "APlast_amp", APlast_amp);
   return 1;
 }
+
 
 // Peak voltage of the first spike
 int LibV5::AP1_peak(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
-  int retVal;
-  vector<double> peak_voltage, AP1_peak;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "peak_voltage", peak_voltage);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AP1_peak", AP1_peak);
-    return 0;
-  } else {
-    AP1_peak.push_back(peak_voltage[0]);
-  }
-
+  const vector<double>& peak_voltage = getFeature(DoubleFeatureData, "peak_voltage");
+  vector<double> AP1_peak;
+  AP1_peak.push_back(peak_voltage[0]);
   setVec(DoubleFeatureData, StringData, "AP1_peak", AP1_peak);
   return 1;
 }
@@ -808,103 +744,70 @@ int LibV5::AP1_peak(mapStr2intVec& IntFeatureData,
 int LibV5::AP2_amp(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
-  int retVal;
-
-  vector<double> AP_amplitudes, AP2_amp;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_amplitude",
-                        AP_amplitudes);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_amp", AP2_amp);
-    return 0;
+  const vector<double>& AP_amplitudes = getFeature(DoubleFeatureData, "AP_amplitude");
+  vector<double> AP2_amp;
+  if (AP_amplitudes.size() < 2) {
+    throw FeatureComputationError("Size of AP_amplitude should be >= 2 for AP2_amp");
   } else {
     AP2_amp.push_back(AP_amplitudes[1]);
+    setVec(DoubleFeatureData, StringData, "AP2_amp", AP2_amp);
+    return 1;
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_amp", AP2_amp);
-
-  return 1;
 }
 
 // Peak voltage of the second spike
 int LibV5::AP2_peak(mapStr2intVec& IntFeatureData,
                     mapStr2doubleVec& DoubleFeatureData,
                     mapStr2Str& StringData) {
-  int retVal;
-
-  vector<double> peak_voltage, AP2_peak;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "peak_voltage", peak_voltage);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_peak", AP2_peak);
-    return 0;
+  const vector<double>& peak_voltage = getFeature(DoubleFeatureData, "peak_voltage");
+  vector<double> AP2_peak;
+  if (peak_voltage.size() < 2) {
+    throw FeatureComputationError("Size of peak_voltage should be >= 2 for AP2_peak");
   } else {
     AP2_peak.push_back(peak_voltage[1]);
+    setVec(DoubleFeatureData, StringData, "AP2_peak", AP2_peak);
+    return 1;
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_peak", AP2_peak);
-  return 1;
 }
 
 // Difference amplitude of the second to first spike
 int LibV5::AP2_AP1_diff(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
-
-  vector<double> AP_amplitudes, AP2_AP1_diff;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_amplitude",
-                        AP_amplitudes);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_AP1_diff", AP2_AP1_diff);
-    return 0;
+  const vector<double>& AP_amplitudes = getFeature(DoubleFeatureData, "AP_amplitude");
+  vector<double> AP2_AP1_diff;
+  if (AP_amplitudes.size() < 2) {
+    throw FeatureComputationError("Size of AP_amplitude should be >= 2 for AP2_AP1_diff");
   } else {
     AP2_AP1_diff.push_back(AP_amplitudes[1] - AP_amplitudes[0]);
+    setVec(DoubleFeatureData, StringData, "AP2_AP1_diff", AP2_AP1_diff);
+    return 1;
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_AP1_diff", AP2_AP1_diff);
-
-  return 1;
 }
 
 // Difference peak_amp of the second to first spike
 int LibV5::AP2_AP1_peak_diff(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  int retVal;
-  vector<double> peak_voltage, AP2_AP1_peak_diff;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "peak_voltage", peak_voltage);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
-                 AP2_AP1_peak_diff);
-    return 0;
+  const vector<double>& peak_voltage = getFeature(DoubleFeatureData, "peak_voltage");
+  vector<double> AP2_AP1_peak_diff;
+  if (peak_voltage.size() < 2) {
+    throw FeatureComputationError("Size of peak_voltage should be >= 2 for AP2_AP1_peak_diff");
   } else {
     AP2_AP1_peak_diff.push_back(peak_voltage[1] - peak_voltage[0]);
+    setVec(DoubleFeatureData, StringData, "AP2_AP1_peak_diff", AP2_AP1_peak_diff);
+    return 1;
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
-               AP2_AP1_peak_diff);
-
-  return 1;
 }
 
 // Width of the first spike
 int LibV5::AP1_width(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
-  int retVal;
-  vector<double> spike_half_width, AP1_width;
-  retVal = getVec(DoubleFeatureData, StringData, "spike_half_width",
-                        spike_half_width);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AP1_width", AP1_width);
-    return 0;
-  } else {
-    AP1_width.push_back(spike_half_width[0]);
-  }
-
+  const vector<double>& spike_half_width = getFeature(DoubleFeatureData, "spike_half_width");
+  vector<double> AP1_width;
+  AP1_width.push_back(spike_half_width[0]);
   setVec(DoubleFeatureData, StringData, "AP1_width", AP1_width);
-
   return 1;
 }
 
@@ -912,40 +815,24 @@ int LibV5::AP1_width(mapStr2intVec& IntFeatureData,
 int LibV5::AP2_width(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData) {
-  int retVal;
-  vector<double> spike_half_width, AP2_width;
-  retVal = getVec(DoubleFeatureData, StringData, "spike_half_width",
-                        spike_half_width);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_width", AP2_width);
-    return 0;
+  const vector<double>& spike_half_width = getFeature(DoubleFeatureData, "spike_half_width");
+  vector<double> AP2_width;
+  if (spike_half_width.size() < 2) {
+    throw FeatureComputationError("Size of spike_half_width should be >= 2 for AP2_width");
   } else {
     AP2_width.push_back(spike_half_width[1]);
+    setVec(DoubleFeatureData, StringData, "AP2_width", AP2_width);
+    return 1;
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_width", AP2_width);
-
-  return 1;
 }
 
 // Width of the last spike
 int LibV5::APlast_width(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData) {
-  vector<double> spike_half_width, APlast_width;
-
-  int spike_half_width_size = 
-      getVec(DoubleFeatureData, StringData, "spike_half_width",
-                        spike_half_width);
-  
-  if (spike_half_width_size < 1) {
-    GErrorStr +=
-        "\nError: At least one spike is needed for APlast_width.\n";  
-    return -1;
-  } else {
-    APlast_width.push_back(spike_half_width[spike_half_width_size - 1]);
-  }
-
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+  const vector<double>& spike_half_width = getFeature(DoubleFeatureData, "spike_half_width");
+  vector<double> APlast_width;
+  APlast_width.push_back(spike_half_width[spike_half_width.size() - 1]);
   setVec(DoubleFeatureData, StringData, "APlast_width", APlast_width);
   return 1;
 }
@@ -965,27 +852,17 @@ static int __AHP_time_from_peak(const vector<double>& t,
 int LibV5::AHP_time_from_peak(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retval;
-  vector<double> T;
-  retval = getVec(DoubleFeatureData, StringData, "T", T);
-  if (retval < 0) return -1;
-
-  vector<int> peakIndices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices", peakIndices);
-  if (retval < 0) return -1;
-
-  vector<int> minAHPIndices;
-  retval =
-      getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndices);
-  if (retval < 0) return -1;
-
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "min_AHP_indices"});
   vector<double> ahpTimeFromPeak;
-  retval = __AHP_time_from_peak(T, peakIndices, minAHPIndices, ahpTimeFromPeak);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AHP_time_from_peak",
-                 ahpTimeFromPeak);
+  const vector<double>& T = doubleFeatures.at("T");
+  const vector<int>& peakIndices = intFeatures.at("peak_indices");
+  const vector<int>& minAHPIndices = intFeatures.at("min_AHP_indices");
+  int retVal = __AHP_time_from_peak(T, peakIndices, minAHPIndices, ahpTimeFromPeak);
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "AHP_time_from_peak", ahpTimeFromPeak);
   }
-  return retval;
+  return retVal;
 }
 
 static int __AHP_depth_from_peak(const vector<double>& v,
@@ -1002,49 +879,27 @@ static int __AHP_depth_from_peak(const vector<double>& v,
 int LibV5::AHP_depth_from_peak(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData) {
-  int retval;
-  vector<double> V;
-  retval = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retval < 0) return -1;
-
-  vector<int> peakIndices;
-  retval = getVec(IntFeatureData, StringData, "peak_indices", peakIndices);
-  if (retval < 0) return -1;
-
-  vector<int> minAHPIndices;
-  retval =
-      getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndices);
-  if (retval < 0) return -1;
-
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "min_AHP_indices"});
   vector<double> ahpDepthFromPeak;
-  retval =
-      __AHP_depth_from_peak(V, peakIndices, minAHPIndices, ahpDepthFromPeak);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "AHP_depth_from_peak",
-                 ahpDepthFromPeak);
+  const vector<double>& V = doubleFeatures.at("V");
+  const vector<int>& peakIndices = intFeatures.at("peak_indices");
+  const vector<int>& minAHPIndices = intFeatures.at("min_AHP_indices");
+  int retVal = __AHP_depth_from_peak(V, peakIndices, minAHPIndices, ahpDepthFromPeak);
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "AHP_depth_from_peak", ahpDepthFromPeak);
   }
-  return retval;
+  return retVal;
 }
 
 // AHP_depth_from_peak of first spike
 int LibV5::AHP1_depth_from_peak(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
-  int retVal;
-  vector<double> ahpDepthFromPeak, ahp1DepthFromPeak;
-  retVal = getVec(DoubleFeatureData, StringData, "AHP_depth_from_peak",
-                        ahpDepthFromPeak);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AHP1_depth_from_peak",
-                 ahp1DepthFromPeak);
-    return 0;
-  } else {
-    ahp1DepthFromPeak.push_back(ahpDepthFromPeak[0]);
-  }
-
-  setVec(DoubleFeatureData, StringData, "AHP1_depth_from_peak",
-               ahp1DepthFromPeak);
-
+  const vector<double>& ahpDepthFromPeak = getFeature(DoubleFeatureData, "AHP_depth_from_peak");
+  vector<double> ahp1DepthFromPeak;
+  ahp1DepthFromPeak.push_back(ahpDepthFromPeak[0]);
+  setVec(DoubleFeatureData, StringData, "AHP1_depth_from_peak", ahp1DepthFromPeak);
   return 1;
 }
 
@@ -1052,21 +907,14 @@ int LibV5::AHP1_depth_from_peak(mapStr2intVec& IntFeatureData,
 int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
-  int retVal;
-  vector<double> ahpDepthFromPeak, ahp2DepthFromPeak;
-  retVal = getVec(DoubleFeatureData, StringData, "AHP_depth_from_peak",
-                        ahpDepthFromPeak);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AHP2_depth_from_peak",
-                 ahp2DepthFromPeak);
-    return 0;
+  const vector<double>& ahpDepthFromPeak = getFeature(DoubleFeatureData, "AHP_depth_from_peak");
+  vector<double> ahp2DepthFromPeak;
+  if (ahpDepthFromPeak.size() < 2) {
+    throw FeatureComputationError("Size of AHP_depth_from_peak should be >= 2 for AHP2_depth_from_peak");
   } else {
     ahp2DepthFromPeak.push_back(ahpDepthFromPeak[1]);
   }
-
-  setVec(DoubleFeatureData, StringData, "AHP2_depth_from_peak",
-               ahp2DepthFromPeak);
-
+  setVec(DoubleFeatureData, StringData, "AHP2_depth_from_peak", ahp2DepthFromPeak);
   return 1;
 }
 
@@ -1120,35 +968,17 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_begin_width(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
-  int retVal;
-  vector<int> AP_begin_indices, minAHPIndex;
-  vector<double> V, t, dv1, dv2, AP_begin_width;
-  vector<double> stim_start;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retVal < 0) return -1;
-  retVal =
-      getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndex);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     AP_begin_indices);
-  if (retVal < 0) return -1;
-  if (AP_begin_indices.size() < 1) {
-    GErrorStr +=
-        "\nError: At least one spike is needed for spikewidth calculation.\n";
-    return -1;
-  }
-  // Take derivative of voltage from 1st AHPmin to the peak of the spike
-  // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
-  retVal =
-      __AP_begin_width(t, V, stimstart[0], AP_begin_indices, minAHPIndex, AP_begin_width);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_begin_width",
-                 AP_begin_width);
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_start"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices", "AP_begin_indices"});
+  vector<double> AP_begin_width;
+  const vector<double>& V = doubleFeatures.at("V");
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<double>& stim_start = doubleFeatures.at("stim_start");
+  const vector<int>& min_AHP_indices = intFeatures.at("min_AHP_indices");
+  const vector<int>& AP_begin_indices = intFeatures.at("AP_begin_indices");
+  int retVal = __AP_begin_width(t, V, stim_start[0], AP_begin_indices, min_AHP_indices, AP_begin_width);
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_begin_width", AP_begin_width);
   }
   return retVal;
 }
@@ -1165,19 +995,14 @@ static int __AP_begin_time(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_begin_time(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  int retVal;
-  vector<int> AP_begin_indices;
-  vector<double> V, t, AP_begin_time;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     AP_begin_indices);
-  if (retVal < 0) return -1;
-
-  retVal = __AP_begin_time(t, V, AP_begin_indices, AP_begin_time);
-  if (retVal >= 0) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices"});
+  vector<double> AP_begin_time;
+  const vector<double>& V = doubleFeatures.at("V");
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<int>& AP_begin_indices = intFeatures.at("AP_begin_indices");
+  int retVal = __AP_begin_time(t, V, AP_begin_indices, AP_begin_time);
+  if (retVal > 0) {
     setVec(DoubleFeatureData, StringData, "AP_begin_time", AP_begin_time);
   }
   return retVal;
@@ -1195,21 +1020,15 @@ static int __AP_begin_voltage(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_begin_voltage(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal;
-  vector<int> AP_begin_indices;
-  vector<double> V, t, AP_begin_voltage;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices",
-                     AP_begin_indices);
-  if (retVal < 0) return -1;
-
-  retVal = __AP_begin_voltage(t, V, AP_begin_indices, AP_begin_voltage);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_begin_voltage",
-                 AP_begin_voltage);
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices"});
+  vector<double> AP_begin_voltage;
+  const vector<double>& V = doubleFeatures.at("V");
+  const vector<double>& t = doubleFeatures.at("T");
+  const vector<int>& AP_begin_indices = intFeatures.at("AP_begin_indices");
+  int retVal = __AP_begin_voltage(t, V, AP_begin_indices, AP_begin_voltage);
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_begin_voltage", AP_begin_voltage);
   }
   return retVal;
 }
@@ -1217,98 +1036,65 @@ int LibV5::AP_begin_voltage(mapStr2intVec& IntFeatureData,
 int LibV5::AP1_begin_voltage(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_begin_voltage, AP1_begin_voltage;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
-                        AP_begin_voltage);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AP1_begin_voltage",
-                 AP1_begin_voltage);
-    return 0;
-  } else {
-    AP1_begin_voltage.push_back(AP_begin_voltage[0]);
-    setVec(DoubleFeatureData, StringData, "AP1_begin_voltage",
-                 AP1_begin_voltage);
-    return 1;
-  }
+  const vector<double>& AP_begin_voltage = getFeature(DoubleFeatureData, "AP_begin_voltage");
+  vector<double> AP1_begin_voltage;
+  AP1_begin_voltage.push_back(AP_begin_voltage[0]);
+  setVec(DoubleFeatureData, StringData, "AP1_begin_voltage", AP1_begin_voltage);
+  return 1;
 }
 
 int LibV5::AP2_begin_voltage(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_begin_voltage, AP2_begin_voltage;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_begin_voltage",
-                        AP_begin_voltage);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_begin_voltage",
-                 AP2_begin_voltage);
-    return 0;
+  const vector<double>& AP_begin_voltage = getFeature(DoubleFeatureData, "AP_begin_voltage");
+  vector<double> AP2_begin_voltage;
+
+  if (AP_begin_voltage.size() < 2) {
+    throw FeatureComputationError("There are less than 2 spikes in the trace.");
   } else {
     AP2_begin_voltage.push_back(AP_begin_voltage[1]);
-    setVec(DoubleFeatureData, StringData, "AP2_begin_voltage",
-                 AP2_begin_voltage);
-    return 1;
   }
+
+  setVec(DoubleFeatureData, StringData, "AP2_begin_voltage", AP2_begin_voltage);
+  return 1;
 }
 
 int LibV5::AP1_begin_width(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_begin_width, AP1_begin_width;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_begin_width",
-                        AP_begin_width);
-  if (retVal < 1) {
-    setVec(DoubleFeatureData, StringData, "AP1_begin_width",
-                 AP1_begin_width);
-    return 0;
-  } else {
-    AP1_begin_width.push_back(AP_begin_width[0]);
-    setVec(DoubleFeatureData, StringData, "AP1_begin_width",
-                 AP1_begin_width);
-    return 1;
-  }
+  const vector<double>& AP_begin_width = getFeature(DoubleFeatureData, "AP_begin_width");
+  vector<double> AP1_begin_width;
+  AP1_begin_width.push_back(AP_begin_width[0]);
+  setVec(DoubleFeatureData, StringData, "AP1_begin_width", AP1_begin_width);
+  return 1;
 }
 
 int LibV5::AP2_begin_width(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_begin_width, AP2_begin_width;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_begin_width",
-                        AP_begin_width);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_begin_width",
-                 AP2_begin_width);
-    return 0;
+  const vector<double>& AP_begin_width = getFeature(DoubleFeatureData, "AP_begin_width");
+  vector<double> AP2_begin_width;
+  if (AP_begin_width.size() < 2) {
+    throw FeatureComputationError("There are less than 2 spikes in the trace.");
   } else {
     AP2_begin_width.push_back(AP_begin_width[1]);
-    setVec(DoubleFeatureData, StringData, "AP2_begin_width",
-                 AP2_begin_width);
-    return 1;
   }
+  setVec(DoubleFeatureData, StringData, "AP2_begin_width", AP2_begin_width);
+  return 1;
 }
 
 // Difference amplitude of the second to first spike
 int LibV5::AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
                                     mapStr2doubleVec& DoubleFeatureData,
                                     mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_begin_widths, AP2_AP1_begin_width_diff;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_begin_width",
-                        AP_begin_widths);
-  if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "AP2_AP1_begin_width_diff",
-                 AP2_AP1_begin_width_diff);
-    return 0;
+  const vector<double>& AP_begin_widths = getFeature(DoubleFeatureData, "AP_begin_width");
+  vector<double> AP2_AP1_begin_width_diff;
+  if (AP_begin_widths.size() < 2) {
+    throw FeatureComputationError("There are less than 2 spikes in the trace.");
   } else {
     AP2_AP1_begin_width_diff.push_back(AP_begin_widths[1] - AP_begin_widths[0]);
   }
-
-  setVec(DoubleFeatureData, StringData, "AP2_AP1_begin_width_diff",
-               AP2_AP1_begin_width_diff);
-
+  setVec(DoubleFeatureData, StringData, "AP2_AP1_begin_width_diff", AP2_AP1_begin_width_diff);
   return 1;
 }
 
@@ -1351,23 +1137,13 @@ static int __voltage_deflection_begin(const vector<double>& v,
 int LibV5::voltage_deflection_begin(mapStr2intVec& IntFeatureData,
                                     mapStr2doubleVec& DoubleFeatureData,
                                     mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v;
-  vector<double> t;
-  vector<double> stimStart;
-  vector<double> stimEnd;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
-
+  const vector<double>& v = getFeature(DoubleFeatureData, "V");
+  const vector<double>& t = getFeature(DoubleFeatureData, "T");
+  const vector<double>& stimStart = getFeature(DoubleFeatureData, "stim_start");
+  const vector<double>& stimEnd = getFeature(DoubleFeatureData, "stim_end");
   vector<double> vd;
-  retVal = __voltage_deflection_begin(v, t, stimStart[0], stimEnd[0], vd);
-  if (retVal >= 0) {
+  int retVal = __voltage_deflection_begin(v, t, stimStart[0], stimEnd[0], vd);
+  if (retVal > 0) {
     setVec(DoubleFeatureData, StringData, "voltage_deflection_begin", vd);
   }
   return retVal;
@@ -1380,28 +1156,18 @@ int LibV5::voltage_deflection_begin(mapStr2intVec& IntFeatureData,
 int LibV5::is_not_stuck(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retval;
-  vector<double> peak_time;
-  vector<double> stim_start;
-  vector<double> stim_end;
-  retval = getVec(DoubleFeatureData, StringData, "peak_time", peak_time);
-  if (retval < 0) return -1;
-  retval =
-      getVec(DoubleFeatureData, StringData, "stim_start", stim_start);
-  if (retval < 0) return -1;
-  retval = getVec(DoubleFeatureData, StringData, "stim_end", stim_end);
-  if (retval < 0) return -1;
-
+  const vector<double>& peak_time = getFeature(DoubleFeatureData, "peak_time");
+  const vector<double>& stim_start = getFeature(DoubleFeatureData, "stim_start");
+  const vector<double>& stim_end = getFeature(DoubleFeatureData, "stim_end");
   bool stuck = true;
-  for (size_t i = 0; i < peak_time.size(); i++) {
-    if (peak_time[i] > stim_end[0] * 0.5 && peak_time[i] < stim_end[0]) {
+  for (const auto& pt : peak_time) {
+    if (pt > stim_end[0] * 0.5 && pt < stim_end[0]) {
       stuck = false;
       break;
     }
   }
-  vector<int> tc;
   if (!stuck) {
-    tc.push_back(1);
+    vector<int> tc = {1};
     setVec(IntFeatureData, StringData, "is_not_stuck", tc);
     return tc.size();
   } else {
@@ -1412,67 +1178,45 @@ int LibV5::is_not_stuck(mapStr2intVec& IntFeatureData,
 // The mean voltage after the stimulus in (stim_end + 25%*end_period, stim_end +
 // 75%*end_period)
 int LibV5::voltage_after_stim(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v, t, stimEnd, vRest;
-  double startTime, endTime;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
-
-  startTime = stimEnd[0] + (t[t.size() - 1] - stimEnd[0]) * .25;
-  endTime = stimEnd[0] + (t[t.size() - 1] - stimEnd[0]) * .75;
+                               mapStr2doubleVec& DoubleFeatureData,
+                               mapStr2Str& StringData) {
+  const vector<double>& v = getFeature(DoubleFeatureData, "V");
+  const vector<double>& t = getFeature(DoubleFeatureData, "T");
+  const vector<double>& stimEnd = getFeature(DoubleFeatureData, "stim_end");
+  double startTime = stimEnd[0] + (t.back() - stimEnd[0]) * .25;
+  double endTime = stimEnd[0] + (t.back() - stimEnd[0]) * .75;
   int nCount = 0;
   double vSum = 0;
-  // calculte the mean of voltage between startTime and endTime
+
   for (size_t i = 0; i < t.size(); i++) {
     if (t[i] >= startTime) {
-      vSum = vSum + v[i];
+      vSum += v[i];
       nCount++;
     }
     if (t[i] > endTime) break;
   }
+
   if (nCount == 0) return -1;
-  vRest.push_back(vSum / nCount);
+
+  vector<double> vRest = {vSum / nCount};
   setVec(DoubleFeatureData, StringData, "voltage_after_stim", vRest);
+
   return 1;
 }
 
 int LibV5::mean_AP_amplitude(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  int retVal;
-  vector<double> AP_amplitude;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "AP_amplitude", AP_amplitude);
-
-  if (retVal < 0) {
-    GErrorStr += "Error calculating AP_amplitude for mean_AP_amplitude";
-    return -1;
-  } else if (retVal == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  } else if (AP_amplitude.size() == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  }
-
-  vector<double> mean_AP_amplitude;
+  const vector<double>& AP_amplitude = getFeature(DoubleFeatureData, "AP_amplitude");
   double mean_amp = 0.0;
-
-  for (size_t i = 0; i < AP_amplitude.size(); i++) {
-    mean_amp += AP_amplitude[i];
+  for (const auto& amplitude : AP_amplitude) {
+    mean_amp += amplitude;
   }
 
   mean_amp /= AP_amplitude.size();
-  mean_AP_amplitude.push_back(mean_amp);
+  vector<double> mean_AP_amplitude = {mean_amp};
 
-  setVec(DoubleFeatureData, StringData, "mean_AP_amplitude",
-               mean_AP_amplitude);
+  setVec(DoubleFeatureData, StringData, "mean_AP_amplitude", mean_AP_amplitude);
 
   return mean_AP_amplitude.size();
 }
@@ -1516,38 +1260,21 @@ static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
 int LibV5::AP_phaseslope(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-
-  vector<double> stimStart;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-
-  vector<double> stimEnd;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
-
-  vector<double> range_param;
-  retVal = getVec(DoubleFeatureData, StringData, "AP_phaseslope_range",
-                        range_param);
-  if (retVal < 0) return -1;
-
-  vector<int> apbi;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
-  if (retVal < 0) return -1;
-
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end", "AP_phaseslope_range"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices"});
   vector<double> ap_phaseslopes;
-  retVal = __AP_phaseslope(v, t, stimStart[0], stimEnd[0], ap_phaseslopes, apbi,
-                           range_param[0]);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "AP_phaseslope",
-                 ap_phaseslopes);
+  int retVal = __AP_phaseslope(
+    doubleFeatures.at("V"),
+    doubleFeatures.at("T"),
+    doubleFeatures.at("stim_start")[0],
+    doubleFeatures.at("stim_end")[0],
+    ap_phaseslopes,
+    intFeatures.at("AP_begin_indices"),
+    doubleFeatures.at("AP_phaseslope_range")[0]
+  );
+
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "AP_phaseslope", ap_phaseslopes);
   }
   return retVal;
 }
@@ -1555,15 +1282,15 @@ int LibV5::AP_phaseslope(mapStr2intVec& IntFeatureData,
 int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
-  int retVal;
-  vector<double> VecISI, pvTime;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time", pvTime);
-  if (retVal < 2) {
+  const vector<double>& peak_time = getFeature(DoubleFeatureData, "peak_time");
+  if (peak_time.size() < 2) {
     GErrorStr += "\n Two spikes required for calculation of all_ISI_values.\n";
     return -1;
   }
-  for (size_t i = 1; i < pvTime.size(); i++) {
-    VecISI.push_back(pvTime[i] - pvTime[i - 1]);
+
+  vector<double> VecISI;
+  for (size_t i = 1; i < peak_time.size(); i++) {
+    VecISI.push_back(peak_time[i] - peak_time[i - 1]);
   }
   setVec(DoubleFeatureData, StringData, "all_ISI_values", VecISI);
   return VecISI.size();
@@ -1573,34 +1300,12 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
 int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
                                          mapStr2doubleVec& DoubleFeatureData,
                                          mapStr2Str& StringData) {
-  int retVal;
-  vector<double> peakvoltage;
-  vector<double> voltage_base_vec;
-  double voltage_base;
-  retVal = getVec(DoubleFeatureData, StringData, "voltage_base",
-                        voltage_base_vec);
-  if (retVal <= 0) {
-    GErrorStr +=
-        "Error calculating voltage_base for AP_amplitude_from_voltagebase";
-    return -1;
-  } else {
-    voltage_base = voltage_base_vec[0];
-  }
-  retVal =
-      getVec(DoubleFeatureData, StringData, "peak_voltage", peakvoltage);
-  if (retVal <= 0) {
-    GErrorStr +=
-        "Error calculating peak_voltage for AP_amplitude_from_voltagebase";
-    return -1;
-  }
-
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"voltage_base", "peak_voltage"});
   vector<double> apamplitude;
-  apamplitude.resize(peakvoltage.size());
-  for (size_t i = 0; i < apamplitude.size(); i++) {
-    apamplitude[i] = peakvoltage[i] - voltage_base;
+  for (const auto& peak : doubleFeatures.at("peak_voltage")) {
+    apamplitude.push_back(peak - doubleFeatures.at("voltage_base")[0]);
   }
-  setVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase",
-               apamplitude);
+  setVec(DoubleFeatureData, StringData, "AP_amplitude_from_voltagebase", apamplitude);
   return apamplitude.size();
 }
 
@@ -1608,33 +1313,22 @@ int LibV5::AP_amplitude_from_voltagebase(mapStr2intVec& IntFeatureData,
 int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
-  int retVal;
-  vector<int> peak_indices;
-  vector<double> v;
-  vector<double> min_voltage_between_spikes;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", peak_indices);
-  if (retVal < 0) {
-    GErrorStr +=
-        "Error calculating peak_indices for min_voltage_between_spikes";
-    return -1;
-  } else if (retVal < 2) {
-    setVec(DoubleFeatureData, StringData, "min_voltage_between_spikes",
-                 min_voltage_between_spikes);
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
+
+  if (intFeatures.at("peak_indices").size() < 2) {
+    setVec(DoubleFeatureData, StringData, "min_voltage_between_spikes", vector<double>());
     return 0;
   }
 
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) {
-    GErrorStr += "Error getting V for min_voltage_between_spikes";
-    return -1;
+  vector<double> min_voltage_between_spikes;
+  for (size_t i = 0; i < intFeatures.at("peak_indices").size() - 1; i++) {
+    min_voltage_between_spikes.push_back(*min_element(
+        doubleFeatures.at("V").begin() + intFeatures.at("peak_indices")[i], 
+        doubleFeatures.at("V").begin() + intFeatures.at("peak_indices")[i + 1]));
   }
 
-  for (size_t i = 0; i < peak_indices.size() - 1; i++) {
-    min_voltage_between_spikes.push_back(*min_element(
-        v.begin() + peak_indices[i], v.begin() + peak_indices[i + 1]));
-  }
-  setVec(DoubleFeatureData, StringData, "min_voltage_between_spikes",
-               min_voltage_between_spikes);
+  setVec(DoubleFeatureData, StringData, "min_voltage_between_spikes", min_voltage_between_spikes);
   return min_voltage_between_spikes.size();
 }
 
@@ -1642,166 +1336,122 @@ int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
 int LibV5::voltage(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) {
-    GErrorStr += "Error getting V for voltage";
-    return -1;
-  }
-
-  setVec(DoubleFeatureData, StringData, "voltage", v);
-  return v.size();
+    const vector<double>& v = getFeature(DoubleFeatureData, "V");
+    setVec(DoubleFeatureData, StringData, "voltage", v);
+    return v.size();
 }
 
 // return (possibly interpolate) current trace
 int LibV5::current(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData) {
-  int retVal;
-  vector<double> i;
-  retVal = getVec(DoubleFeatureData, StringData, "I", i);
-  if (retVal < 0) {
-    GErrorStr += "Error getting I for current";
-    return -1;
-  }
-
-  setVec(DoubleFeatureData, StringData, "current", i);
-  return i.size();
+    const vector<double>& i = getFeature(DoubleFeatureData, "I");
+    setVec(DoubleFeatureData, StringData, "current", i);
+    return i.size();
 }
 
 // return (possibly interpolate) time trace
 int LibV5::time(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData,
-                   mapStr2Str& StringData) {
-  int retVal;
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) {
-    GErrorStr += "Error getting T for voltage";
-    return -1;
-  }
-
-  setVec(DoubleFeatureData, StringData, "time", t);
-  return t.size();
+                mapStr2doubleVec& DoubleFeatureData,
+                mapStr2Str& StringData) {
+    const vector<double>& t = getFeature(DoubleFeatureData, "T");
+    setVec(DoubleFeatureData, StringData, "time", t);
+    return t.size();
 }
 
 // *** The average voltage during the last 90% of the stimulus duration. ***
 int LibV5::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
                                         mapStr2doubleVec& DoubleFeatureData,
                                         mapStr2Str& StringData) {
-  int retVal;
-  vector<double> t, v, stimEnd, stimStart, ssv;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimEnd);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_end", "stim_start"});
 
-  double start_time = stimEnd[0] - 0.1 * (stimEnd[0] - stimStart[0]);
-  size_t start_index =
-      distance(t.begin(),
-               find_if(t.begin(), t.end(),
-                       [start_time](double x){ return x >= start_time; }));
-  size_t stop_index =
-      distance(t.begin(),
-               find_if(t.begin(), t.end(),
-                       [stimEnd](double x){ return x >= stimEnd[0]; }));
+  const vector<double>& voltages = doubleFeatures.at("V");
+  const vector<double>& times = doubleFeatures.at("T");
+  const double stimStart = doubleFeatures.at("stim_start")[0];
+  const double stimEnd = doubleFeatures.at("stim_end")[0];
 
-  size_t mean_size = 0;
-  double mean = 0.0;
-  for (size_t i = start_index; i < stop_index; i++) {
-    mean += v[i];
-    mean_size++;
-  }
+  double start_time = stimEnd - 0.1 * (stimEnd - stimStart);
+  auto start_it = find_if(times.begin(), times.end(), [start_time](double x) { return x >= start_time; });
+  auto stop_it = find_if(times.begin(), times.end(), [stimEnd](double x) { return x >= stimEnd; });
 
-  // Check for division by zero
-  if (mean_size == 0) {
-    return -1;
-  } else {
+  size_t start_index = distance(times.begin(), start_it);
+  size_t stop_index = distance(times.begin(), stop_it);
+
+  double mean = accumulate(voltages.begin() + start_index, voltages.begin() + stop_index, 0.0);
+  size_t mean_size = stop_index - start_index;
+
+  vector<double> ssv;
+  if (mean_size > 0) {
     mean /= mean_size;
     ssv.push_back(mean);
-
-    setVec(DoubleFeatureData, StringData, "steady_state_voltage_stimend",
-                 ssv);
-
+    setVec(DoubleFeatureData, StringData, "steady_state_voltage_stimend", ssv);
     return 1;
   }
+  return -1;
 }
 
 int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
-  vector<double> v, t, stimStart, vRest, vb_start_perc_vec, vb_end_perc_vec;
-  double startTime, endTime, vb_start_perc, vb_end_perc;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "voltage_base_start_perc", vb_start_perc_vec);
-  if (retVal == 1) {
-    vb_start_perc = vb_start_perc_vec[0];
-  } else {
-    vb_start_perc = 0.9;
-  }
-  retVal = getVec(DoubleFeatureData, StringData, "voltage_base_end_perc",
-                        vb_end_perc_vec);
-  if (retVal == 1) {
-    vb_end_perc = vb_end_perc_vec[0];
-  } else {
-    vb_end_perc = 1.0;
+  const vector<double>& v = getFeature(DoubleFeatureData, "V");
+  const vector<double>& t = getFeature(DoubleFeatureData, "T");
+  const vector<double>& stimStart = getFeature(DoubleFeatureData, "stim_start");
+
+  // Retrieve percentage values or use defaults.
+  double vb_start_perc = 0.9; // Default value
+  double vb_end_perc = 1.0;   // Default value
+  try {
+    auto vb_start_perc_vec = getFeature(DoubleFeatureData, "voltage_base_start_perc");
+    if (vb_start_perc_vec.size() == 1)
+      vb_start_perc = vb_start_perc_vec[0];
+  } catch (const EmptyFeatureError&) {
+    // If there's an error, use the default value.
   }
 
-  startTime = stimStart[0] * vb_start_perc;
-  endTime = stimStart[0] * vb_end_perc;
+  try {
+    auto vb_end_perc_vec = getFeature(DoubleFeatureData, "voltage_base_end_perc");
+    if (vb_end_perc_vec.size() == 1)
+      vb_end_perc = vb_end_perc_vec[0];
+  } catch (const EmptyFeatureError&) {
+    // If there's an error, use the default value.
+  }
 
+  // Calculate start and end times based on stimStart and percentages.
+  double startTime = stimStart[0] * vb_start_perc;
+  double endTime = stimStart[0] * vb_end_perc;
+
+  // Validate start and end times.
   if (startTime >= endTime) {
     GErrorStr += "\nvoltage_base: startTime >= endTime\n";
     return -1;
   }
 
+  const auto& precisionThreshold = getFeature(DoubleFeatureData, "precision_threshold");
 
-  vector<double> precisionThreshold;
-  retVal = getParam(DoubleFeatureData, "precision_threshold",
-                          precisionThreshold);
-  if (retVal < 0) return -1;
+  // Find index range for the time vector within the specified start and end times.
+  std::pair<size_t, size_t> time_index = get_time_index(t, startTime, endTime, precisionThreshold[0]);
 
-  std::pair<size_t, size_t> time_index = get_time_index(t, startTime, endTime,
-                                                        precisionThreshold[0]);
+  // Extract sub-vector of voltages based on calculated indices.
+  vector<double> subVector(v.begin() + time_index.first, v.begin() + time_index.second);
 
-  vector<double> subVector(v.begin()+time_index.first,
-                           v.begin()+time_index.second);
-
-  double vBase;
+  // Determine computation mode and calculate voltage base.
   std::string computation_mode;
 
-  retVal = getStrParam(StringData, "voltage_base_mode", computation_mode);
+  int retVal = getStrParam(StringData, "voltage_base_mode", computation_mode);
   if (retVal < 0) return -1;
+  double vBase;
 
-
-  try{
-    if (computation_mode == "mean")
-      vBase = vec_mean(subVector);
-    else if (computation_mode == "median")
-      vBase = vec_median(subVector);
-    else
-      throw std::invalid_argument(
-        "Undefined computational mode. Only mean and median are enabled");
-  }
-  catch(std::exception &e) {
-    GErrorStr +=
-    "\nvoltage_base error:" + std::string(e.what()) + "\n";
+  // Perform computation based on the mode.
+  if (computation_mode == "mean")
+    vBase = vec_mean(subVector);
+  else if (computation_mode == "median")
+    vBase = vec_median(subVector);
+  else {
+    GErrorStr += "\nUndefined computational mode. Only mean and median are enabled\n";
     return -1;
-    }
+  }
 
-  vRest.push_back(vBase);
+  vector<double> vRest = {vBase};
   setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
   return 1;
 }
@@ -1989,57 +1639,38 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
 // Calculate the time constants after each step for a stimuli containing several
 // steps, as for example SpikeRec protocols
 int LibV5::multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
-                                             mapStr2doubleVec& DoubleFeatureData,
-                                             mapStr2Str& StringData) {
-  int retVal;
-  vector<double> voltages;
-  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
-  if (retVal < 0) return -1;
+                                                   mapStr2doubleVec& DoubleFeatureData,
+                                                   mapStr2Str& StringData) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "multi_stim_start", "multi_stim_end"});
+  vector<double> stimsEnd, stimsStart;
 
-  vector<double> times;
-  retVal = getVec(DoubleFeatureData, StringData, "T", times);
-  if (retVal < 0) return -1;
+  stimsEnd = doubleFeatures.at("multi_stim_end");
+  stimsStart = doubleFeatures.at("multi_stim_start");
 
-  vector<double> vect;
-  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_end", vect);
-  if (retVal < 0) return -1;
-  vector<double> stimsEnd = vect;
-
-  retVal = getVec(DoubleFeatureData, StringData, "multi_stim_start", vect);
-  if (retVal < 0) return -1;
-  vector<double> stimsStart = vect;
-
-  double decay_start_after_stim, decay_end_after_stim;
-  retVal = getVec(DoubleFeatureData, StringData, "decay_start_after_stim",
-                        vect);
-  if (retVal == 1) {
-    decay_start_after_stim = vect[0];
-  } else {
-    decay_start_after_stim = 1.0;
+  // Attempt to get decay parameters, using defaults if not found or if not exactly one element
+  double decay_start_after_stim = 1.0;
+  double decay_end_after_stim = 10.0;
+  vector<double> decayStartVec, decayEndVec;
+  
+  if (getVec(DoubleFeatureData, StringData, "decay_start_after_stim", decayStartVec) == 1) {
+    decay_start_after_stim = decayStartVec[0];
   }
-
-  retVal =
-      getVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
-  if (retVal == 1) {
-    decay_end_after_stim = vect[0];
-  } else {
-    decay_end_after_stim = 10.0;
+  if (getVec(DoubleFeatureData, StringData, "decay_end_after_stim", decayEndVec) == 1) {
+    decay_end_after_stim = decayEndVec[0];
   }
-
-  // Call the decay_time_constant_after_stim for each set of stim_start
-  // and stim_end
-  double ret_dtcas;
   vector<double> dtcas;
   for (size_t i = 0; i < stimsStart.size(); i++) {
-      ret_dtcas = __decay_time_constant_after_stim(times, voltages,
-                 decay_start_after_stim, decay_end_after_stim, stimsStart[i],
-                 stimsEnd[i]);
+      double ret_dtcas = __decay_time_constant_after_stim(
+        doubleFeatures.at("T"),
+        doubleFeatures.at("V"),
+        decay_start_after_stim,
+        decay_end_after_stim,
+        stimsStart[i],
+        stimsEnd[i]
+      );
       dtcas.push_back(ret_dtcas);
   }
-
-  setVec(DoubleFeatureData, StringData, "multiple_decay_time_constant_after_stim",
-             dtcas);
-
+  setVec(DoubleFeatureData, StringData, "multiple_decay_time_constant_after_stim", dtcas);
   return 1;
 }
 
@@ -2106,85 +1737,36 @@ static int __sag_time_constant(const vector<double>& times,
 int LibV5::sag_time_constant(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal;
-  vector<double> voltages;
-  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
-  if (retVal < 0) return -1;
-
-  vector<double> times;
-  retVal = getVec(DoubleFeatureData, StringData, "T", times);
-  if (retVal < 0) return -1;
-
-  vector<double> vect;
-
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", vect);
-  if (retVal != 1) return -1;
-  const double stimEnd = vect[0];
-
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", vect);
-  if (retVal != 1) return -1;
-  const double stimStart = vect[0];
-
-  vector<double> minimum_voltage;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "minimum_voltage",
-                        minimum_voltage);
-  if (retVal <= 0) return -1;
-
-  vector<double> steady_state_v;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "steady_state_voltage_stimend",
-                        steady_state_v);
-  if (retVal <= 0) return -1;
-
-  vector<double> sag_amplitude;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "sag_amplitude",
-                        sag_amplitude);
-  if (retVal <= 0) return -1;
-
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_end", "stim_start", "minimum_voltage", "steady_state_voltage_stimend", "sag_amplitude"});
   vector<double> sagtc;
-  retVal = __sag_time_constant(
-      times, voltages, 
-      minimum_voltage[0], 
-      steady_state_v[0],
-      sag_amplitude[0],
-      stimStart, stimEnd, sagtc);
+  int retVal = __sag_time_constant(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    doubleFeatures.at("minimum_voltage")[0],
+    doubleFeatures.at("steady_state_voltage_stimend")[0],
+    doubleFeatures.at("sag_amplitude")[0],
+    doubleFeatures.at("stim_start")[0],
+    doubleFeatures.at("stim_end")[0],
+    sagtc
+  );
 
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "sag_time_constant",
-               sagtc);
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "sag_time_constant", sagtc);
   }
   return retVal;
 }
 
 /// *** Voltage deflection between voltage_base and steady_state_voltage_stimend
-
 int LibV5::voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
                                       mapStr2doubleVec& DoubleFeatureData,
                                       mapStr2Str& StringData) {
-  int retVal;
-  vector<double> voltage_base;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "voltage_base", voltage_base);
-  if (retVal <= 0) return -1;
-
-  vector<double> steady_state_voltage_stimend;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "steady_state_voltage_stimend",
-                        steady_state_voltage_stimend);
-  if (retVal <= 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"voltage_base", "steady_state_voltage_stimend"});
 
   vector<double> voltage_deflection_vb_ssse;
-
-  voltage_deflection_vb_ssse.push_back(steady_state_voltage_stimend[0] -
-                                       voltage_base[0]);
-
-  setVec(DoubleFeatureData, StringData, "voltage_deflection_vb_ssse",
-               voltage_deflection_vb_ssse);
-  retVal = 1;
-
-  return retVal;
+  voltage_deflection_vb_ssse.push_back(doubleFeatures.at("steady_state_voltage_stimend")[0] -
+                                       doubleFeatures.at("voltage_base")[0]);
+  setVec(DoubleFeatureData, StringData, "voltage_deflection_vb_ssse", voltage_deflection_vb_ssse);
+  return 1;
 }
 
 // *** ohmic input resistance based on voltage_deflection_vb_ssse***
@@ -2192,53 +1774,26 @@ int LibV5::voltage_deflection_vb_ssse(mapStr2intVec& IntFeatureData,
 int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                                           mapStr2doubleVec& DoubleFeatureData,
                                           mapStr2Str& StringData) {
-  int retVal;
-  vector<double> voltage_deflection_vb_ssse;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "voltage_deflection_vb_ssse",
-                   voltage_deflection_vb_ssse);
-  if (retVal <= 0) return -1;
-  vector<double> stimulus_current;
-  retVal = getParam(DoubleFeatureData, "stimulus_current", 
-                          stimulus_current);
-
-  if (retVal <= 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"voltage_deflection_vb_ssse", "stimulus_current"});
   vector<double> ohmic_input_resistance_vb_ssse;
+  ohmic_input_resistance_vb_ssse.push_back(doubleFeatures.at("voltage_deflection_vb_ssse")[0] /
+                                           doubleFeatures.at("stimulus_current")[0]);
+  setVec(DoubleFeatureData, StringData, "ohmic_input_resistance_vb_ssse", ohmic_input_resistance_vb_ssse);
 
-  ohmic_input_resistance_vb_ssse.push_back(voltage_deflection_vb_ssse[0] /
-                                           stimulus_current[0]);
-  setVec(DoubleFeatureData, StringData, "ohmic_input_resistance_vb_ssse",
-               ohmic_input_resistance_vb_ssse);
-  retVal = 1;
-
-  return retVal;
+  return 1;
 }
 
 // *** Diff between maximum voltage during stimulus and voltage_base ***
 int LibV5::maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
                                             mapStr2doubleVec& DoubleFeatureData,
                                             mapStr2Str& StringData) {
-  int retVal;
-  vector<double> maximum_voltage;
-  retVal = getVec(DoubleFeatureData, StringData, "maximum_voltage",
-                        maximum_voltage);
-  if (retVal <= 0) return -1;
-
-  vector<double> voltage_base;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "voltage_base", voltage_base);
-  if (retVal <= 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"maximum_voltage", "voltage_base"});
 
   vector<double> maximum_voltage_from_voltagebase;
-
-  maximum_voltage_from_voltagebase.push_back(maximum_voltage[0] -
-                                             voltage_base[0]);
-  setVec(DoubleFeatureData, StringData,
-               "maximum_voltage_from_voltagebase",
-               maximum_voltage_from_voltagebase);
-  retVal = 1;
-
-  return retVal;
+  maximum_voltage_from_voltagebase.push_back(doubleFeatures.at("maximum_voltage")[0] -
+                                             doubleFeatures.at("voltage_base")[0]);
+  setVec(DoubleFeatureData, StringData, "maximum_voltage_from_voltagebase", maximum_voltage_from_voltagebase);
+  return 1;
 }
 
 struct InInterval {
@@ -2251,50 +1806,23 @@ struct InInterval {
   double lower, upper;
 };
 
-// *** Spikecount_stimint ***
 int LibV5::Spikecount_stimint(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retval;
-  int spikecount_stimint_value;
-  // Get stimulus start
-  vector<double> stimstart;
-  retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retval <= 0) {
-    GErrorStr += "\nSpikecount_stimint: stim_start not found\n";
-    return -1;
-  }
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"stim_start", "stim_end", "peak_time"});
 
-  // Get stimulus end
-  vector<double> stimend;
-  retval = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
-  if (retval <= 0) {
-    GErrorStr += "\nSpikecount_stimint: stim_start not found\n";
-    return -1;
-  }
+  // Get the number of peaks between stim start and end
+  int spikecount_stimint_value = count_if(doubleFeatures.at("peak_time").begin(), doubleFeatures.at("peak_time").end(),
+                                          InInterval(doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0]));
 
-  // Get the times of the peaks
-  vector<double> peaktimes;
-  retval = getVec(DoubleFeatureData, StringData, "peak_time", peaktimes);
+  vector<int> spikecount_stimint(1, spikecount_stimint_value);
+  setVec(IntFeatureData, StringData, "Spikecount_stimint", spikecount_stimint);
 
-  if (retval < 0) {
-    GErrorStr += "\nSpikecount_stimint: peak_time failed\n";
-    return -1;
-  } else {
-    // Get the number of peaks between stim start and end
-    spikecount_stimint_value = count_if(peaktimes.begin(), peaktimes.end(),
-                                        InInterval(stimstart[0], stimend[0]));
-
-    vector<int> spikecount_stimint(1, spikecount_stimint_value);
-    setVec(IntFeatureData, StringData, "Spikecount_stimint",
-              spikecount_stimint);
-    return 1;
-  }
+  return 1;
 }
-// end of Spikecount_stimint
 
-static int __peak_indices(double threshold, vector<double>& V,
-                          vector<double>& t, vector<int>& PeakIndex,
+static int __peak_indices(double threshold, const vector<double>& V,
+                          const vector<double>& t, vector<int>& PeakIndex,
                           bool strict_stiminterval, double stim_start,
                           double stim_end) {
   vector<int> upVec, dnVec;
@@ -2364,193 +1892,94 @@ static int __peak_indices(double threshold, vector<double>& V,
 int LibV5::peak_indices(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
-  vector<int> PeakIndex, strict_stiminterval_vec;
-  vector<double> v, t, threshold, stim_start_vec, stim_end_vec;
-  bool strict_stiminterval = false;
-  double stim_start = 0.0, stim_end = 0.0;
-
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) {
-    return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "Threshold", "stim_start", "stim_end"});
+  bool strict_stiminterval;
+  try{
+    const auto& intFeatures = getFeatures(IntFeatureData, {"strict_stiminterval"});
+    strict_stiminterval = bool(intFeatures.at("strict_stiminterval")[0]);
   }
-
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) {
-    return -1;
-  }
-
-  retVal = getParam(DoubleFeatureData, "Threshold", threshold);
-  if (retVal <= 0) {
-    return -1;
-  }
-
-  retVal = getParam(IntFeatureData, "strict_stiminterval",
-                       strict_stiminterval_vec);
-  if (retVal <= 0) {
+  catch (const std::runtime_error& e) {
     strict_stiminterval = false;
-  } else {
-    strict_stiminterval = bool(strict_stiminterval_vec[0]);
   }
+  vector<int> PeakIndex;
+  int retVal = __peak_indices(
+    doubleFeatures.at("Threshold")[0],
+    doubleFeatures.at("V"),
+    doubleFeatures.at("T"),
+    PeakIndex,
+    strict_stiminterval,
+    doubleFeatures.at("stim_start")[0],
+    doubleFeatures.at("stim_end")[0]
+  );
 
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_start", stim_start_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_start = stim_start_vec[0];
-  }
-
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_end = stim_end_vec[0];
-  }
-
-  int retval = __peak_indices(threshold[0], v, t, PeakIndex,
-                              strict_stiminterval, stim_start, stim_end);
-
-  if (retval >= 0) {
+  if (retVal >= 0) {
     setVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
   }
-
-  return retval;
-}
-int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
-                                          mapStr2doubleVec& DoubleFeatureData,
-                                          mapStr2Str& StringData) {
-  int retVal;
-  // Get steady_state_voltage_stimend
-  vector<double> steady_state_voltage_stimend;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "steady_state_voltage_stimend", 
-                   steady_state_voltage_stimend);
-  if (retVal <= 0) return -1;
-
-  // Get voltage_deflection_stim_ssse  
-  double voltage_deflection_stim_ssse = 0.0;
-  vector<double> voltage_deflection_vb_ssse_vec;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "voltage_deflection_vb_ssse", 
-                   voltage_deflection_vb_ssse_vec);
-  if (retVal <= 0) {
-      return -1;
-  } else {
-      voltage_deflection_stim_ssse = voltage_deflection_vb_ssse_vec[0];
-  }
-  
-  // Get minimum_voltage
-  vector<double> minimum_voltage;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "minimum_voltage", 
-                   minimum_voltage);
-  if (retVal <= 0) return -1;
- 
-  // Calculate sag_amplitude
-  vector<double> sag_amplitude;
-  if (voltage_deflection_stim_ssse <= 0) {
-      sag_amplitude.push_back(steady_state_voltage_stimend[0] 
-              - minimum_voltage[0]);
-  } else {
-      //In case of positive voltage deflection, return an error
-      GErrorStr += "\nsag_amplitude: voltage_deflection is positive\n";
-      return -1;
-  }
-  setVec(DoubleFeatureData, StringData, "sag_amplitude",
-               sag_amplitude);
-  retVal = 1;
   return retVal;
+}
+
+int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
+                         mapStr2doubleVec& DoubleFeatureData,
+                         mapStr2Str& StringData) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"steady_state_voltage_stimend", "voltage_deflection_vb_ssse", "minimum_voltage"});
+
+  vector<double> sag_amplitude;
+  if (doubleFeatures.at("voltage_deflection_vb_ssse")[0] <= 0) {
+    sag_amplitude.push_back(doubleFeatures.at("steady_state_voltage_stimend")[0] - doubleFeatures.at("minimum_voltage")[0]);
+  } else {
+    //In case of positive voltage deflection, return an error
+    GErrorStr += "\nsag_amplitude: voltage_deflection is positive\n";
+    return -1;
+  }
+
+  if (!sag_amplitude.empty()) {
+    setVec(DoubleFeatureData, StringData, "sag_amplitude", sag_amplitude);
+  }
+  return sag_amplitude.empty() ? -1 : 1;
 }
 
 int LibV5::sag_ratio1(mapStr2intVec& IntFeatureData,
-                                          mapStr2doubleVec& DoubleFeatureData,
-                                          mapStr2Str& StringData) {
-  int retVal;
-  // Get sag_amplitude
-  vector<double> sag_amplitude;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "sag_amplitude", 
-                   sag_amplitude);
-  if (retVal <= 0) return -1;
+                      mapStr2doubleVec& DoubleFeatureData,
+                      mapStr2Str& StringData) {
+  // Retrieve all required double features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"sag_amplitude", "voltage_base", "minimum_voltage"});
 
-  // Get voltage_base
-  vector<double> voltage_base;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "voltage_base", 
-                   voltage_base);
-  if (retVal <= 0) {return -1;}
-  
-  // Get minimum_voltage
-  vector<double> minimum_voltage;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "minimum_voltage", 
-                   minimum_voltage);
-  if (retVal <= 0) return -1;
- 
-  // Calculate sag_ratio1
   vector<double> sag_ratio1;
-  if (minimum_voltage[0] == voltage_base[0]) {
-      GErrorStr += "\nsag_ratio1: voltage_base equals minimum_voltage\n";
-      //In case of possible division by zero return error
-      return -1;
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+    GErrorStr += "\nsag_ratio1: voltage_base equals minimum_voltage\n";
+    //In case of possible division by zero return error
+    return -1;
   } else {
-      sag_ratio1.push_back(sag_amplitude[0] / (voltage_base[0] - minimum_voltage[0]));
+    sag_ratio1.push_back(doubleFeatures.at("sag_amplitude")[0] / 
+                         (doubleFeatures.at("voltage_base")[0] - doubleFeatures.at("minimum_voltage")[0]));
   }
-  setVec(DoubleFeatureData, StringData, "sag_ratio1",
-               sag_ratio1);
-  retVal = 1;
-  return retVal;
+
+  if (!sag_ratio1.empty()) {
+    setVec(DoubleFeatureData, StringData, "sag_ratio1", sag_ratio1);
+  }
+  return sag_ratio1.empty() ? -1 : 1;
 }
 
 int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
-                                          mapStr2doubleVec& DoubleFeatureData,
-                                          mapStr2Str& StringData) {
-  int retVal;
-  // Get voltage_base
-  vector<double> voltage_base;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "voltage_base", 
-                   voltage_base);
-  if (retVal <= 0) {return -1;}
-  
-  // Get minimum_voltage
-  vector<double> minimum_voltage;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "minimum_voltage", 
-                   minimum_voltage);
-  if (retVal <= 0) return -1;
- 
-  // Get steady_state_voltage_stimend
-  vector<double> steady_state_voltage_stimend;
-  retVal =
-      getVec(DoubleFeatureData, StringData, 
-                   "steady_state_voltage_stimend", 
-                   steady_state_voltage_stimend);
-  if (retVal <= 0) return -1;
-  
-  // Calculate sag_ratio2
+                      mapStr2doubleVec& DoubleFeatureData,
+                      mapStr2Str& StringData) {
+  // Retrieve all required double features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"voltage_base", "minimum_voltage", "steady_state_voltage_stimend"});
+
   vector<double> sag_ratio2;
-  if (minimum_voltage[0] == voltage_base[0]) {
-      GErrorStr += "\nsag_ratio2: voltage_base equals minimum_voltage\n";
-      //In case of possible division by zero return error
-      return -1;
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+    GErrorStr += "\nsag_ratio2: voltage_base equals minimum_voltage\n";
+    //In case of possible division by zero return error
+    return -1;
   } else {
-      sag_ratio2.push_back((voltage_base[0] - steady_state_voltage_stimend[0]) / (voltage_base[0] - minimum_voltage[0]));
+    sag_ratio2.push_back((doubleFeatures.at("voltage_base")[0] - doubleFeatures.at("steady_state_voltage_stimend")[0]) / 
+                         (doubleFeatures.at("voltage_base")[0] - doubleFeatures.at("minimum_voltage")[0]));
   }
-  setVec(DoubleFeatureData, StringData, "sag_ratio2",
-               sag_ratio2);
-  retVal = 1;
-  return retVal;
+
+  if (!sag_ratio2.empty()) {
+    setVec(DoubleFeatureData, StringData, "sag_ratio2", sag_ratio2);
+  }
+  return sag_ratio2.empty() ? -1 : 1;
 }
 
 
@@ -2593,28 +2022,19 @@ static int __AP_peak_upstroke(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_peak_upstroke(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal;
-  // Get input parameters
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<int> apbi;
-  retVal = getVec(IntFeatureData, StringData, "AP_begin_indices", apbi);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices", "peak_indices"});
+
   vector<double> pus;
+  int retVal = __AP_peak_upstroke(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    intFeatures.at("peak_indices"),
+    intFeatures.at("AP_begin_indices"),
+    pus
+  );
 
-  
-  // Calculate feature
-  retVal =
-      __AP_peak_upstroke(t, v, pi, apbi, pus);
-
-  // Save feature value
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_peak_upstroke", pus);
   }
@@ -2645,30 +2065,20 @@ static int __AP_peak_downstroke(const vector<double>& t, const vector<double>& v
 }
 
 int LibV5::AP_peak_downstroke(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData) {
-  int retVal;
-  // Get input parameters
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<int> ahpi;
-  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices", "peak_indices"});
+
   vector<double> pds;
+  int retVal = __AP_peak_downstroke(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    intFeatures.at("peak_indices"),
+    intFeatures.at("min_AHP_indices"),
+    pds
+  );
 
-  
-  // Calculate feature
-  retVal =
-      __AP_peak_downstroke(t, v, pi, ahpi, pds);
-
-  // Save feature value
   if (retVal >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_peak_downstroke", pds);
   }
@@ -2716,68 +2126,28 @@ static int __min_between_peaks_indices(const vector<double>& t, const vector<dou
 // This is different from min_AHP_indices, for traces that have broad peaks
 // with local minima and maxima in it (e.g. dendritic AP)
 int LibV5::min_between_peaks_indices(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal;
-  double stim_start, stim_end;
-  vector<int> min_btw_peaks_indices, strict_stiminterval_vec, peak_indices;
-  vector<double> v, t, stim_start_vec, stim_end_vec, min_btw_peaks_values;
-  bool strict_stiminterval;
+                                     mapStr2doubleVec& DoubleFeatureData,
+                                     mapStr2Str& StringData) {
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "strict_stiminterval"});
 
-  // Get voltage
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
+  vector<int> min_btw_peaks_indices;
+  vector<double> min_btw_peaks_values;
+  int retVal = __min_between_peaks_indices(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    intFeatures.at("peak_indices"),
+    doubleFeatures.at("stim_start").front(),
+    doubleFeatures.at("stim_end").front(),
+    intFeatures.at("strict_stiminterval").empty() ? false : intFeatures.at("strict_stiminterval").front(),
+    min_btw_peaks_indices,
+    min_btw_peaks_values
+  );
 
-  // Get time
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
-
-  // Get peak_indices
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", peak_indices);
-  if (retVal < 1) {
-    GErrorStr +=
-        "\n At least one spike required for calculation of "
-        "min_between_peaks_indices.\n";
-    return -1;
-  }
-
-  // Get strict_stiminterval
-  retVal = getParam(IntFeatureData, "strict_stiminterval",
-                       strict_stiminterval_vec);
-  if (retVal <= 0) {
-    strict_stiminterval = false;
-  } else {
-    strict_stiminterval = bool(strict_stiminterval_vec[0]);
-  }
-
-  // Get stim_start
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_start", stim_start_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_start = stim_start_vec[0];
-  }
-
-  /// Get stim_end
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_end = stim_end_vec[0];
-  }
-
-  retVal =
-      __min_between_peaks_indices(t, v, peak_indices, stim_start, stim_end,
-                        strict_stiminterval, min_btw_peaks_indices, min_btw_peaks_values);
-
-  if (retVal == 0)
-    return -1;
   if (retVal > 0) {
     setVec(IntFeatureData, StringData, "min_between_peaks_indices", min_btw_peaks_indices);
-    setVec(DoubleFeatureData, StringData, "min_between_peaks_values",
-                 min_btw_peaks_values);
+    setVec(DoubleFeatureData, StringData, "min_between_peaks_values", min_btw_peaks_values);
   }
   return retVal;
 }
@@ -2821,30 +2191,23 @@ static int __AP_width_between_threshold(const vector<double>& t, const vector<do
 }
 
 int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
-                    mapStr2doubleVec& DoubleFeatureData,
-                    mapStr2Str& StringData) {
-  int retval;
-  vector<double> t;
-  retval = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retval < 0) return -1;
-  vector<double> v;
-  retval = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retval < 0) return -1;
-  vector<double> threshold;
-  retval = getParam(DoubleFeatureData, "Threshold", threshold);
-  if (retval < 0) return -1;
-  vector<double> stimstart;
-  retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retval < 0) return -1;
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "Threshold", "stim_start"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_between_peaks_indices"});
 
-  vector<int> min_between_peaks_indices;
-  retval = getVec(IntFeatureData, StringData, "min_between_peaks_indices", min_between_peaks_indices);
-  if (retval < 0) return -1;
   vector<double> ap_width_threshold;
-  retval = __AP_width_between_threshold(t, v, stimstart[0], threshold[0],
-                      min_between_peaks_indices, ap_width_threshold);
+  int retval = __AP_width_between_threshold(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    doubleFeatures.at("stim_start").front(),
+    doubleFeatures.at("Threshold").front(),
+    intFeatures.at("min_between_peaks_indices"),
+    ap_width_threshold
+  );
   if (retval == 0)
-    return -1;
+    throw EmptyFeatureError("AP_width_between_threshold is empty");
   else if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_width_between_threshold", ap_width_threshold);
   }
@@ -2950,9 +2313,9 @@ int LibV5::burst_end_indices(mapStr2intVec& IntFeatureData,
 }
 
 
-static int __strict_burst_mean_freq(vector<double>& PVTime,
-                             vector<int>& burst_begin_indices,
-                             vector<int>& burst_end_indices,
+static int __strict_burst_mean_freq(const vector<double>& PVTime,
+                             const vector<int>& burst_begin_indices,
+                             const vector<int>& burst_end_indices,
                              vector<double>& BurstMeanFreq) {
   if (burst_begin_indices.size() == 0) return BurstMeanFreq.size();
   double span;
@@ -2969,25 +2332,22 @@ static int __strict_burst_mean_freq(vector<double>& PVTime,
 }
 
 int LibV5::strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal;
-  vector<int> burst_begin_indices, burst_end_indices;
-  vector<double> BurstMeanFreq, PVTime;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time", PVTime);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
-                     burst_begin_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
-                     burst_end_indices);
-  if (retVal < 0) return -1;
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"burst_begin_indices", "burst_end_indices"});
 
-  retVal = __strict_burst_mean_freq(PVTime, burst_begin_indices,
-                             burst_end_indices, BurstMeanFreq);
+  vector<double> BurstMeanFreq;
+  int retVal = __strict_burst_mean_freq(
+    doubleFeatures.at("peak_time"),
+    intFeatures.at("burst_begin_indices"),
+    intFeatures.at("burst_end_indices"),
+    BurstMeanFreq
+  );
+
   if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "strict_burst_mean_freq",
-                 BurstMeanFreq);
+    setVec(DoubleFeatureData, StringData, "strict_burst_mean_freq", BurstMeanFreq);
   }
   return retVal;
 }
@@ -2995,22 +2355,17 @@ int LibV5::strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
 int LibV5::strict_burst_number(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
-  vector<double> BurstMeanFreq;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"strict_burst_mean_freq"});
   vector<int> BurstNum;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "strict_burst_mean_freq", BurstMeanFreq);
-  if (retVal < 0) return -1;
-
-  BurstNum.push_back(BurstMeanFreq.size());
+  BurstNum.push_back(doubleFeatures.at("strict_burst_mean_freq").size());
   setVec(IntFeatureData, StringData, "strict_burst_number", BurstNum);
-  return (BurstNum.size());
+  return BurstNum.size();
 }
 
 
-static int __strict_interburst_voltage(vector<int>& burst_begin_indices,
-                                vector<int>& PeakIndex,
-                                vector<double>& T, vector<double>& V,
+static int __strict_interburst_voltage(const vector<int>& burst_begin_indices,
+                                const vector<int>& PeakIndex,
+                                const vector<double>& T, const vector<double>& V,
                                 vector<double>& IBV) {
   if (burst_begin_indices.size() < 1) return 0;
   int j, pIndex, tsIndex, teIndex, cnt;
@@ -3043,21 +2398,18 @@ static int __strict_interburst_voltage(vector<int>& burst_begin_indices,
 int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData) {
-  int retVal;
-  vector<int> burst_begin_indices, PeakIndex;
-  vector<double> V, T, IBV;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", T);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_begin_indices",
-                     burst_begin_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "burst_begin_indices"});
+  vector<double> IBV;
+  int retVal = __strict_interburst_voltage(
+    intFeatures.at("burst_begin_indices"),
+    intFeatures.at("peak_indices"),
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    IBV
+  );
 
-  retVal = __strict_interburst_voltage(burst_begin_indices, PeakIndex, T, V, IBV);
-  if (retVal >= 0) {
+  if (retVal > 0) {
     setVec(DoubleFeatureData, StringData, "strict_interburst_voltage", IBV);
   }
   return retVal;
@@ -3065,9 +2417,9 @@ int LibV5::strict_interburst_voltage(mapStr2intVec& IntFeatureData,
 
 
 // strict_stiminterval should be True when using this feature
-static int __ADP_peak_indices(vector<double>& v,
-                      vector<int>& min_AHP_indices,
-                      vector<int>& min_between_peaks_indices,
+static int __ADP_peak_indices(const vector<double>& v,
+                      const vector<int>& min_AHP_indices,
+                      const vector<int>& min_between_peaks_indices,
                       vector<int>& ADP_peak_indices,
                       vector<double>& ADP_peak_values) {
   if (min_AHP_indices.size() > min_between_peaks_indices.size()){
@@ -3091,65 +2443,57 @@ static int __ADP_peak_indices(vector<double>& v,
 
 // strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_indices(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal;
-  vector<int> min_AHP_indices, min_between_peaks_indices, ADP_peak_indices;
-  vector<double> ADP_peak_values, v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices",
-                  min_AHP_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "min_between_peaks_indices",
-                  min_between_peaks_indices);
-  if (retVal < 0) return -1;
-
-  retVal = __ADP_peak_indices(v, min_AHP_indices, min_between_peaks_indices,
-                              ADP_peak_indices, ADP_peak_values);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "ADP_peak_indices",
-           ADP_peak_indices);
-    setVec(DoubleFeatureData, StringData, "ADP_peak_values",
-           ADP_peak_values);
+                             mapStr2doubleVec& DoubleFeatureData,
+                             mapStr2Str& StringData) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices", "min_between_peaks_indices"});
+  vector<int> ADP_peak_indices;
+  vector<double> ADP_peak_values;
+  int retVal = __ADP_peak_indices(doubleFeatures.at("V"), 
+                                  intFeatures.at("min_AHP_indices"), 
+                                  intFeatures.at("min_between_peaks_indices"),
+                                  ADP_peak_indices, 
+                                  ADP_peak_values);
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "ADP_peak_indices", ADP_peak_indices);
+    setVec(DoubleFeatureData, StringData, "ADP_peak_values", ADP_peak_values);
   }
   return retVal;
 }
 
 // strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_values(mapStr2intVec& IntFeatureData,
-                          mapStr2doubleVec& DoubleFeatureData,
-                          mapStr2Str& StringData) {
-  return 1;
+                        mapStr2doubleVec& DoubleFeatureData,
+                        mapStr2Str& StringData) {
+return 1;
 }
 
 
 // strict_stiminterval should be True when using this feature
 int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  int retVal;
-  vector<double> ADP_peak_amplitude, min_AHP_values, ADP_peak_values;
-  retVal = getVec(DoubleFeatureData, StringData, "min_AHP_values",
-                  min_AHP_values);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "ADP_peak_values",
-                  ADP_peak_values);
-  if (retVal < 0) return -1;
+                               mapStr2doubleVec& DoubleFeatureData,
+                               mapStr2Str& StringData) {
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"min_AHP_values", "ADP_peak_values"});
+  vector<double> ADP_peak_amplitude;
+  const vector<double>& min_AHP_values = doubleFeatures.at("min_AHP_values");
+  const vector<double>& ADP_peak_values = doubleFeatures.at("ADP_peak_values");
 
+  if (min_AHP_values.size() != ADP_peak_values.size()){
+    GErrorStr +=
+        "\nmin_AHP_values and ADP_peak_values should have the same number of elements\n";
+    return -1;
+  }
   for (size_t i = 0; i < ADP_peak_values.size(); i++) {
     ADP_peak_amplitude.push_back(ADP_peak_values[i] - min_AHP_values[i]);
   }
-  setVec(DoubleFeatureData, StringData, "ADP_peak_amplitude",
-           ADP_peak_amplitude);
-  return (ADP_peak_amplitude.size());
+  setVec(DoubleFeatureData, StringData, "ADP_peak_amplitude", ADP_peak_amplitude);
+  return ADP_peak_amplitude.size();
 }
 
 
-
-static int __interburst_min_indices(vector<double>& v,
-                      vector<int>& peak_indices,
-                      vector<int>& burst_end_indices,
+static int __interburst_min_indices(const vector<double>& v,
+                      const vector<int>& peak_indices,
+                      const vector<int>& burst_end_indices,
                       vector<int>& interburst_min_indices,
                       vector<double>& interburst_min_values) {
   unsigned interburst_min_index;
@@ -3164,33 +2508,29 @@ static int __interburst_min_indices(vector<double>& v,
     interburst_min_indices.push_back(interburst_min_index);
     interburst_min_values.push_back(v[interburst_min_index]);
   }
-
   return interburst_min_indices.size();
 }
 
 int LibV5::interburst_min_indices(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
-  int retVal;
-  vector<int> peak_indices, burst_end_indices, interburst_min_indices;
-  vector<double> interburst_min_values, v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices",
-                  peak_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
-                  burst_end_indices);
-  if (retVal < 0) return -1;
-
-  retVal = __interburst_min_indices(v, peak_indices, burst_end_indices,
-                                    interburst_min_indices,
-                                    interburst_min_values);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "interburst_min_indices",
-           interburst_min_indices);
-    setVec(DoubleFeatureData, StringData, "interburst_min_values",
-           interburst_min_values);
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "burst_end_indices"});
+  vector<int> interburst_min_indices;
+  vector<double> interburst_min_values;
+  const vector<double>& v = doubleFeatures.at("V");
+  const vector<int>& peak_indices = intFeatures.at("peak_indices");
+  const vector<int>& burst_end_indices = intFeatures.at("burst_end_indices");
+  int retVal = __interburst_min_indices(
+    v,
+    peak_indices,
+    burst_end_indices,
+    interburst_min_indices,
+    interburst_min_values
+  );
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "interburst_min_indices", interburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "interburst_min_values", interburst_min_values);
   }
   return retVal;
 }
@@ -3202,10 +2542,10 @@ int LibV5::interburst_min_values(mapStr2intVec& IntFeatureData,
 }
 
 
-static int __postburst_min_indices(vector<double>& t,
-                                   vector<double>& v,
-                                   vector<int>& peak_indices,
-                                   vector<int>& burst_end_indices,
+static int __postburst_min_indices(const vector<double>& t,
+                                   const vector<double>& v,
+                                   const vector<int>& peak_indices,
+                                   const vector<int>& burst_end_indices,
                                    vector<int>& postburst_min_indices,
                                    vector<double>& postburst_min_values,
                                    const double stim_end) {
@@ -3240,37 +2580,23 @@ static int __postburst_min_indices(vector<double>& t,
 int LibV5::postburst_min_indices(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
-  int retVal;
-  double stim_end;
-  vector<int> peak_indices, burst_end_indices, postburst_min_indices;
-  vector<double> postburst_min_values, t, v, stim_end_vec;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices",
-                  peak_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
-                  burst_end_indices);
-  if (retVal < 0) return -1;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_end = stim_end_vec[0];
-  }
-
-  retVal = __postburst_min_indices(t, v, peak_indices, burst_end_indices,
-                                   postburst_min_indices,
-                                   postburst_min_values,
-                                   stim_end);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "postburst_min_indices",
-           postburst_min_indices);
-    setVec(DoubleFeatureData, StringData, "postburst_min_values",
-           postburst_min_values);
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_end"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "burst_end_indices"});
+  vector<int> postburst_min_indices;
+  vector<double> postburst_min_values;
+  double stim_end = doubleFeatures.at("stim_end").front();
+  int retVal = __postburst_min_indices(
+    doubleFeatures.at("T"),
+    doubleFeatures.at("V"),
+    intFeatures.at("peak_indices"),
+    intFeatures.at("burst_end_indices"),
+    postburst_min_indices,
+    postburst_min_values,
+    stim_end
+  );
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "postburst_min_indices", postburst_min_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_min_values", postburst_min_values);
   }
   return retVal;
 }
@@ -3285,33 +2611,27 @@ int LibV5::postburst_min_values(mapStr2intVec& IntFeatureData,
 int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
-  int retVal;
-  vector<double> time_to_interburst_min, peak_time, time;
-  vector<int> interburst_min_indices, burst_end_indices;
-  retVal = getVec(DoubleFeatureData, StringData, "T",
-                  time);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "peak_time",
-                  peak_time);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "burst_end_indices",
-                  burst_end_indices);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "interburst_min_indices",
-                  interburst_min_indices);
-  if (retVal < 0) return -1;
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "peak_time"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"burst_end_indices", "interburst_min_indices"});
+
+  vector<double> time_to_interburst_min;
+  const vector<double>& time = doubleFeatures.at("T");
+  const vector<double>& peak_time = doubleFeatures.at("peak_time");
+  const vector<int>& burst_end_indices = intFeatures.at("burst_end_indices");
+  const vector<int>& interburst_min_indices = intFeatures.at("interburst_min_indices");
 
   if (burst_end_indices.size() < interburst_min_indices.size()){
     GErrorStr +=
         "\nburst_end_indices should not have less elements than interburst_min_indices\n";
     return -1;
-  }
+}
 
   for (size_t i = 0; i < interburst_min_indices.size(); i++) {
     time_to_interburst_min.push_back(time[interburst_min_indices[i]] -
-                                     peak_time[burst_end_indices[i]]);
+                                    peak_time[burst_end_indices[i]]);
   }
-  setVec(DoubleFeatureData, StringData, "time_to_interburst_min",
-         time_to_interburst_min);
-  return (time_to_interburst_min.size());
+
+  setVec(DoubleFeatureData, StringData, "time_to_interburst_min", time_to_interburst_min);
+  return time_to_interburst_min.size();
 }

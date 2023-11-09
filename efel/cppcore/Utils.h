@@ -57,7 +57,7 @@ double vec_median(vector<T> v);
 template <class T>
 double vec_mean(const vector<T> &v);
 
-std::pair<size_t, size_t> get_time_index(std::vector<double> &t, double startTime,
+std::pair<size_t, size_t> get_time_index(const std::vector<double> &t, double startTime,
                                      double endTime, double precisionThreshold);
       
 template <class ForwardIterator>

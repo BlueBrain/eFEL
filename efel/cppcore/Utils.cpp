@@ -175,7 +175,7 @@ slope_straight_line_fit(const vector<double>& x,
   return result;
 }
 
-std::pair<size_t, size_t> get_time_index(std::vector<double> &t, double startTime,
+std::pair<size_t, size_t> get_time_index(const std::vector<double> &t, double startTime,
                                      double endTime, double precisionThreshold) {
   /*
    * Returns the start and end index of the time array 

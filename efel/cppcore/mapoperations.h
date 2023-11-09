@@ -36,6 +36,10 @@ template <typename T>
 map<string, vector<T>> getFeatures(
     const map<string, vector<T>>& allFeatures,
     const vector<string>& requestedFeatures);
+template <typename T>
+std::vector<T> getFeature(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::string& requestedFeature);
 template<typename T>
 int getParam(map<string, vector<T>>& featureData,
                const string& param, vector<T>& vec);
