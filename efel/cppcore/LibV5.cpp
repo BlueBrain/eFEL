@@ -201,7 +201,7 @@ int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
 int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  const auto& all_isi_values_vec = getFeature(DoubleFeatureData, {"all_ISI_values"});
+  const auto& all_isi_values_vec = getFeature(DoubleFeatureData, "all_ISI_values");
   
   double inv_last_ISI = calculateInvISI(all_isi_values_vec, all_isi_values_vec.size() - 1); // Last ISI
   vector<double> inv_last_ISI_vec = {inv_last_ISI};
