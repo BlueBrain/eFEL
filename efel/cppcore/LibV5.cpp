@@ -362,38 +362,22 @@ static int __spike_width1(const vector<double>& t, const vector<double>& v,
 int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_start"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices", "peak_indices"});
 
-  vector<int> PeakIndex, minAHPIndex;
-  vector<double> V, t, dv1, dv2, spike_width1;
-  vector<double> stim_start;
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_start", stim_start);
-  if (retVal < 0) return -1;
-  retVal =
-      getVec(IntFeatureData, StringData, "min_AHP_indices", minAHPIndex);
-  if (retVal < 0) return -1;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", PeakIndex);
-  if (retVal < 0) return -1;
-
-  // if(PeakIndex.size()<1) {GErrorStr = GErrorStr + "\nError: One spike is
-  // needed for spikewidth calculation.\n"; return -1;}
-  if (PeakIndex.size() == 0 || minAHPIndex.size() == 0) {
-    setVec(DoubleFeatureData, StringData, "spike_half_width",
-                 spike_width1);
+  vector<double> spike_width1;
+  // Check if peak_indices and min_AHP_indices are empty
+  if (intFeatures.at("peak_indices").empty() || intFeatures.at("min_AHP_indices").empty()) {
+    setVec(DoubleFeatureData, StringData, "spike_half_width", spike_width1);
     return 0;
   }
-  // Take derivative of voltage from 1st AHPmin to the peak of the spike
-  // Using Central difference derivative vec1[i] = ((vec[i+1]+vec[i-1])/2)/dx
-  retVal =
-      __spike_width1(t, V, PeakIndex, minAHPIndex, stim_start[0], spike_width1);
+
+  // Calculate spike width
+  int retVal = __spike_width1(doubleFeatures.at("T"), doubleFeatures.at("V"), intFeatures.at("peak_indices"), 
+                              intFeatures.at("min_AHP_indices"), doubleFeatures.at("stim_start")[0], spike_width1);
+
   if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "spike_half_width",
-                 spike_width1);
+    setVec(DoubleFeatureData, StringData, "spike_half_width", spike_width1);
   }
   return retVal;
 }
