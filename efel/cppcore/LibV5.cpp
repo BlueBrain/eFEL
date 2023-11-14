@@ -2164,15 +2164,14 @@ static int __burst_indices(double burst_factor, int IgnoreFirstISI,
 }
 
 int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
-                    mapStr2doubleVec& DoubleFeatureData,
-                    mapStr2Str& StringData) {
+                               mapStr2doubleVec& DoubleFeatureData,
+                               mapStr2Str& StringData) {
   int retVal;
   vector<int> burst_begin_indices, burst_end_indices, retIgnore;
   vector<double> ISI_values, tVec;
   int IgnoreFirstISI;
   double burst_factor = 0;
-  retVal = getVec(DoubleFeatureData, StringData, "all_ISI_values", ISI_values);
-  if (retVal < 0) return -1;
+  ISI_values = getFeature(DoubleFeatureData, "all_ISI_values");
   if (ISI_values.size() < 2) {
     GErrorStr += "\nError: At least than 3 spikes are needed for burst calculation.\n";
     return -1;
@@ -2184,12 +2183,10 @@ int LibV5::burst_begin_indices(mapStr2intVec& IntFeatureData,
     burst_factor = tVec[0];
 
   retVal = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
-  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
+  if ((retVal == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0))
     IgnoreFirstISI = 0;
-  }
-  else {
+  else
     IgnoreFirstISI = 1;
-   }
 
   retVal = __burst_indices(
     burst_factor, IgnoreFirstISI, ISI_values, burst_begin_indices, burst_end_indices
