@@ -268,29 +268,17 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
   int retVal;
-  double stim_start, stim_end;
-  vector<int> min_ahp_indices, strict_stiminterval_vec, peak_indices;
-  vector<double> v, t, stim_start_vec, stim_end_vec, min_ahp_values;
+  // Retrieve all required double features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
+
+  vector<int> min_ahp_indices;
+  vector<double> min_ahp_values;
+  double stim_start = doubleFeatures.at("stim_start")[0];
+  double stim_end = doubleFeatures.at("stim_end")[0];
+    // Get strict_stiminterval
+  vector<int> strict_stiminterval_vec;
   bool strict_stiminterval;
-
-  // Get voltage
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal <= 0) return -1;
-
-  // Get time
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal <= 0) return -1;
-
-  // Get peak_indices
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", peak_indices);
-  if (retVal < 1) {
-    GErrorStr +=
-        "\n At least one spike required for calculation of "
-        "min_AHP_indices.\n";
-    return -1;
-  }
-
-  // Get strict_stiminterval
   retVal = getParam(IntFeatureData, "strict_stiminterval",
                        strict_stiminterval_vec);
   if (retVal <= 0) {
@@ -299,34 +287,14 @@ int LibV5::min_AHP_indices(mapStr2intVec& IntFeatureData,
     strict_stiminterval = bool(strict_stiminterval_vec[0]);
   }
 
-  // Get stim_start
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_start", stim_start_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_start = stim_start_vec[0];
-  }
-
-  /// Get stim_end
-  retVal =
-      getVec(DoubleFeatureData, StringData, "stim_end", stim_end_vec);
-  if (retVal <= 0) {
-    return -1;
-  } else {
-    stim_end = stim_end_vec[0];
-  }
-
-  retVal =
-      __min_AHP_indices(t, v, peak_indices, stim_start, stim_end,
-                        strict_stiminterval, min_ahp_indices, min_ahp_values);
+  retVal = __min_AHP_indices(doubleFeatures.at("T"), doubleFeatures.at("V"), intFeatures.at("peak_indices"), 
+                                 stim_start, stim_end, strict_stiminterval, min_ahp_indices, min_ahp_values);
 
   if (retVal == 0)
     return -1;
   if (retVal > 0) {
     setVec(IntFeatureData, StringData, "min_AHP_indices", min_ahp_indices);
-    setVec(DoubleFeatureData, StringData, "min_AHP_values",
-                 min_ahp_values);
+    setVec(DoubleFeatureData, StringData, "min_AHP_values", min_ahp_values);
   }
   return retVal;
 }
