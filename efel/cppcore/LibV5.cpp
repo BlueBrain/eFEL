@@ -479,31 +479,15 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-  int retVal;
-  // Get input parameters
-  vector<double> t;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  vector<double> v;
-  retVal = getVec(DoubleFeatureData, StringData, "V", v);
-  if (retVal < 0) return -1;
-  vector<double> stimstart;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
-  if (retVal < 0) return -1;
-  vector<double> stimend;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", stimend);
-  if (retVal < 0) return -1;
-  vector<int> pi;
-  retVal = getVec(IntFeatureData, StringData, "peak_indices", pi);
-  if (retVal < 0) return -1;
-  vector<int> ahpi;
-  retVal = getVec(IntFeatureData, StringData, "min_AHP_indices", ahpi);
-  if (retVal < 0) return -1;
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
+  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices", "min_AHP_indices"});
+
   vector<int> apbi;
 
   // Get DerivativeThreshold
   vector<double> dTh;
-  retVal = getParam(DoubleFeatureData, "DerivativeThreshold", dTh);
+  int retVal = getParam(DoubleFeatureData, "DerivativeThreshold", dTh);
   if (retVal <= 0) {
     // derivative at peak start according to eCode specification 10mV/ms
     // according to Shaul 12mV/ms
@@ -519,9 +503,9 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   }
   
   // Calculate feature
-  retVal =
-      __AP_begin_indices(t, v, stimstart[0], stimend[0], 
-                         pi, ahpi, apbi, dTh[0], derivative_window[0]);
+  retVal = __AP_begin_indices(doubleFeatures.at("T"), doubleFeatures.at("V"), doubleFeatures.at("stim_start")[0], 
+                              doubleFeatures.at("stim_end")[0], intFeatures.at("peak_indices"), 
+                              intFeatures.at("min_AHP_indices"), apbi, dTh[0], derivative_window[0]);
 
   // Save feature value
   if (retVal >= 0) {
@@ -1407,8 +1391,7 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 int LibV5::current_base(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-
-  int retVal;         
+  int retVal;
   vector<double> i, t, stimStart, iRest, cb_start_perc_vec, cb_end_perc_vec;
   double startTime, endTime, cb_start_perc, cb_end_perc;
   retVal = getVec(DoubleFeatureData, StringData, "I", i);
