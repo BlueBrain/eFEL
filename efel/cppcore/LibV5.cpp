@@ -1391,78 +1391,42 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 int LibV5::current_base(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  int retVal;
-  vector<double> i, t, stimStart, iRest, cb_start_perc_vec, cb_end_perc_vec;
-  double startTime, endTime, cb_start_perc, cb_end_perc;
-  retVal = getVec(DoubleFeatureData, StringData, "I", i);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", t);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", stimStart);
-  if (retVal < 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData,
-                        "current_base_start_perc", cb_start_perc_vec);
-  if (retVal == 1) {
-    cb_start_perc = cb_start_perc_vec[0];
-  } else {
-    cb_start_perc = 0.9;
-  }
-  retVal = getVec(DoubleFeatureData, StringData, "current_base_end_perc",
-                        cb_end_perc_vec);
-  if (retVal == 1) {
-    cb_end_perc = cb_end_perc_vec[0];
-  } else {
-    cb_end_perc = 1.0;
-  }
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"I", "T", "stim_start", "current_base_start_perc", "current_base_end_perc"});
+  double cb_start_perc = doubleFeatures.at("current_base_start_perc").empty() ? 0.9 : doubleFeatures.at("current_base_start_perc")[0];
+  double cb_end_perc = doubleFeatures.at("current_base_end_perc").empty() ? 1.0 : doubleFeatures.at("current_base_end_perc")[0];
 
-  startTime = stimStart[0] * cb_start_perc;
-  endTime = stimStart[0] * cb_end_perc;
+  double startTime = doubleFeatures.at("stim_start")[0] * cb_start_perc;
+  double endTime = doubleFeatures.at("stim_start")[0] * cb_end_perc;
 
   if (startTime >= endTime) {
     GErrorStr += "\ncurrent_base: startTime >= endTime\n";
     return -1;
   }
 
-
   vector<double> precisionThreshold;
-  retVal = getParam(DoubleFeatureData, "precision_threshold",
-                          precisionThreshold);
+  int retVal = getParam(DoubleFeatureData, "precision_threshold", precisionThreshold);
   if (retVal < 0) return -1;
 
+  std::pair<size_t, size_t> time_index = get_time_index(doubleFeatures.at("T"), startTime, endTime, precisionThreshold[0]);
 
-  std::pair<size_t, size_t> time_index = get_time_index(t, startTime, endTime,
-                                                        precisionThreshold[0]);
-
-
-  vector<double> subVector(i.begin()+time_index.first,
-                           i.begin()+time_index.second);
+  vector<double> subVector(doubleFeatures.at("I").begin()+time_index.first, doubleFeatures.at("I").begin()+time_index.second);
 
   double iBase;
   std::string computation_mode;
-
   retVal = getStrParam(StringData, "current_base_mode", computation_mode);
   if (retVal < 0) return -1;
+  if (computation_mode == "mean")
+    iBase = vec_mean(subVector);
+  else if (computation_mode == "median")
+    iBase = vec_median(subVector);
+  else {
+    GErrorStr += "\ncurrent_base error: Undefined computational mode. Only mean and median are enabled\n";
+  return -1;
+}
 
-
-  try{
-    if (computation_mode == "mean")
-      iBase = vec_mean(subVector);
-    else if (computation_mode == "median")
-      iBase = vec_median(subVector);
-    else
-      throw std::invalid_argument(
-        "Undefined computational mode. Only mean and median are enabled");
-  }
-  catch(std::exception &e) {
-    GErrorStr +=
-    "\ncurrent_base error:" + std::string(e.what()) + "\n";
-    return -1;
-    }
-
-  iRest.push_back(iBase);
+  vector<double> iRest{iBase};
   setVec(DoubleFeatureData, StringData, "current_base", iRest);
   return 1;
-
 }
 
 size_t get_index(const vector<double>& times, double t) {
