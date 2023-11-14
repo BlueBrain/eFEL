@@ -310,11 +310,7 @@ int LibV5::min_AHP_values(mapStr2intVec& IntFeatureData,
 int LibV5::AHP_depth_abs(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  int retVal;
-
-  vector<double> vAHP;
-  retVal = getVec(DoubleFeatureData, StringData, "min_AHP_values", vAHP);
-  if (retVal < 0) return -1;
+  const auto& vAHP = getFeature(DoubleFeatureData, "min_AHP_values");
   setVec(DoubleFeatureData, StringData, "AHP_depth_abs", vAHP);
   return vAHP.size();
 }
