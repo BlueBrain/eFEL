@@ -1477,56 +1477,37 @@ double __decay_time_constant_after_stim(const vector<double>& times,
 int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
                                           mapStr2doubleVec& DoubleFeatureData,
                                           mapStr2Str& StringData) {
-  int retVal;
-  vector<double> voltages;
-  retVal = getVec(DoubleFeatureData, StringData, "V", voltages);
-  if (retVal < 0) return -1;
-
-  vector<double> times;
-  retVal = getVec(DoubleFeatureData, StringData, "T", times);
-  if (retVal < 0) return -1;
-
-  vector<double> vect;
-
-  retVal = getVec(DoubleFeatureData, StringData, "stim_end", vect);
-  if (retVal != 1) return -1;
-  const double stimEnd = vect[0];
-
-  retVal = getVec(DoubleFeatureData, StringData, "stim_start", vect);
-  if (retVal != 1) return -1;
-  const double stimStart = vect[0];
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
 
   double decay_start_after_stim, decay_end_after_stim;
-  retVal = getVec(DoubleFeatureData, StringData, "decay_start_after_stim",
-                        vect);
-  if (retVal == 1) {
-    decay_start_after_stim = vect[0];
-  } else {
-    decay_start_after_stim = 1.0;
+
+  try {
+    const auto& decayStartFeatures = getFeatures(DoubleFeatureData, {"decay_start_after_stim"});
+    decay_start_after_stim = decayStartFeatures.at("decay_start_after_stim")[0];
+  } catch (const std::runtime_error&) {
+    decay_start_after_stim = 1.0;  // Default value if not found
   }
 
-  retVal =
-      getVec(DoubleFeatureData, StringData, "decay_end_after_stim", vect);
-  if (retVal == 1) {
-    decay_end_after_stim = vect[0];
-  } else {
-    decay_end_after_stim = 10.0;
+  try {
+    const auto& decayEndFeatures = getFeatures(DoubleFeatureData, {"decay_end_after_stim"});
+    decay_end_after_stim = decayEndFeatures.at("decay_end_after_stim")[0];
+  } catch (const std::runtime_error&) {
+    decay_end_after_stim = 10.0;  // Default value if not found
   }
-
+  // Validate decay times
   if (decay_start_after_stim >= decay_end_after_stim) {
-    GErrorStr +=
-        "Error decay_start_after_stim small larger than decay_end_after_stim";
+    GErrorStr += "Error decay_start_after_stim small larger than decay_end_after_stim";
     return -1;
   }
 
+  // Perform calculation
   const double val = __decay_time_constant_after_stim(
-      times, voltages, decay_start_after_stim, decay_end_after_stim, stimStart,
-      stimEnd);
+    doubleFeatures.at("T"), doubleFeatures.at("V"), decay_start_after_stim, 
+    decay_end_after_stim, doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0]);
 
-  vector<double> dtcas;
-  dtcas.push_back(val);
-  setVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim",
-               dtcas);
+  // Store the result
+  vector<double> dtcas{val};
+  setVec(DoubleFeatureData, StringData, "decay_time_constant_after_stim", dtcas);
 
   return 1;
 }
