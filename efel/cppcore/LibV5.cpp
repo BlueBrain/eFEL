@@ -1391,9 +1391,17 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 int LibV5::current_base(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"I", "T", "stim_start", "current_base_start_perc", "current_base_end_perc"});
-  double cb_start_perc = doubleFeatures.at("current_base_start_perc").empty() ? 0.9 : doubleFeatures.at("current_base_start_perc")[0];
-  double cb_end_perc = doubleFeatures.at("current_base_end_perc").empty() ? 1.0 : doubleFeatures.at("current_base_end_perc")[0];
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"I", "T", "stim_start"});
+  double cb_start_perc = 0.9; // Default value
+  double cb_end_perc = 1.0;   // Default value
+
+  try {
+      const double cb_start_perc = getFeature(DoubleFeatureData, "current_base_start_perc")[0];
+  } catch (const std::runtime_error&) {} // Use default value if not found or an error occurs
+
+  try {
+      const double cb_end_perc = getFeature(DoubleFeatureData, "current_base_end_perc")[0];
+  } catch (const std::runtime_error&) {} // Use default value if not found or an error occurs
 
   double startTime = doubleFeatures.at("stim_start")[0] * cb_start_perc;
   double endTime = doubleFeatures.at("stim_start")[0] * cb_end_perc;
@@ -1526,14 +1534,12 @@ int LibV5::multiple_decay_time_constant_after_stim(mapStr2intVec& IntFeatureData
   // Attempt to get decay parameters, using defaults if not found or if not exactly one element
   double decay_start_after_stim = 1.0;
   double decay_end_after_stim = 10.0;
-  vector<double> decayStartVec, decayEndVec;
-  
-  if (getVec(DoubleFeatureData, StringData, "decay_start_after_stim", decayStartVec) == 1) {
-    decay_start_after_stim = decayStartVec[0];
-  }
-  if (getVec(DoubleFeatureData, StringData, "decay_end_after_stim", decayEndVec) == 1) {
-    decay_end_after_stim = decayEndVec[0];
-  }
+  try {
+    const double decay_start_after_stim = getFeature(DoubleFeatureData, "decay_start_after_stim")[0];
+  } catch (const std::runtime_error&) {} // Use default value
+  try {
+    const double decay_end_after_stim = getFeature(DoubleFeatureData, "decay_end_after_stim")[0];
+  } catch (const std::runtime_error&) {} // Use default value
   vector<double> dtcas;
   for (size_t i = 0; i < stimsStart.size(); i++) {
       double ret_dtcas = __decay_time_constant_after_stim(
