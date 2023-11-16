@@ -47,7 +47,4 @@ int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 template <class T>
 void setVec(map<string, vector<T>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value);
-template <class T>
-int getVec(map<string, vector<T>>& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<T>& v);
 #endif

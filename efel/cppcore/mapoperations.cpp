@@ -100,25 +100,6 @@ void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Str
  * features in that way.
  */
 
-template <class T>
-int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<T>& v){
-  string params;
-  getStrParam(StringData, "params", params);
-  strFeature += params;
-
-  typename std::map<std::string, std::vector<T> >::iterator
-    mapstr2VecItr(FeatureData.find(strFeature));
-
-  if (mapstr2VecItr == FeatureData.end()) {
-    GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
-    return -1;
-  }
-  v = mapstr2VecItr->second;
-
-  return (v.size());
-}
-
 template std::map<std::string, std::vector<double>> getFeatures(
     const std::map<std::string, std::vector<double>>& allFeatures,
     const std::vector<std::string>& requestedFeatures);
@@ -133,10 +114,6 @@ template void setVec(std::map<std::string, std::vector<double> >& FeatureData, m
                string key, const vector<double>& value);
 template void setVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
                string key, const vector<int>& value);
-template int getVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<double>& v);
-template int getVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<int>& v);
 template std::vector<double> getFeature(
     const std::map<std::string, std::vector<double>>& allFeatures,
     const std::string& requestedFeature);

@@ -46,38 +46,35 @@ std::string to_string(const T& value) {
 int LibV1::interpolate(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData) {
-  int retVal;
-
   vector<double> V, T, VIntrpol, TIntrpol, InterpStepVec;
-  vector<int> intrpolte;
-  double InterpStep;
-  // getVec takes care of stimulus suffix
-  retVal = getVec(DoubleFeatureData, StringData, "V", V);
-  if (retVal <= 0) return -1;
-  retVal = getVec(DoubleFeatureData, StringData, "T", T);
-  if (retVal <= 0) return -1;
+  T = getFeature(DoubleFeatureData, "T");
   // interp_step is a stimulus independent parameter
-  retVal = getParam(DoubleFeatureData, "interp_step", InterpStepVec);
-  if (retVal <= 0)
-    InterpStep = 0.1;
-  else
-    InterpStep = InterpStepVec[0];
+  int retVal = getParam(DoubleFeatureData, "interp_step", InterpStepVec);
+  double InterpStep = (retVal <= 0) ? 0.1 : InterpStepVec[0];
 
-  LinearInterpolation(InterpStep, T, V, TIntrpol, VIntrpol);
-
-  setVec(DoubleFeatureData, StringData, "V", VIntrpol);
-  setVec(DoubleFeatureData, StringData, "T", TIntrpol);
-  setVec(IntFeatureData, StringData, "interpolate", intrpolte);
+  try  // interpolate V if it's available
+  {
+    V = getFeature(DoubleFeatureData, "V");
+    LinearInterpolation(InterpStep, T, V, TIntrpol, VIntrpol);
+    setVec(DoubleFeatureData, StringData, "V", VIntrpol);
+    setVec(DoubleFeatureData, StringData, "T", TIntrpol);
+  }
+  catch(...)
+  {
+    return -1;  // interpolation failed
+  }
 
   // also interpolate current if present
   vector<double> I, IIntrpol, TIntrpolI;
-  int retValI;
-  retValI = getVec(DoubleFeatureData, StringData, "I", I);
-  if (retValI > 0){
+  try
+  {
+    I = getFeature(DoubleFeatureData, "I");
     LinearInterpolation(InterpStep, T, I, TIntrpolI, IIntrpol);
     setVec(DoubleFeatureData, StringData, "I", IIntrpol);
+    setVec(DoubleFeatureData, StringData, "T", TIntrpol);
   }
-  return retVal;
+  catch(...) {}  // pass, it is optional
+  return 1;
 }
 
 // *** Spikecount ***
