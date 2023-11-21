@@ -3645,7 +3645,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
   stim_end_index =
       distance(t.begin(),
                 find_if(t.begin(), t.end(),
-                        std::bind2nd(std::greater_equal<double>(), stim_end)));
+                        [stim_end](double x) { return x >= stim_end; }));
   end_index = distance(t.begin(), t.end());
   for (size_t i = 0; i < burst_end_indices.size(); i++) {
     double t_start = t[peak_indices[burst_end_indices[i]]] + sahp_start;
@@ -3654,7 +3654,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
       t_start_index = find_if(
         t.begin() + peak_indices[burst_end_indices[i]],
         t.begin() + peak_indices[burst_end_indices[i] + 1],
-        std::bind2nd(std::greater_equal<double>(), t_start)
+        [t_start](double x) { return x >= t_start; }
       ) - t.begin();
       postburst_slow_ahp_index = min_element(
         v.begin() + t_start_index,
@@ -3664,7 +3664,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
       t_start_index = find_if(
         t.begin() + peak_indices[burst_end_indices[i]],
         t.begin() + stim_end_index,
-        std::bind2nd(std::greater_equal<double>(), t_start)
+        [t_start](double x) { return x >= t_start; }
       ) - t.begin();
       if (t_start_index < stim_end_index){
         postburst_slow_ahp_index = min_element(
@@ -3678,7 +3678,7 @@ static int __postburst_slow_ahp_indices(vector<double>& t,
       t_start_index = find_if(
         t.begin() + peak_indices[burst_end_indices[i]],
         t.begin() + end_index,
-        std::bind2nd(std::greater_equal<double>(), t_start)
+        [t_start](double x) { return x >= t_start; }
       ) - t.begin();
       if (t_start_index < end_index){
         postburst_slow_ahp_index = min_element(
@@ -3837,7 +3837,7 @@ static int __postburst_fast_ahp_indices(const vector<double>& t, const vector<do
     end_index =
         distance(t.begin(),
                  find_if(t.begin(), t.end(),
-                         std::bind2nd(std::greater_equal<double>(), stim_end)));
+                         [stim_end](double x) { return x >= stim_end; }));
   } else {
     end_index = distance(t.begin(), t.end());
   }
@@ -4117,7 +4117,7 @@ int __interburst_percent_indices(const vector<double>& t, const vector<double>& 
         index_at_fraction =
           distance(t.begin(),
                     find_if(t.begin(), t.end(),
-                            std::bind2nd(std::greater_equal<double>(), time_at_fraction)));
+                            [time_at_fraction](double x){ return x >= time_at_fraction; }));
         interburst_percent_indices.push_back(index_at_fraction);
         interburst_percent_values.push_back(v[index_at_fraction]);
       }
