@@ -45,14 +45,14 @@ Time from the start of the stimulus to the maximum of the second peak
 `LibV5`_ : inv_time_to_first_spike
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1.0 over time to first spike; returns 0 when no spike
+1.0 over time to first spike (times 1000 to convert it to Hz); returns 0 when no spike
 
 - **Required features**: time_to_first_spike
 - **Units**: Hz
 - **Pseudocode**: ::
 
     if len(time_to_first_spike) > 0:
-        inv_time_to_first_spike = 1.0 / time_to_first_spike[0]
+        inv_time_to_first_spike = 1000.0 / time_to_first_spike[0]
     else:
         inv_time_to_first_spike = 0
 
