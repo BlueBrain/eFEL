@@ -46,6 +46,7 @@ all_pyfeatures = [
     'spikes_in_burst1_burst2_diff',
     'spikes_in_burst1_burstlast_diff',
     'impedance',
+    'phaseslope_max',
 ]
 
 
@@ -339,6 +340,24 @@ def spikes_in_burst1_burstlast_diff():
     return numpy.array([
         spikes_per_burst_values[0] - spikes_per_burst_values[-1]
     ])
+
+
+def phaseslope_max():
+    """Calculate the maximum phase slope"""
+
+    voltage = _get_cpp_feature("voltage")
+    time = _get_cpp_feature("time")
+    time = time[:len(voltage)]
+
+    from numpy import diff
+    
+    phaseslope = diff(voltage) / diff(time)
+    phaseslope_max= max(phaseslope)
+
+    if phaseslope_max.size == 0:
+        return None
+    else:
+        return numpy.array([phaseslope_max])
 
 
 def _get_cpp_feature(feature_name):
