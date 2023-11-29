@@ -35,14 +35,13 @@
  */
 
 #include <Python.h>
-
-#include <cstddef>
 #include <cfeature.h>
 
-cFeature *pFeature = NULL;
+#include <cstddef>
 
+cFeature* pFeature = NULL;
 
-int Initialize(const char *strDepFile, const char *outdir) {
+int Initialize(const char* strDepFile, const char* outdir) {
   if (pFeature != NULL) {
     delete pFeature;
   }
@@ -56,8 +55,7 @@ int Initialize(const char *strDepFile, const char *outdir) {
 }
 
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
-
-  char* depfilename, *outfilename;
+  char *depfilename, *outfilename;
   if (!PyArg_ParseTuple(args, "ss", &depfilename, &outfilename)) {
     return NULL;
   }
@@ -82,7 +80,7 @@ static void PyList_from_vectorint(vector<int> input, PyObject* output) {
   size_t vector_size = input.size();
 
   for (size_t index = 0; index < vector_size; index++) {
-    PyObject *obj = Py_BuildValue("i", input[index]);
+    PyObject* obj = Py_BuildValue("i", input[index]);
     PyList_Append(output, obj);
     Py_DECREF(obj);
   }
@@ -104,7 +102,7 @@ static void PyList_from_vectordouble(vector<double> input, PyObject* output) {
   size_t vector_size = input.size();
 
   for (size_t index = 0; index < vector_size; index++) {
-    PyObject *obj = Py_BuildValue("f", input[index]);
+    PyObject* obj = Py_BuildValue("f", input[index]);
     PyList_Append(output, obj);
     Py_DECREF(obj);
   }
@@ -114,14 +112,14 @@ static void PyList_from_vectorstring(vector<string> input, PyObject* output) {
   size_t vector_size = input.size();
 
   for (size_t index = 0; index < vector_size; index++) {
-    PyObject *obj = Py_BuildValue("s", input[index].c_str());
+    PyObject* obj = Py_BuildValue("s", input[index].c_str());
     PyList_Append(output, obj);
     Py_DECREF(obj);
   }
 }
 
-static PyObject*
-_getfeature(PyObject* self, PyObject* args, const string &input_type) {
+static PyObject* _getfeature(PyObject* self, PyObject* args,
+                             const string& input_type) {
   char* feature_name;
   PyObject* py_values;
 
@@ -134,7 +132,8 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
   try {
     string feature_type = pFeature->featuretype(string(feature_name));
 
-    if (!input_type.empty() && feature_type != input_type){  // when types do not match
+    if (!input_type.empty() &&
+        feature_type != input_type) {  // when types do not match
       PyErr_SetString(PyExc_TypeError, "Feature type does not match");
       return NULL;
     }
@@ -144,30 +143,26 @@ _getfeature(PyObject* self, PyObject* args, const string &input_type) {
       return_value = pFeature->getFeature<int>(string(feature_name), values);
       PyList_from_vectorint(values, py_values);
       return Py_BuildValue("i", return_value);
-    } else { // double
+    } else {  // double
       vector<double> values;
       return_value = pFeature->getFeature<double>(string(feature_name), values);
       PyList_from_vectordouble(values, py_values);
       return Py_BuildValue("i", return_value);
     }
-  }
-  catch(EfelAssertionError& e) {  // more specialised exception
+  } catch (EfelAssertionError& e) {  // more specialised exception
     PyErr_SetString(PyExc_AssertionError, e.what());
     return NULL;
-  }
-  catch(const std::runtime_error& e) {  // e.g. feature does not exist
+  } catch (const std::runtime_error& e) {  // e.g. feature does not exist
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    return NULL;
+  } catch (const std::exception& e) {  // catch standard exceptions
     PyErr_SetString(PyExc_RuntimeError, e.what());
     return NULL;
   }
-  catch(const std::exception& e) {  // catch standard exceptions
-      PyErr_SetString(PyExc_RuntimeError, e.what());
-      return NULL;
-  }
 }
 
-
-static PyObject*
-_getmapdata(PyObject* self, PyObject* args, const string &type) {
+static PyObject* _getmapdata(PyObject* self, PyObject* args,
+                             const string& type) {
   char* data_name;
   PyObject* py_values = PyList_New(0);
 
@@ -240,11 +235,11 @@ static PyObject* setfeaturedouble(PyObject* self, PyObject* args) {
 }
 
 static PyObject* getfeaturedouble(PyObject* self, PyObject* args) {
-  const string type ("double");
+  const string type("double");
   return _getfeature(self, args, type);
 }
 
-static PyObject* setfeaturestring(PyObject* self, PyObject* args){
+static PyObject* setfeaturestring(PyObject* self, PyObject* args) {
   char* feature_name;
   char* py_value;
 
@@ -256,7 +251,6 @@ static PyObject* setfeaturestring(PyObject* self, PyObject* args){
   return_value = pFeature->setFeatureString(string(feature_name), py_value);
 
   return Py_BuildValue("i", return_value);
-
 }
 
 static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
@@ -272,25 +266,23 @@ static PyObject* getFeatureNames(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-static PyObject* getDistance_wrapper(PyObject* self,
-                                     PyObject* args,
+static PyObject* getDistance_wrapper(PyObject* self, PyObject* args,
                                      PyObject* kwds) {
   char* feature_name;
-  double mean, std, distance, error_dist=250;
+  double mean, std, distance, error_dist = 250;
   int trace_check = 1;
 
-  const char *kwlist[] = {"feature_name", "mean", "std", "trace_check", 
-      "error_dist", NULL};
+  const char* kwlist[] = {"feature_name", "mean",       "std",
+                          "trace_check",  "error_dist", NULL};
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "sdd|id",
-                                   const_cast<char**>(kwlist),
-                                   &feature_name, &mean, &std,
-                                   &trace_check, &error_dist)) {
+                                   const_cast<char**>(kwlist), &feature_name,
+                                   &mean, &std, &trace_check, &error_dist)) {
     return NULL;
   }
 
-  distance = pFeature->getDistance(feature_name, mean, std,
-                                   trace_check, error_dist);
+  distance =
+      pFeature->getDistance(feature_name, mean, std, trace_check, error_dist);
 
   return Py_BuildValue("d", distance);
 }
@@ -316,41 +308,34 @@ static PyObject* getgerrorstr(PyObject* self, PyObject* args) {
   string errorStr = GErrorStr + pFeature->getGError();
   GErrorStr.clear();
 
-
   return Py_BuildValue("s", errorStr.c_str());
 }
 
 static PyMethodDef CppCoreMethods[] = {
-    {"Initialize", CppCoreInitialize, METH_VARARGS,
-      "Initialise CppCore."},
+    {"Initialize", CppCoreInitialize, METH_VARARGS, "Initialise CppCore."},
 
     {"getFeature", getfeature, METH_VARARGS,
-      "Get a values associated with a feature. Takes a list() to be filled."},
-    {"getFeatureInt", getfeatureint, METH_VARARGS,
-      "Get a integer feature."},
+     "Get a values associated with a feature. Takes a list() to be filled."},
+    {"getFeatureInt", getfeatureint, METH_VARARGS, "Get a integer feature."},
     {"getFeatureDouble", getfeaturedouble, METH_VARARGS,
-      "Get a double feature."},
-    {"getMapIntData", getmapintdata, METH_VARARGS,
-      "Get a int data."},
-    {"getMapDoubleData", getmapdoubledata, METH_VARARGS,
-      "Get a double data."},
+     "Get a double feature."},
+    {"getMapIntData", getmapintdata, METH_VARARGS, "Get a int data."},
+    {"getMapDoubleData", getmapdoubledata, METH_VARARGS, "Get a double data."},
 
-    {"setFeatureInt", setfeatureint, METH_VARARGS,
-      "Set a integer feature."},
+    {"setFeatureInt", setfeatureint, METH_VARARGS, "Set a integer feature."},
     {"setFeatureDouble", setfeaturedouble, METH_VARARGS,
-      "Set a double feature."},
+     "Set a double feature."},
     {"setFeatureString", setfeaturestring, METH_VARARGS,
-      "Set a string feature."},
+     "Set a string feature."},
 
-    {"featuretype", featuretype, METH_VARARGS,
-      "Get the type of a feature"},
-    {"getgError", getgerrorstr, METH_VARARGS,
-      "Get CppCore error string"},
+    {"featuretype", featuretype, METH_VARARGS, "Get the type of a feature"},
+    {"getgError", getgerrorstr, METH_VARARGS, "Get CppCore error string"},
     {"getFeatureNames", getFeatureNames, METH_VARARGS,
-      "Get the names of all the available features"},
+     "Get the names of all the available features"},
 
-    {"getDistance", (PyCFunction)getDistance_wrapper, METH_VARARGS|METH_KEYWORDS,
-      "Get the distance between a feature and experimental data"},
+    {"getDistance", (PyCFunction)getDistance_wrapper,
+     METH_VARARGS | METH_KEYWORDS,
+     "Get the distance between a feature and experimental data"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -369,10 +354,15 @@ static int cppcore_clear(PyObject* m) {
   return 0;
 }
 
-static struct PyModuleDef moduledef = {
-    PyModuleDef_HEAD_INIT,       "cppcore",      NULL,
-    sizeof(struct module_state), CppCoreMethods, NULL,
-    cppcore_traverse,            cppcore_clear,  NULL};
+static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
+                                       "cppcore",
+                                       NULL,
+                                       sizeof(struct module_state),
+                                       CppCoreMethods,
+                                       NULL,
+                                       cppcore_traverse,
+                                       cppcore_clear,
+                                       NULL};
 
 extern "C" PyObject* PyInit_cppcore(void) {
   PyObject* module = PyModule_Create(&moduledef);

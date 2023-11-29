@@ -18,15 +18,15 @@
 
 #include "LibV3.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <functional>
 #include <list>
-#include <math.h>
 
 using std::find_if;
 using std::list;
 using std::min_element;
-
 
 static int __depolarized_base(const vector<double>& t, const vector<double>& v,
                               double stimstart, double stimend,
@@ -65,23 +65,21 @@ static int __depolarized_base(const vector<double>& t, const vector<double>& v,
 int LibV3::depolarized_base(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
-    // Retrieve all required double and int features at once
-    const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
-    const auto& intFeatures = getFeatures(IntFeatureData, {"AP_end_indices", "AP_begin_indices"});
+  // Retrieve all required double and int features at once
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"AP_end_indices", "AP_begin_indices"});
 
-    vector<double> dep_base;
-    int retVal = __depolarized_base(
-        doubleFeatures.at("T"),
-        doubleFeatures.at("V"),
-        doubleFeatures.at("stim_start").front(),
-        doubleFeatures.at("stim_end").front(),
-        intFeatures.at("AP_begin_indices"),
-        intFeatures.at("AP_end_indices"),
-        dep_base
-    );
+  vector<double> dep_base;
+  int retVal = __depolarized_base(
+      doubleFeatures.at("T"), doubleFeatures.at("V"),
+      doubleFeatures.at("stim_start").front(),
+      doubleFeatures.at("stim_end").front(), intFeatures.at("AP_begin_indices"),
+      intFeatures.at("AP_end_indices"), dep_base);
 
-    if (retVal > 0) {
-        setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
-    }
-    return retVal;
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "depolarized_base", dep_base);
+  }
+  return retVal;
 }

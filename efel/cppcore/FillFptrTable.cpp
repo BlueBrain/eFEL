@@ -103,19 +103,29 @@ int FillFptrTable() {
   FptrTableV5["ISI_log_slope_skip"] = &LibV5::ISI_log_slope_skip;
   FptrTableV5["time_to_second_spike"] = &LibV5::time_to_second_spike;
   FptrTableV5["time_to_last_spike"] = &LibV5::time_to_last_spike;
-  FptrTableV5["inv_first_ISI"] = [](mapStr2intVec& intData, mapStr2doubleVec& doubleData, mapStr2Str& strData) {
-      return LibV5::inv_ISI_generic(intData, doubleData, strData, 0);
+  FptrTableV5["inv_first_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 0);
   };
-  FptrTableV5["inv_second_ISI"] = [](mapStr2intVec& intData, mapStr2doubleVec& doubleData, mapStr2Str& strData) {
-      return LibV5::inv_ISI_generic(intData, doubleData, strData, 1);
+  FptrTableV5["inv_second_ISI"] = [](mapStr2intVec& intData,
+                                     mapStr2doubleVec& doubleData,
+                                     mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 1);
   };
-  FptrTableV5["inv_third_ISI"] = [](mapStr2intVec& intData, mapStr2doubleVec& doubleData, mapStr2Str& strData) {
+  FptrTableV5["inv_third_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
     return LibV5::inv_ISI_generic(intData, doubleData, strData, 2);
   };
-  FptrTableV5["inv_fourth_ISI"] = [](mapStr2intVec& intData, mapStr2doubleVec& doubleData, mapStr2Str& strData) {
-      return LibV5::inv_ISI_generic(intData, doubleData, strData, 3);
+  FptrTableV5["inv_fourth_ISI"] = [](mapStr2intVec& intData,
+                                     mapStr2doubleVec& doubleData,
+                                     mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 3);
   };
-  FptrTableV5["inv_fifth_ISI"] = [](mapStr2intVec& intData, mapStr2doubleVec& doubleData, mapStr2Str& strData) {
+  FptrTableV5["inv_fifth_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
     return LibV5::inv_ISI_generic(intData, doubleData, strData, 4);
   };
   FptrTableV5["inv_last_ISI"] = &LibV5::inv_last_ISI;
@@ -178,8 +188,7 @@ int FillFptrTable() {
       &LibV5::decay_time_constant_after_stim;
   FptrTableV5["multiple_decay_time_constant_after_stim"] =
       &LibV5::multiple_decay_time_constant_after_stim;
-  FptrTableV5["sag_time_constant"] =
-      &LibV5::sag_time_constant;
+  FptrTableV5["sag_time_constant"] = &LibV5::sag_time_constant;
 
   FptrTableV5["ohmic_input_resistance_vb_ssse"] =
       &LibV5::ohmic_input_resistance_vb_ssse;
@@ -188,7 +197,7 @@ int FillFptrTable() {
   FptrTableV5["maximum_voltage_from_voltagebase"] =
       &LibV5::maximum_voltage_from_voltagebase;
   FptrTableV5["Spikecount_stimint"] = &LibV5::Spikecount_stimint;
-  
+
   FptrTableV5["peak_indices"] = &LibV5::peak_indices;
   FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;
   FptrTableV5["sag_ratio1"] = &LibV5::sag_ratio1;
@@ -197,7 +206,8 @@ int FillFptrTable() {
   FptrTableV5["AP_peak_downstroke"] = &LibV5::AP_peak_downstroke;
   FptrTableV5["min_between_peaks_indices"] = &LibV5::min_between_peaks_indices;
   FptrTableV5["min_between_peaks_values"] = &LibV5::min_between_peaks_values;
-  FptrTableV5["AP_width_between_threshold"] = &LibV5::AP_width_between_threshold;
+  FptrTableV5["AP_width_between_threshold"] =
+      &LibV5::AP_width_between_threshold;
 
   FptrTableV5["burst_begin_indices"] = &LibV5::burst_begin_indices;
   FptrTableV5["burst_end_indices"] = &LibV5::burst_end_indices;
@@ -214,7 +224,7 @@ int FillFptrTable() {
   FptrTableV5["postburst_min_indices"] = &LibV5::postburst_min_indices;
   FptrTableV5["postburst_min_values"] = &LibV5::postburst_min_values;
   FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
-  
+
   //****************** end of FptrTableV5 *****************************
 
   return 1;

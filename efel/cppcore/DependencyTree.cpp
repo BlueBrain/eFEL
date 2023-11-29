@@ -18,8 +18,8 @@
 
 #include "DependencyTree.h"
 
-#include <algorithm> //remove
-#include <cctype> //isspace
+#include <algorithm>  //remove
+#include <cctype>     //isspace
 #include <fstream>
 
 static void removeAllWhiteSpace(string &str) {
@@ -34,7 +34,7 @@ cTree::cTree(const char *strFileName) {
     return;
   }
 
-  for (string line; std::getline(input, line); ) {
+  for (string line; std::getline(input, line);) {
     removeAllWhiteSpace(line);
     if (!line.empty()) {
       strDependencyFile.push_back(std::move(line));
@@ -52,13 +52,13 @@ cTree::cTree(const char *strFileName) {
  * FptrTable :
  * FptrLookup | vector of pairs:
  *                  first | string: feature name
- *                  second | vector of feature_function to represent list of dependent features
+ *                  second | vector of feature_function to represent list of
+ * dependent features
  *
  */
-int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
-                              feature2function *FptrTable,
-                              map<string, vector<feature_function > > *FptrLookup)
-{
+int cTree::setFeaturePointers(
+    map<string, feature2function *> &mapFptrLib, feature2function *FptrTable,
+    map<string, vector<feature_function> > *FptrLookup) {
   list<string>::iterator lstItr;
   map<string, feature2function *>::iterator mapLibItr;
   feature2function *fptrTbl;
@@ -73,7 +73,6 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
   // vecFeature is a list with all the feature names in the first column
   // of the dependency file
   for (unsigned i = 0; i < vecFeature.size(); i++) {
-
     FinalList.clear();
     strLibFeature = vecFeature[i];
     // fill FinalList with all the dependencies of feature vecFeature[i]
@@ -112,7 +111,7 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
 
       vecfptr.push_back(mapFeatureItr->second);
       FptrTable->insert(std::pair<string, feature_function>(
-              strFeature, mapFeatureItr->second));
+          strFeature, mapFeatureItr->second));
     }
     // Add the vecfptr from above to a map with as key the base featurei
     FptrLookup->insert(
@@ -130,7 +129,7 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
  */
 int cTree::getAllParents(vector<string> &lstFeature) {
   for (unsigned i = 0; i < strDependencyFile.size(); i++) {
-    const string& strLine = strDependencyFile[i];
+    const string &strLine = strDependencyFile[i];
     size_t nPos = strLine.find_first_of('#');
     string FeatureName = strLine.substr(0, nPos);
     if (!FeatureName.empty()) {
@@ -161,19 +160,19 @@ int cTree::getChilds(string str, list<string> &childs) {
   return 1;
 }
 
-
-int cTree::getDependency(const string& strLine) {
+int cTree::getDependency(const string &strLine) {
   std::list<string> tmpChild;
 
   getChilds(strLine, tmpChild);
-  for (const auto& childFeature : tmpChild) {
-    getDependency(childFeature);  // Recursively get dependencies of the child feature.
+  for (const auto &childFeature : tmpChild) {
+    getDependency(
+        childFeature);  // Recursively get dependencies of the child feature.
   }
   AddUniqueItem(strLine);  // Add the feature itself to the FinalList.
   return 0;
 }
 
-void cTree::AddUniqueItem(const string& strFeature) {
+void cTree::AddUniqueItem(const string &strFeature) {
   auto it = std::find(FinalList.begin(), FinalList.end(), strFeature);
   if (it == FinalList.end()) {
     FinalList.push_back(strFeature);
