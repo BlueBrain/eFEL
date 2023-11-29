@@ -49,7 +49,8 @@ cppcore_headers = ['Utils.h',
                    'Global.h',
                    'mapoperations.h',
                    'types.h',
-                   'eFELLogger.h']
+                   'eFELLogger.h',
+                   'EfelExceptions.h']
 cppcore_sources = [
     os.path.join(
         cppcore_dir,
