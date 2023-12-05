@@ -20,6 +20,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 from pathlib import Path
+import neo
 import numpy as np
 
 
@@ -175,9 +176,6 @@ def load_neo_file(file_name, stim_start=None, stim_end=None, **kwargs):
             returned object : [Segments_1, Segments_2, ..., Segments_n]
             Segments_1 = [Traces_1, Traces_2, ..., Traces_n]
     """
-
-    import neo
-
     reader = neo.io.get_io(file_name)
     blocks = reader.read(**kwargs)
 
@@ -185,27 +183,23 @@ def load_neo_file(file_name, stim_start=None, stim_end=None, **kwargs):
         blocks, stim_start, stim_end)
     if stim_start is None or stim_end is None:
         raise ValueError(
-            'No stim_start or stim_end has been found inside epochs or events.'
-            ' You can directly specify their value as argument "stim_start"'
-            ' and "stim_end"')
+            'No stim_start or stim_end found in epochs or events. '
+            'Please specify "stim_start" and "stim_end" arguments.')
 
-    # this part of the code transforms the data format.
+    # Convert data for eFEL
     efel_blocks = []
     for bl in blocks:
         efel_segments = []
         for seg in bl.segments:
             traces = []
-            count_traces = 0
-            analogsignals = seg.analogsignals
-
-            for sig in analogsignals:
-                traces.append({})
-                traces[count_traces]['T'] = sig.times.rescale('ms').magnitude
-                traces[count_traces]['V'] = sig.rescale('mV').magnitude
-                traces[count_traces]['stim_start'] = [stim_start]
-                traces[count_traces]['stim_end'] = [stim_end]
-                count_traces += 1
-
+            for sig in seg.analogsignals:
+                trace = {
+                    'T': sig.times.rescale('ms').magnitude,
+                    'V': sig.rescale('mV').magnitude,
+                    'stim_start': [stim_start],
+                    'stim_end': [stim_end]
+                }
+                traces.append(trace)
             efel_segments.append(traces)
         efel_blocks.append(efel_segments)
 
