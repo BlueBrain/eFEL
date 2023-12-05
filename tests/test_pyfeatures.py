@@ -29,113 +29,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
-import os
+from pathlib import Path
 import numpy
 
 import efel
+from efel.io import load_ascii_input
 
-testdata_dir = os.path.join(
-    os.path.dirname(
-        os.path.abspath(__file__)),
-    'testdata')
+testdata_dir = Path(__file__).parent / 'testdata'
 
 traces_data = {
     'mean_frequency1': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'mean_frequency_1.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'basic' / 'mean_frequency_1.txt',
         'stim_start': 500,
         'stim_end': 900},
     'init_burst1': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'init_burst1.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'basic' / 'init_burst1.txt',
         'stim_start': 250,
         'stim_end': 1600},
     'init_burst2': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'init_burst2.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'basic' / 'init_burst2.txt',
         'stim_start': 250,
         'stim_end': 1600},
     'init_burst3': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'init_burst3.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'basic' / 'init_burst3.txt',
         'stim_start': 250,
         'stim_end': 1600},
     'init_burst_sahp_error': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'initburst_sahp_error.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'basic' / 'initburst_sahp_error.txt',
         'stim_start': 800,
         'stim_end': 1600},
     'depol_block_subthresh': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'allfeatures',
-            'testdb2data.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'allfeatures' / 'testdb2data.txt',
         'stim_start': 419.995,
         'stim_end': 1419.995},
     'depol_block_subthresh_hyperpol': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'allfeatures',
-            'testdb1data.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'allfeatures' / 'testdb1data.txt',
         'stim_start': 419.995,
         'stim_end': 1419.995},
     'depol_block_spiking': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'allfeatures',
-            'testdb3data.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'allfeatures' / 'testdb3data.txt',
         'stim_start': 419.995,
         'stim_end': 1419.995},
     'depol_block_db': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'allfeatures',
-            'testdbdata.txt'),
-        't_col': 1,
-        'v_col': 2,
+        'url': testdata_dir / 'allfeatures' / 'testdbdata.txt',
         'stim_start': 419.995,
         'stim_end': 1419.995},
     'current': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'current.txt'),
+        'url': testdata_dir / 'basic' / 'current.txt',
         't_col': 1,
         'i_col': 2,
         'v_col': 3,
         'stim_start': 700.0,
         'stim_end': 2700.0},
     'impedance': {
-        'url': 'file://%s' % os.path.join(
-            os.path.abspath(testdata_dir),
-            'basic',
-            'impedance.txt'),
+        'url': testdata_dir / 'basic' / 'impedance.txt',
         't_col': 1,
         'v_col': 2,
         'i_col': 3,
@@ -146,35 +93,35 @@ traces_data = {
 
 def _load_trace(trace_name):
     """Load trace with a certain name"""
-
     trace_data = traces_data[trace_name]
 
     url = trace_data['url']
 
     trace = {
-        'T': efel.io.load_fragment(
-            '%s#col=%d' %
-            (url, trace_data['t_col'])),
-        'V': efel.io.load_fragment(
-            '%s#col=%d' %
-            (url, trace_data['v_col'])),
         'stim_start': [trace_data['stim_start']],
         'stim_end': [trace_data['stim_end']],
     }
 
-    if trace_name == "current":
-        trace['T'] = trace['T'] * 1000.0  # s -> ms
-
     if 'i_col' in trace_data:
-        trace['I'] = efel.io.load_fragment('%s#col=%d' %
-                                           (url, trace_data['i_col']))
+        data = numpy.loadtxt(url)
+        if trace_data['i_col'] == 3:  # I is the last
+            trace['T'] = data[:, 0]
+            trace['V'] = data[:, 1]
+            trace['I'] = data[:, 2]
+        else:  # V is the last
+            trace['T'] = data[:, 0]
+            trace['V'] = data[:, 2]
+            trace['I'] = data[:, 1]
+        if trace_name == "current":
+            trace['T'] = trace['T'] * 1000.0  # s -> ms
+    else:
+        trace['T'], trace['V'] = load_ascii_input(url)
 
     return trace
 
 
 def _test_expected_value(feature_name, expected_values):
     """Test expected values for feature"""
-
     for trace_name, expected_value in expected_values.items():
         trace = _load_trace(trace_name)
 
@@ -191,7 +138,6 @@ def _test_expected_value(feature_name, expected_values):
 
 def test_initburst_sahp():
     """pyfeatures: Test initburst_sahp feature"""
-
     feature_name = 'initburst_sahp'
     expected_values = {
         'mean_frequency1': None, 'init_burst1': [-69.19999695],
@@ -203,7 +149,6 @@ def test_initburst_sahp():
 
 def test_initburst_sahp_argmin_error():
     """pyfeatures: Test initburst_sahp argmin error"""
-
     feature_name = 'initburst_sahp'
     expected_values = {
         'init_burst_sahp_error': None}
@@ -213,7 +158,6 @@ def test_initburst_sahp_argmin_error():
 
 def test_initburst_sahp_vb():
     """pyfeatures: Test initburst_sahp_vb feature"""
-
     feature_name = 'initburst_sahp_vb'
     expected_values = {
         'mean_frequency1': None, 'init_burst1': [13.80537756],
@@ -225,7 +169,6 @@ def test_initburst_sahp_vb():
 
 def test_initburst_sahp_ssse():
     """pyfeatures: Test initburst_sahp_ssse feature"""
-
     feature_name = 'initburst_sahp_ssse'
     expected_values = {
         'mean_frequency1': None, 'init_burst1': [-11.33152931],
@@ -328,7 +271,6 @@ def test_pydistance():
 
 def test_pydistance_featurefail():
     """pyfeatures: Test failure of feature in getdistance"""
-
     mf1_trace = _load_trace('mean_frequency1')
 
     feature_name = 'initburst_sahp'
@@ -346,7 +288,6 @@ def test_pydistance_featurefail():
 
 def test_interpolate_current():
     """pyfeatures: Test interpolation of current"""
-
     def interpolate(time, voltage, new_dt):
         """Interpolate voltage to new dt"""
 
@@ -355,9 +296,7 @@ def test_interpolate_current():
 
         return interp_time, interp_voltage
 
-    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                      'basic',
-                                      'current.txt'))
+    data = numpy.loadtxt(testdata_dir / 'basic' / 'current.txt')
     time = data[:, 0] * 1000.0  # -> ms
     current = data[:, 1]
     voltage = data[:, 2]
@@ -380,7 +319,6 @@ def test_interpolate_current():
 
 def test_impedance():
     """pyfeatures: Test impedance feature"""
-
     feature_name = "impedance"
 
     expected_values = {feature_name: 4.615384615384615}
