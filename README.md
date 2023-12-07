@@ -1,4 +1,4 @@
-<img src="docs/source/logo/eFELBanner.png"/>
+<img src="https://raw.githubusercontent.com/BlueBrain/eFEL/master/docs/source/logo/eFELBanner.png"/>
 
 <table>
 <tr>
@@ -73,7 +73,7 @@ the values to the user.
 
 The core of the library is written in C++, and a Python wrapper is included.
 At the moment we provide a way to automatically compile and install the library
-as a Python module. Instructions on how to compile the eFEL as a standalone C++ 
+as a Python module. Instructions on how to compile the eFEL as a standalone C++
 library can be found [here](http://efel.readthedocs.io/en/latest/installation.html#installing-the-c-standalone-library).
 
 
@@ -83,12 +83,12 @@ Citation
 When you use this eFEL software for your research, we ask you to cite the following publications (this includes poster presentations):
 
 ```
-    @article{efel, 
-        title={eFEL}, 
+    @article{efel,
+        title={eFEL},
         DOI={10.5281/zenodo.593869},
-        url={https://doi.org/10.5281/zenodo.593869} 
-        abstractNote={The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.}, 
-        publisher={Zenodo}, 
+        url={https://doi.org/10.5281/zenodo.593869}
+        abstractNote={The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.},
+        publisher={Zenodo},
         author={Ranjan, Rajnish and
                 Van Geit, Werner and
                 Moor, Ruben and
@@ -97,8 +97,8 @@ When you use this eFEL software for your research, we ask you to cite the follow
                 Damart, Tanguy and
                 Jaquier, Aurélien and
                 Tuncel, Anil},
-        year={2023}, 
-        month={Jul} 
+        year={2023},
+        month={Jul}
     }
 ```
 
@@ -235,15 +235,15 @@ Results are in mV.
 
 Full documentation
 ==================
-The full documentation can be found [here](http://efel.readthedocs.io) 
+The full documentation can be found [here](http://efel.readthedocs.io)
 
 Funding
 =======
-This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP), 
-the European Union’s Horizon 2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 720270, 785907 
-(Human Brain Project SGA1/SGA2) and by the EBRAINS research infrastructure, funded from the European Union’s Horizon 2020 Framework 
-Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3). 
-This project/research was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de 
+This work has been partially funded by the European Union Seventh Framework Program (FP7/2007­2013) under grant agreement no. 604102 (HBP),
+the European Union’s Horizon 2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 720270, 785907
+(Human Brain Project SGA1/SGA2) and by the EBRAINS research infrastructure, funded from the European Union’s Horizon 2020 Framework
+Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3).
+This project/research was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de
 Lausanne (EPFL), from the Swiss government’s ETH Board of the Swiss Federal Institutes of Technology.
 
 Copyright (c) 2009-2022 Blue Brain Project/EPFL
