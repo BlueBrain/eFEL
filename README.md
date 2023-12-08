@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/BlueBrain/eFEL/master/docs/source/logo/eFELBanner.png"/>
+<img src="https://raw.githubusercontent.com/BlueBrain/eFEL/master/docs/source/logo/eFELBanner.png" alt="eFEL banner" />
 
 <table>
 <tr>
