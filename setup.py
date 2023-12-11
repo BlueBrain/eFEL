@@ -73,6 +73,9 @@ cppcore = Extension('efel.cppcore',
                     extra_compile_args=coverage_flags + ['-std=c++17'],
                     extra_link_args=coverage_flags)
 
+with open("README.md", encoding="utf-8") as f:
+    README = f.read()
+
 setup(
     name="efel",
     version=versioneer.get_version(),
@@ -83,14 +86,8 @@ setup(
     maintainer="Werner Van Geit",
     maintainer_email="werner.vangeit@epfl.ch",
     description="Electrophys Feature Extract Library (eFEL)",
-    long_description="The Electrophys Feature Extract Library (eFEL) allows "
-    "neuroscientists to automatically extract features from time series data "
-    "recorded from neurons (both in vitro and in silico). "
-    "Examples are the action potential width and amplitude in "
-    "voltage traces recorded during whole-cell patch clamp experiments. "
-    "The user of the library provides a set of traces and selects the "
-    "features to be calculated. The library will then extract the requested "
-    "features and return the values to the user.",
+    long_description=README,
+    long_description_content_type="text/markdown",
     license="LGPLv3",
     keywords=[
         'feature',
