@@ -1093,7 +1093,7 @@ int LibV1::maximum_voltage(mapStr2intVec& IntFeatureData,
   int retVal = __maxmin_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
                                 doubleFeatures.at("stim_start")[0],
                                 doubleFeatures.at("stim_end")[0], maxV, minV);
-  if (retVal >= 0) {
+  if (retVal > 0) {
     setVec(DoubleFeatureData, StringData, "maximum_voltage", maxV);
   }
   return retVal;
