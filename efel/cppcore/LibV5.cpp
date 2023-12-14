@@ -1295,9 +1295,8 @@ int LibV5::min_voltage_between_spikes(mapStr2intVec& IntFeatureData,
   const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
 
   if (intFeatures.at("peak_indices").size() < 2) {
-    setVec(DoubleFeatureData, StringData, "min_voltage_between_spikes",
-           vector<double>());
-    return 0;
+    throw FeatureComputationError(
+        "Size of peak_indices should be >= 2 for min_voltage_between_spikes");
   }
 
   vector<double> min_voltage_between_spikes;

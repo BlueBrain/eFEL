@@ -1651,6 +1651,26 @@ def test_min_voltage_between_spikes1():
             min_voltage_between_spikes_value)
 
 
+def test_min_voltage_between_spikes_single_spike():
+    """basic: Test min_voltage_between_spikes testing the edge case of 1 spike."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    # get the last 45% of time and voltage (contains a single spike)
+    time = time[-int(len(time) * 0.45):]
+    voltage = voltage[-int(len(voltage) * 0.45):]
+    # stim_start and stim_end are not effective for this feature
+    trace = {'T': time, 'V': voltage, 'stim_start': [-2], 'stim_end': [-1]}
+
+    features = ['min_voltage_between_spikes']
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+    assert feature_values[0]['min_voltage_between_spikes'] is None
+
+
 def test_getFeatureNames():
     """basic: Test getting all feature names"""
     import efel
