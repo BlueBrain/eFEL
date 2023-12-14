@@ -799,7 +799,7 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
       getFeatures(IntFeatureData, {"min_AHP_indices", "peak_indices"});
   if (intFeatures.at("peak_indices").size() <= 1) {
     GErrorStr +=
-        "\nError: More than one spike is needed for spikewidth calculation.\n";
+        "\nError: More than one spike is needed for spikewidth2 calculation.\n";
     return -1;
   }
   vector<double> spike_width2;
