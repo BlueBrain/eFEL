@@ -1523,13 +1523,12 @@ double __decay_time_constant_after_stim(const vector<double>& times,
 
   if (decayTimes.size() < 1 || decayValues.size() < 1) {
     throw FeatureComputationError("No data points to calculate decay_time_constant_after_stim");
-  } else {
-    linear_fit_result fit;
-    fit = slope_straight_line_fit(decayTimes, decayValues);
+  } 
+  linear_fit_result fit;
+  fit = slope_straight_line_fit(decayTimes, decayValues);
 
-    const double tau = -1.0 / fit.slope;
-    return std::abs(tau);
-  }
+  const double tau = -1.0 / fit.slope;
+  return std::abs(tau);
 }
 
 // *** Decay time constant measured during decay after the stimulus***
@@ -1890,13 +1889,12 @@ int LibV5::sag_ratio1(mapStr2intVec& IntFeatureData,
       DoubleFeatureData, {"sag_amplitude", "voltage_base", "minimum_voltage"});
 
   vector<double> sag_ratio1;
-  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0])
     throw FeatureComputationError("voltage_base equals minimum_voltage");
-  } else {
-    sag_ratio1.push_back(doubleFeatures.at("sag_amplitude")[0] /
-                         (doubleFeatures.at("voltage_base")[0] -
-                          doubleFeatures.at("minimum_voltage")[0]));
-  }
+
+  sag_ratio1.push_back(doubleFeatures.at("sag_amplitude")[0] /
+                        (doubleFeatures.at("voltage_base")[0] -
+                        doubleFeatures.at("minimum_voltage")[0]));
 
   if (!sag_ratio1.empty()) {
     setVec(DoubleFeatureData, StringData, "sag_ratio1", sag_ratio1);
@@ -1913,15 +1911,14 @@ int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
       {"voltage_base", "minimum_voltage", "steady_state_voltage_stimend"});
 
   vector<double> sag_ratio2;
-  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0])
     throw FeatureComputationError("voltage_base equals minimum_voltage");
-  } else {
-    sag_ratio2.push_back(
-        (doubleFeatures.at("voltage_base")[0] -
-         doubleFeatures.at("steady_state_voltage_stimend")[0]) /
-        (doubleFeatures.at("voltage_base")[0] -
-         doubleFeatures.at("minimum_voltage")[0]));
-  }
+
+  sag_ratio2.push_back(
+      (doubleFeatures.at("voltage_base")[0] -
+        doubleFeatures.at("steady_state_voltage_stimend")[0]) /
+      (doubleFeatures.at("voltage_base")[0] -
+        doubleFeatures.at("minimum_voltage")[0]));
 
   if (!sag_ratio2.empty()) {
     setVec(DoubleFeatureData, StringData, "sag_ratio2", sag_ratio2);
