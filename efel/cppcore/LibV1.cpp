@@ -434,8 +434,6 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
   retValIgnore = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
   if ((retValIgnore == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
     IgnoreFirstISI = 0;
-  } else {
-    IgnoreFirstISI = 1;
   }
   vector<double> BurstMeanFreq;
   int retVal = __burst_mean_freq(doubleFeatures.at("peak_time"),
