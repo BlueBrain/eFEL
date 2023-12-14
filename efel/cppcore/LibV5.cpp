@@ -715,11 +715,10 @@ int LibV5::AP2_amp(mapStr2intVec& IntFeatureData,
   if (AP_amplitudes.size() < 2) {
     throw FeatureComputationError(
         "Size of AP_amplitude should be >= 2 for AP2_amp");
-  } else {
-    AP2_amp.push_back(AP_amplitudes[1]);
-    setVec(DoubleFeatureData, StringData, "AP2_amp", AP2_amp);
-    return 1;
   }
+  AP2_amp.push_back(AP_amplitudes[1]);
+  setVec(DoubleFeatureData, StringData, "AP2_amp", AP2_amp);
+  return 1;
 }
 
 // Peak voltage of the second spike
@@ -732,11 +731,10 @@ int LibV5::AP2_peak(mapStr2intVec& IntFeatureData,
   if (peak_voltage.size() < 2) {
     throw FeatureComputationError(
         "Size of peak_voltage should be >= 2 for AP2_peak");
-  } else {
-    AP2_peak.push_back(peak_voltage[1]);
-    setVec(DoubleFeatureData, StringData, "AP2_peak", AP2_peak);
-    return 1;
   }
+  AP2_peak.push_back(peak_voltage[1]);
+  setVec(DoubleFeatureData, StringData, "AP2_peak", AP2_peak);
+  return 1;
 }
 
 // Difference amplitude of the second to first spike
@@ -749,11 +747,10 @@ int LibV5::AP2_AP1_diff(mapStr2intVec& IntFeatureData,
   if (AP_amplitudes.size() < 2) {
     throw FeatureComputationError(
         "Size of AP_amplitude should be >= 2 for AP2_AP1_diff");
-  } else {
-    AP2_AP1_diff.push_back(AP_amplitudes[1] - AP_amplitudes[0]);
-    setVec(DoubleFeatureData, StringData, "AP2_AP1_diff", AP2_AP1_diff);
-    return 1;
   }
+  AP2_AP1_diff.push_back(AP_amplitudes[1] - AP_amplitudes[0]);
+  setVec(DoubleFeatureData, StringData, "AP2_AP1_diff", AP2_AP1_diff);
+  return 1;
 }
 
 // Difference peak_amp of the second to first spike
@@ -766,12 +763,11 @@ int LibV5::AP2_AP1_peak_diff(mapStr2intVec& IntFeatureData,
   if (peak_voltage.size() < 2) {
     throw FeatureComputationError(
         "Size of peak_voltage should be >= 2 for AP2_AP1_peak_diff");
-  } else {
-    AP2_AP1_peak_diff.push_back(peak_voltage[1] - peak_voltage[0]);
-    setVec(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
-           AP2_AP1_peak_diff);
-    return 1;
   }
+  AP2_AP1_peak_diff.push_back(peak_voltage[1] - peak_voltage[0]);
+  setVec(DoubleFeatureData, StringData, "AP2_AP1_peak_diff",
+          AP2_AP1_peak_diff);
+  return 1;
 }
 
 // Width of the first spike
@@ -796,11 +792,10 @@ int LibV5::AP2_width(mapStr2intVec& IntFeatureData,
   if (spike_half_width.size() < 2) {
     throw FeatureComputationError(
         "Size of spike_half_width should be >= 2 for AP2_width");
-  } else {
-    AP2_width.push_back(spike_half_width[1]);
-    setVec(DoubleFeatureData, StringData, "AP2_width", AP2_width);
-    return 1;
   }
+  AP2_width.push_back(spike_half_width[1]);
+  setVec(DoubleFeatureData, StringData, "AP2_width", AP2_width);
+  return 1;
 }
 
 // Width of the last spike
@@ -897,9 +892,8 @@ int LibV5::AHP2_depth_from_peak(mapStr2intVec& IntFeatureData,
   if (ahpDepthFromPeak.size() < 2) {
     throw FeatureComputationError(
         "Size of AHP_depth_from_peak should be >= 2 for AHP2_depth_from_peak");
-  } else {
-    ahp2DepthFromPeak.push_back(ahpDepthFromPeak[1]);
   }
+  ahp2DepthFromPeak.push_back(ahpDepthFromPeak[1]);
   setVec(DoubleFeatureData, StringData, "AHP2_depth_from_peak",
          ahp2DepthFromPeak);
   return 1;
@@ -1043,10 +1037,8 @@ int LibV5::AP2_begin_voltage(mapStr2intVec& IntFeatureData,
 
   if (AP_begin_voltage.size() < 2) {
     throw FeatureComputationError("There are less than 2 spikes in the trace.");
-  } else {
-    AP2_begin_voltage.push_back(AP_begin_voltage[1]);
   }
-
+  AP2_begin_voltage.push_back(AP_begin_voltage[1]);
   setVec(DoubleFeatureData, StringData, "AP2_begin_voltage", AP2_begin_voltage);
   return 1;
 }
@@ -1070,9 +1062,8 @@ int LibV5::AP2_begin_width(mapStr2intVec& IntFeatureData,
   vector<double> AP2_begin_width;
   if (AP_begin_width.size() < 2) {
     throw FeatureComputationError("There are less than 2 spikes in the trace.");
-  } else {
-    AP2_begin_width.push_back(AP_begin_width[1]);
   }
+  AP2_begin_width.push_back(AP_begin_width[1]);
   setVec(DoubleFeatureData, StringData, "AP2_begin_width", AP2_begin_width);
   return 1;
 }
@@ -1086,9 +1077,8 @@ int LibV5::AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
   vector<double> AP2_AP1_begin_width_diff;
   if (AP_begin_widths.size() < 2) {
     throw FeatureComputationError("There are less than 2 spikes in the trace.");
-  } else {
-    AP2_AP1_begin_width_diff.push_back(AP_begin_widths[1] - AP_begin_widths[0]);
   }
+  AP2_AP1_begin_width_diff.push_back(AP_begin_widths[1] - AP_begin_widths[0]);
   setVec(DoubleFeatureData, StringData, "AP2_AP1_begin_width_diff",
          AP2_AP1_begin_width_diff);
   return 1;
