@@ -390,13 +390,6 @@ int LibV5::spike_width1(mapStr2intVec& IntFeatureData,
       getFeatures(IntFeatureData, {"min_AHP_indices", "peak_indices"});
 
   vector<double> spike_width1;
-  // Check if peak_indices and min_AHP_indices are empty
-  if (intFeatures.at("peak_indices").empty() ||
-      intFeatures.at("min_AHP_indices").empty()) {
-    setVec(DoubleFeatureData, StringData, "spike_half_width", spike_width1);
-    return 0;
-  }
-
   // Calculate spike width
   int retVal = __spike_width1(doubleFeatures.at("T"), doubleFeatures.at("V"),
                               intFeatures.at("peak_indices"),
