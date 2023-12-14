@@ -566,7 +566,7 @@ int LibV2::amp_drop_first_last(mapStr2intVec& IntFeatureData,
                                mapStr2Str& StringData) {
   const auto& peakVoltageFeature =
       getFeatures(DoubleFeatureData, {"peak_voltage"});
-  const vector<double> peakvoltage = peakVoltageFeature.at("peak_voltage");
+  const vector<double>& peakvoltage = peakVoltageFeature.at("peak_voltage");
 
   if (peakvoltage.size() < 2) {
     GErrorStr +=
