@@ -427,7 +427,7 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
   const auto& intFeatures =
-      getFeatures(IntFeatureData, {"burst_ISI_indices", "ignore_first_ISI"});
+      getFeatures(IntFeatureData, {"burst_ISI_indices"});
   int IgnoreFirstISI = 1;
   int retValIgnore;
   vector<int> retIgnore;
