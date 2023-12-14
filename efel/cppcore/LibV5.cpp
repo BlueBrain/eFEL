@@ -913,8 +913,8 @@ static int __AP_begin_width(const vector<double>& t, const vector<double>& v,
 
   // keep only min_ahp_indices values that are after stim start
   // because AP_begin_indices are all after stim start
-  // if not done, could cause cases where AP_begin_indices[i] >
-  // min_ahp_indices[i] leading to segmentation faults
+  // if not done, could cause cases where AP_begin_indices[i] > min_ahp_indices[i]
+  // leading to segmentation faults
   auto it = find_if(t.begin(), t.end(),
                     [stimstart](double val) { return val >= stimstart; });
   int stimbeginindex = distance(t.begin(), it);
