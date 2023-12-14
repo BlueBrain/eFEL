@@ -2204,7 +2204,7 @@ int LibV5::AP_width_between_threshold(mapStr2intVec& IntFeatureData,
       doubleFeatures.at("Threshold").front(),
       intFeatures.at("min_between_peaks_indices"), ap_width_threshold);
   if (retval == 0)
-    throw EmptyFeatureError("AP_width_between_threshold is empty");
+    return -1;
   else if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_width_between_threshold",
            ap_width_threshold);
