@@ -1367,6 +1367,23 @@ def test_ohmic_inputresistance():
         stimulus_current)
 
 
+def test_ohmic_inputresistance_zero_stimulus_current():
+    """Test the edge case of having 0.0 stimulus current."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    trace = {'T': time, 'V': voltage, 'stim_start': [-2], 'stim_end': [-1]}
+    features = ['ohmic_input_resistance']
+
+    stimulus_current = 0.0
+    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    feature_values = efel.getFeatureValues([trace], features)
+
+    ohmic_input_resistance = feature_values[0]['ohmic_input_resistance']
+    assert ohmic_input_resistance is None
+
+
 def test_sag_amplitude():
     """basic: Test sag_amplitude"""
 
@@ -1577,6 +1594,22 @@ def test_ohmic_input_resistance_vb_ssse():
         ohmic_input_resistance ==
         voltage_deflection /
         stimulus_current)
+
+
+def test_ohmic_input_resistance_vb_ssse_zero_stimulus_current():
+    """edge case of having zero stimulus current."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    # start and end times are not used for this feature
+    trace = {'T': time, 'V': voltage, 'stim_start': [500.0], 'stim_end': [900.0]}
+
+    stimulus_current = 0.0
+    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    feature_values = efel.getFeatureValues([trace], ['ohmic_input_resistance_vb_ssse'])
+    ohmic_input_resistance = feature_values[0]['ohmic_input_resistance_vb_ssse']
+    assert ohmic_input_resistance is None
 
 
 def test_spikecount2():

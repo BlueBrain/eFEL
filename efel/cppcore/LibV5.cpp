@@ -1712,10 +1712,12 @@ int LibV5::ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
                                           mapStr2Str& StringData) {
   const auto& doubleFeatures = getFeatures(
       DoubleFeatureData, {"voltage_deflection_vb_ssse", "stimulus_current"});
+  const double stimulus_current = doubleFeatures.at("stimulus_current")[0];
+  if (stimulus_current == 0)
+    throw FeatureComputationError("Stimulus current is zero which will result in division by zero.");
   vector<double> ohmic_input_resistance_vb_ssse;
   ohmic_input_resistance_vb_ssse.push_back(
-      doubleFeatures.at("voltage_deflection_vb_ssse")[0] /
-      doubleFeatures.at("stimulus_current")[0]);
+      doubleFeatures.at("voltage_deflection_vb_ssse")[0] / stimulus_current);
   setVec(DoubleFeatureData, StringData, "ohmic_input_resistance_vb_ssse",
          ohmic_input_resistance_vb_ssse);
 

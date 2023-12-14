@@ -992,6 +992,8 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
 static int __ohmic_input_resistance(double voltage_deflection,
                                     double stimulus_current,
                                     vector<double>& oir) {
+  if (stimulus_current == 0)
+    throw FeatureComputationError("Stimulus current is zero which will result in division by zero.");
   oir.push_back(voltage_deflection / stimulus_current);
   return 1;
 }
