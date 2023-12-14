@@ -117,10 +117,8 @@ int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
   const auto maxnSpike = getFeature(IntFeatureData, {"max_spike_skip"}).front();
 
   // Check the validity of spikeSkipf value
-  if (spikeSkipf < 0 || spikeSkipf >= 1) {
-    GErrorStr += "\nspike_skipf should lie between [0 1).\n";
-    return -1;
-  }
+  if (spikeSkipf < 0 || spikeSkipf >= 1)
+    throw FeatureComputationError("spike_skipf should lie between [0 1).");
 
   vector<double> slope;
   bool semilog = false;
@@ -142,10 +140,9 @@ int LibV5::time_to_second_spike(mapStr2intVec& IntFeatureData,
       getFeatures(DoubleFeatureData, {"peak_time", "stim_start"});
   const auto& peaktime = doubleFeatures.at("peak_time");
   const auto& stimstart = doubleFeatures.at("stim_start");
-  if (peaktime.size() < 2) {
-    GErrorStr += "\n Two spikes required for time_to_second_spike.\n";
-    return -1;
-  }
+  if (peaktime.size() < 2)
+    throw FeatureComputationError("Two spikes required for time_to_second_spike.");
+
   vector<double> second_spike = {peaktime[1] - stimstart[0]};
   setVec(DoubleFeatureData, StringData, "time_to_second_spike", second_spike);
   return 1;
@@ -450,10 +447,8 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
     }
   }
   int endindex = distance(t.begin(), t.end());
-  if (minima.size() < peak_indices.size()) {
-    GErrorStr += "\nMore peaks than min_AHP in AP_begin_indices\n";
-    return -1;
-  }
+  if (minima.size() < peak_indices.size())
+    throw FeatureComputationError("More peaks than min_AHP in AP_begin_indices.");
 
   // printf("Found %d minima\n", minima.size());
   for (size_t i = 0; i < peak_indices.size(); i++) {
@@ -523,10 +518,8 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
   // Get DerivativeWindow
   vector<int> derivative_window;
   retVal = getParam(IntFeatureData, "DerivativeWindow", derivative_window);
-  if (retVal <= 0) {
-    GErrorStr += "\nDerivativeWindow not set\n";
-    return -1;
-  }
+  if (retVal <= 0)
+    throw FeatureComputationError("DerivativeWindow not set.");
 
   // Calculate feature
   retVal = __AP_begin_indices(
@@ -1268,10 +1261,8 @@ int LibV5::all_ISI_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
   const vector<double>& peak_time = getFeature(DoubleFeatureData, "peak_time");
-  if (peak_time.size() < 2) {
-    GErrorStr += "\n Two spikes required for calculation of all_ISI_values.\n";
-    return -1;
-  }
+  if (peak_time.size() < 2)
+    throw FeatureComputationError("Two spikes required for calculation of all_ISI_values.");
 
   vector<double> VecISI;
   for (size_t i = 1; i < peak_time.size(); i++) {
@@ -1414,10 +1405,8 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
   double endTime = stimStart[0] * vb_end_perc;
 
   // Validate start and end times.
-  if (startTime >= endTime) {
-    GErrorStr += "\nvoltage_base: startTime >= endTime\n";
-    return -1;
-  }
+  if (startTime >= endTime)
+    throw FeatureComputationError("voltage_base: startTime >= endTime");
 
   const auto& precisionThreshold =
       getFeature(DoubleFeatureData, "precision_threshold");
@@ -1443,11 +1432,8 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     vBase = vec_mean(subVector);
   else if (computation_mode == "median")
     vBase = vec_median(subVector);
-  else {
-    GErrorStr +=
-        "\nUndefined computational mode. Only mean and median are enabled\n";
-    return -1;
-  }
+  else
+    throw FeatureComputationError("Undefined computational mode. Only mean and median are enabled.");
 
   vector<double> vRest = {vBase};
   setVec(DoubleFeatureData, StringData, "voltage_base", vRest);
@@ -1477,10 +1463,8 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
   double startTime = doubleFeatures.at("stim_start")[0] * cb_start_perc;
   double endTime = doubleFeatures.at("stim_start")[0] * cb_end_perc;
 
-  if (startTime >= endTime) {
-    GErrorStr += "\ncurrent_base: startTime >= endTime\n";
-    return -1;
-  }
+  if (startTime >= endTime)
+    throw FeatureComputationError("current_base: startTime >= endTime");
 
   vector<double> precisionThreshold;
   int retVal =
@@ -1501,12 +1485,8 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
     iBase = vec_mean(subVector);
   else if (computation_mode == "median")
     iBase = vec_median(subVector);
-  else {
-    GErrorStr +=
-        "\ncurrent_base error: Undefined computational mode. Only mean and "
-        "median are enabled\n";
-    return -1;
-  }
+  else
+    throw FeatureComputationError("Undefined computational mode. Only mean and median are enabled.");
 
   vector<double> iRest{iBase};
   setVec(DoubleFeatureData, StringData, "current_base", iRest);
@@ -1543,10 +1523,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
   }
 
   if (decayTimes.size() < 1 || decayValues.size() < 1) {
-    GErrorStr +=
-        "\ndecay_time_constant_after_stim: no data points to calculate this "
-        "feature\n";
-    return -1;
+    throw FeatureComputationError("No data points to calculate decay_time_constant_after_stim");
   } else {
     linear_fit_result fit;
     fit = slope_straight_line_fit(decayTimes, decayValues);
@@ -1581,11 +1558,8 @@ int LibV5::decay_time_constant_after_stim(mapStr2intVec& IntFeatureData,
     decay_end_after_stim = 10.0;  // Default value if not found
   }
   // Validate decay times
-  if (decay_start_after_stim >= decay_end_after_stim) {
-    GErrorStr +=
-        "Error decay_start_after_stim small larger than decay_end_after_stim";
-    return -1;
-  }
+  if (decay_start_after_stim >= decay_end_after_stim)
+    throw FeatureComputationError("Error decay_start_after_stim small larger than decay_end_after_stim");
 
   // Perform calculation
   const double val = __decay_time_constant_after_stim(
@@ -1683,10 +1657,7 @@ static int __sag_time_constant(const vector<double>& times,
     decayValues[i] = log(u0);
   }
   if (decayValues.size() < min_length) {
-    GErrorStr +=
-        "\nsag time constant: Not enough data points to compute time "
-        "constant.\n";
-    return -1;
+    throw FeatureComputationError("Not enough data points to compute time constant.");
   }
   linear_fit_result fit;
   fit = slope_straight_line_fit(TInterval, decayValues);
@@ -1901,11 +1872,8 @@ int LibV5::sag_amplitude(mapStr2intVec& IntFeatureData,
     sag_amplitude.push_back(
         doubleFeatures.at("steady_state_voltage_stimend")[0] -
         doubleFeatures.at("minimum_voltage")[0]);
-  } else {
-    // In case of positive voltage deflection, return an error
-    GErrorStr += "\nsag_amplitude: voltage_deflection is positive\n";
-    return -1;
-  }
+  } else
+      throw FeatureComputationError("sag_amplitude: voltage_deflection is positive");
 
   if (!sag_amplitude.empty()) {
     setVec(DoubleFeatureData, StringData, "sag_amplitude", sag_amplitude);
@@ -1921,11 +1889,8 @@ int LibV5::sag_ratio1(mapStr2intVec& IntFeatureData,
       DoubleFeatureData, {"sag_amplitude", "voltage_base", "minimum_voltage"});
 
   vector<double> sag_ratio1;
-  if (doubleFeatures.at("minimum_voltage")[0] ==
-      doubleFeatures.at("voltage_base")[0]) {
-    GErrorStr += "\nsag_ratio1: voltage_base equals minimum_voltage\n";
-    // In case of possible division by zero return error
-    return -1;
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+    throw FeatureComputationError("voltage_base equals minimum_voltage");
   } else {
     sag_ratio1.push_back(doubleFeatures.at("sag_amplitude")[0] /
                          (doubleFeatures.at("voltage_base")[0] -
@@ -1947,11 +1912,8 @@ int LibV5::sag_ratio2(mapStr2intVec& IntFeatureData,
       {"voltage_base", "minimum_voltage", "steady_state_voltage_stimend"});
 
   vector<double> sag_ratio2;
-  if (doubleFeatures.at("minimum_voltage")[0] ==
-      doubleFeatures.at("voltage_base")[0]) {
-    GErrorStr += "\nsag_ratio2: voltage_base equals minimum_voltage\n";
-    // In case of possible division by zero return error
-    return -1;
+  if (doubleFeatures.at("minimum_voltage")[0] == doubleFeatures.at("voltage_base")[0]) {
+    throw FeatureComputationError("voltage_base equals minimum_voltage");
   } else {
     sag_ratio2.push_back(
         (doubleFeatures.at("voltage_base")[0] -
@@ -2400,10 +2362,7 @@ static int __ADP_peak_indices(const vector<double>& v,
                               vector<int>& ADP_peak_indices,
                               vector<double>& ADP_peak_values) {
   if (min_AHP_indices.size() > min_between_peaks_indices.size()) {
-    GErrorStr +=
-        "\nmin_AHP_indices should not have less elements than "
-        "min_between_peaks_indices\n";
-    return -1;
+    throw FeatureComputationError("min_AHP_indices should not have less elements than min_between_peaks_indices");
   }
 
   unsigned adp_peak_index;
@@ -2456,12 +2415,8 @@ int LibV5::ADP_peak_amplitude(mapStr2intVec& IntFeatureData,
   const vector<double>& min_AHP_values = doubleFeatures.at("min_AHP_values");
   const vector<double>& ADP_peak_values = doubleFeatures.at("ADP_peak_values");
 
-  if (min_AHP_values.size() != ADP_peak_values.size()) {
-    GErrorStr +=
-        "\nmin_AHP_values and ADP_peak_values should have the same number of "
-        "elements\n";
-    return -1;
-  }
+  if (min_AHP_values.size() != ADP_peak_values.size())
+    throw FeatureComputationError("min_AHP_values and ADP_peak_values should have the same number of elements");
   for (size_t i = 0; i < ADP_peak_values.size(); i++) {
     ADP_peak_amplitude.push_back(ADP_peak_values[i] - min_AHP_values[i]);
   }
@@ -2602,10 +2557,7 @@ int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
       intFeatures.at("interburst_min_indices");
 
   if (burst_end_indices.size() < interburst_min_indices.size()) {
-    GErrorStr +=
-        "\nburst_end_indices should not have less elements than "
-        "interburst_min_indices\n";
-    return -1;
+    throw FeatureComputationError("burst_end_indices should not have less elements than interburst_min_indices");
   }
 
   for (size_t i = 0; i < interburst_min_indices.size(); i++) {

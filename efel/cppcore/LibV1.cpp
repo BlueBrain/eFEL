@@ -97,10 +97,8 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
   const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
-  if (doubleFeatures.at("peak_time").size() < 3) {
-    GErrorStr += "\n Three spikes required for calculation of ISI_values.\n";
-    return -1;
-  }
+  if (doubleFeatures.at("peak_time").size() < 3)
+    throw FeatureComputationError("Three spikes required for calculation of ISI_values.");
 
   const auto& intFeatures = getFeatures(IntFeatureData, {"ignore_first_ISI"});
   int IgnoreFirstISI = 1;
@@ -178,10 +176,8 @@ int LibV1::firing_rate(mapStr2intVec& IntFeatureData,
       nCount++;
     }
   }
-  if (lastAPTime == doubleFeatures.at("stim_start")[0]) {
-    GErrorStr += "\nPrevent divide by zero.\n";
-    return -1;
-  }
+  if (lastAPTime == doubleFeatures.at("stim_start")[0])
+    throw FeatureComputationError("Prevent divide by zero.");
   vector<double> firing_rate;
   firing_rate.push_back(nCount * 1000 /
                         (lastAPTime - doubleFeatures.at("stim_start")[0]));
@@ -208,10 +204,8 @@ int LibV1::first_spike_time(mapStr2intVec& IntFeatureData,
                             mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"peak_time", "stim_start"});
-  if (doubleFeatures.at("peak_time").size() < 1) {
-    GErrorStr += "\n One spike required for time_to_first_spike.\n";
-    return -1;
-  }
+  if (doubleFeatures.at("peak_time").size() < 1)
+    throw FeatureComputationError("One spike required for time_to_first_spike.");
   vector<double> first_spike;
   first_spike.push_back(doubleFeatures.at("peak_time")[0] -
                         doubleFeatures.at("stim_start")[0]);
@@ -236,13 +230,8 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
       getFeatures(DoubleFeatureData,
                   {"V", "stim_start", "stim_end", "peak_voltage", "peak_time"});
   const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices"});
-  if (doubleFeatures.at("peak_voltage").size() !=
-      doubleFeatures.at("peak_time").size()) {
-    GErrorStr +=
-        "AP_amplitude: Not the same amount of peak_time and peak_voltage "
-        "entries";
-    return -1;
-  }
+  if (doubleFeatures.at("peak_voltage").size() != doubleFeatures.at("peak_time").size())
+    throw FeatureComputationError("AP_amplitude: Not the same amount of peak_time and peak_voltage entries");
   vector<double> peakvoltage_duringstim;
   for (size_t i = 0; i < doubleFeatures.at("peak_time").size(); i++) {
     if (doubleFeatures.at("peak_time")[i] >=
@@ -251,13 +240,8 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
       peakvoltage_duringstim.push_back(doubleFeatures.at("peak_voltage")[i]);
     }
   }
-  if (peakvoltage_duringstim.size() >
-      intFeatures.at("AP_begin_indices").size()) {
-    GErrorStr +=
-        "AP_amplitude: More peak_voltage entries during the stimulus than "
-        "AP_begin_indices entries";
-    return -1;
-  }
+  if (peakvoltage_duringstim.size() > intFeatures.at("AP_begin_indices").size())
+    throw FeatureComputationError("AP_amplitude: More peak_voltage entries during the stimulus than AP_begin_indices entries");
   vector<double> apamplitude;
   apamplitude.resize(peakvoltage_duringstim.size());
   for (size_t i = 0; i < apamplitude.size(); i++) {
@@ -301,12 +285,8 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"T", "V", "sahp_start"});
   const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
-  if (intFeatures.at("peak_indices").size() < 3) {
-    GErrorStr +=
-        "\n At least 3 spikes needed for AHP_depth_abs_slow and "
-        "AHP_slow_time.\n";
-    return -1;
-  }
+  if (intFeatures.at("peak_indices").size() < 3)
+    throw FeatureComputationError("At least 3 spikes needed for AHP_depth_abs_slow and AHP_slow_time.");
   double sahp_start = (doubleFeatures.at("sahp_start").empty())
                           ? 5
                           : doubleFeatures.at("sahp_start")[0];
@@ -372,11 +352,8 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"ISI_values", "burst_factor"});
   const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
-  if (intFeatures.at("peak_indices").size() < 5) {
-    GErrorStr +=
-        "\nError: More than 5 spike is needed for burst calculation.\n";
-    return -1;
-  }
+  if (intFeatures.at("peak_indices").size() < 5)
+    throw FeatureComputationError("More than 5 spikes are needed for burst calculation.");
   double BurstFactor = (doubleFeatures.at("burst_factor").empty())
                            ? 2
                            : doubleFeatures.at("burst_factor")[0];
@@ -542,10 +519,8 @@ static int __adaptation_index(double spikeSkipf, int maxnSpike,
   }
 
   // Adaptation index can not be calculated if nAPVec <4 or no of ISI is <3
-  if (SpikeTime.size() < 4) {
-    GErrorStr += "\nMinimum 4 spike needed for feature [adaptation_index].\n";
-    return -1;
-  }
+  if (SpikeTime.size() < 4)
+    throw FeatureComputationError("Minimum 4 spikes needed for feature [adaptation_index].");
 
   // Generate ISI vector
   list<double>::iterator lstItr = SpikeTime.begin();
@@ -579,8 +554,7 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
 
   if (doubleFeatures.at("spike_skipf")[0] < 0 ||
       doubleFeatures.at("spike_skipf")[0] >= 1) {
-    GErrorStr += "\nspike_skipf should lie between [0 1).\n";
-    return -1;
+    throw FeatureComputationError("spike_skipf should lie between [0 1).");
   }
   vector<double> OffSetVec;
   double Offset;
@@ -620,10 +594,7 @@ static int __adaptation_index2(double StimStart, double StimEnd, double Offset,
   }
 
   if (SpikeTime.size() < 4) {
-    GErrorStr +=
-        "\n At least 4 spikes within stimulus interval needed for "
-        "adaptation_index2.\n";
-    return -1;
+    throw FeatureComputationError("At least 4 spikes within stimulus interval needed for adaptation_index2.");
   }
   // start at second ISI:
   SpikeTime.pop_front();
@@ -664,8 +635,7 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
     Offset = OffSetVec[0];
 
   if (doubleFeatures.at("peak_time").size() < 4) {
-    GErrorStr += "\n At least 4 spikes needed for adaptation_index2.\n";
-    return -1;
+    throw FeatureComputationError("At least 4 spikes needed for adaptation_index2.");
   }
 
   vector<double> adaptationindex2;
@@ -700,10 +670,7 @@ int LibV1::trace_check(mapStr2intVec& IntFeatureData,
     setVec(IntFeatureData, StringData, "trace_check", tc);
     return tc.size();
   } else {
-    GErrorStr +=
-        "Trace sanity check failed, there were spike outside the stimulus "
-        "interval.\n";
-    return -1;
+    throw FeatureComputationError("Trace sanity check failed, there were spike outside the stimulus interval.");
   }
 }
 
@@ -724,8 +691,7 @@ static int __spike_width2(const vector<double>& t, const vector<double>& V,
 
     for (int j = minAHPIndex[i]; j <= PeakIndex[i + 1]; j++) {
       if (j < 0) {
-        GErrorStr += "\nInvalid index\n";
-        return -1;
+        throw FeatureComputationError("Invalid index");
       }
       v.push_back(V[j]);
     }
@@ -775,8 +741,7 @@ static int __spike_width2(const vector<double>& t, const vector<double>& V,
     }
 
     if (index == V.size()) {
-      GErrorStr += "\nFalling phase of last spike is missing.\n";
-      return -1;
+      throw FeatureComputationError("Falling phase of last spike is missing.");
     }
 
     T0 = t[index - 1];
@@ -798,9 +763,7 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
   const auto& intFeatures =
       getFeatures(IntFeatureData, {"min_AHP_indices", "peak_indices"});
   if (intFeatures.at("peak_indices").size() <= 1) {
-    GErrorStr +=
-        "\nError: More than one spike is needed for spikewidth2 calculation.\n";
-    return -1;
+    throw FeatureComputationError("More than one spike is needed for spikewidth2 calculation.");
   }
   vector<double> spike_width2;
   int retVal = __spike_width2(doubleFeatures.at("T"), doubleFeatures.at("V"),
@@ -866,8 +829,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
                    return val > -min_derivative;
                  }) != dvdt.begin() + i_start + 5) {
     if (dvdt.begin() + i_start + 5 == dvdt.end()) {
-      GErrorStr += "Could not find the decay.\n";
-      return -1;
+      throw FeatureComputationError("Could not find the decay.");
     }
     i_start++;
   }
@@ -902,8 +864,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
   vector<double> t_decay(part_t.begin() + i_start, part_t.begin() + i_flat);
   vector<double> v_decay(part_v.begin() + i_start, part_v.begin() + i_flat);
   if (dvdt_decay.size() < min_length) {
-    GErrorStr += "\nTrace fall time too short.\n";
-    return -1;
+    throw FeatureComputationError("Trace fall time too short.");
   }
 
   // fit to exponential
@@ -1053,10 +1014,8 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
 static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
                             double stimStart, double stimEnd,
                             vector<double>& maxV, vector<double>& minV) {
-  if (stimStart > t[t.size() - 1]) {
-    GErrorStr += "\nStimulus start larger than max time in trace\n";
-    return -1;
-  }
+  if (stimStart > t[t.size() - 1])
+    throw FeatureComputationError("Stimulus start larger than max time in trace");
 
   if (stimEnd > t[t.size() - 1]) stimEnd = t.back();
 
@@ -1065,8 +1024,7 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     stimstartindex++;
 
   if (stimstartindex >= t.size()) {
-    GErrorStr += "\nStimulus start index not found\n";
-    return -1;
+    throw FeatureComputationError("Stimulus start index not found");
   }
 
   size_t stimendindex = 0;
@@ -1074,8 +1032,7 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     stimendindex++;
 
   if (stimendindex >= t.size()) {
-    GErrorStr += "\nStimulus end index not found\n";
-    return -1;
+    throw FeatureComputationError("Stimulus end index not found");
   }
 
   maxV.push_back(*max_element(&v[stimstartindex], &v[stimendindex]));
@@ -1269,8 +1226,7 @@ int LibV1::doublet_ISI(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData) {
   const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
   if (doubleFeatures.at("peak_time").size() < 2) {
-    GErrorStr += "\nNeed at least two spikes for doublet_ISI.\n";
-    return -1;
+    throw FeatureComputationError("Need at least two spikes for doublet_ISI.");
   }
   vector<double> doubletisi(
       1, doubleFeatures.at("peak_time")[1] - doubleFeatures.at("peak_time")[0]);

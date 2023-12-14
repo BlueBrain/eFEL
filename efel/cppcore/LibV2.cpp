@@ -542,9 +542,7 @@ int LibV2::amp_drop_first_second(mapStr2intVec& IntFeatureData,
   const vector<double> peakvoltage = features.at("peak_voltage");
 
   if (peakvoltage.size() < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of amp_drop_first_second.\n";
-    return -1;
+    throw FeatureComputationError("At least 2 spikes needed for calculation of amp_drop_first_second.");
   }
   vector<double> ampdropfirstsecond;
   int retval = __amp_drop_first_second(peakvoltage, ampdropfirstsecond);
@@ -569,9 +567,7 @@ int LibV2::amp_drop_first_last(mapStr2intVec& IntFeatureData,
   const vector<double>& peakvoltage = peakVoltageFeature.at("peak_voltage");
 
   if (peakvoltage.size() < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of amp_drop_first_last.\n";
-    return -1;
+    throw FeatureComputationError("At least 2 spikes needed for calculation of amp_drop_first_last.");
   }
   vector<double> ampdropfirstlast;
   int retval = __amp_drop_first_last(peakvoltage, ampdropfirstlast);
@@ -597,9 +593,7 @@ int LibV2::amp_drop_second_last(mapStr2intVec& IntFeatureData,
   const vector<double>& peakvoltage = peakVoltageFeatures.at("peak_voltage");
   // Ensure there are at least 3 spikes for calculation
   if (peakvoltage.size() < 3) {
-    GErrorStr +=
-        "At least 3 spikes needed for calculation of amp_drop_second_last.\n";
-    return -1;
+    throw FeatureComputationError("At least 3 spikes needed for calculation of amp_drop_second_last.");
   }
   vector<double> ampdropsecondlast;
   int retval = __amp_drop_second_last(peakvoltage, ampdropsecondlast);
@@ -633,9 +627,7 @@ int LibV2::max_amp_difference(mapStr2intVec& IntFeatureData,
 
   // Ensure there are at least 2 spikes for calculation
   if (features.at("peak_voltage").size() < 2) {
-    GErrorStr +=
-        "At least 2 spikes needed for calculation of max_amp_difference.\n";
-    return -1;
+    throw FeatureComputationError("At least 2 spikes needed for calculation of max_amp_difference.");
   }
   vector<double> maxampdifference;
   int retval =
