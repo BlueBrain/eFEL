@@ -1373,7 +1373,7 @@ def test_ohmic_input_resistance_zero_stimulus_current():
     efel.reset()
 
     time, voltage = load_ascii_input(meanfrequency1_url)
-    trace = {'T': time, 'V': voltage, 'stim_start': [-2], 'stim_end': [-1]}
+    trace = {'T': time, 'V': voltage, 'stim_start': [500], 'stim_end': [900]}
     features = ['ohmic_input_resistance']
 
     stimulus_current = 0.0
