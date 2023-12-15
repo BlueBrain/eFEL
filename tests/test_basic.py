@@ -1367,7 +1367,7 @@ def test_ohmic_inputresistance():
         stimulus_current)
 
 
-def test_ohmic_inputresistance_zero_stimulus_current():
+def test_ohmic_input_resistance_zero_stimulus_current():
     """Test the edge case of having 0.0 stimulus current."""
     import efel
     efel.reset()
