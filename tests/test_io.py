@@ -1,129 +1,31 @@
 """Test eFEL io module"""
 
-# pylint: disable=F0401
-
 import os
+from pathlib import Path
+import numpy as np
 
 import pytest
 
-testdata_dir = os.path.join(
-    os.path.dirname(
-        os.path.abspath(__file__)),
-    'testdata')
-
-neo_test_files_dir = os.path.join(
-    os.path.dirname(
-        os.path.abspath(__file__)),
-    'neo_test_files')
-
-meanfrequency1_filename = os.path.join(testdata_dir,
-                                       'basic',
-                                       'mean_frequency_1.txt')
-meanfrequency1_url = 'file://%s' % meanfrequency1_filename
+from efel.io import load_ascii_input
 
 
-def test_import():
-    """io: Testing import"""
-
-    # pylint: disable=W0611
-    import efel.io  # NOQA
-    # pylint: enable=W0611
+testdata_dir = Path(__file__).parent / 'testdata'
+neo_test_files_dir = Path(__file__).parent / 'neo_test_files'
+meanfrequency1_filename = testdata_dir / 'basic' / 'mean_frequency_1.txt'
+meanfrequency1_url = str(meanfrequency1_filename)
 
 
-def test_import_without_urlparse():
-    """io: Testing import without urlparse"""
+def test_load_ascii_input():
+    """Test loading of data from an ASCII file and splitting into time and voltage."""
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
-    # The only purpose of this test is to get the code coverage to 100% :-)
+    # Load data using numpy for comparison
+    expected_data = np.loadtxt(meanfrequency1_url, delimiter=' ')
+    expected_time, expected_voltage = expected_data[:, 0], expected_data[:, 1]
 
-    import sys
-    del sys.modules['efel.io']
-
-    python_version = sys.version_info[0]
-
-    if python_version < 3:
-        import __builtin__
-    else:
-        import builtins as __builtin__
-    realimport = __builtin__.__import__
-
-    def myimport(name, *args):  # global_s, local, fromlist, level):
-        """Override import"""
-        if name == 'urlparse':
-            raise ImportError
-        return realimport(name, *args)  # global_s, local, fromlist, level)
-    __builtin__.__import__ = myimport
-
-    try:
-        import urllib.parse  # NOQA
-        urllibparse_import_fails = False
-    except ImportError:
-        urllibparse_import_fails = True
-
-    if urllibparse_import_fails:
-        pytest.raises(ImportError, __builtin__.__import__, 'efel.io')
-    else:
-        import efel.io  # NOQA
-
-    __builtin__.__import__ = realimport
-
-
-def test_load_fragment_column_txt1():
-    """io: Test loading of one column from txt file"""
-
-    import efel
-    import numpy
-
-    time_io = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-
-    time_numpy = numpy.loadtxt(meanfrequency1_filename, usecols=[0])
-
-    numpy.testing.assert_array_equal(time_io, time_numpy)
-
-
-def test_load_fragment_strange_mimetype():
-    """io: Test loading file with unresolvable mime type"""
-
-    import efel
-
-    pytest.raises(
-        TypeError,
-        efel.io.load_fragment, 'file://strange.mimetype')
-
-
-def test_load_fragment_wrong_fragment_format():
-    """io: Test loading file wrong fragment format"""
-
-    import efel
-
-    pytest.raises(
-        TypeError,
-        efel.io.load_fragment,
-        '%s#co=1' %
-        meanfrequency1_url)
-
-
-def test_load_fragment_wrong_mimetype():
-    """io: Test loading fragment wrong mime type"""
-
-    import efel
-
-    pytest.raises(
-        TypeError,
-        efel.io.load_fragment,
-        '%s#col=1' % meanfrequency1_url, mime_type='application/json')
-
-
-def test_load_fragment_allcolumns():
-    """io: Test loading fragment without specifying columns"""
-
-    import efel
-    import numpy
-
-    time_io = efel.io.load_fragment('%s' % meanfrequency1_url)
-
-    time_numpy = numpy.loadtxt(meanfrequency1_filename)
-
-    numpy.testing.assert_array_equal(time_io, time_numpy)
+    # Assert that the arrays are equal
+    np.testing.assert_array_equal(time, expected_time)
+    np.testing.assert_array_equal(voltage, expected_voltage)
 
 
 def test_load_neo_file_stim_time_arg():
