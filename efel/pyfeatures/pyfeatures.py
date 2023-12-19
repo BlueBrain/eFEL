@@ -72,6 +72,8 @@ def impedance():
         holding_current = _get_cpp_feature("current_base")
         normalized_current = current_trace - holding_current
         spike_count = _get_cpp_feature("Spikecount")
+        if spike_count is None:
+            spike_count = 0
         if spike_count < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)

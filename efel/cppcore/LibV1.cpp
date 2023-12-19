@@ -80,13 +80,7 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
 int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {
-  size_t spikecount_value;
-  try {  // handle empty peak_indices
-    const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
-    spikecount_value = intFeatures.at("peak_indices").size();
-  } catch (const EmptyFeatureError& e) {
-    spikecount_value = 0;
-  }
+  size_t spikecount_value = getFeature(IntFeatureData, {"peak_indices"}).size();
   vector<int> spikecount(1, spikecount_value);
   setVec(IntFeatureData, StringData, "Spikecount", spikecount);
   return spikecount_value;

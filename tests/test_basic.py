@@ -1638,8 +1638,8 @@ def test_spikecount2():
             [trace],
             features)
 
-    spikecount = feature_values[0]['Spikecount'][0]
-    assert spikecount == 0
+    spikecount = feature_values[0]['Spikecount']
+    assert spikecount is None
 
 
 def test_min_voltage_between_spikes1():
