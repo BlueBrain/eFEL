@@ -21,4 +21,4 @@ bin
 *.ipynb_checkpoints
 lib
 fllog.txt
-.DS_STORE
+*.DS_Store

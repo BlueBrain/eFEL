@@ -39,7 +39,7 @@ MUTPB = 0.3
 # The higher this value, the more spread
 ETA = 10.0
 
-# Seletor to use
+# Selector to use
 SELECTOR = "NSGA2"
 
 # Number of parameters
@@ -51,7 +51,7 @@ UPPER = [1e-4, -20.0]
 
 # Create a fitness function
 # By default DEAP selector will try to optimise fitness values,
-# so we add a -1 weight value to minise
+# so we add a -1 weight value to minimise
 creator.create("Fitness", base.Fitness, weights=[-1.0] * 2)
 
 # Create an individual that consists of a list

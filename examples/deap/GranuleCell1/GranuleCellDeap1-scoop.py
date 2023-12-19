@@ -13,6 +13,7 @@ neuron.h.load_file('stdrun.hoc')
 import efel
 import numpy as np
 import GranuleCell1 as grcsteps
+import bluepyopt.deapext
 
 from scoop import futures
 
@@ -36,7 +37,6 @@ import deap.gp
 from deap import base
 from deap import creator
 from deap import tools
-from deap import algorithms
 
 FEATURES = ['voltage_base',
             'Spikecount',
@@ -175,17 +175,15 @@ toolbox.register("evaluate", evaluate)
 toolbox.register("mate", deap.tools.cxSimulatedBinaryBounded, eta=ETA, low=LOWER, up=UPPER)
 toolbox.register("mutate", deap.tools.mutPolynomialBounded, eta=ETA, low=LOWER, up=UPPER, indpb=0.1)
 toolbox.register("variate", deap.algorithms.varAnd)
-toolbox.register("select", plot_selector, selector=tools.selIBEA)
+toolbox.register("select", plot_selector, selector=bluepyopt.deapext.tools.selIBEA)
 toolbox.register("map", futures.map)
-# toolbox.register("select", tools.selIBEA)
-# toolbox.register("select", tools.selIBEA)
 
 def main():
     pop = toolbox.population(n=MU)
-    pop, logbook = algorithms.eaAlphaMuPlusLambda(pop, toolbox, MU,
-                                                  None, CXPB, 1 - CXPB,
-                                                  NGEN, verbose=False)
+    pop, logbook = bluepyopt.deapext.algorithms.eaAlphaMuPlusLambdaCheckpoint(pop, toolbox, MU,
+                                                   CXPB, 1 - CXPB,
+                                                  NGEN)
     return pop, logbook
 
 if __name__ == '__main__':
-    print main()
+    main()

@@ -53,11 +53,11 @@ def main():
     # The return value is a list of trace_results, every trace_results
     # corresponds to one trace in the 'traces' list above (in same order)
     for trace_number, trace_results in enumerate(traces_results):
-        print "Results for trace %d" % (trace_number + 1)
+        print("Results for trace %d" % (trace_number + 1))
         # trace_result is a dictionary, with as keys the requested features
         for feature_name, feature_values in trace_results.items():
-            print "Feature %s has the following values: %s" % \
-                (feature_name, ', '.join([str(x) for x in feature_values]))
+            print("Feature %s has the following values: %s" % \
+                (feature_name, ', '.join([str(x) for x in feature_values])))
 
 
 if __name__ == '__main__':
