@@ -28,10 +28,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import json
 import os
 import warnings
 
-# pylint: disable=R0914
+import numpy as np
+
+import efel
 
 testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'testdata',
@@ -41,7 +44,6 @@ testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 def get_allfeature_values():
     """Get back all the feature names and value"""
 
-    import efel
     import numpy
     efel.reset()
 
@@ -127,12 +129,10 @@ def test_allfeatures():
 
     feature_values = get_allfeature_values()
 
-    import json
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
 
-    import numpy
     assert set(feature_values.keys()) == set(expected_results.keys())
     failed_feature = False
     for feature_name, feature_value in feature_values.items():
@@ -145,7 +145,7 @@ def test_allfeatures():
             equal = (expected_value is None)
         else:
             equal = (len(feature_value) == len(expected_value)) \
-                and numpy.allclose(feature_value, expected_value)
+                and np.allclose(feature_value, expected_value)
 
         if not equal:
             print("Difference in feature %s: value=%s expected=%s" %
@@ -153,3 +153,38 @@ def test_allfeatures():
             failed_feature = True
 
     assert not failed_feature
+
+
+def test_allfeatures_on_constant_voltage():
+    """Call all features on constant voltage input."""
+    time = np.linspace(0, 999, 1000)
+    voltage = np.full(1000, -80.0)
+
+    efel.reset()
+    traces = [{'T': time, 'V': voltage, 'stim_start': [100], 'stim_end': [999]}]
+    all_featurenames = efel.getFeatureNames()
+    feature_values = efel.getFeatureValues(traces, all_featurenames)[0]
+    assert all(feature_values["voltage"] == -80.0)
+    # Assert that each element in time is greater than or equal to the previous element
+    assert np.all(feature_values["time"][1:] >= feature_values["time"][:-1])
+
+    # Assert for array fields to be non-empty arrays
+    # If you add a new feature in the future that results in an array, add here
+    array_fields = [
+        "minimum_voltage", "maximum_voltage", "maximum_voltage_from_voltagebase",
+        "sag_amplitude", "voltage_after_stim", "steady_state_hyper",
+        "steady_state_voltage", "steady_state_voltage_stimend",
+        "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
+        "depol_block", "depol_block_bool", "voltage_base"
+    ]
+
+    for field in array_fields:
+        if field in feature_values:
+            assert isinstance(feature_values[field], np.ndarray)
+            assert len(feature_values[field]) > 0
+
+    # Assert the rest of the fields are None
+    excluded_fields = array_fields + ["voltage", "time"]
+    for key in feature_values:
+        if key not in excluded_fields:
+            assert feature_values[key] is None, f"Field {key} is not None"
