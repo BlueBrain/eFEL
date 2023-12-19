@@ -43,14 +43,12 @@ testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 def get_allfeature_values():
     """Get back all the feature names and value"""
-
-    import numpy
     efel.reset()
 
     all_featurenames = efel.getFeatureNames()
 
     def load_data(filename):
-        data = numpy.loadtxt(os.path.join(testdata_dir, filename))
+        data = np.loadtxt(os.path.join(testdata_dir, filename))
         return data[:, 0], data[:, 1]
 
     soma_time, soma_voltage = load_data('testdata.txt')
