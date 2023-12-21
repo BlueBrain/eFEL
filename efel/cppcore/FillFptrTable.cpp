@@ -195,7 +195,6 @@ int FillFptrTable() {
       &LibV5::voltage_deflection_vb_ssse;
   FptrTableV5["maximum_voltage_from_voltagebase"] =
       &LibV5::maximum_voltage_from_voltagebase;
-  FptrTableV5["Spikecount_stimint"] = &LibV5::Spikecount_stimint;
 
   FptrTableV5["peak_indices"] = &LibV5::peak_indices;
   FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;

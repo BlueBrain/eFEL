@@ -211,9 +211,6 @@ int ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
 int maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
-int Spikecount_stimint(mapStr2intVec& IntFeatureData,                                    
-                       mapStr2doubleVec& DoubleFeatureData, 
-                       mapStr2Str& StringData); 
 int peak_indices(mapStr2intVec& IntFeatureData,                                    
                        mapStr2doubleVec& DoubleFeatureData, 
                        mapStr2Str& StringData); 

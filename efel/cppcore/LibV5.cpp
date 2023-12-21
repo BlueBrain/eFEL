@@ -1739,25 +1739,6 @@ int LibV5::maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-int LibV5::Spikecount_stimint(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const auto& doubleFeatures =
-      getFeatures(DoubleFeatureData, {"stim_start", "stim_end", "peak_time"});
-  // Get the number of peaks between stim start and end
-  int spikecount_stimint_value =
-      count_if(doubleFeatures.at("peak_time").begin(), doubleFeatures.at("peak_time").end(),
-                    [&](double time) {
-                        return time >= doubleFeatures.at("stim_start")[0] &&
-                               time <= doubleFeatures.at("stim_end")[0];
-                    });
-
-  vector<int> spikecount_stimint{spikecount_stimint_value};
-  setVec(IntFeatureData, StringData, "Spikecount_stimint", spikecount_stimint);
-
-  return 1;
-}
-
 static int __peak_indices(double threshold, const vector<double>& V,
                           const vector<double>& t, vector<int>& PeakIndex,
                           bool strict_stiminterval, double stim_start,

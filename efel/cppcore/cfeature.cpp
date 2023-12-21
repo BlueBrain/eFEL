@@ -128,7 +128,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["ISI_CV"] = "double";
   featuretypes["AHP_depth_abs_slow"] = "double";
   featuretypes["AHP_slow_time"] = "double";
-  featuretypes["Spikecount_stimint"] = "int";
   featuretypes["AHP_depth"] = "double";
   featuretypes["AHP_depth_slow"] = "double";
   featuretypes["amp_drop_first_second"] = "double";

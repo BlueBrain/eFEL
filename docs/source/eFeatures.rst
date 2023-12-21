@@ -161,8 +161,8 @@ number of spikes in the trace, including outside of stimulus interval
 
     Spikecount = len(peak_indices)
 
-`LibV5`_ : Spikecount_stimint
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : Spikecount_stimint
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes inside the stimulus interval
 

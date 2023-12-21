@@ -43,6 +43,7 @@ all_pyfeatures = [
     'depol_block',
     'depol_block_bool',
     'Spikecount',
+    'Spikecount_stimint',
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
@@ -72,6 +73,23 @@ def spike_count() -> numpy.ndarray:
     if peak_indices is None:
         return numpy.array([0])
     return numpy.array([peak_indices.size])
+
+
+@deprecated("Use spike_count_stimint instead.")
+def Spikecount_stimint() -> numpy.ndarray:
+    return spike_count_stimint()
+
+
+def spike_count_stimint() -> numpy.ndarray:
+    """Get spike count within stimulus interval."""
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = _get_cpp_feature("peak_time")
+    if peak_times is None:
+        return numpy.array([0])
+
+    res = sum(1 for time in peak_times if stim_start <= time <= stim_end)
+    return numpy.array([res])
 
 
 def impedance():
