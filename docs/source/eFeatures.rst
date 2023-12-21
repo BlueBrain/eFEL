@@ -150,8 +150,8 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-`LibV1`_ : Spikecount
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : Spikecount
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes in the trace, including outside of stimulus interval
 
