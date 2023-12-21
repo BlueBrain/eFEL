@@ -257,8 +257,7 @@ int cFeature::calc_features(const std::string& name) {
 
   bool last_failed = false;
 
-  for (const auto& pfptrstring : lookup_it->second) {
-    feature_function function = pfptrstring;
+  for (const feature_function& function : lookup_it->second) {
     setFeatureString("params", "");
 
     if (function(mapIntData, mapDoubleData, mapStrData) < 0) {
