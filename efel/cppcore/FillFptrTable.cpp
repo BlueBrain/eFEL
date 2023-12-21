@@ -48,7 +48,6 @@ int FillFptrTable() {
   FptrTableV1["ISI_CV"] = &LibV1::ISI_CV;
   FptrTableV1["AHP_depth_abs_slow"] = &LibV1::AHP_depth_abs_slow;
   FptrTableV1["AHP_slow_time"] = &LibV1::AHP_slow_time;
-  FptrTableV1["Spikecount"] = &LibV1::Spikecount;
   FptrTableV1["AHP_depth"] = &LibV1::AHP_depth;
   FptrTableV1["AHP_depth_slow"] = &LibV1::AHP_depth_slow;
   FptrTableV1["burst_number"] = &LibV1::burst_number;

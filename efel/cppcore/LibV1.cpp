@@ -76,17 +76,6 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-// *** Spikecount ***
-int LibV1::Spikecount(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData) {
-  size_t spikecount_value = getFeature(IntFeatureData, {"peak_indices"}).size();
-  vector<int> spikecount(1, spikecount_value);
-  setVec(IntFeatureData, StringData, "Spikecount", spikecount);
-  return spikecount_value;
-}
-// end of Spikecount
-
 int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData) {

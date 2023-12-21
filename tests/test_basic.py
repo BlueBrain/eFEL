@@ -626,7 +626,6 @@ def test_strict_stiminterval():
         peak_indices = feature_values[0]['peak_indices']
         peak_time = feature_values[0]['peak_time']
         spikecount = feature_values[0]['Spikecount']
-
         assert len(peak_indices) == n_of_spikes
         assert len(peak_time) == n_of_spikes
         assert spikecount == n_of_spikes
@@ -1132,7 +1131,6 @@ def test_getDistance_trace_check():
     trace['stim_start'] = [10]
     trace['stim_end'] = [70]
     traces.append(trace)
-
     numpy.testing.assert_allclose(
         efel.getDistance(trace, 'Spikecount', 0, 1), 3.0
     )
@@ -1638,8 +1636,8 @@ def test_spikecount2():
             [trace],
             features)
 
-    spikecount = feature_values[0]['Spikecount']
-    assert spikecount is None
+    spikecount = feature_values[0]['Spikecount'][0]
+    assert spikecount == 0
 
 
 def test_min_voltage_between_spikes1():

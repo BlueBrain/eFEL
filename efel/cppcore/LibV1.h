@@ -116,8 +116,6 @@ int AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData);
 int AHP_slow_time(mapStr2intVec& IntFeatureData,
                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int Spikecount(mapStr2intVec& IntFeatureData,
-               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth_slow(mapStr2intVec& IntFeatureData,

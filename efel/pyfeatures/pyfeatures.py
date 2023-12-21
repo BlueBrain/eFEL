@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from typing_extensions import deprecated
 
 import numpy
 import efel.cppcore
@@ -41,6 +42,7 @@ all_pyfeatures = [
     'initburst_sahp_ssse',
     'depol_block',
     'depol_block_bool',
+    'Spikecount',
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
@@ -59,6 +61,19 @@ def time():
     return _get_cpp_feature("time")
 
 
+@deprecated("Use spike_count instead.")
+def Spikecount() -> numpy.ndarray:
+    return spike_count()
+
+
+def spike_count() -> numpy.ndarray:
+    """Get spike count."""
+    peak_indices = _get_cpp_feature("peak_indices")
+    if peak_indices is None:
+        return numpy.array([0])
+    return numpy.array([peak_indices.size])
+
+
 def impedance():
     from scipy.ndimage.filters import gaussian_filter1d
 
@@ -71,10 +86,10 @@ def impedance():
     if current_trace is not None:
         holding_current = _get_cpp_feature("current_base")
         normalized_current = current_trace - holding_current
-        spike_count = _get_cpp_feature("Spikecount")
-        if spike_count is None:
-            spike_count = 0
-        if spike_count < 1:  # if there is no spikes in ZAP
+        n_spikes = spike_count()
+        if n_spikes is None:
+            n_spikes = 0
+        if n_spikes < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)
             if any(fft_cur) == 0:
