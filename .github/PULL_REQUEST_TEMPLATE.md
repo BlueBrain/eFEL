@@ -4,7 +4,8 @@
 ## Description
 
 Please include a summary of the change.
-By default the change will increment the patch version, to increment major or minor changes add #major or #minor to the PR description.
+By default the change will increment the patch version.
+To increment major or minor changes add #major or #minor to the PR description.
 
 
 ## Checklist:
