@@ -49,6 +49,8 @@ all_pyfeatures = [
     'spikes_in_burst1_burst2_diff',
     'spikes_in_burst1_burstlast_diff',
     'impedance',
+    'burst_number',
+    'strict_burst_number'
 ]
 
 
@@ -90,6 +92,29 @@ def spike_count_stimint() -> numpy.ndarray:
 
     res = sum(1 for time in peak_times if stim_start <= time <= stim_end)
     return numpy.array([res])
+
+
+def burst_number() -> numpy.ndarray:
+    """The number of bursts."""
+    burst_mean_freq = _get_cpp_feature("burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
+
+
+def strict_burst_number() -> numpy.ndarray:
+    """Calculate the strict burst number.
+
+    This implementation does not assume that every spike belongs to a burst.
+    The first spike is ignored by default. This can be changed by setting
+    ignore_first_ISI to 0.
+
+    The burst detection can be fine-tuned by changing the setting
+    strict_burst_factor. Default value is 2.0."""
+    burst_mean_freq = _get_cpp_feature("strict_burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
 
 
 def impedance():

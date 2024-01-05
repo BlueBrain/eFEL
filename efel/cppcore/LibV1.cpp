@@ -405,17 +405,6 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-int LibV1::burst_number(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  const auto& doubleFeatures =
-      getFeatures(DoubleFeatureData, {"burst_mean_freq"});
-  vector<int> BurstNum;
-  BurstNum.push_back(doubleFeatures.at("burst_mean_freq").size());
-  setVec(IntFeatureData, StringData, "burst_number", BurstNum);
-  return BurstNum.size();
-}
-
 // reminder: first ISI value is ignored in burst_ISI_indices if IgnoreFirstISI=1
 static int __interburst_voltage(const vector<int>& BurstIndex,
                                 const vector<int>& PeakIndex,

@@ -247,9 +247,6 @@ int burst_end_indices(mapStr2intVec& IntFeatureData,
 int strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int strict_burst_number(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
 int strict_interburst_voltage(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);

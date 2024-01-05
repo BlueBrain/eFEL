@@ -201,9 +201,9 @@ def test_failing_int_feature():
 
     feature_value = efel.getFeatureValues(
         [trace],
-        ['burst_number'], raise_warnings=False)[0]['burst_number']
+        ['burst_number'], raise_warnings=False)[0]['burst_number'][0]
 
-    assert feature_value is None
+    assert feature_value == 0
 
 
 def test_empty_trace():

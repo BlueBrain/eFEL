@@ -402,8 +402,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             )
         )
 
-`LibV1`_ : burst_number
-~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 
@@ -413,8 +413,8 @@ The number of bursts
 
     burst_number = len(burst_mean_freq)
 
-`LibV5`_ : strict_burst_number
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : strict_burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 

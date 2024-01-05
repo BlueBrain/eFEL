@@ -2258,17 +2258,6 @@ int LibV5::strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-int LibV5::strict_burst_number(mapStr2intVec& IntFeatureData,
-                               mapStr2doubleVec& DoubleFeatureData,
-                               mapStr2Str& StringData) {
-  const auto& doubleFeatures =
-      getFeatures(DoubleFeatureData, {"strict_burst_mean_freq"});
-  vector<int> BurstNum;
-  BurstNum.push_back(doubleFeatures.at("strict_burst_mean_freq").size());
-  setVec(IntFeatureData, StringData, "strict_burst_number", BurstNum);
-  return BurstNum.size();
-}
-
 static int __strict_interburst_voltage(const vector<int>& burst_begin_indices,
                                        const vector<int>& PeakIndex,
                                        const vector<double>& T,

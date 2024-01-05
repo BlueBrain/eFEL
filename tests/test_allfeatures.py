@@ -174,7 +174,7 @@ def test_allfeatures_on_constant_voltage():
         "steady_state_voltage", "steady_state_voltage_stimend",
         "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
         "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
-        "Spikecount_stimint"
+        "Spikecount_stimint", "burst_number", "strict_burst_number"
     ]
 
     for field in array_fields:

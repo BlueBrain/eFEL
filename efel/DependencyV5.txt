@@ -13,7 +13,6 @@ LibV1:adaptation_index2	#LibV1:peak_time #LibV1:interpolate
 LibV1:spike_width2	 	    #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV1:AP_width  #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV1:burst_mean_freq	    #LibV1:burst_ISI_indices    #LibV1:peak_time #LibV1:interpolate 
-LibV1:burst_number	    #LibV1:burst_mean_freq #LibV1:interpolate 
 LibV1:interburst_voltage	#LibV1:burst_ISI_indices #LibV1:interpolate 
 LibV1:AP_height             #LibV1:peak_voltage #LibV1:interpolate 
 LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage #LibV1:peak_time #LibV1:interpolate 
@@ -125,7 +124,6 @@ LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:inte
 LibV5:burst_begin_indices    #LibV5:all_ISI_values #LibV1:interpolate
 LibV5:burst_end_indices    #LibV5:burst_begin_indices #LibV1:interpolate
 LibV5:strict_burst_mean_freq    #LibV1:peak_time #LibV5:burst_begin_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:strict_burst_number    #LibV5:strict_burst_mean_freq #LibV1:interpolate
 LibV5:strict_interburst_voltage    #LibV5:peak_indices #LibV5:burst_begin_indices #LibV1:interpolate
 LibV5:ADP_peak_indices    #LibV5:min_AHP_indices #LibV5:min_between_peaks_indices #LibV1:interpolate
 LibV5:ADP_peak_values     #LibV5:ADP_peak_indices #LibV1:interpolate

@@ -135,7 +135,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["amp_drop_second_last"] = "double";
   featuretypes["max_amp_difference"] = "double";
   featuretypes["depolarized_base"] = "double";
-  featuretypes["burst_number"] = "int";
 
   // LibV5
   featuretypes["ISI_log_slope"] = "double";
@@ -212,7 +211,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["burst_begin_indices"] = "int";
   featuretypes["burst_end_indices"] = "int";
   featuretypes["strict_burst_mean_freq"] = "double";
-  featuretypes["strict_burst_number"] = "int";
   featuretypes["strict_interburst_voltage"] = "double";
 
   featuretypes["ADP_peak_indices"] = "int";

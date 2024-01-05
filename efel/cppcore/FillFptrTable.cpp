@@ -50,7 +50,6 @@ int FillFptrTable() {
   FptrTableV1["AHP_slow_time"] = &LibV1::AHP_slow_time;
   FptrTableV1["AHP_depth"] = &LibV1::AHP_depth;
   FptrTableV1["AHP_depth_slow"] = &LibV1::AHP_depth_slow;
-  FptrTableV1["burst_number"] = &LibV1::burst_number;
   FptrTableV1["AP_amplitude_diff"] = &LibV1::AP_amplitude_diff;
   FptrTableV1["AHP_depth_diff"] = &LibV1::AHP_depth_diff;
 
@@ -210,7 +209,6 @@ int FillFptrTable() {
   FptrTableV5["burst_begin_indices"] = &LibV5::burst_begin_indices;
   FptrTableV5["burst_end_indices"] = &LibV5::burst_end_indices;
   FptrTableV5["strict_burst_mean_freq"] = &LibV5::strict_burst_mean_freq;
-  FptrTableV5["strict_burst_number"] = &LibV5::strict_burst_number;
   FptrTableV5["strict_interburst_voltage"] = &LibV5::strict_interburst_voltage;
 
   FptrTableV5["ADP_peak_indices"] = &LibV5::ADP_peak_indices;
