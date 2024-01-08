@@ -3,7 +3,7 @@ import efel
 
 
 def check_ais_initiation(soma_trace: dict, ais_trace: dict) -> bool:
-    """Checks the initiation of action potential in AIS wrt. soma."""
+    """Checks the initiation of action potential in AIS with respect to soma."""
     f_values = efel.getFeatureValues([soma_trace, ais_trace], ["AP_begin_time"])
     soma_ap_begin_time = f_values[0]["AP_begin_time"]
     ais_ap_begin_time = f_values[1]["AP_begin_time"]
