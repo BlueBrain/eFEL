@@ -31,91 +31,44 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-import os
+from pathlib import Path
 import numpy
 
 import pytest
 
-_multiprocess_can_split_ = True
-
-testdata_dir = os.path.join(
-    os.path.dirname(
-        os.path.abspath(__file__)),
-    'testdata')
+from efel.io import load_ascii_input
 
 
-meanfrequency1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                                'basic',
-                                                'mean_frequency_1.txt')
-
-ahptest1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                          'basic',
-                                          'ahptest_1.txt')
-
-tau20_0_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                         'basic',
-                                         'tau20.0.csv')
-
-spikeoutsidestim_url = 'file://%s' % os.path.join(
-    os.path.abspath(testdata_dir),
-    'basic',
-    'spike_outside_stim.txt')
-
-sagtrace1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                           'basic',
-                                           'sagtrace_1.txt')
-
-zeroISIlog1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                             'basic',
-                                             'zero_ISI_log_slope_skip'
-                                             '95824004.abf.csv')
-
-derivwindow1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                              'basic',
-                                              'derivwindow.txt')
-
-dendriticAP_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                             'basic',
-                                             'dendritic_AP.txt')
-
-burst1_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                        'basic',
-                                        'init_burst1.txt')
-
-burst2_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                        'basic',
-                                        'init_burst2.txt')
-
-burst3_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                        'basic',
-                                        'init_burst3.txt')
-
-spiking_from_beginning_to_end_url = 'file://%s' % os.path.join(
-    os.path.abspath(testdata_dir),
-    'basic',
-    'spiking_from_beginning_to_end.txt')
+testdata_dir = Path(__file__).parent / 'testdata'
+meanfrequency1_url = testdata_dir / 'basic' / 'mean_frequency_1.txt'
+ahptest1_url = testdata_dir / 'basic' / 'ahptest_1.txt'
+tau20_0_url = testdata_dir / 'basic' / 'tau20.0.csv'
+spikeoutsidestim_url = testdata_dir / 'basic' / 'spike_outside_stim.txt'
+sagtrace1_url = testdata_dir / 'basic' / 'sagtrace_1.txt'
+zeroISIlog1_url = testdata_dir / 'basic' / 'zero_ISI_log_slope_skip95824004.abf.csv'
+derivwindow1_url = testdata_dir / 'basic' / 'derivwindow.txt'
+dendriticAP_url = testdata_dir / 'basic' / 'dendritic_AP.txt'
+burst1_url = testdata_dir / 'basic' / 'init_burst1.txt'
+burst2_url = testdata_dir / 'basic' / 'init_burst2.txt'
+burst3_url = testdata_dir / 'basic' / 'init_burst3.txt'
+spiking_from_beginning_to_end_url = (
+    testdata_dir
+    / 'basic'
+    / 'spiking_from_beginning_to_end.txt'
+)
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
-
-    import efel
-
     trace = {}
-
     if data_name == 'mean_frequency1':
         stim_start = 500.0
         stim_end = 900.0
-
-        time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-        voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+        time, voltage = load_ascii_input(meanfrequency1_url)
     elif data_name == 'tau20.0':
         stim_start = 100.0
         stim_end = 1000.0
-
-        time = efel.io.load_fragment('%s#col=1' % tau20_0_url)
-        voltage = efel.io.load_fragment('%s#col=2' % tau20_0_url)
-
+        time, voltage = load_ascii_input(tau20_0_url)
         trace['decay_start_after_stim'] = [1.0]
         trace['decay_end_after_stim'] = [10.0]
     else:
@@ -128,21 +81,16 @@ def load_data(data_name, interp=False, interp_dt=0.1):
 
     if interp:
         time, voltage = interpolate(time, voltage, interp_dt)
-
     return trace, time, voltage, stim_start, stim_end
 
 
 def test_import():
-    """basic: Test importing of eFEL"""
-
-    # pylint: disable=W0611
-    import efel  # NOQA
-    # pylint: enable=W0611
+    """basic: Test importing of eFEL."""
+    import efel
 
 
 def test_version():
-    """basic: Test if version number exists"""
-
+    """basic: Test if version number exists."""
     import efel
     efel.reset()
 
@@ -150,8 +98,7 @@ def test_version():
 
 
 def test_setDependencyFileLocation_wrongpath():
-    """basic: Test if setDependencyFileLocation fails if path doesn't exist"""
-
+    """basic: Test if setDependencyFileLocation fails if path doesn't exist."""
     import efel
     efel.reset()
     pytest.raises(
@@ -160,19 +107,17 @@ def test_setDependencyFileLocation_wrongpath():
 
 
 def test_setDependencyFileLocation():
-    """basic: Test if setDependencyFileLocation works"""
+    """basic: Test if setDependencyFileLocation works."""
     import efel
     efel.reset()
-    dep_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'DependencyV5_LibV5peakindices.txt')
+    dep_file = str(Path(__file__).parent / 'DependencyV5_LibV5peakindices.txt')
     efel.setDependencyFileLocation(dep_file)
     result = efel.getDependencyFileLocation()
     assert result == dep_file
 
 
 def test_nonexisting_feature():
-    """basic: Test nonexisting feature"""
-
+    """basic: Test nonexisting feature."""
     import efel
     efel.reset()
 
@@ -190,8 +135,7 @@ def test_nonexisting_feature():
 
 
 def test_failing_double_feature():
-    """basic: Test failing double feature"""
-
+    """basic: Test failing double feature."""
     import efel
     efel.reset()
 
@@ -308,9 +252,7 @@ def test_multiprocessing_traces():
 
     stim_start = 31.2
     stim_end = 431.2
-
-    time1 = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
-    voltage1 = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
+    time1, voltage1 = load_ascii_input(zeroISIlog1_url)
 
     trace1 = {}
 
@@ -321,10 +263,7 @@ def test_multiprocessing_traces():
 
     feature_name = 'peak_time'
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'AP_begin_indices_95810005.abf.csv')
+    test_data_path = testdata_dir / 'basic' / 'AP_begin_indices_95810005.abf.csv'
     data2 = numpy.loadtxt(test_data_path)
 
     voltage2 = data2
@@ -365,16 +304,13 @@ def test_multiprocessing_traces():
 
 
 def test_consecutive_traces():
-    """basic: Test if features from two different traces give other results"""
-
+    """basic: Test if features from two different traces give other results."""
     import efel
     efel.reset()
 
     stim_start = 31.2
     stim_end = 431.2
-
-    time1 = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
-    voltage1 = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
+    time1, voltage1 = load_ascii_input(zeroISIlog1_url)
 
     trace1 = {}
 
@@ -390,10 +326,7 @@ def test_consecutive_traces():
             [trace1],
             [feature_name], raise_warnings=False)
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'AP_begin_indices_95810005.abf.csv')
+    test_data_path = testdata_dir / 'basic' / 'AP_begin_indices_95810005.abf.csv'
     data2 = numpy.loadtxt(test_data_path)
 
     voltage2 = data2
@@ -424,10 +357,7 @@ def test_stimstart_stimend():
 
     stim_start = 500.0
     stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -470,10 +400,7 @@ def test_setDerivativeThreshold():
 
     stim_start = 500.0
     stim_end = 900.0
-
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
-
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -538,8 +465,7 @@ def test_zero_ISI_log_slope_skip():
     stim_start = 31.2
     stim_end = 431.2
 
-    time = efel.io.load_fragment('%s#col=1' % zeroISIlog1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % zeroISIlog1_url)
+    time, voltage = load_ascii_input(zeroISIlog1_url)
     trace = {}
 
     trace['T'] = time
@@ -557,16 +483,14 @@ def test_zero_ISI_log_slope_skip():
 
 
 def test_peak_indices():
-    """basic: Test peak_indices"""
-
+    """basic: Test peak_indices."""
     import efel
     efel.reset()
 
     stim_start = 650.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -595,8 +519,7 @@ def test_min_AHP_indices():
     stim_start = 650.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -628,8 +551,7 @@ def test_min_AHP_indices_strict():
         stim_start = 700.0
         stim_end = 2700.0
 
-        time = efel.io.load_fragment('%s#col=1' % ahptest1_url)
-        voltage = efel.io.load_fragment('%s#col=2' % ahptest1_url)
+        time, voltage = load_ascii_input(ahptest1_url)
 
         trace = {}
 
@@ -657,10 +579,7 @@ def test_min_AHP_indices_single_peak():
 
     import efel
 
-    trace_file = os.path.join(
-        testdata_dir,
-        'basic',
-        'min_AHP_values_single_peak.txt')
+    trace_file = testdata_dir / 'basic' / 'min_AHP_values_single_peak.txt'
     trace_values = numpy.loadtxt(trace_file)
 
     trace = {}
@@ -689,8 +608,7 @@ def test_strict_stiminterval():
         stim_start = 600.0
         stim_end = 750.0
 
-        time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-        voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+        time, voltage = load_ascii_input(meanfrequency1_url)
         trace = {}
 
         trace['T'] = time
@@ -723,8 +641,7 @@ def test_ISI_log_slope():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -758,8 +675,7 @@ def test_ISI_values_noIgnore():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -798,8 +714,7 @@ def test_ISI_semilog_slope():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
     trace = {}
 
     trace['T'] = time
@@ -828,17 +743,13 @@ def test_ISI_semilog_slope():
 
 def test_AP_begin_indices1():
     """basic: Test AP_begin_indices 1"""
-
     import efel
     efel.reset()
 
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'AP_begin_indices_95810005.abf.csv')
+    test_data_path = testdata_dir / 'basic' / 'AP_begin_indices_95810005.abf.csv'
     voltage = numpy.loadtxt(test_data_path)
 
     time = numpy.arange(len(voltage)) * 0.1
@@ -884,10 +795,7 @@ def test_AP_end_indices():
     stim_start = 31.2
     stim_end = 431.2
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'AP_begin_indices_95810005.abf.csv')
+    test_data_path = testdata_dir / 'basic' / 'AP_begin_indices_95810005.abf.csv'
     voltage = numpy.loadtxt(test_data_path)
 
     time = numpy.arange(len(voltage)) * 0.1
@@ -975,10 +883,7 @@ def test_ap_amplitude_outside_stim():
     stim_start = 700.0
     stim_end = 2700.0
 
-    test_data_path = os.path.join(
-        testdata_dir,
-        'basic',
-        'spike_outside_stim.txt')
+    test_data_path = testdata_dir / 'basic' / 'spike_outside_stim.txt'
     data = numpy.loadtxt(test_data_path)
 
     time = data[:, 0]
@@ -1016,8 +921,7 @@ def test_ap_amplitude_from_voltagebase1():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1097,13 +1001,10 @@ def test_voltagebase_median():
 
 def test_currentbase():
     """basic: Test currentbase"""
-
     import efel
     efel.reset()
 
-    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                      'basic',
-                                      'current.txt'))
+    data = numpy.loadtxt(testdata_dir / 'basic' / 'current.txt')
     current = data[:, 1]
     time = data[:, 0]
     stim_start = 2.0
@@ -1125,14 +1026,11 @@ def test_currentbase():
 
 def test_currentbase_median():
     """basic: Test currentbase with median"""
-
     import efel
     efel.reset()
     efel.setStrSetting("current_base_mode", "median")
 
-    data = numpy.loadtxt(os.path.join(os.path.abspath(testdata_dir),
-                                      'basic',
-                                      'current.txt'))
+    data = numpy.loadtxt(testdata_dir / 'basic' / 'current.txt')
     current = data[:, 1]
     time = data[:, 0]
     stim_start = 2.0
@@ -1160,8 +1058,7 @@ def test_getDistance1():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1188,8 +1085,7 @@ def test_getDistance_error_dist():
     stim_start = 400.0
     stim_end = 500.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1269,8 +1165,7 @@ def test_APlast_amp():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1300,8 +1195,7 @@ def test_APlast_width():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1323,17 +1217,14 @@ def test_APlast_width():
 
 
 def test_derivwindow1():
-    """basic: Test DerivativeWindow"""
-
+    """basic: Test DerivativeWindow."""
     import efel
     efel.reset()
 
     stim_start = 100.0
     stim_end = 1000.0
 
-    time = efel.io.load_fragment('%s#col=1' % derivwindow1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % derivwindow1_url)
-
+    time, voltage = load_ascii_input(derivwindow1_url)
     trace = {}
 
     trace['T'] = time
@@ -1382,8 +1273,7 @@ def test_spikecount1():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1405,17 +1295,14 @@ def test_spikecount1():
 
 
 def test_spikecount_stimint1():
-    """basic: Test Spikecount_stimint 1"""
-
+    """basic: Test Spikecount_stimint 1."""
     import efel
     efel.reset()
 
     stim_start = 700.0
     stim_end = 2700.0
 
-    time = efel.io.load_fragment('%s#col=1' % spikeoutsidestim_url)
-    voltage = efel.io.load_fragment('%s#col=2' % spikeoutsidestim_url)
-
+    time, voltage = load_ascii_input(spikeoutsidestim_url)
     trace = {}
 
     trace['T'] = time
@@ -1455,8 +1342,7 @@ def test_ohmic_inputresistance():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1491,8 +1377,7 @@ def test_sag_amplitude():
     stim_start = 800.0
     stim_end = 3800.0
 
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
 
     trace = {}
 
@@ -1529,8 +1414,7 @@ def test_sag_amplitude_pos_deflect():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1559,8 +1443,7 @@ def test_sag_ratio1():
     stim_start = 800.0
     stim_end = 3800.0
 
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
 
     trace = {}
 
@@ -1630,8 +1513,7 @@ def test_sag_ratio2():
     stim_start = 800.0
     stim_end = 3800.0
 
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
 
     trace = {}
 
@@ -1671,8 +1553,7 @@ def test_ohmic_input_resistance_vb_ssse():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1738,8 +1619,7 @@ def test_min_voltage_between_spikes1():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -1774,12 +1654,11 @@ def test_min_voltage_between_spikes1():
 
 def test_getFeatureNames():
     """basic: Test getting all feature names"""
-
     import efel
     efel.reset()
     import json
 
-    test_data_path = os.path.join(testdata_dir, '..', 'featurenames.json')
+    test_data_path = testdata_dir.parent / 'featurenames.json'
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
     assert set(efel.getFeatureNames()) == set(expected_featurenames)
@@ -1787,7 +1666,6 @@ def test_getFeatureNames():
 
 def test_getFeatureNameExists():
     """basic: Test FeatureNameExists"""
-
     import efel
     efel.reset()
     assert efel.FeatureNameExists('voltage_base')
@@ -2014,8 +1892,7 @@ def test_sag_time_constant():
 
     stim_start = 800.0
     stim_end = 3800.0
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
     time, voltage = interpolate(time, voltage, interp_dt)
 
     trace = {}
@@ -2059,8 +1936,7 @@ def test_getmeanfeaturevalues():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -2091,8 +1967,7 @@ def test_mean_AP_amplitude():
     stim_start = 500.0
     stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    time, voltage = load_ascii_input(meanfrequency1_url)
 
     trace = {}
 
@@ -2342,8 +2217,7 @@ def test_min_between_peaks_indices():
     stim_start = 200.0
     stim_end = 1200.0
 
-    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
-    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = load_ascii_input(dendriticAP_url)
     trace = {}
 
     trace['T'] = time
@@ -2373,8 +2247,7 @@ def test_min_between_peaks_values():
     stim_start = 200.0
     stim_end = 1200.0
 
-    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
-    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = load_ascii_input(dendriticAP_url)
     time, voltage = interpolate(time, voltage, 0.1)
     trace = {}
 
@@ -2409,8 +2282,7 @@ def test_AP_width_between_threshold():
     stim_start = 200.0
     stim_end = 1200.0
 
-    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
-    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = load_ascii_input(dendriticAP_url)
     time, voltage = interpolate(time, voltage, 0.1)
     trace = {}
 
@@ -2454,8 +2326,7 @@ def test_AP_width_between_threshold_strict():
     stim_start = 200.0
     stim_end = 1200.0
 
-    time = efel.io.load_fragment('%s#col=1' % dendriticAP_url)
-    voltage = efel.io.load_fragment('%s#col=2' % dendriticAP_url)
+    time, voltage = load_ascii_input(dendriticAP_url)
     time, voltage = interpolate(time, voltage, 0.1)
     trace = {}
 
@@ -2516,8 +2387,7 @@ def test_burst_mean_freq():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
         time, voltage = interpolate(time, voltage, 0.1)
         trace = {}
 
@@ -2561,10 +2431,8 @@ def test_segfault_in_AP_begin_width():
     stim_end = 140.0
     trace = {}
 
-    trace['T'] = efel.io.load_fragment(
-        '%s#col=1' % spiking_from_beginning_to_end_url)
-    trace['V'] = efel.io.load_fragment(
-        '%s#col=2' % spiking_from_beginning_to_end_url)
+    trace['T'], trace['V'] = load_ascii_input(
+        spiking_from_beginning_to_end_url)
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
@@ -2603,8 +2471,7 @@ def test_interburst_voltage():
     import efel
     efel.reset()
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -2730,8 +2597,7 @@ def test_time_constant():
     stim_start = 800.0
     stim_end = 3800.0
 
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
 
     trace = {}
     trace['T'] = time
@@ -2975,8 +2841,7 @@ def test_steady_state_hyper():
     stim_start = 800.0
     stim_end = 3800.0
 
-    time = efel.io.load_fragment('%s#col=1' % sagtrace1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % sagtrace1_url)
+    time, voltage = load_ascii_input(sagtrace1_url)
 
     trace = {}
 
@@ -3221,8 +3086,7 @@ def test_burst_indices():
     efel.reset()
     efel.setIntSetting('ignore_first_ISI', 0)
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3258,8 +3122,7 @@ def test_strict_burst_mean_freq():
     efel.reset()
     efel.setIntSetting('ignore_first_ISI', 0)
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3306,8 +3169,7 @@ def test_strict_burst_number():
     efel.reset()
     efel.setIntSetting('ignore_first_ISI', 0)
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3355,8 +3217,7 @@ def test_strict_interburst_voltage():
     efel.reset()
     efel.setIntSetting('ignore_first_ISI', 0)
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3396,8 +3257,7 @@ def test_AP_width_spike_before_stim_start():
     stim_start = 700.0
     stim_end = 2700.0
 
-    time = efel.io.load_fragment('%s#col=1' % spikeoutsidestim_url)
-    voltage = efel.io.load_fragment('%s#col=2' % spikeoutsidestim_url)
+    time, voltage = load_ascii_input(spikeoutsidestim_url)
 
     trace = {}
 
@@ -3460,8 +3320,7 @@ def test_ADP_peak_amplitude():
     stim_start = 250.0
     stim_end = 1600.0
 
-    time = efel.io.load_fragment('%s#col=1' % burst2_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst2_url)
+    time, voltage = load_ascii_input(burst2_url)
 
     _, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3541,8 +3400,7 @@ def test_interburst_min_values():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         _, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3596,8 +3454,7 @@ def test_time_to_interburst_min():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3685,8 +3542,7 @@ def test_postburst_min_values():
         # use this to have all spikes in burst for burst3_url case
         efel.setDoubleSetting('strict_burst_factor', 4.0)
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3742,8 +3598,7 @@ def test_spikes_per_burst_diff():
     import efel
     efel.reset()
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3768,8 +3623,7 @@ def test_spikes_in_burst1_burst2_diff():
     import efel
     efel.reset()
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}
@@ -3796,8 +3650,7 @@ def test_spikes_in_burst1_burstlast_diff():
     import efel
     efel.reset()
 
-    time = efel.io.load_fragment('%s#col=1' % burst1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % burst1_url)
+    time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
 
     trace = {}

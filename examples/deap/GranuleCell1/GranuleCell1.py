@@ -63,7 +63,7 @@ class GrCmono:
 
 def steps(step_number, parameters):
 
-      # instantiate the class
+    # instantiate the class
     cell = GrCmono(parameters)
 
     # no table are in use from the mod files
@@ -130,8 +130,7 @@ def steps(step_number, parameters):
         stim3[0].dur = stimdata['stim2dur']
         stim3[0].amp = stimdata['stim2amp']
 
-        # Code to record everything.
-
+    # Code to record everything.
     time = h.Vector()
     time.record(h._ref_t)
 
