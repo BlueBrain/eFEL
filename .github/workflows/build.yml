@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
@@ -72,7 +72,7 @@ jobs:
       CIBW_SKIP: "*-musllinux_*"
       
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [call-test-workflow, tag]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [call-test-workflow, tag, wheels, tarball]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Python 3.9
