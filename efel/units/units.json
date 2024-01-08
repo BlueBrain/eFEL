@@ -144,5 +144,18 @@
     "initburst_sahp_ssse": "mV",
     "initburst_sahp_vb": "mV",
     "depol_block_bool": "constant",
-    "impedance": "Hz"
+    "impedance": "Hz",
+    "postburst_slow_ahp_values": "mV",
+    "time_to_postburst_slow_ahp": "ms",
+    "postburst_fast_ahp_values": "mV",
+    "postburst_adp_peak_values": "mV",
+    "time_to_postburst_fast_ahp": "ms",
+    "time_to_postburst_adp_peak": "ms",
+    "interburst_15percent_values": "mV",
+    "interburst_20percent_values": "mV",
+    "interburst_25percent_values": "mV",
+    "interburst_30percent_values": "mV",
+    "interburst_40percent_values": "mV",
+    "interburst_60percent_values": "mV",
+    "interburst_duration": "ms"
 }
