@@ -38,7 +38,7 @@ LibV5:AP_end_indices        #LibV5:peak_indices #LibV1:interpolate
 LibV2:AP_fall_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices     #LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:AP_duration	        #LibV5:AP_begin_indices #LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:AP_duration_half_width	#LibV2:AP_rise_indices	#LibV2:AP_fall_indices #LibV1:interpolate 
-LibV2:AP_rise_time	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:AP_amplitude #LibV1:interpolate 
+LibV2:AP_rise_time	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
 LibV2:AP_fall_time	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 
 LibV2:AP_rise_rate	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
 LibV2:AP_fall_rate	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 

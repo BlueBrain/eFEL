@@ -193,37 +193,50 @@ static int __AP_rise_time(const vector<double>& t,
                           const vector<double>& v,
                           const vector<int>& apbeginindices,
                           const vector<int>& peakindices,
-                          const vector<double>& apamplitude,
                           double beginperc,
                           double endperc,
                           vector<double>& aprisetime) {
   aprisetime.resize(std::min(apbeginindices.size(), peakindices.size()));
+  vector<int> newpeakindices;
+  // Make sure that we do not use peaks starting before the 1st AP_begin_index
+  // Because AP_begin_indices only takes into account peaks after stimstart
+  if (aprisetime.size() > 0) {
+    for (size_t i=0; i < peakindices.size(); i++) {
+      if (peakindices[i] > apbeginindices[0]) {
+        newpeakindices.push_back(peakindices[i]);
+      }
+    }
+  }
   double begin_v;
   double end_v;
   double begin_indice;
   double end_indice;
+  double apamplitude;
   for (size_t i = 0; i < aprisetime.size(); i++) {
-    begin_v = v[apbeginindices[i]] + beginperc * apamplitude[i];
-    end_v = v[apbeginindices[i]] + endperc * apamplitude[i];
+    // do not use AP_amplitude feature because it does not take into account
+    // peaks after stim_end
+    apamplitude = v[newpeakindices[i]] - v[apbeginindices[i]];
+    begin_v = v[apbeginindices[i]] + beginperc * apamplitude;
+    end_v = v[apbeginindices[i]] + endperc * apamplitude;
 
     // Get begin indice
     size_t j=apbeginindices[i];
     // change slightly begin_v for almost equal case
     // truncature error can change begin_v even when beginperc == 0.0
-    while (j<peakindices[i] && v[j] < begin_v - 0.0000000000001){
+    while (j<newpeakindices[i] && v[j] < begin_v - 0.0000000000001){
       j++;
     }
     begin_indice = j;
 
     // Get end indice
-    j=peakindices[i];
+    j=newpeakindices[i];
     // change slightly end_v for almost equal case
     // truncature error can change end_v even when beginperc == 0.0
     while (j>apbeginindices[i] && v[j] > end_v + 0.0000000000001){
       j--;
     }
     end_indice = j;
-    
+
     aprisetime[i] = t[end_indice] - t[begin_indice];
   }
   return aprisetime.size();
@@ -246,19 +259,6 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
   vector<double> v;
   retval = getVec(DoubleFeatureData, StringData, "V", v);
   if (retval < 0) return -1;
-  vector<double> AP_amplitude;
-  retval =
-      getVec(DoubleFeatureData, StringData, "AP_amplitude", AP_amplitude);
-  if (retval < 0) {
-    GErrorStr += "Error calculating AP_amplitude for mean_AP_amplitude";
-    return -1;
-  } else if (retval == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  } else if (AP_amplitude.size() == 0) {
-    GErrorStr += "No spikes found when calculating mean_AP_amplitude";
-    return -1;
-  }
   // Get rise begin percentage
   vector<double> risebeginperc;
   retval = getVec(DoubleFeatureData, StringData, "rise_start_perc", risebeginperc);
@@ -272,7 +272,7 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
     riseendperc.push_back(1.0);
   }
   vector<double> aprisetime;
-  retval = __AP_rise_time(t, v, apbeginindices, peakindices, AP_amplitude, risebeginperc[0], riseendperc[0], aprisetime);
+  retval = __AP_rise_time(t, v, apbeginindices, peakindices, risebeginperc[0], riseendperc[0], aprisetime);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_rise_time", aprisetime);
   }
@@ -282,12 +282,22 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
 
 // *** AP_fall_time according to E10 and E18 ***
 static int __AP_fall_time(const vector<double>& t,
+                          const double stimstart,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfalltime) {
   apfalltime.resize(std::min(peakindices.size(), apendindices.size()));
+  vector<int> newpeakindices;
+  // Make sure that we do not use peaks starting before stim start
+  // Because AP_end_indices only takes into account peaks after stim start
+  for (size_t i=0; i < peakindices.size(); i++) {
+    if (t[peakindices[i]] > stimstart) {
+      newpeakindices.push_back(peakindices[i]);
+    }
+  }
+
   for (size_t i = 0; i < apfalltime.size(); i++) {
-    apfalltime[i] = t[apendindices[i]] - t[peakindices[i]];
+    apfalltime[i] = t[apendindices[i]] - t[newpeakindices[i]];
   }
   return apfalltime.size();
 }
@@ -298,6 +308,9 @@ int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
   vector<double> t;
   retval = getVec(DoubleFeatureData, StringData, "T", t);
   if (retval < 0) return -1;
+  vector<double> stimstart;
+  retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+  if (retval < 0) return -1;
   vector<int> peakindices;
   retval = getVec(IntFeatureData, StringData, "peak_indices",
                      peakindices);
@@ -307,7 +320,7 @@ int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
                      apendindices);
   if (retval < 0) return -1;
   vector<double> apfalltime;
-  retval = __AP_fall_time(t, peakindices, apendindices, apfalltime);
+  retval = __AP_fall_time(t, stimstart[0], peakindices, apendindices, apfalltime);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_time", apfalltime);
   }
@@ -321,9 +334,17 @@ static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peakindices,
                           vector<double>& apriserate) {
   apriserate.resize(std::min(peakindices.size(), apbeginindices.size()));
+  vector<int> newpeakindices;
+  if (apriserate.size() > 0) {
+    for (size_t i=0; i < peakindices.size(); i++) {
+      if (peakindices[i] > apbeginindices[0]) {
+        newpeakindices.push_back(peakindices[i]);
+      }
+    }
+  }
   for (size_t i = 0; i < apriserate.size(); i++) {
-    apriserate[i] = (v[peakindices[i]] - v[apbeginindices[i]]) /
-                    (t[peakindices[i]] - t[apbeginindices[i]]);
+    apriserate[i] = (v[newpeakindices[i]] - v[apbeginindices[i]]) /
+                    (t[newpeakindices[i]] - t[apbeginindices[i]]);
   }
   return apriserate.size();
 }
@@ -356,13 +377,20 @@ int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
 
 // *** AP_fall_rate according to E12 and E20 ***
 static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
+                          const double stimstart,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfallrate) {
   apfallrate.resize(std::min(apendindices.size(), peakindices.size()));
+  vector<int> newpeakindices;
+  for (size_t i=0; i < peakindices.size(); i++) {
+    if (t[peakindices[i]] > stimstart) {
+      newpeakindices.push_back(peakindices[i]);
+    }
+  }
   for (size_t i = 0; i < apfallrate.size(); i++) {
-    apfallrate[i] = (v[apendindices[i]] - v[peakindices[i]]) /
-                    (t[apendindices[i]] - t[peakindices[i]]);
+    apfallrate[i] = (v[apendindices[i]] - v[newpeakindices[i]]) /
+                    (t[apendindices[i]] - t[newpeakindices[i]]);
   }
   return apfallrate.size();
 }
@@ -376,6 +404,9 @@ int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
   vector<double> v;
   retval = getVec(DoubleFeatureData, StringData, "V", v);
   if (retval < 0) return -1;
+  vector<double> stimstart;
+  retval = getVec(DoubleFeatureData, StringData, "stim_start", stimstart);
+  if (retval < 0) return -1;
   vector<int> peakindices;
   retval = getVec(IntFeatureData, StringData, "peak_indices", peakindices);
   if (retval < 0) return -1;
@@ -384,7 +415,7 @@ int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
                      apendindices);
   if (retval < 0) return -1;
   vector<double> apfallrate;
-  retval = __AP_fall_rate(t, v, peakindices, apendindices, apfallrate);
+  retval = __AP_fall_rate(t, v, stimstart[0], peakindices, apendindices, apfallrate);
   if (retval >= 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_rate", apfallrate);
   }
