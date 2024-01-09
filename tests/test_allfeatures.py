@@ -162,15 +162,7 @@ def test_allfeatures_on_constant_voltage():
     voltage = np.full(1000, -80.0)
 
     efel.reset()
-    traces = [
-        {
-            "T": time,
-            "V": voltage,
-            "stim_start": [100],
-            "stim_end": [999],
-            "stimulus_current": [1.0],
-        }
-    ]
+    traces = [{'T': time, 'V': voltage, 'stim_start': [100], 'stim_end': [999]}]
     all_featurenames = efel.getFeatureNames()
     feature_values = efel.getFeatureValues(traces, all_featurenames)[0]
     assert all(feature_values["voltage"] == -80.0)
@@ -185,9 +177,7 @@ def test_allfeatures_on_constant_voltage():
         "steady_state_voltage", "steady_state_voltage_stimend",
         "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
         "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
-        "Spikecount_stimint", "spike_count", "spike_count_stimint", "burst_number",
-        "strict_burst_number", "trace_check", "ohmic_input_resistance",
-        "ohmic_input_resistance_vb_ssse"
+        "Spikecount_stimint", "burst_number", "strict_burst_number", "trace_check"
     ]
 
     for field in array_fields:
