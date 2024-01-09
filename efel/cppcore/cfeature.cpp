@@ -339,69 +339,6 @@ int cFeature::setFeatureDouble(string strName, vector<double>& v) {
   return 1;
 }
 
-double cFeature::getDistance(string strName, double mean, double std,
-                             bool trace_check, double error_dist) {
-  vector<double> feature_vec;
-  vector<int> feature_veci;
-  string featureType;
-  int retVal, intFlag;
-  double dError = 0;
-
-  // Check if a the trace doesn't contain any spikes outside of the stimulus
-  // interval
-  if (trace_check) {
-    retVal = getFeature<int>("trace_check", feature_veci);
-    if (retVal < 0) {
-      return error_dist;
-    }
-  }
-
-  featureType = featuretype(strName);
-
-  if (featureType == "int") {
-    retVal = getFeature<int>(strName, feature_veci);
-    intFlag = 1;
-  } else {  // double
-    retVal = getFeature<double>(strName, feature_vec);
-    intFlag = 0;
-  }
-  // printf("\n Calculating distance for [%s] values [", strName.c_str());
-  if (retVal <= 0) {
-    // printf ("\n Error in feature calculation... [%s]\n",GErrorStr.c_str() );
-    return error_dist;
-  } else {
-    if (intFlag) {
-      for (unsigned i = 0; i < feature_veci.size(); i++) {
-        // printf("%d\t", feature_veci[i]);
-        dError = dError + fabs(feature_veci[i] - mean);
-      }
-      dError = dError / std / feature_veci.size();
-      if (dError != dError) {
-        // printf("Warning: Error distance calculation generated NaN, returning
-        // error_dist\n");
-        return error_dist;
-      }
-      // printf("] TotalError = %f\n", dError);
-      return dError;
-    } else {
-      for (unsigned i = 0; i < feature_vec.size(); i++) {
-        // printf("%f\t", feature_vec[i]);
-        dError = dError + fabs(feature_vec[i] - mean);
-      }
-      dError = dError / std / feature_vec.size();
-      if (dError != dError) {
-        printf(
-            "Warning: Error distance calculation generated NaN, returning "
-            "error_dist\n");
-        return error_dist;
-      }
-      // printf("] TotalError = %f\n", dError);
-      return dError;
-    }
-  }
-  return error_dist;
-}
-
 string cFeature::featuretype(string featurename) {
   if (featurename == "__test_efel_assertion__")  // for testing only
     throw EfelAssertionError("Test efel assertion is successfully triggered.");

@@ -62,8 +62,6 @@ class cFeature {
   string featuretype(string featurename);
   string getGError();
   void get_feature_names(vector<string>& feature_names);
-  double getDistance(string strName, double mean, double std, 
-          bool trace_check=true, double error_dist=250);
 
 };
 

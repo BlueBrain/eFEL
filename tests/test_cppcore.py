@@ -120,19 +120,6 @@ class TestCppcore:
         import efel
         efel.cppcore.getFeatureInt("AP_amplitude", list())
 
-    def test_getDistance(self):
-        """cppcore: Testing getDistance()"""
-        import efel
-
-        self.setup_data()
-        np.testing.assert_allclose(
-            3.09045815935,
-            efel.cppcore.getDistance(
-                'AP_amplitude',
-                50.0,
-                10.0,
-                trace_check=True))
-
     def test_getFeature(self):
         """cppcore: Testing getFeature"""
         import efel

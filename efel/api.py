@@ -209,64 +209,6 @@ def FeatureNameExists(feature_name):
     return feature_name in getFeatureNames()
 
 
-def _getDistance_cpp(
-        trace,
-        featureName,
-        mean,
-        std,
-        trace_check=None,
-        error_dist=None):
-    """Calculate distance value for a list of traces.
-
-    Parameters
-    ==========
-    trace : trace dicts
-            Trace dict that represents one trace. The dict should have the
-            following keys: 'T', 'V', 'stim_start', 'stim_end'
-    featureName : string
-                  Name of the the features for which to calculate the distance
-    mean : float
-           Mean to calculate the distance from
-    std : float
-          Std to scale the distance with
-    trace_check : float
-          Let the library check if there are spikes outside of stimulus
-          interval
-    error_dist : float
-          Distance returned when error, default is 250
-
-    Returns
-    =======
-    distance : float
-               The absolute number of standard deviation the feature is away
-               from the mean. In case of anomalous results a value of
-               'error_dist' standard deviations is returned.
-               This can happen if: a feature generates an error, there are
-               spikes outside of the stimulus interval, the feature returns
-               a NaN, etc.
-    """
-
-    _initialise()
-
-    # Next set time, voltage and the stimulus start and end
-    for item in list(trace.keys()):
-        cppcore.setFeatureDouble(item, [x for x in trace[item]])
-
-    kwargs = {}
-
-    kwargs['feature_name'] = featureName
-    kwargs['mean'] = mean
-    kwargs['std'] = std
-
-    if trace_check is not None:
-        kwargs['trace_check'] = 1 if trace_check else 0
-
-    if error_dist is not None:
-        kwargs['error_dist'] = error_dist
-
-    return efel.cppcore.getDistance(**kwargs)
-
-
 def _get_feature(featureName, raise_warnings=None):
     """Get feature value, decide to use python or cpp"""
     if featureName in pyfeatures.all_pyfeatures:
