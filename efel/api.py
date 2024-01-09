@@ -261,9 +261,8 @@ def getDistance(
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     if trace_check:
-        cppcoreFeatureValues = list()
-        retval = cppcore.getFeature('trace_check', cppcoreFeatureValues)
-        if retval < 0:
+        trace_check_success = getFeatureValues([trace], ['trace_check'])[0]
+        if trace_check_success["trace_check"] is None:
             return error_dist
 
     feature_values = _get_feature(featureName)

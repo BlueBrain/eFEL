@@ -17,5 +17,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Python changes
 - `bpap_attenuation` feature is added to the Python API.
-- `Spikecount`, `Spikecount_stimint`, `burst_number` and `strict_burst_number` features migrated to Python from C++.
+- `Spikecount`, `Spikecount_stimint`, `burst_number`, `strict_burst_number` and `trace_check` features migrated to Python from C++.
 - `check_ais_initiation` is added to the Python API.

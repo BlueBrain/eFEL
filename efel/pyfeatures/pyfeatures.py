@@ -50,7 +50,8 @@ all_pyfeatures = [
     'spikes_in_burst1_burstlast_diff',
     'impedance',
     'burst_number',
-    'strict_burst_number'
+    'strict_burst_number',
+    'trace_check'
 ]
 
 
@@ -92,6 +93,23 @@ def spike_count_stimint() -> numpy.ndarray:
 
     res = sum(1 for time in peak_times if stim_start <= time <= stim_end)
     return numpy.array([res])
+
+
+def trace_check() -> numpy.ndarray | None:
+    """Returns np.array([0]) if there are no spikes outside stimulus boundaries.
+
+    Returns None upon failure.
+    """
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = _get_cpp_feature("peak_time")
+    if peak_times is None:  # If no spikes, then no problem
+        return numpy.array([0])
+    # Check if there are no spikes or if all spikes are within the stimulus interval
+    if numpy.all((peak_times >= stim_start) & (peak_times <= stim_end * 1.05)):
+        return numpy.array([0])  # 0 if trace is valid
+    else:
+        return None  # None if trace is invalid due to spike outside stimulus interval
 
 
 def burst_number() -> numpy.ndarray:

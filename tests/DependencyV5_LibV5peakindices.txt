@@ -1,5 +1,4 @@
 LibV5:peak_indices	    	#LibV1:interpolate
-LibV1:trace_check		    #LibV1:peak_time
 LibV1:ISI_values  		    #LibV1:peak_time   
 LibV1:doublet_ISI	#LibV1:peak_time
 LibV1:peak_voltage		    #LibV5:peak_indices

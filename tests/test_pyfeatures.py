@@ -231,16 +231,29 @@ def test_pydistance():
 
     numpy.seterr(divide='ignore')
 
-    # Extra sanity checks for trace_check
-    mf1_trace['stim_end'] = [600]
 
-    efel.reset()
+    mf1_trace['stim_start'] = [0]
+    mf1_trace['stim_end'] = [900]
+    # with successful trace_check
     numpy.testing.assert_allclose(efel.getDistance(
         mf1_trace,
         feature_name,
         mean,
         std,
-        trace_check=False), 30.422218394481284)
+        trace_check=True), 30.422218394481284)
+
+    efel.reset()
+    # with failed trace_check
+    mf1_trace["stim_end"] = [600]
+    error_value = 250.0
+    res = efel.getDistance(
+        mf1_trace,
+        feature_name,
+        mean,
+        std,
+        trace_check=True,
+        error_dist=error_value)
+    assert res == error_value
 
 
 def test_pydistance_featurefail():
@@ -297,3 +310,20 @@ def test_impedance():
 
     expected_values = {feature_name: 4.615384615384615}
     _test_expected_value(feature_name, expected_values)
+
+
+def test_trace_check():
+    """Unit test for trace_check."""
+    efel.reset()
+
+    mf1_trace = _load_trace('mean_frequency1')
+    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    assert feature_values[0]['trace_check'][0] == 0
+    # failure
+    mf1_trace["stim_end"] = [600]
+    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    assert feature_values[0]['trace_check'] is None
+    # no spikes
+    mf1_trace["V"] = [0] * len(mf1_trace["V"])
+    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    assert feature_values[0]['trace_check'][0] == 0

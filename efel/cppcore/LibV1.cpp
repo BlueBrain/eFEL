@@ -624,28 +624,6 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
 
 // end of adaptation_index2
 
-int LibV1::trace_check(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData) {
-  const auto& doubleFeatures =
-      getFeatures(DoubleFeatureData, {"peak_time", "stim_start", "stim_end"});
-  bool sane = true;
-  for (const auto& peak : doubleFeatures.at("peak_time")) {
-    if (peak < doubleFeatures.at("stim_start")[0] ||
-        peak > doubleFeatures.at("stim_end")[0] * 1.05) {
-      sane = false;
-      break;
-    }
-  }
-  if (sane) {
-    vector<int> tc = {0};
-    setVec(IntFeatureData, StringData, "trace_check", tc);
-    return tc.size();
-  } else {
-    throw FeatureComputationError("Trace sanity check failed, there were spike outside the stimulus interval.");
-  }
-}
-
 // To find spike width using Central difference derivative vec1[i] =
 // ((vec[i+1]+vec[i-1])/2)/dx  and half width is between
 // MinAHP and APThreshold

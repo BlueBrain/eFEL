@@ -65,9 +65,6 @@ int adaptation_index(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData);
 
-int trace_check(mapStr2intVec& IntFeatureData,
-                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
 // passive properties
 int time_constant(mapStr2intVec& IntFeatureData,
                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
