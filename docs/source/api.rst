@@ -17,6 +17,6 @@ Submodules
    io
    pyfeatures.multitrace
    pyfeatures.pyfeatures
+   pyfeatures.validation
    units
    settings
-   validation

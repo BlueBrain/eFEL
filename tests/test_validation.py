@@ -6,7 +6,7 @@ import pytest
 
 import efel
 from efel.io import load_ascii_input
-from efel.validation import check_ais_initiation
+from efel.pyfeatures.validation import check_ais_initiation
 
 
 testdata_dir = Path(__file__).parent / "testdata"
