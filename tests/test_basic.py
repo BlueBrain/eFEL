@@ -616,7 +616,7 @@ def test_strict_stiminterval():
         trace['stim_start'] = [stim_start]
         trace['stim_end'] = [stim_end]
 
-        features = ['peak_indices', 'peak_time', 'Spikecount']
+        features = ['peak_indices', 'peak_time', 'spike_count']
 
         feature_values = \
             efel.getFeatureValues(
@@ -625,7 +625,7 @@ def test_strict_stiminterval():
 
         peak_indices = feature_values[0]['peak_indices']
         peak_time = feature_values[0]['peak_time']
-        spikecount = feature_values[0]['Spikecount']
+        spikecount = feature_values[0]['spike_count']
         assert len(peak_indices) == n_of_spikes
         assert len(peak_time) == n_of_spikes
         assert spikecount == n_of_spikes
@@ -1132,7 +1132,7 @@ def test_getDistance_trace_check():
     trace['stim_end'] = [70]
     traces.append(trace)
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'Spikecount', 0, 1), 3.0
+        efel.getDistance(trace, 'spike_count', 0, 1), 3.0
     )
 
     trace['stim_end'] = [50]
@@ -1141,7 +1141,7 @@ def test_getDistance_trace_check():
     numpy.testing.assert_allclose(
         efel.getDistance(
             trace,
-            'Spikecount',
+            'spike_count',
             0,
             1,
             trace_check=False),
@@ -1149,7 +1149,7 @@ def test_getDistance_trace_check():
 
     efel.reset()
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'Spikecount', 0, 1), 250.0
+        efel.getDistance(trace, 'spike_count', 0, 1), 250.0
     )
 
 
@@ -1261,8 +1261,8 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.505521563640386)
 
 
-def test_spikecount1():
-    """basic: Test Spikecount 1"""
+def test_spike_count1():
+    """basic: Test spike_count 1"""
 
     import efel
     efel.reset()
@@ -1279,7 +1279,7 @@ def test_spikecount1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['peak_indices', 'Spikecount']
+    features = ['peak_indices', 'spike_count']
 
     feature_values = \
         efel.getFeatureValues(
@@ -1287,12 +1287,12 @@ def test_spikecount1():
             features)
 
     peak_indices = feature_values[0]['peak_indices']
-    spikecount = feature_values[0]['Spikecount'][0]
+    spikecount = feature_values[0]['spike_count'][0]
     assert len(peak_indices) == spikecount
 
 
-def test_spikecount_stimint1():
-    """basic: Test Spikecount_stimint 1."""
+def test_spike_count_stimint1():
+    """basic: Test spike_count_stimint 1."""
     import efel
     efel.reset()
 
@@ -1307,7 +1307,7 @@ def test_spikecount_stimint1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['peak_time', 'Spikecount_stimint', 'Spikecount']
+    features = ['peak_time', 'spike_count_stimint', 'spike_count']
 
     feature_values = \
         efel.getFeatureValues(
@@ -1315,8 +1315,8 @@ def test_spikecount_stimint1():
             features)
 
     peak_times = feature_values[0]['peak_time']
-    spikecount = feature_values[0]['Spikecount'][0]
-    spikecount_stimint = feature_values[0]['Spikecount_stimint'][0]
+    spikecount = feature_values[0]['spike_count'][0]
+    spikecount_stimint = feature_values[0]['spike_count_stimint'][0]
 
     interval_peaktimes, = \
         numpy.where((peak_times >= stim_start) & (peak_times <= stim_end))
@@ -1610,8 +1610,8 @@ def test_ohmic_input_resistance_vb_ssse_zero_stimulus_current():
     assert ohmic_input_resistance is None
 
 
-def test_spikecount2():
-    """basic: Test Spikecount 2: test empty trace"""
+def test_spike_count2():
+    """basic: Test spike_count 2: test empty trace"""
 
     import efel
     efel.reset()
@@ -1629,14 +1629,14 @@ def test_spikecount2():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['Spikecount']
+    features = ['spike_count']
 
     feature_values = \
         efel.getFeatureValues(
             [trace],
             features)
 
-    spikecount = feature_values[0]['Spikecount'][0]
+    spikecount = feature_values[0]['spike_count'][0]
     assert spikecount == 0
 
 
@@ -1712,7 +1712,7 @@ def test_getFeatureNames():
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
     # add the new names for the deprecated ones
-    expected_featurenames += ["spike_count", "spike_count_stimint"]
+    expected_featurenames += ["Spikecount", "Spikecount_stimint"]
     assert set(efel.getFeatureNames()) == set(expected_featurenames)
 
 
@@ -2038,7 +2038,7 @@ def test_mean_AP_amplitude():
 
 
 def test_unfinished_peak():
-    """basic: Test if unfinished peak doesn't break Spikecount"""
+    """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
     efel.setIntSetting('strict_stiminterval', True)
@@ -2055,17 +2055,17 @@ def test_unfinished_peak():
     trace['stim_start'] = [10]
     trace['stim_end'] = [70]
 
-    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
-    spikecount = traces_results[0]['Spikecount'][0]
+    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
 
     # When the signal at the end of the trace is larger than the threshold,
-    # Spikecount and possibly other features cannont be estimated.
+    # spike_count and possibly other features cannont be estimated.
     v[int(80 / dt):] = -19
 
-    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
-    spikecount = traces_results[0]['Spikecount'][0]
+    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
 

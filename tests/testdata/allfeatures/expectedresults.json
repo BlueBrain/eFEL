@@ -314,10 +314,10 @@
         675.4999999993856,
         250.29999999977235
     ],
-    "Spikecount": [
+    "spike_count": [
         6
     ],
-    "Spikecount_stimint": [
+    "spike_count_stimint": [
         6
     ],
     "adaptation_index": [

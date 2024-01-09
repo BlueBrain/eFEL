@@ -126,10 +126,9 @@ def test_allfeatures():
     """allfeatures: Regression testing all features on a trace"""
 
     feature_values = get_allfeature_values()
-    # drop spike_count and spike_count_stimint from feature values since they
-    # are the same as deprecated Spikecount and Spikecount_stimint
-    feature_values.pop('spike_count')
-    feature_values.pop('spike_count_stimint')
+    # drop Spikecount and Spikecount_stimint deprecated features
+    feature_values.pop('Spikecount')
+    feature_values.pop('Spikecount_stimint')
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)

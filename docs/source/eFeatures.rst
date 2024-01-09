@@ -150,8 +150,8 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-`Python efeature`_ : Spikecount
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : spike_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes in the trace, including outside of stimulus interval
 
@@ -159,11 +159,11 @@ number of spikes in the trace, including outside of stimulus interval
 - **Units**: constant
 - **Pseudocode**: ::
 
-    Spikecount = len(peak_indices)
+    spike_count = len(peak_indices)
 
 **Note**: In the future this feature will be called "spike_count".
 
-`Python efeature`_ : Spikecount_stimint
+`Python efeature`_ : spike_count_stimint
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes inside the stimulus interval
@@ -173,7 +173,7 @@ number of spikes inside the stimulus interval
 - **Pseudocode**: ::
 
     peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
-    Spikecount_stimint = len(peaktimes_stimint)
+    spike_count_stimint = len(peaktimes_stimint)
 
 **Note**: In the future this feature will be called "spike_count_stimint".
 
@@ -1902,7 +1902,7 @@ Computes the impedance given a ZAP current input and its voltage response.
 It will return the frequency at which the impedance is maximal, in the range (0, impedance_max_freq] Hz,
 with impedance_max_freq being a setting with 50.0 as a default value.
 
-- **Required features**: current, LibV1:Spikecount, LibV5:voltage_base, LibV5:current_base
+- **Required features**: current, spike_count, LibV5:voltage_base, LibV5:current_base
 - **Units**: Hz
 - **Pseudocode**: ::
 
