@@ -416,3 +416,8 @@ string cFeature::getGError() {
   GErrorStr.clear();
   return error;
 }
+
+template int cFeature::getFeature(string strName, vector<int>& vec);
+template int cFeature::getFeature(string strName, vector<double>& vec);
+template const vector<int> cFeature::getMapData(const string& strName, const map<string, vector<int>>& mapData);
+template const vector<double> cFeature::getMapData(const string& strName, const map<string, vector<double>>& mapData);
