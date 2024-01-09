@@ -126,7 +126,10 @@ def test_allfeatures():
     """allfeatures: Regression testing all features on a trace"""
 
     feature_values = get_allfeature_values()
-
+    # drop spike_count and spike_count_stimint from feature values since they
+    # are the same as deprecated Spikecount and Spikecount_stimint
+    feature_values.pop('spike_count')
+    feature_values.pop('spike_count_stimint')
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
@@ -182,8 +185,9 @@ def test_allfeatures_on_constant_voltage():
         "steady_state_voltage", "steady_state_voltage_stimend",
         "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
         "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
-        "Spikecount_stimint", "burst_number", "strict_burst_number", "trace_check",
-        "ohmic_input_resistance", "ohmic_input_resistance_vb_ssse"
+        "Spikecount_stimint", "spike_count", "spike_count_stimint", "burst_number",
+        "strict_burst_number", "trace_check", "ohmic_input_resistance",
+        "ohmic_input_resistance_vb_ssse"
     ]
 
     for field in array_fields:

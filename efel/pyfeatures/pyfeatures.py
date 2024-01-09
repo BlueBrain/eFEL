@@ -45,6 +45,8 @@ all_pyfeatures = [
     'depol_block_bool',
     'Spikecount',
     'Spikecount_stimint',
+    'spike_count',
+    'spike_count_stimint',
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',

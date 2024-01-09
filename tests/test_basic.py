@@ -1711,6 +1711,8 @@ def test_getFeatureNames():
     test_data_path = testdata_dir.parent / 'featurenames.json'
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
+    # add the new names for the deprecated ones
+    expected_featurenames += ["spike_count", "spike_count_stimint"]
     assert set(efel.getFeatureNames()) == set(expected_featurenames)
 
 
