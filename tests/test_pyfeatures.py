@@ -231,7 +231,6 @@ def test_pydistance():
 
     numpy.seterr(divide='ignore')
 
-
     mf1_trace['stim_start'] = [0]
     mf1_trace['stim_end'] = [900]
     # with successful trace_check
