@@ -22,33 +22,29 @@
 
 #include "types.h"
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 using std::string;
 using std::vector;
+using std::map;
 
 extern string GErrorStr;
 
-int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
-                vector<int>& vec);
-int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
-                   vector<double>& vec);
+template <typename T>
+map<string, vector<T>> getFeatures(
+    const map<string, vector<T>>& allFeatures,
+    const vector<string>& requestedFeatures);
+template <typename T>
+std::vector<T> getFeature(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::string& requestedFeature);
+template<typename T>
+int getParam(map<string, vector<T>>& featureData,
+               const string& param, vector<T>& vec);
 int getStrParam(mapStr2Str& StringData, const string& param, string& value);
 template <class T>
-void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
+void setVec(map<string, vector<T>>& FeatureData, mapStr2Str& StringData,
                string key, const vector<T>& value);
-template <class T>
-int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<T>& v);
-// eCode feature convenience function
-int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                       const string& feature, const string& stimulus_name,
-                       int i_elem, vector<double>& mean);
-int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                      const string& feature, const string& stimulus_name,
-                      double mean, int i_elem, vector<double>& std);
-void getTraces(mapStr2doubleVec& DoubleFeatureData, const string& wildcard,
-               vector<string>& traces);
-
 #endif

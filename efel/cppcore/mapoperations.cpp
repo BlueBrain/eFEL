@@ -17,40 +17,59 @@
  */
 
 #include "mapoperations.h"
-#include <math.h>
+
+#include "EfelExceptions.h"
 
 extern string GErrorStr;
+
+template <typename T>
+std::map<std::string, std::vector<T>> getFeatures(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::vector<std::string>& requestedFeatures) {
+  std::map<std::string, std::vector<T>> selectedFeatures;
+  for (const auto& featureKey : requestedFeatures) {
+    auto it = allFeatures.find(featureKey);
+    if (it == allFeatures.end()) {
+      throw FeatureComputationError("Feature " + featureKey + " not found");
+    } else if (it->second.empty()) {
+      throw EmptyFeatureError("Feature " + featureKey + " is empty");
+    } else {
+      selectedFeatures.insert(*it);
+    }
+  }
+  return selectedFeatures;
+}
+
+template <typename T>
+std::vector<T> getFeature(
+    const std::map<std::string, std::vector<T>>& allFeatures,
+    const std::string& requestedFeature) {
+  // Use getFeatures to retrieve a map with the single requested feature
+  auto selectedFeatures = getFeatures(allFeatures, {requestedFeature});
+
+  // Since we requested only one feature, we can directly access the value
+  // The exception handling in getFeatures ensures we have a valid, non-empty
+  // vector
+  return selectedFeatures.at(requestedFeature);
+}
 
 /*
  * get(Int|Double|Str)Param provides access to the Int, Double, Str map
  *
  */
-int getIntParam(mapStr2intVec& IntFeatureData, const string& param,
-                vector<int>& vec) {
-  mapStr2intVec::iterator mapstr2IntItr(IntFeatureData.find(param));
-  if (mapstr2IntItr == IntFeatureData.end()) {
-    GErrorStr += "Parameter [" + param + "] is missing in int map."
-                 "In the python interface this can be set using the "
-                 "setIntSetting() function\n";
-    return -1;
-  }
-  vec = mapstr2IntItr->second;
-  return (vec.size());
-}
-
-int getDoubleParam(mapStr2doubleVec& DoubleFeatureData, const string& param,
-                   vector<double>& vec) {
-  mapStr2doubleVec::iterator mapstr2DoubleItr;
-  mapstr2DoubleItr = DoubleFeatureData.find(param);
-  if (mapstr2DoubleItr == DoubleFeatureData.end()) {
+template <typename T>
+int getParam(std::map<std::string, std::vector<T>>& featureData,
+             const std::string& param, std::vector<T>& vec) {
+  auto itr = featureData.find(param);
+  if (itr == featureData.end()) {
     GErrorStr += "Parameter [" + param +
-                 "] is missing in double map. "
-                 "In the python interface this can be set using the "
-                 "setDoubleSetting() function\n";
+                 "] is missing in the map. "
+                 "In the python interface, this can be set using the "
+                 "appropriate setting function\n";
     return -1;
   }
-  vec = mapstr2DoubleItr->second;
-  return (vec.size());
+  vec = itr->second;
+  return static_cast<int>(vec.size());
 }
 
 int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
@@ -64,8 +83,8 @@ int getStrParam(mapStr2Str& StringData, const string& param, string& value) {
 }
 
 template <class T>
-void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
-               string key, const vector<T>& value){
+void setVec(std::map<std::string, std::vector<T>>& FeatureData,
+            mapStr2Str& StringData, string key, const vector<T>& value) {
   string params;
   getStrParam(StringData, "params", params);
   key += params;
@@ -81,133 +100,25 @@ void setVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& Str
  * features in that way.
  */
 
-template <class T>
-int getVec(std::map<std::string, std::vector<T> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<T>& v){
-  string params;
-  getStrParam(StringData, "params", params);
-  strFeature += params;
-
-  typename std::map<std::string, std::vector<T> >::iterator
-    mapstr2VecItr(FeatureData.find(strFeature));
-
-  if (mapstr2VecItr == FeatureData.end()) {
-    GErrorStr += "\nFeature [" + strFeature + "] is missing\n";
-    return -1;
-  }
-  v = mapstr2VecItr->second;
-
-  return (v.size());
-}
-
-/*
- *  Take a wildcard string as an argument:
- *  wildcards seperated by ';' e.g. "APWaveForm;soma"
- *  Find traces containing every required wildcard in the name
- *  e.g. "V;APWaveForm200;soma", "V;APWaveForm240;soma"
- *  Finally return a vector of all parameter strings
- *  e.g. (";APWaveForm200;soma", ";APWaveForm240;soma", ...)
- */
-void getTraces(mapStr2doubleVec& mapDoubleData, const string& wildcards,
-               vector<string>& params) {
-  mapStr2doubleVec::const_iterator map_it;
-  string featurename;
-  params.clear();
-  for (map_it = mapDoubleData.begin(); map_it != mapDoubleData.end();
-       ++map_it) {
-    featurename = map_it->first;
-    // find traces
-    if (featurename.find("V;") != string::npos) {
-      bool match = true;
-      int nextpos;
-      int oldpos = 1;
-      do {
-        string param;
-        nextpos = wildcards.find(";", oldpos + 1);
-        if (nextpos == -1) {
-          nextpos = wildcards.size();
-        }
-        param = wildcards.substr(oldpos, nextpos - oldpos - 1);
-        if (featurename.find(param) == string::npos) {
-          match = false;
-          break;
-        }
-        oldpos = nextpos;
-      } while (nextpos != (int)wildcards.size());
-      if (match) {
-        params.push_back(featurename.substr(1));
-      }
-    }
-  }
-}
-
-// mean over all traces obtained with the same stimulus
-int mean_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                       const string& feature, const string& stimulus_name,
-                       int i_elem, vector<double>& mean) {
-  double sum = 0.;
-  vector<string> stim_params;
-  getTraces(DoubleFeatureData, stimulus_name, stim_params);
-  if (stim_params.size() > 0) {
-    for (unsigned i = 0; i < stim_params.size(); i++) {
-      vector<double> elem_feature;
-      getDoubleParam(DoubleFeatureData, feature + stim_params[i], elem_feature);
-      if (i_elem > (int)elem_feature.size() - 1 || elem_feature.size() == 0) {
-        GErrorStr +=
-            "mean_traces_double: feature vector of the elementary feature does "
-            "not contain that many elements.\n";
-      }
-      if (i_elem == -1) {
-        sum += elem_feature.back();
-      } else {
-        sum += elem_feature[i_elem];
-      }
-    }
-    mean.push_back(sum / stim_params.size());
-    return stim_params.size();
-  } else {
-    return -1;
-  }
-}
-
-// standard deviation over all traces obtained with the same stimulus
-int std_traces_double(mapStr2doubleVec& DoubleFeatureData,
-                      const string& feature, const string& stimulus_name,
-                      double mean, int i_elem, vector<double>& std) {
-  double sum = 0.;
-  double v;
-  vector<string> stim_params;
-  getTraces(DoubleFeatureData, stimulus_name, stim_params);
-  if (stim_params.size() > 0) {
-    for (unsigned i = 0; i < stim_params.size(); i++) {
-      vector<double> elem_feature;
-      getDoubleParam(DoubleFeatureData, feature + stim_params[i], elem_feature);
-      if (i_elem > (int)elem_feature.size() - 1 ||
-          (int)elem_feature.size() == 0) {
-        GErrorStr +=
-            "std_traces_double: feature vector of the elementary feature does "
-            "not contain that many elements.\n";
-      }
-      if (i_elem == -1) {
-        v = elem_feature.back();
-      } else {
-        v = elem_feature[i_elem];
-      }
-      double deviation = v - mean;
-      sum += deviation * deviation;
-    }
-    std.push_back(sqrt(sum / (double)(stim_params.size() - 1)));
-    return stim_params.size();
-  } else {
-    return -1;
-  }
-}
-
-template void setVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
-               string key, const vector<double>& value);
-template void setVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
-               string key, const vector<int>& value);
-template int getVec(std::map<std::string, std::vector<double> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<double>& v);
-template int getVec(std::map<std::string, std::vector<int> >& FeatureData, mapStr2Str& StringData,
-                 string strFeature, vector<int>& v);
+template std::map<std::string, std::vector<double>> getFeatures(
+    const std::map<std::string, std::vector<double>>& allFeatures,
+    const std::vector<std::string>& requestedFeatures);
+template std::map<std::string, std::vector<int>> getFeatures(
+    const std::map<std::string, std::vector<int>>& allFeatures,
+    const std::vector<std::string>& requestedFeatures);
+template int getParam(std::map<std::string, std::vector<double>>& featureData,
+                      const std::string& param, std::vector<double>& vec);
+template int getParam(std::map<std::string, std::vector<int>>& featureData,
+                      const std::string& param, std::vector<int>& vec);
+template void setVec(std::map<std::string, std::vector<double>>& FeatureData,
+                     mapStr2Str& StringData, string key,
+                     const vector<double>& value);
+template void setVec(std::map<std::string, std::vector<int>>& FeatureData,
+                     mapStr2Str& StringData, string key,
+                     const vector<int>& value);
+template std::vector<double> getFeature(
+    const std::map<std::string, std::vector<double>>& allFeatures,
+    const std::string& requestedFeature);
+template std::vector<int> getFeature(
+    const std::map<std::string, std::vector<int>>& allFeatures,
+    const std::string& requestedFeature);

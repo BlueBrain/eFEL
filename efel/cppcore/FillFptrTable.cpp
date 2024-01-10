@@ -27,7 +27,6 @@ int FillFptrTable() {
   FptrTableV1["time_to_first_spike"] = &LibV1::first_spike_time;
   FptrTableV1["burst_ISI_indices"] = &LibV1::burst_ISI_indices;
   FptrTableV1["adaptation_index"] = &LibV1::adaptation_index;
-  FptrTableV1["trace_check"] = &LibV1::trace_check;
   FptrTableV1["spike_width2"] = &LibV1::spike_width2;
   FptrTableV1["burst_mean_freq"] = &LibV1::burst_mean_freq;
   FptrTableV1["interburst_voltage"] = &LibV1::interburst_voltage;
@@ -48,10 +47,8 @@ int FillFptrTable() {
   FptrTableV1["ISI_CV"] = &LibV1::ISI_CV;
   FptrTableV1["AHP_depth_abs_slow"] = &LibV1::AHP_depth_abs_slow;
   FptrTableV1["AHP_slow_time"] = &LibV1::AHP_slow_time;
-  FptrTableV1["Spikecount"] = &LibV1::Spikecount;
   FptrTableV1["AHP_depth"] = &LibV1::AHP_depth;
   FptrTableV1["AHP_depth_slow"] = &LibV1::AHP_depth_slow;
-  FptrTableV1["burst_number"] = &LibV1::burst_number;
   FptrTableV1["AP_amplitude_diff"] = &LibV1::AP_amplitude_diff;
   FptrTableV1["AHP_depth_diff"] = &LibV1::AHP_depth_diff;
 
@@ -82,38 +79,6 @@ int FillFptrTable() {
   FptrTableV2["AP_duration_half_width"] = &LibV2::AP_duration_half_width;
   FptrTableV2["AP_duration_half_width_change"] =
       &LibV2::AP_duration_half_width_change;
-  FptrTableV2["E6"] = &LibV2::E6;
-  FptrTableV2["E7"] = &LibV2::E7;
-
-  FptrTableV2["BPAPatt2"] = &LibV2::BPAPatt2;
-  FptrTableV2["BPAPatt3"] = &LibV2::BPAPatt3;
-  FptrTableV2["E39"] = &LibV2::E39;
-  FptrTableV2["E39_cod"] = &LibV2::E39_cod;
-  FptrTableV2["E2"] = &LibV2::E2;
-  FptrTableV2["E3"] = &LibV2::E3;
-  FptrTableV2["E4"] = &LibV2::E4;
-  FptrTableV2["E5"] = &LibV2::E5;
-  FptrTableV2["E8"] = &LibV2::E8;
-  FptrTableV2["E9"] = &LibV2::E9;
-  FptrTableV2["E10"] = &LibV2::E10;
-  FptrTableV2["E11"] = &LibV2::E11;
-  FptrTableV2["E12"] = &LibV2::E12;
-  FptrTableV2["E13"] = &LibV2::E13;
-  FptrTableV2["E14"] = &LibV2::E14;
-  FptrTableV2["E15"] = &LibV2::E15;
-  FptrTableV2["E16"] = &LibV2::E16;
-  FptrTableV2["E17"] = &LibV2::E17;
-  FptrTableV2["E18"] = &LibV2::E18;
-  FptrTableV2["E19"] = &LibV2::E19;
-  FptrTableV2["E20"] = &LibV2::E20;
-  FptrTableV2["E21"] = &LibV2::E21;
-  FptrTableV2["E22"] = &LibV2::E22;
-  FptrTableV2["E23"] = &LibV2::E23;
-  FptrTableV2["E24"] = &LibV2::E24;
-  FptrTableV2["E25"] = &LibV2::E25;
-  FptrTableV2["E26"] = &LibV2::E26;
-  FptrTableV2["E27"] = &LibV2::E27;
-  FptrTableV2["E40"] = &LibV2::E40;
   FptrTableV2["steady_state_hyper"] = &LibV2::steady_state_hyper;
   FptrTableV2[string("amp_drop_first_second")] = &LibV2::amp_drop_first_second;
   FptrTableV2[string("amp_drop_first_last")] = &LibV2::amp_drop_first_last;
@@ -135,11 +100,31 @@ int FillFptrTable() {
   FptrTableV5["ISI_log_slope_skip"] = &LibV5::ISI_log_slope_skip;
   FptrTableV5["time_to_second_spike"] = &LibV5::time_to_second_spike;
   FptrTableV5["time_to_last_spike"] = &LibV5::time_to_last_spike;
-  FptrTableV5["inv_first_ISI"] = &LibV5::inv_first_ISI;
-  FptrTableV5["inv_second_ISI"] = &LibV5::inv_second_ISI;
-  FptrTableV5["inv_third_ISI"] = &LibV5::inv_third_ISI;
-  FptrTableV5["inv_fourth_ISI"] = &LibV5::inv_fourth_ISI;
-  FptrTableV5["inv_fifth_ISI"] = &LibV5::inv_fifth_ISI;
+  FptrTableV5["inv_first_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 0);
+  };
+  FptrTableV5["inv_second_ISI"] = [](mapStr2intVec& intData,
+                                     mapStr2doubleVec& doubleData,
+                                     mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 1);
+  };
+  FptrTableV5["inv_third_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 2);
+  };
+  FptrTableV5["inv_fourth_ISI"] = [](mapStr2intVec& intData,
+                                     mapStr2doubleVec& doubleData,
+                                     mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 3);
+  };
+  FptrTableV5["inv_fifth_ISI"] = [](mapStr2intVec& intData,
+                                    mapStr2doubleVec& doubleData,
+                                    mapStr2Str& strData) {
+    return LibV5::inv_ISI_generic(intData, doubleData, strData, 4);
+  };
   FptrTableV5["inv_last_ISI"] = &LibV5::inv_last_ISI;
   FptrTableV5["inv_time_to_first_spike"] = &LibV5::inv_time_to_first_spike;
   FptrTableV5["min_AHP_indices"] = &LibV5::min_AHP_indices;
@@ -181,17 +166,7 @@ int FillFptrTable() {
 
   FptrTableV5["AP2_AP1_begin_width_diff"] = &LibV5::AP2_AP1_begin_width_diff;
 
-  FptrTableV5["BPAPHeightLoc1"] = &LibV5::BPAPHeightLoc1;
-  FptrTableV5["BPAPAmplitudeLoc1"] = &LibV5::BPAPAmplitudeLoc1;
-  FptrTableV5["BPAPAmplitudeLoc2"] = &LibV5::BPAPAmplitudeLoc2;
-  FptrTableV5["BPAPHeightLoc2"] = &LibV5::BPAPHeightLoc2;
-
-  FptrTableV5["check_AISInitiation"] = &LibV5::check_AISInitiation;
   FptrTableV5["AP_phaseslope"] = &LibV5::AP_phaseslope;
-  FptrTableV5["AP_phaseslope_AIS"] = &LibV5::AP_phaseslope_AIS;
-
-  FptrTableV5["BAC_width"] = &LibV5::BAC_width;
-  FptrTableV5["BAC_maximum_voltage"] = &LibV5::BAC_maximum_voltage;
 
   FptrTableV5["all_ISI_values"] = &LibV5::all_ISI_values;
 
@@ -210,8 +185,7 @@ int FillFptrTable() {
       &LibV5::decay_time_constant_after_stim;
   FptrTableV5["multiple_decay_time_constant_after_stim"] =
       &LibV5::multiple_decay_time_constant_after_stim;
-  FptrTableV5["sag_time_constant"] =
-      &LibV5::sag_time_constant;
+  FptrTableV5["sag_time_constant"] = &LibV5::sag_time_constant;
 
   FptrTableV5["ohmic_input_resistance_vb_ssse"] =
       &LibV5::ohmic_input_resistance_vb_ssse;
@@ -219,8 +193,7 @@ int FillFptrTable() {
       &LibV5::voltage_deflection_vb_ssse;
   FptrTableV5["maximum_voltage_from_voltagebase"] =
       &LibV5::maximum_voltage_from_voltagebase;
-  FptrTableV5["Spikecount_stimint"] = &LibV5::Spikecount_stimint;
-  
+
   FptrTableV5["peak_indices"] = &LibV5::peak_indices;
   FptrTableV5["sag_amplitude"] = &LibV5::sag_amplitude;
   FptrTableV5["sag_ratio1"] = &LibV5::sag_ratio1;
@@ -229,12 +202,12 @@ int FillFptrTable() {
   FptrTableV5["AP_peak_downstroke"] = &LibV5::AP_peak_downstroke;
   FptrTableV5["min_between_peaks_indices"] = &LibV5::min_between_peaks_indices;
   FptrTableV5["min_between_peaks_values"] = &LibV5::min_between_peaks_values;
-  FptrTableV5["AP_width_between_threshold"] = &LibV5::AP_width_between_threshold;
+  FptrTableV5["AP_width_between_threshold"] =
+      &LibV5::AP_width_between_threshold;
 
   FptrTableV5["burst_begin_indices"] = &LibV5::burst_begin_indices;
   FptrTableV5["burst_end_indices"] = &LibV5::burst_end_indices;
   FptrTableV5["strict_burst_mean_freq"] = &LibV5::strict_burst_mean_freq;
-  FptrTableV5["strict_burst_number"] = &LibV5::strict_burst_number;
   FptrTableV5["strict_interburst_voltage"] = &LibV5::strict_interburst_voltage;
 
   FptrTableV5["ADP_peak_indices"] = &LibV5::ADP_peak_indices;
@@ -246,7 +219,7 @@ int FillFptrTable() {
   FptrTableV5["postburst_min_indices"] = &LibV5::postburst_min_indices;
   FptrTableV5["postburst_min_values"] = &LibV5::postburst_min_values;
   FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
-  
+
   //****************** end of FptrTableV5 *****************************
 
   return 1;

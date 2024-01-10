@@ -28,9 +28,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import json
 import os
+import warnings
 
-# pylint: disable=R0914
+import numpy as np
+
+import efel
 
 testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'testdata',
@@ -39,125 +43,81 @@ testdata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 def get_allfeature_values():
     """Get back all the feature names and value"""
-
-    import efel
     efel.reset()
-    import numpy
 
     all_featurenames = efel.getFeatureNames()
 
-    soma_data = numpy.loadtxt(os.path.join(testdata_dir, 'testdata.txt'))
-    soma_time = soma_data[:, 0]
-    soma_voltage = soma_data[:, 1]
+    def load_data(filename):
+        data = np.loadtxt(os.path.join(testdata_dir, filename))
+        return data[:, 0], data[:, 1]
 
-    db_data = numpy.loadtxt(os.path.join(testdata_dir, 'testdbdata.txt'))
-    db_time = db_data[:, 0]
-    db_voltage = db_data[:, 1]
+    soma_time, soma_voltage = load_data('testdata.txt')
+    db_time, db_voltage = load_data('testdbdata.txt')
+    bac_time, bac_voltage = load_data('testbacdata.txt')
+    bap1_time, bap1_voltage = load_data('testbap1data.txt')
+    bap2_time, bap2_voltage = load_data('testbap2data.txt')
 
-    bac_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbacdata.txt'))
-    bac_time = bac_data[:, 0]
-    bac_voltage = bac_data[:, 1]
-
-    bap1_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbap1data.txt'))
-    bap1_time = bap1_data[:, 0]
-    bap1_voltage = bap1_data[:, 1]
-
-    bap2_data = numpy.loadtxt(os.path.join(testdata_dir, 'testbap2data.txt'))
-    bap2_time = bap2_data[:, 0]
-    bap2_voltage = bap2_data[:, 1]
-
-    trace = {}
-    trace_db = {}
-
-    trace['T'] = soma_time
-    trace['V'] = soma_voltage
-    trace['stim_start'] = [700]
-    trace['stim_end'] = [2700]
-    trace['T;location_AIS'] = soma_time
-    trace['V;location_AIS'] = soma_voltage
-    trace['stim_start;location_AIS'] = [700]
-    trace['stim_end;location_AIS'] = [2700]
-    trace['T;location_epsp'] = bac_time
-    trace['V;location_epsp'] = bac_voltage
-    trace['stim_start;location_epsp'] = [295]
-    trace['stim_end;location_epsp'] = [600]
-    trace['T;location_dend1'] = bap1_time
-    trace['V;location_dend1'] = bap1_voltage
-    trace['stim_start;location_dend1'] = [295]
-    trace['stim_end;location_dend1'] = [500]
-    trace['T;location_dend2'] = bap2_time
-    trace['V;location_dend2'] = bap2_voltage
-    trace['stim_start;location_dend2'] = [295]
-    trace['stim_end;location_dend2'] = [500]
-
-    trace_db['T'] = db_time
-    trace_db['V'] = db_voltage
-    trace_db['stim_start'] = [419.995]
-    trace_db['stim_end'] = [1419.995]
-
-    bpap_featurenames = [
-        'BPAPHeightLoc1',
-        'BPAPHeightLoc2',
-        'BPAPAmplitudeLoc1',
-        'BPAPAmplitudeLoc2']
-
-    bac_featurenames = [
-        'BAC_width']
-
-    db_featurenames = [
-        'depol_block',
-        'depol_block_bool'
+    traces = [
+        {
+            'T': soma_time,
+            'V': soma_voltage,
+            'stim_start': [700],
+            'stim_end': [2700]
+        },
+        {
+            'T': soma_time,
+            'V': soma_voltage,
+            'stim_start': [700],
+            'stim_end': [2700],
+        },
+        {
+            'T': bac_time,
+            'V': bac_voltage,
+            'stim_start': [295],
+            'stim_end': [600]
+        },
+        {
+            'T': bap1_time,
+            'V': bap1_voltage,
+            'stim_start': [295],
+            'stim_end': [500]
+        },
+        {
+            'T': bap2_time,
+            'V': bap2_voltage,
+            'stim_start': [295],
+            'stim_end': [500]
+        }
     ]
 
-    soma_featurenames = all_featurenames[:]
+    trace_db = {
+        'T': db_time,
+        'V': db_voltage,
+        'stim_start': [419.995],
+        'stim_end': [1419.995]
+    }
 
-    for feature_name in bpap_featurenames:
-        soma_featurenames.remove(feature_name)
+    db_featurenames = ['depol_block', 'depol_block_bool']
 
-    for feature_name in bac_featurenames:
-        soma_featurenames.remove(feature_name)
-
-    for feature_name in db_featurenames:
-        soma_featurenames.remove(feature_name)
-
-    soma_featurenames = [x for x in soma_featurenames
-                         if x not in ['current', 'current_base', 'impedance']]
-
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        feature_values = efel.getFeatureValues([trace], soma_featurenames)[0]
+    soma_featurenames = [
+        x
+        for x in all_featurenames
+        if x
+        not in db_featurenames
+        + ["current", "current_base", "impedance"]
+    ]
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        feature_values = dict(
-            list(feature_values.items()) +
-            list(efel.getFeatureValues(
-                [trace_db],
-                db_featurenames)[0].items()))
+        feature_values = efel.getFeatureValues(traces, soma_featurenames)[0]
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        efel.setThreshold(-30)
-        feature_values = dict(
-            list(feature_values.items()) +
-            list(efel.getFeatureValues(
-                [trace],
-                bpap_featurenames)[0].items()))
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        efel.setThreshold(-55)
-        feature_values = dict(
-            list(feature_values.items()) +
-            list(efel.getFeatureValues(
-                [trace],
-                bac_featurenames)[0].items()))
+        feature_values.update(efel.getFeatureValues([trace_db], db_featurenames)[0])
 
     for feature_name in feature_values:
         if feature_values[feature_name] is not None:
-            feature_values[feature_name] = list(
-                feature_values[feature_name])
+            feature_values[feature_name] = list(feature_values[feature_name])
 
     return feature_values
 
@@ -166,13 +126,13 @@ def test_allfeatures():
     """allfeatures: Regression testing all features on a trace"""
 
     feature_values = get_allfeature_values()
-
-    import json
+    # drop Spikecount and Spikecount_stimint deprecated features
+    feature_values.pop('Spikecount')
+    feature_values.pop('Spikecount_stimint')
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
 
-    import numpy
     assert set(feature_values.keys()) == set(expected_results.keys())
     failed_feature = False
     for feature_name, feature_value in feature_values.items():
@@ -185,7 +145,7 @@ def test_allfeatures():
             equal = (expected_value is None)
         else:
             equal = (len(feature_value) == len(expected_value)) \
-                and numpy.allclose(feature_value, expected_value)
+                and np.allclose(feature_value, expected_value)
 
         if not equal:
             print("Difference in feature %s: value=%s expected=%s" %
@@ -193,3 +153,40 @@ def test_allfeatures():
             failed_feature = True
 
     assert not failed_feature
+
+
+def test_allfeatures_on_constant_voltage():
+    """Call all features on constant voltage input."""
+    time = np.linspace(0, 999, 1000)
+    voltage = np.full(1000, -80.0)
+
+    efel.reset()
+    traces = [{'T': time, 'V': voltage, 'stim_start': [100], 'stim_end': [999]}]
+    all_featurenames = efel.getFeatureNames()
+    feature_values = efel.getFeatureValues(traces, all_featurenames)[0]
+    assert all(feature_values["voltage"] == -80.0)
+    # Assert that each element in time is greater than or equal to the previous element
+    assert np.all(feature_values["time"][1:] >= feature_values["time"][:-1])
+
+    # Assert for array fields to be non-empty arrays
+    # If you add a new feature in the future that results in an array, add here
+    array_fields = [
+        "minimum_voltage", "maximum_voltage", "maximum_voltage_from_voltagebase",
+        "sag_amplitude", "voltage_after_stim", "steady_state_hyper",
+        "steady_state_voltage", "steady_state_voltage_stimend",
+        "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
+        "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
+        "Spikecount_stimint", "burst_number", "strict_burst_number", "trace_check",
+        "spike_count", "spike_count_stimint"
+    ]
+
+    for field in array_fields:
+        if field in feature_values:
+            assert isinstance(feature_values[field], np.ndarray)
+            assert len(feature_values[field]) > 0
+
+    # Assert the rest of the fields are None
+    excluded_fields = array_fields + ["voltage", "time"]
+    for key in feature_values:
+        if key not in excluded_fields:
+            assert feature_values[key] is None, f"Field {key} is not None"

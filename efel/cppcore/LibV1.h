@@ -27,9 +27,6 @@
 using std::vector;
 
 namespace LibV1 {
-int printVectorI(char* strName, vector<int> vec);
-int printVectorD(char* strName, vector<double> vec);
-
 int interpolate(mapStr2intVec& IntFeatureData,
                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
@@ -67,9 +64,6 @@ int interburst_voltage(mapStr2intVec& IntFeatureData,
 int adaptation_index(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData);
-
-int trace_check(mapStr2intVec& IntFeatureData,
-                mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
 // passive properties
 int time_constant(mapStr2intVec& IntFeatureData,
@@ -119,15 +113,11 @@ int AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                        mapStr2Str& StringData);
 int AHP_slow_time(mapStr2intVec& IntFeatureData,
                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int Spikecount(mapStr2intVec& IntFeatureData,
-               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth_slow(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);
-int burst_number(mapStr2intVec& IntFeatureData,
-                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AP_amplitude_diff(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);

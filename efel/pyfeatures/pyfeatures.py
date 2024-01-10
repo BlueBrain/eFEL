@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Python implementation of features"""
 
 """
@@ -25,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from typing_extensions import deprecated
 
 import numpy
 import efel.cppcore
@@ -41,11 +43,18 @@ all_pyfeatures = [
     'initburst_sahp_ssse',
     'depol_block',
     'depol_block_bool',
+    'Spikecount',
+    'Spikecount_stimint',
+    'spike_count',
+    'spike_count_stimint',
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
     'spikes_in_burst1_burstlast_diff',
     'impedance',
+    'burst_number',
+    'strict_burst_number',
+    'trace_check'
 ]
 
 
@@ -57,6 +66,76 @@ def voltage():
 def time():
     """Get time trace"""
     return _get_cpp_feature("time")
+
+
+@deprecated("Use spike_count instead.")
+def Spikecount() -> numpy.ndarray:
+    return spike_count()
+
+
+def spike_count() -> numpy.ndarray:
+    """Get spike count."""
+    peak_indices = _get_cpp_feature("peak_indices")
+    if peak_indices is None:
+        return numpy.array([0])
+    return numpy.array([peak_indices.size])
+
+
+@deprecated("Use spike_count_stimint instead.")
+def Spikecount_stimint() -> numpy.ndarray:
+    return spike_count_stimint()
+
+
+def spike_count_stimint() -> numpy.ndarray:
+    """Get spike count within stimulus interval."""
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = _get_cpp_feature("peak_time")
+    if peak_times is None:
+        return numpy.array([0])
+
+    res = sum(1 for time in peak_times if stim_start <= time <= stim_end)
+    return numpy.array([res])
+
+
+def trace_check() -> numpy.ndarray | None:
+    """Returns np.array([0]) if there are no spikes outside stimulus boundaries.
+
+    Returns None upon failure.
+    """
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = _get_cpp_feature("peak_time")
+    if peak_times is None:  # If no spikes, then no problem
+        return numpy.array([0])
+    # Check if there are no spikes or if all spikes are within the stimulus interval
+    if numpy.all((peak_times >= stim_start) & (peak_times <= stim_end * 1.05)):
+        return numpy.array([0])  # 0 if trace is valid
+    else:
+        return None  # None if trace is invalid due to spike outside stimulus interval
+
+
+def burst_number() -> numpy.ndarray:
+    """The number of bursts."""
+    burst_mean_freq = _get_cpp_feature("burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
+
+
+def strict_burst_number() -> numpy.ndarray:
+    """Calculate the strict burst number.
+
+    This implementation does not assume that every spike belongs to a burst.
+    The first spike is ignored by default. This can be changed by setting
+    ignore_first_ISI to 0.
+
+    The burst detection can be fine-tuned by changing the setting
+    strict_burst_factor. Default value is 2.0."""
+    burst_mean_freq = _get_cpp_feature("strict_burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
 
 
 def impedance():
@@ -71,8 +150,8 @@ def impedance():
     if current_trace is not None:
         holding_current = _get_cpp_feature("current_base")
         normalized_current = current_trace - holding_current
-        spike_count = _get_cpp_feature("Spikecount")
-        if spike_count < 1:  # if there is no spikes in ZAP
+        n_spikes = spike_count()
+        if n_spikes < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)
             if any(fft_cur) == 0:
@@ -99,10 +178,12 @@ def current():
 
 
 def ISIs():
-    """Get all ISIs"""
-
+    """Get all ISIs."""
     peak_times = _get_cpp_feature("peak_time")
-    return numpy.diff(peak_times)
+    if peak_times is None:
+        return None
+    else:
+        return numpy.diff(peak_times)
 
 
 def initburst_sahp_vb():
@@ -156,6 +237,8 @@ def initburst_sahp():
     last_isi = None
 
     # Loop over ISIs until frequency higher than initburst_freq_threshold
+    if all_isis is None:
+        return None
     for isi_counter, isi in enumerate(all_isis):
         # Convert to Hz
         freq = 1000.0 / isi

@@ -37,6 +37,4 @@ typedef int (*feature_function)(mapStr2intVec &,
  */
 typedef std::map<std::string, feature_function> feature2function;
 
-typedef std::pair<feature_function, std::string> featureStringPair;
-
 #endif

@@ -18,8 +18,8 @@
 
 #include "DependencyTree.h"
 
-#include <algorithm> //remove
-#include <cctype> //isspace
+#include <algorithm>  //remove
+#include <cctype>     //isspace
 #include <fstream>
 
 static void removeAllWhiteSpace(string &str) {
@@ -27,30 +27,21 @@ static void removeAllWhiteSpace(string &str) {
 }
 
 cTree::cTree(const char *strFileName) {
-  std::string line;
-
   std::ifstream input(strFileName);
-  if (input.is_open()) {
 
-    std::getline(input, line);
+  if (!input) {
+    ErrorStr += "\nCould not open the file " + string(strFileName);
+    return;
+  }
+
+  for (string line; std::getline(input, line);) {
     removeAllWhiteSpace(line);
-    if (!line.empty())
-      strDependencyFile.push_back(line);
-    while (!(input.fail() || input.eof())) {
-      std::getline(input, line);
-      removeAllWhiteSpace(line);
-      if (!line.empty())
-        strDependencyFile.push_back(line);
+    if (!line.empty()) {
+      strDependencyFile.push_back(std::move(line));
     }
-  } else {
-    ErrorStr = ErrorStr + string("\nCould not open the file ") + strFileName;
   }
+
   getAllParents(vecFeature);
-}
-int cTree::getDependencyList(string) {
-  for (unsigned i = 0; i < strDependencyFile.size(); i++) {
-  }
-  return 1;
 }
 
 /**
@@ -61,33 +52,31 @@ int cTree::getDependencyList(string) {
  * FptrTable :
  * FptrLookup | vector of pairs:
  *                  first | string: feature name
- *                  second | vector of featureStringPair
+ *                  second | vector of feature_function to represent list of
+ * dependent features
  *
  */
-int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
-                              feature2function *FptrTable,
-                              map<string, vector<featureStringPair > > *FptrLookup)
-{
+int cTree::setFeaturePointers(
+    map<string, feature2function *> &mapFptrLib, feature2function *FptrTable,
+    map<string, vector<feature_function> > *FptrLookup) {
   list<string>::iterator lstItr;
   map<string, feature2function *>::iterator mapLibItr;
   feature2function *fptrTbl;
   feature2function::iterator mapFeatureItr;
 
   string strLibFeature, strLib, strFeature;
-  string wildcards;
 
-  vector<featureStringPair> vecfptr;
+  vector<feature_function> vecfptr;
 
   if (vecFeature.size() == 0) return -1;
 
   // vecFeature is a list with all the feature names in the first column
   // of the dependency file
   for (unsigned i = 0; i < vecFeature.size(); i++) {
-
     FinalList.clear();
     strLibFeature = vecFeature[i];
     // fill FinalList with all the dependencies of feature vecFeature[i]
-    getDependency(strLibFeature, "");
+    getDependency(strLibFeature);
     vecfptr.clear();
     for (lstItr = FinalList.begin(); lstItr != FinalList.end(); lstItr++) {
       // Here strLibFeature is the feature name of the dependent feature
@@ -102,14 +91,7 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
       strLib = strLibFeature.substr(0, nPos);
 
       // Put feature name in strFeature
-      size_t wcpos = strLibFeature.find(";");
-      if (wcpos == string::npos) {
-        strFeature = strLibFeature.substr(nPos + 1);
-        wildcards = "";
-      } else {
-        strFeature = strLibFeature.substr(nPos + 1, wcpos - nPos - 1);
-        wildcards = strLibFeature.substr(wcpos);
-      }
+      strFeature = strLibFeature.substr(nPos + 1);
 
       // Find the feature function pointer map for the library
       mapLibItr = mapFptrLib.find(strLib);
@@ -127,15 +109,13 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
         return -1;
       }
 
-      // Add the feature function pointer and wildcards to the list of dependent
-      // features
-      vecfptr.push_back(featureStringPair(mapFeatureItr->second, wildcards));
+      vecfptr.push_back(mapFeatureItr->second);
       FptrTable->insert(std::pair<string, feature_function>(
-              strFeature, mapFeatureItr->second));
+          strFeature, mapFeatureItr->second));
     }
     // Add the vecfptr from above to a map with as key the base featurei
     FptrLookup->insert(
-        std::pair<string, vector<featureStringPair> >(strFeature, vecfptr));
+        std::pair<string, vector<feature_function> >(strFeature, vecfptr));
   }
 
   return 1;
@@ -149,7 +129,7 @@ int cTree::setFeaturePointers(map<string, feature2function *> &mapFptrLib,
  */
 int cTree::getAllParents(vector<string> &lstFeature) {
   for (unsigned i = 0; i < strDependencyFile.size(); i++) {
-    const string& strLine = strDependencyFile[i];
+    const string &strLine = strDependencyFile[i];
     size_t nPos = strLine.find_first_of('#');
     string FeatureName = strLine.substr(0, nPos);
     if (!FeatureName.empty()) {
@@ -180,43 +160,21 @@ int cTree::getChilds(string str, list<string> &childs) {
   return 1;
 }
 
-/*
- *
- *  Fill FinalList with a list of all the feature matching the wildcards
- *
- */
-int cTree::getDependency(string strLine, string wildcards) {
-  list<string> tmpChild;
+int cTree::getDependency(const string &strLine) {
+  std::list<string> tmpChild;
 
-  // parse wildcards out of "LibVx:feature_name;wildcards_name"
-  size_t wcpos = strLine.find(";");
-  if (wcpos != string::npos) {
-    wildcards = strLine.substr(wcpos);
-    strLine = strLine.substr(0, wcpos);
-  }
-  unsigned childCount = 0;
   getChilds(strLine, tmpChild);
-  if (tmpChild.size() != 0) {
-    childCount = tmpChild.size();
-    for (unsigned i = 0; i < childCount; i++) {
-      string str = tmpChild.front();
-      tmpChild.pop_front();
-      getDependency(str, wildcards);
-    }
+  for (const auto &childFeature : tmpChild) {
+    getDependency(
+        childFeature);  // Recursively get dependencies of the child feature.
   }
-  AddUniqueItem(strLine + wildcards, FinalList);
+  AddUniqueItem(strLine);  // Add the feature itself to the FinalList.
   return 0;
 }
 
-int cTree::AddUniqueItem(string strFeature, list<string> &lstFinal) {
-  list<string>::iterator lstItr;
-  bool FoundFlag = false;
-  for (lstItr = lstFinal.begin(); lstItr != lstFinal.end(); lstItr++) {
-    if (strFeature == *lstItr) {
-      FoundFlag = true;
-      break;
-    }
+void cTree::AddUniqueItem(const string &strFeature) {
+  auto it = std::find(FinalList.begin(), FinalList.end(), strFeature);
+  if (it == FinalList.end()) {
+    FinalList.push_back(strFeature);
   }
-  if (!FoundFlag) lstFinal.push_back(strFeature);
-  return 1;
 }
