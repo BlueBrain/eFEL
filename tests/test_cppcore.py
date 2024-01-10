@@ -97,6 +97,8 @@ class TestCppcore:
         test_data_path = os.path.join(testdata_dir, '../featurenames.json')
         with open(test_data_path, 'r') as featurenames_json:
             expected_featurenames = json.load(featurenames_json)
+        # add the new names for the deprecated ones
+        expected_featurenames += ["Spikecount", "Spikecount_stimint"]
         assert set(feature_names) == set(expected_featurenames)
 
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
@@ -119,19 +121,6 @@ class TestCppcore:
         """cppcore: Teting getFeatureInt with wrong type"""
         import efel
         efel.cppcore.getFeatureInt("AP_amplitude", list())
-
-    def test_getDistance(self):
-        """cppcore: Testing getDistance()"""
-        import efel
-
-        self.setup_data()
-        np.testing.assert_allclose(
-            3.09045815935,
-            efel.cppcore.getDistance(
-                'AP_amplitude',
-                50.0,
-                10.0,
-                trace_check=True))
 
     def test_getFeature(self):
         """cppcore: Testing getFeature"""
