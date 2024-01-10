@@ -200,6 +200,31 @@ std::pair<size_t, size_t> get_time_index(const std::vector<double>& t,
   return std::pair<size_t, size_t>(startIndex, endIndex);
 }
 
+// expects an empty newpeakindices
+int peaks_after_stim_start(const double stimstart,
+                           const vector<int>& peakindices,
+                           const vector<double>& t,
+                           vector<int>& newpeakindices){
+  for (size_t i=0; i < peakindices.size(); i++) {
+    if (t[peakindices[i]] > stimstart) {
+      newpeakindices.push_back(peakindices[i]);
+    }
+  }
+  return 1;
+}
+
+// expects an empty newpeakindices
+int peaks_after_stim_start(const double stimstartindex,
+                           const vector<int>& peakindices,
+                           vector<int>& newpeakindices){
+  for (size_t i=0; i < peakindices.size(); i++) {
+    if (peakindices[i] > stimstartindex) {
+      newpeakindices.push_back(peakindices[i]);
+    }
+  }
+  return 1;
+}
+
 template <class T>
 double vec_mean(const vector<T>& v) {
   /*
