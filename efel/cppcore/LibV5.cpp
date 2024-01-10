@@ -26,7 +26,6 @@
 #include <deque>
 #include <functional>
 #include <iterator>
-#include <iostream>
 
 #include "EfelExceptions.h"
 
