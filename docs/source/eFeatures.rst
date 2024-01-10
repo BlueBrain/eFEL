@@ -161,7 +161,8 @@ number of spikes in the trace, including outside of stimulus interval
 
     spike_count = len(peak_indices)
 
-**Note**: In the future this feature will be called "spike_count".
+**Note**: "spike_count" is the new name for the feature "Spikecount".
+"Spikecount", while still available, will be removed in the future.
 
 `Python efeature`_ : spike_count_stimint
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,7 +176,8 @@ number of spikes inside the stimulus interval
     peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
     spike_count_stimint = len(peaktimes_stimint)
 
-**Note**: In the future this feature will be called "spike_count_stimint".
+**Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
+"Spikecount_stimint", while still available, will be removed in the future.
 
 `LibV5`_ : number_initial_spikes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
