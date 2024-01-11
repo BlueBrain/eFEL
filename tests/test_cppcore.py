@@ -173,6 +173,31 @@ class TestCppcore:
         import efel
         efel.cppcore.getFeature("does_not_exist", list())
 
+    def test_getMapIntData(self):
+        """cppcore: Testing getMapIntData."""
+        import efel
+        self.setup_data()
+        # with non-existent key
+        res = efel.cppcore.getMapIntData('AP_begin_indices')
+        assert res == []
+        feature_values = list()
+        efel.cppcore.getFeatureInt('AP_begin_indices', feature_values)
+        res = efel.cppcore.getMapIntData('AP_begin_indices')
+        assert res == [5655, 6057, 6527, 7161, 8266]
+
+    def test_getMapDoubleData(self):
+        """cppcore: Testing getMapDoubleData."""
+        import efel
+        self.setup_data()
+        # with non-existent key
+        res = efel.cppcore.getMapDoubleData('AP_amplitude')
+        assert res == []
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        res = efel.cppcore.getMapDoubleData('AP_amplitude')
+        assert res[0] == 80.45724099440199
+        assert len(res) == 5
+
     def test_logging(self):  # pylint: disable=R0201
         """cppcore: Testing logging"""
         import efel
