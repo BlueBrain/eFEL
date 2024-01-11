@@ -204,6 +204,16 @@ class TestCppcore:
         assert efel.cppcore.featuretype('AP_amplitude') == 'double'
         assert efel.cppcore.featuretype('AP_begin_indices') == 'int'
 
+    def test_getgError(self):
+        """cppcore: Testing getgError."""
+        import efel
+        efel.reset()
+        assert efel.cppcore.getgError() == ''
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        assert "Feature T not found" in efel.cppcore.getgError()
+        assert efel.cppcore.getgError() == ''
+
     def test_logging(self):  # pylint: disable=R0201
         """cppcore: Testing logging"""
         import efel
