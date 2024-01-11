@@ -3765,14 +3765,106 @@ def test_spontaneous_firing():
     assert len(ap_rise_time) == len(ap_fall_time) == 17
     assert len(ap_rise_rate) == len(ap_fall_rate) == 17
 
+    ap_begin_indices_expected = [
+        2018,
+        2156,
+        2291,
+        2426,
+        2561,
+        2695,
+        2830,
+        2965,
+        3100,
+        3235,
+        3369,
+        3504,
+        3639,
+        3774,
+        3908,
+        4564,
+        5352
+    ]
+    ap_end_indices_expected = [
+        2052,
+        2188,
+        2323,
+        2458,
+        2593,
+        2728,
+        2863,
+        2997,
+        3132,
+        3267,
+        3402,
+        3536,
+        3671,
+        3806,
+        3941,
+        4596,
+        5384
+    ]
     ap_duration_expected = numpy.asarray(
-        [3.4, 3.2, 3.2, 3.2, 3.2, 3.3, 3.3, 3.2, 3.2, 3.2, 3.3, 3.2, 3.2, 3.2, 3.3, 3.2, 3.2]
+        [
+            3.4,
+            3.2,
+            3.2, 
+            3.2,
+            3.2,
+            3.3,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2
+        ]
     )
     ap_rise_time_expected = numpy.asarray(
-        [1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1., 1.1]
+        [
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.,
+            1.1
+        ]
     )
     ap_fall_time_expected = numpy.asarray(
-        [2.3, 2.1, 2.1, 2.1, 2.1, 2.2, 2.2, 2.1, 2.1, 2.1, 2.2, 2.1, 2.1, 2.1, 2.2, 2.2, 2.1]
+        [
+            2.3,
+            2.1,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1,
+            2.1, 
+            2.1,
+            2.2,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1
+        ]
     )
     ap_rise_rate_expected = numpy.asarray(
         [
@@ -3816,12 +3908,8 @@ def test_spontaneous_firing():
             -52.17949364
         ]
     )
-    assert list(ap_begin_indices) == [
-        2018, 2156, 2291, 2426, 2561, 2695, 2830, 2965, 3100, 3235, 3369, 3504, 3639, 3774, 3908, 4564, 5352
-    ]
-    assert list(ap_end_indices) == [
-        2052, 2188, 2323, 2458, 2593, 2728, 2863, 2997, 3132, 3267, 3402, 3536, 3671, 3806, 3941, 4596, 5384
-    ]
+    assert list(ap_begin_indices) == ap_begin_indices_expected
+    assert list(ap_end_indices) == ap_end_indices_expected
     numpy.testing.assert_allclose(ap_duration, ap_duration_expected)
     numpy.testing.assert_allclose(ap_rise_time, ap_rise_time_expected)
     numpy.testing.assert_allclose(ap_fall_time, ap_fall_time_expected)
