@@ -288,6 +288,8 @@ def getDistance(
 def _initialise():
     """Set cppcore initial values"""
     cppcore.Initialize(_settings.dependencyfile_path, "log")
+    # flush the GErrorString from previous runs by calling getgError()
+    cppcore.getgError()
 
     # First set some settings that are used by the feature extraction
 
