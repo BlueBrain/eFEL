@@ -60,14 +60,12 @@ double vec_mean(const vector<T> &v);
 std::pair<size_t, size_t> get_time_index(const std::vector<double> &t, double startTime,
                                      double endTime, double precisionThreshold);
 
-int peaks_after_stim_start(const double stimstart,
+vector<int> peaks_after_stim_start(const double stimstart,
                            const vector<int>& peakindices,
-                           const vector<double>& t,
-                           vector<int>& newpeakindices);
+                           const vector<double>& t);
 
-int peaks_after_stim_start(const double stimstartindex,
-                           const vector<int>& peakindices,
-                           vector<int>& newpeakindices);
+vector<int> peaks_after_stim_start(const double stimstartindex,
+                           const vector<int>& peakindices);
 
 template <class ForwardIterator>
 ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {

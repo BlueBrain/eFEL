@@ -171,11 +171,11 @@ static int __AP_rise_time(const vector<double>& t, const vector<double>& v,
                           double beginperc, double endperc,
                           vector<double>& aprisetime) {
   aprisetime.resize(std::min(apbeginindices.size(), peakindices.size()));
-  vector<int> newpeakindices;
   // Make sure that we do not use peaks starting before the 1st AP_begin_index
   // Because AP_begin_indices only takes into account peaks after stimstart
+  vector<int> newpeakindices;
   if (apbeginindices.size() > 0) {
-    peaks_after_stim_start(apbeginindices[0], peakindices, newpeakindices);
+    newpeakindices = peaks_after_stim_start(apbeginindices[0], peakindices);
   }
   double begin_v;
   double end_v;
@@ -246,8 +246,7 @@ static int __AP_fall_time(const vector<double>& t,
   apfalltime.resize(std::min(peakindices.size(), apendindices.size()));
   // Make sure that we do not use peaks starting before stim start
   // Because AP_end_indices only takes into account peaks after stim start
-  vector<int> newpeakindices;
-  peaks_after_stim_start(stimstart, peakindices, t, newpeakindices);
+  vector<int> newpeakindices = peaks_after_stim_start(stimstart, peakindices, t);
 
   for (size_t i = 0; i < apfalltime.size(); i++) {
     apfalltime[i] = t[apendindices[i]] - t[newpeakindices[i]];
@@ -283,7 +282,7 @@ static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
   apriserate.resize(std::min(peakindices.size(), apbeginindices.size()));
   vector<int> newpeakindices;
   if (apbeginindices.size() > 0) {
-    peaks_after_stim_start(apbeginindices[0], peakindices, newpeakindices);
+    newpeakindices = peaks_after_stim_start(apbeginindices[0], peakindices);
   }
   for (size_t i = 0; i < apriserate.size(); i++) {
     apriserate[i] = (v[newpeakindices[i]] - v[apbeginindices[i]]) /
@@ -319,8 +318,7 @@ static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& apendindices,
                           vector<double>& apfallrate) {
   apfallrate.resize(std::min(apendindices.size(), peakindices.size()));
-  vector<int> newpeakindices;
-  peaks_after_stim_start(stimstart, peakindices, t, newpeakindices);
+  vector<int> newpeakindices = peaks_after_stim_start(stimstart, peakindices, t);
 
   for (size_t i = 0; i < apfallrate.size(); i++) {
     apfallrate[i] = (v[apendindices[i]] - v[newpeakindices[i]]) /
