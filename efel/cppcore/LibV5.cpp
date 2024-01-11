@@ -1458,14 +1458,12 @@ int LibV5::current_base(mapStr2intVec& IntFeatureData,
   double cb_end_perc = 1.0;    // Default value
 
   try {
-    const double cb_start_perc =
-        getFeature(DoubleFeatureData, "current_base_start_perc")[0];
+     cb_start_perc = getFeature(DoubleFeatureData, "current_base_start_perc")[0];
   } catch (const std::runtime_error&) {
   }  // Use default value if not found or an error occurs
 
   try {
-    const double cb_end_perc =
-        getFeature(DoubleFeatureData, "current_base_end_perc")[0];
+    cb_end_perc = getFeature(DoubleFeatureData, "current_base_end_perc")[0];
   } catch (const std::runtime_error&) {
   }  // Use default value if not found or an error occurs
 
@@ -1600,13 +1598,11 @@ int LibV5::multiple_decay_time_constant_after_stim(
   double decay_start_after_stim = 1.0;
   double decay_end_after_stim = 10.0;
   try {
-    const double decay_start_after_stim =
-        getFeature(DoubleFeatureData, "decay_start_after_stim")[0];
+    decay_start_after_stim = getFeature(DoubleFeatureData, "decay_start_after_stim")[0];
   } catch (const std::runtime_error&) {
   }  // Use default value
   try {
-    const double decay_end_after_stim =
-        getFeature(DoubleFeatureData, "decay_end_after_stim")[0];
+    decay_end_after_stim = getFeature(DoubleFeatureData, "decay_end_after_stim")[0];
   } catch (const std::runtime_error&) {
   }  // Use default value
   vector<double> dtcas;
