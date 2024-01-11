@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### C++ changes
 - AP_end_indices, AP_rise_time, AP_fall_time, AP_rise_rate, AP_fall_rate do not take into account peaks before stim_start anymore
+- New test and test data for spontaneous firing case.
+  The data is provided by github user SzaBoglarka using cell https://modeldb.science/114047
 
 
 ## [5.4.0] - 2024-01
