@@ -1795,7 +1795,6 @@ static int __peak_indices(double threshold, const vector<double>& V,
     if (itmp_set) {
       if (strict_stiminterval) {
         EFEL_ASSERT(itmp < t.size(), "peak_time falls outside of time array");
-        EFEL_ASSERT(itmp >= 0, "peak_time is negative");
         if (t[itmp] >= stim_start && t[itmp] <= stim_end) {
           PeakIndex.push_back(itmp);
         }
