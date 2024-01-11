@@ -536,31 +536,40 @@ int LibV5::AP_begin_indices(mapStr2intVec& IntFeatureData,
 }
 
 static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
-                            const vector<int>& pi, vector<int>& apei,
-                            double derivativethreshold) {
+                            const double stimstart, const vector<int>& pi,
+                            vector<int>& apei, double derivativethreshold) {
+
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;
+  vector<int> peak_indices;
   int max_slope;
   getCentralDifferenceDerivative(1., v, dv);
   getCentralDifferenceDerivative(1., t, dt);
   transform(dv.begin(), dv.end(), dt.begin(), dvdt.begin(),
             std::divides<double>());
 
-  apei.resize(pi.size());
-  vector<int> picopy(pi.begin(), pi.end());
-  picopy.push_back(v.size() - 1);
+  auto stimbeginindex = distance(t.begin(),
+      find_if(t.begin(), t.end(),
+          [stimstart](double time){ return time >= stimstart; }));
 
-  for (size_t i = 0; i < apei.size(); i++) {
+   for (size_t i = 0; i < pi.size(); i++) {
+    if (pi[i] > stimbeginindex) {
+      peak_indices.push_back(pi[i]);
+    }
+  }
+  peak_indices.push_back(v.size() - 1);
+
+  for (size_t i = 0; i < peak_indices.size() - 1; i++) {
     max_slope =
-        distance(dvdt.begin(), std::min_element(dvdt.begin() + picopy[i] + 1,
-                                                dvdt.begin() + picopy[i + 1]));
+        distance(dvdt.begin(), std::min_element(dvdt.begin() + peak_indices[i] + 1,
+                                                dvdt.begin() + peak_indices[i + 1]));
     // assure that the width of the slope is bigger than 4
-    apei[i] = distance(dvdt.begin(), find_if(dvdt.begin() + max_slope,
-                                             dvdt.begin() + picopy[i + 1],
+    apei.push_back(distance(dvdt.begin(), find_if(dvdt.begin() + max_slope,
+                                             dvdt.begin() + peak_indices[i + 1],
                                              [derivativethreshold](double x) {
                                                return x >= derivativethreshold;
-                                             }));
+                                             })));
   }
   return apei.size();
 }
@@ -570,6 +579,7 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
                           mapStr2Str& StringData) {
   const auto& T = getFeature(DoubleFeatureData, "T");
   const auto& V = getFeature(DoubleFeatureData, "V");
+  const auto& stim_start = getFeature(DoubleFeatureData, "stim_start");
   const auto& peak_indices = getFeature(IntFeatureData, "peak_indices");
 
   vector<double> dTh;
@@ -577,7 +587,7 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
   double downDerivativeThreshold = (retVal <= 0) ? -12.0 : dTh[0];
 
   vector<int> AP_end_indices;
-  retVal = __AP_end_indices(T, V, peak_indices, AP_end_indices,
+  retVal = __AP_end_indices(T, V, stim_start[0], peak_indices, AP_end_indices,
                             downDerivativeThreshold);
   if (retVal >= 0) {
     setVec(IntFeatureData, StringData, "AP_end_indices", AP_end_indices);

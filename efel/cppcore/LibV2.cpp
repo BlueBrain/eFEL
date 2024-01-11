@@ -168,28 +168,38 @@ int LibV2::AP_duration_half_width(mapStr2intVec& IntFeatureData,
 static int __AP_rise_time(const vector<double>& t, const vector<double>& v,
                           const vector<int>& apbeginindices,
                           const vector<int>& peakindices,
-                          const vector<double>& apamplitude, double beginperc,
-                          double endperc, vector<double>& aprisetime) {
+                          double beginperc, double endperc,
+                          vector<double>& aprisetime) {
   aprisetime.resize(std::min(apbeginindices.size(), peakindices.size()));
+  // Make sure that we do not use peaks starting before the 1st AP_begin_index
+  // Because AP_begin_indices only takes into account peaks after stimstart
+  vector<int> newpeakindices;
+  if (apbeginindices.size() > 0) {
+    newpeakindices = peaks_after_stim_start(apbeginindices[0], peakindices);
+  }
   double begin_v;
   double end_v;
   double begin_indice;
   double end_indice;
+  double apamplitude;
   for (size_t i = 0; i < aprisetime.size(); i++) {
-    begin_v = v[apbeginindices[i]] + beginperc * apamplitude[i];
-    end_v = v[apbeginindices[i]] + endperc * apamplitude[i];
+    // do not use AP_amplitude feature because it does not take into account
+    // peaks after stim_end
+    apamplitude = v[newpeakindices[i]] - v[apbeginindices[i]];
+    begin_v = v[apbeginindices[i]] + beginperc * apamplitude;
+    end_v = v[apbeginindices[i]] + endperc * apamplitude;
 
     // Get begin indice
     size_t j = apbeginindices[i];
     // change slightly begin_v for almost equal case
     // truncature error can change begin_v even when beginperc == 0.0
-    while (j < peakindices[i] && v[j] < begin_v - 0.0000000000001) {
+    while (j < newpeakindices[i] && v[j] < begin_v - 0.0000000000001){
       j++;
     }
     begin_indice = j;
 
     // Get end indice
-    j = peakindices[i];
+    j = newpeakindices[i];
     // change slightly end_v for almost equal case
     // truncature error can change end_v even when beginperc == 0.0
     while (j > apbeginindices[i] && v[j] > end_v + 0.0000000000001) {
@@ -207,14 +217,13 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
   // Fetching all required features in one go.
   const auto& doubleFeatures = getFeatures(
       DoubleFeatureData,
-      {"T", "V", "AP_amplitude", "rise_start_perc", "rise_end_perc"});
+      {"T", "V", "rise_start_perc", "rise_end_perc"});
   const auto& intFeatures =
       getFeatures(IntFeatureData, {"AP_begin_indices", "peak_indices"});
   vector<double> aprisetime;
   int retval = __AP_rise_time(
       doubleFeatures.at("T"), doubleFeatures.at("V"),
       intFeatures.at("AP_begin_indices"), intFeatures.at("peak_indices"),
-      doubleFeatures.at("AP_amplitude"),
       doubleFeatures.at("rise_start_perc").empty()
           ? 0.0
           : doubleFeatures.at("rise_start_perc").front(),
@@ -230,28 +239,34 @@ int LibV2::AP_rise_time(mapStr2intVec& IntFeatureData,
 
 // *** AP_fall_time according to E10 and E18 ***
 static int __AP_fall_time(const vector<double>& t,
+                          const double stimstart,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfalltime) {
   apfalltime.resize(std::min(peakindices.size(), apendindices.size()));
+  // Make sure that we do not use peaks starting before stim start
+  // Because AP_end_indices only takes into account peaks after stim start
+  vector<int> newpeakindices = peaks_after_stim_start(stimstart, peakindices, t);
+
   for (size_t i = 0; i < apfalltime.size(); i++) {
-    apfalltime[i] = t[apendindices[i]] - t[peakindices[i]];
+    apfalltime[i] = t[apendindices[i]] - t[newpeakindices[i]];
   }
   return apfalltime.size();
 }
 int LibV2::AP_fall_time(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T"});
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "stim_start"});
   const auto& intFeatures =
       getFeatures(IntFeatureData, {"peak_indices", "AP_end_indices"});
 
   const vector<double>& t = doubleFeatures.at("T");
+  const double stim_start = doubleFeatures.at("stim_start")[0];
   const vector<int>& peakindices = intFeatures.at("peak_indices");
   const vector<int>& apendindices = intFeatures.at("AP_end_indices");
 
   vector<double> apfalltime;
-  int retval = __AP_fall_time(t, peakindices, apendindices, apfalltime);
+  int retval = __AP_fall_time(t, stim_start, peakindices, apendindices, apfalltime);
 
   if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_time", apfalltime);
@@ -265,9 +280,13 @@ static int __AP_rise_rate(const vector<double>& t, const vector<double>& v,
                           const vector<int>& peakindices,
                           vector<double>& apriserate) {
   apriserate.resize(std::min(peakindices.size(), apbeginindices.size()));
+  vector<int> newpeakindices;
+  if (apbeginindices.size() > 0) {
+    newpeakindices = peaks_after_stim_start(apbeginindices[0], peakindices);
+  }
   for (size_t i = 0; i < apriserate.size(); i++) {
-    apriserate[i] = (v[peakindices[i]] - v[apbeginindices[i]]) /
-                    (t[peakindices[i]] - t[apbeginindices[i]]);
+    apriserate[i] = (v[newpeakindices[i]] - v[apbeginindices[i]]) /
+                    (t[newpeakindices[i]] - t[apbeginindices[i]]);
   }
   return apriserate.size();
 }
@@ -294,30 +313,34 @@ int LibV2::AP_rise_rate(mapStr2intVec& IntFeatureData,
 
 // *** AP_fall_rate according to E12 and E20 ***
 static int __AP_fall_rate(const vector<double>& t, const vector<double>& v,
+                          const double stimstart,
                           const vector<int>& peakindices,
                           const vector<int>& apendindices,
                           vector<double>& apfallrate) {
   apfallrate.resize(std::min(apendindices.size(), peakindices.size()));
+  vector<int> newpeakindices = peaks_after_stim_start(stimstart, peakindices, t);
+
   for (size_t i = 0; i < apfallrate.size(); i++) {
-    apfallrate[i] = (v[apendindices[i]] - v[peakindices[i]]) /
-                    (t[apendindices[i]] - t[peakindices[i]]);
+    apfallrate[i] = (v[apendindices[i]] - v[newpeakindices[i]]) /
+                    (t[apendindices[i]] - t[newpeakindices[i]]);
   }
   return apfallrate.size();
 }
 int LibV2::AP_fall_rate(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,
                         mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V", "stim_start"});
   const auto& intFeatures =
       getFeatures(IntFeatureData, {"peak_indices", "AP_end_indices"});
 
   const vector<double>& t = doubleFeatures.at("T");
   const vector<double>& v = doubleFeatures.at("V");
+  const double stim_start = doubleFeatures.at("stim_start")[0];
   const vector<int>& peakindices = intFeatures.at("peak_indices");
   const vector<int>& apendindices = intFeatures.at("AP_end_indices");
 
   vector<double> apfallrate;
-  int retval = __AP_fall_rate(t, v, peakindices, apendindices, apfallrate);
+  int retval = __AP_fall_rate(t, v, stim_start, peakindices, apendindices, apfallrate);
 
   if (retval > 0) {
     setVec(DoubleFeatureData, StringData, "AP_fall_rate", apfallrate);

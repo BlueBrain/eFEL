@@ -56,6 +56,7 @@ spiking_from_beginning_to_end_url = (
     / 'basic'
     / 'spiking_from_beginning_to_end.txt'
 )
+spontaneous_url = testdata_dir / 'basic' / 'spontaneous.txt'
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -3724,3 +3725,193 @@ def test_spikes_in_burst1_burstlast_diff():
         'spikes_in_burst1_burstlast_diff'
     ]
     assert list(spikes_in_burst1_burstlast_diff) == [1]
+
+
+def test_spontaneous_firing():
+    """basic: Test features with spontaneous firing"""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(spontaneous_url)
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [200]
+    trace['stim_end'] = [400]
+
+    features = [
+        "AP_begin_indices",
+        "AP_end_indices",
+        "AP_duration",
+        "AP_rise_time",
+        "AP_fall_time",
+        "AP_rise_rate",
+        "AP_fall_rate"
+    ]
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    ap_begin_indices = feature_values[0]["AP_begin_indices"]
+    ap_end_indices = feature_values[0]["AP_end_indices"]
+    ap_duration = feature_values[0]["AP_duration"]
+    ap_rise_time = feature_values[0]["AP_rise_time"]
+    ap_fall_time = feature_values[0]["AP_fall_time"]
+    ap_rise_rate = feature_values[0]["AP_rise_rate"]
+    ap_fall_rate = feature_values[0]["AP_fall_rate"]
+
+    assert len(ap_begin_indices) == len(ap_end_indices) == 17
+    assert len(ap_rise_time) == len(ap_fall_time) == 17
+    assert len(ap_rise_rate) == len(ap_fall_rate) == 17
+
+    ap_begin_indices_expected = [
+        2018,
+        2156,
+        2291,
+        2426,
+        2561,
+        2695,
+        2830,
+        2965,
+        3100,
+        3235,
+        3369,
+        3504,
+        3639,
+        3774,
+        3908,
+        4564,
+        5352
+    ]
+    ap_end_indices_expected = [
+        2052,
+        2188,
+        2323,
+        2458,
+        2593,
+        2728,
+        2863,
+        2997,
+        3132,
+        3267,
+        3402,
+        3536,
+        3671,
+        3806,
+        3941,
+        4596,
+        5384
+    ]
+    ap_duration_expected = numpy.asarray(
+        [
+            3.4,
+            3.2,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2
+        ]
+    )
+    ap_rise_time_expected = numpy.asarray(
+        [
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.,
+            1.1
+        ]
+    )
+    ap_fall_time_expected = numpy.asarray(
+        [
+            2.3,
+            2.1,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1
+        ]
+    )
+    ap_rise_rate_expected = numpy.asarray(
+        [
+            82.71999369,
+            75.10676844,
+            74.81153,
+            74.49859629,
+            74.06181713,
+            74.79034563,
+            74.81447401,
+            74.625776,
+            74.25400107,
+            73.72304677,
+            74.83236875,
+            74.72279679,
+            74.41938034,
+            73.94843724,
+            74.81475705,
+            82.5914875,
+            75.61000111
+        ]
+    )
+    ap_fall_rate_expected = numpy.asarray(
+        [
+            -50.29279717,
+            -51.47121886,
+            -51.17771356,
+            -51.17143474,
+            -51.1426409,
+            -48.8666936,
+            -49.0424941,
+            -51.14053045,
+            -51.15984648,
+            -51.0874205,
+            -48.98788642,
+            -51.10475374,
+            -51.16398341,
+            -51.12579796,
+            -48.91465101,
+            -49.87112779,
+            -52.17949364
+        ]
+    )
+    assert list(ap_begin_indices) == ap_begin_indices_expected
+    assert list(ap_end_indices) == ap_end_indices_expected
+    numpy.testing.assert_allclose(ap_duration, ap_duration_expected)
+    numpy.testing.assert_allclose(ap_rise_time, ap_rise_time_expected)
+    numpy.testing.assert_allclose(ap_fall_time, ap_fall_time_expected)
+    numpy.testing.assert_allclose(ap_rise_rate, ap_rise_rate_expected)
+    numpy.testing.assert_allclose(ap_fall_rate, ap_fall_rate_expected)
