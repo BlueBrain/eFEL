@@ -101,6 +101,24 @@ class TestCppcore:
         expected_featurenames += ["Spikecount", "Spikecount_stimint"]
         assert set(feature_names) == set(expected_featurenames)
 
+    def test_getFeatureInt(self):
+        """cppcore: Testing getFeatureInt"""
+        import efel
+        self.setup_data()
+        # get int feature
+        feature_values = list()
+        efel.cppcore.getFeatureInt('AP_begin_indices', feature_values)
+        assert isinstance(feature_values[0], int)
+
+    def test_getFeatureDouble(self):
+        """cppcore: Testing getFeatureDouble."""
+        import efel
+        self.setup_data()
+        # get double feature
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        assert isinstance(feature_values[0], float)
+
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
         import efel
@@ -154,6 +172,47 @@ class TestCppcore:
         """cppcore: Testing failure exit code in getFeature"""
         import efel
         efel.cppcore.getFeature("does_not_exist", list())
+
+    def test_getMapIntData(self):
+        """cppcore: Testing getMapIntData."""
+        import efel
+        self.setup_data()
+        # with non-existent key
+        res = efel.cppcore.getMapIntData('AP_begin_indices')
+        assert res == []
+        feature_values = list()
+        efel.cppcore.getFeatureInt('AP_begin_indices', feature_values)
+        res = efel.cppcore.getMapIntData('AP_begin_indices')
+        assert res == [5655, 6057, 6527, 7161, 8266]
+
+    def test_getMapDoubleData(self):
+        """cppcore: Testing getMapDoubleData."""
+        import efel
+        self.setup_data()
+        # with non-existent key
+        res = efel.cppcore.getMapDoubleData('AP_amplitude')
+        assert res == []
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        res = efel.cppcore.getMapDoubleData('AP_amplitude')
+        assert res[0] == 80.45724099440199
+        assert len(res) == 5
+
+    def test_featuretype(self):
+        """cppcore: Testing featuretype."""
+        import efel
+        assert efel.cppcore.featuretype('AP_amplitude') == 'double'
+        assert efel.cppcore.featuretype('AP_begin_indices') == 'int'
+
+    def test_getgError(self):
+        """cppcore: Testing getgError."""
+        import efel
+        efel.reset()
+        assert efel.cppcore.getgError() == ''
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        assert "Feature T not found" in efel.cppcore.getgError()
+        assert efel.cppcore.getgError() == ''
 
     def test_logging(self):  # pylint: disable=R0201
         """cppcore: Testing logging"""
