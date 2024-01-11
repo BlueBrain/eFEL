@@ -198,6 +198,12 @@ class TestCppcore:
         assert res[0] == 80.45724099440199
         assert len(res) == 5
 
+    def test_featuretype(self):
+        """cppcore: Testing featuretype."""
+        import efel
+        assert efel.cppcore.featuretype('AP_amplitude') == 'double'
+        assert efel.cppcore.featuretype('AP_begin_indices') == 'int'
+
     def test_logging(self):  # pylint: disable=R0201
         """cppcore: Testing logging"""
         import efel
