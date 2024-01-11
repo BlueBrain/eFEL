@@ -101,6 +101,24 @@ class TestCppcore:
         expected_featurenames += ["Spikecount", "Spikecount_stimint"]
         assert set(feature_names) == set(expected_featurenames)
 
+    def test_getFeatureInt(self):
+        """cppcore: Testing getFeatureInt"""
+        import efel
+        self.setup_data()
+        # get int feature
+        feature_values = list()
+        efel.cppcore.getFeatureInt('AP_begin_indices', feature_values)
+        assert isinstance(feature_values[0], int)
+
+    def test_getFeatureDouble(self):
+        """cppcore: Testing getFeatureDouble."""
+        import efel
+        self.setup_data()
+        # get double feature
+        feature_values = list()
+        efel.cppcore.getFeatureDouble('AP_amplitude', feature_values)
+        assert isinstance(feature_values[0], float)
+
     def test_getFeatureDouble_failure(self):  # pylint: disable=R0201
         """cppcore: Testing failure exit code in getFeatureDouble"""
         import efel
