@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Callable
 """eFEL Python API functions.
 
 This module provides the user-facing Python API of the eFEL.
@@ -313,12 +314,12 @@ def setStrSetting(setting_name: str, new_value: str) -> None:
     set_str_setting(setting_name, new_value)
 
 
-def getFeatureValues(
-        traces,
-        featureNames,
-        parallel_map=None,
-        return_list=True,
-        raise_warnings=True):
+def get_feature_values(
+        traces: list[dict],
+        feature_names: list[str],
+        parallel_map: Callable | None = None,
+        return_list: bool = True,
+        raise_warnings: bool = True) -> list | map:
     """Calculate feature values for a list of traces.
 
     This function is the core of the eFEL API. A list of traces (in the form
@@ -331,41 +332,33 @@ def getFeatureValues(
     Beware that every feature returns an array of values. E.g. AP_amplitude
     will return a list with the amplitude of every action potential.
 
-    Parameters
-    ==========
-    traces : list of trace dicts
-             Every trace dict represent one trace. The dict should have the
-             following keys: 'T', 'V', 'stim_start', 'stim_end'
-    feature_names : list of string
-                  List with the names of the features to be calculated on all
-                  the traces.
-    parallel_map : map function
-                   Map function to parallelise over the traces. Default is the
-                   serial map() function
-    return_list: boolean
-                 By default the function returns a list of dicts. This
-                 optional argument can disable this, so that the result of the
-                 parallel_map() is returned. Can be useful for performance
-                 reasons when an iterator is preferred.
-    raise_warnings: boolean
-                    Raise warning when efel c++ returns an error
+    Args:
+        traces: Every trace dict represent one trace. The dict should have the
+                following keys: 'T', 'V', 'stim_start', 'stim_end'
+        feature_names: List with the names of the features to be calculated on all
+                       the traces.
+        parallel_map: Map function to parallelise over the traces. Default is the
+                      serial map() function
+        return_list: By default the function returns a list of dicts. This
+                     optional argument can disable this, so that the result of the
+                     parallel_map() is returned. Can be useful for performance
+                     reasons when an iterator is preferred.
+        raise_warnings: Raise warning when efel c++ returns an error
 
-    Returns
-    =======
-    feature_values : list of dicts
-                     For every input trace a feature value dict is return (in
-                     the same order). The dict contains the keys of
-                     'feature_names', every key contains a numpy array with
-                     the feature values returned by the C++ efel code.
-                     The value is None if an error occured during the
-                     calculation of the feature.
+    Returns:
+        For every input trace a feature value dict is return (in
+        the same order). The dict contains the keys of
+        'feature_names', every key contains a numpy array with
+        the feature values returned by the C++ efel code.
+        The value is None if an error occured during the
+        calculation of the feature.
     """
 
     if parallel_map is None:
         parallel_map = map
 
     traces_featurenames = (
-        (trace, featureNames, raise_warnings)
+        (trace, feature_names, raise_warnings)
         for trace in traces)
     map_result = parallel_map(_get_feature_values_serial, traces_featurenames)
 
@@ -373,6 +366,17 @@ def getFeatureValues(
         return list(map_result)
     else:
         return map_result
+
+
+@deprecated("Use get_feature_values instead")
+def getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=None,
+        return_list=True,
+        raise_warnings=True):
+    return get_feature_values(
+        traces, featureNames, parallel_map, return_list, raise_warnings)
 
 
 def get_py_feature(feature_name: str) -> np.ndarray | None:

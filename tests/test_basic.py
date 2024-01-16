@@ -169,6 +169,8 @@ def test_raise_warnings():
 
     with warnings.catch_warnings(record=True) as warning:
         warnings.simplefilter("always")
+        # Ignore DeprecationWarning
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         feature_value = efel.getFeatureValues(
             [trace],
             ['AP_amplitude'])[0]['AP_amplitude']
@@ -180,6 +182,8 @@ def test_raise_warnings():
 
     with warnings.catch_warnings(record=True) as warning:
         warnings.simplefilter("always")
+        # Ignore DeprecationWarning
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         feature_value = efel.getFeatureValues(
             [trace],
             ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
