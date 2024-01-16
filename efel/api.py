@@ -33,6 +33,7 @@ import efel
 import efel.cppcore as cppcore
 
 import efel.pyfeatures as pyfeatures
+from efel.pyfeatures.pyfeatures import get_cpp_feature
 
 """
 Disabling cppcore importerror override, it confuses users in case the error
@@ -432,23 +433,6 @@ def _get_feature_values_serial(trace_featurenames):
             featureName, raise_warnings=raise_warnings)
 
     return featureDict
-
-
-def get_cpp_feature(featureName, raise_warnings=None):
-    """Return value of feature implemented in cpp"""
-    cppcoreFeatureValues = list()
-    exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
-
-    if exitCode < 0:
-        if raise_warnings:
-            import warnings
-            warnings.warn(
-                "Error while calculating feature %s: %s" %
-                (featureName, cppcore.getgError()),
-                RuntimeWarning)
-        return None
-    else:
-        return numpy.array(cppcoreFeatureValues)
 
 
 def getMeanFeatureValues(traces, featureNames, raise_warnings=True):

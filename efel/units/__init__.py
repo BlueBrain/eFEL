@@ -4,6 +4,10 @@ import pkgutil
 
 
 _units_raw = pkgutil.get_data(__name__, "units.json")
+
+if _units_raw is None:
+    raise ValueError("Failed to load units.json")
+
 _units = json.loads(_units_raw)
 
 
