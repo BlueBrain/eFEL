@@ -384,12 +384,12 @@ def get_py_feature(feature_name: str) -> np.ndarray | None:
     return getattr(pyfeatures, feature_name)()
 
 
-def _get_feature_values_serial(trace_featurenames):
-    """Single thread of getFeatureValues"""
-
-    trace, featureNames, raise_warnings = trace_featurenames
-
-    featureDict = {}
+def _get_feature_values_serial(
+    trace_featurenames: tuple[dict, list[str], bool]
+) -> dict:
+    """Single process of get_feature_values."""
+    trace, feature_names, raise_warnings = trace_featurenames
+    result = {}
 
     if 'stim_start' in trace and 'stim_end' in trace:
         try:
@@ -419,11 +419,11 @@ def _get_feature_values_serial(trace_featurenames):
     for item in list(trace.keys()):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
-    for featureName in featureNames:
-        featureDict[featureName] = _get_feature(
-            featureName, raise_warnings=raise_warnings)
+    for feature_name in feature_names:
+        result[feature_name] = _get_feature(
+            feature_name, raise_warnings=raise_warnings)
 
-    return featureDict
+    return result
 
 
 def get_mean_feature_values(
