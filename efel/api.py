@@ -262,8 +262,8 @@ def getDistance(
     return get_distance(trace, featureName, mean, std, trace_check, error_dist)
 
 
-def _initialise():
-    """Set cppcore initial values"""
+def _initialise() -> None:
+    """Set cppcore initial values."""
     cppcore.Initialize(_settings.dependencyfile_path, "log")
     # flush the GErrorString from previous runs by calling getgError()
     cppcore.getgError()
@@ -283,22 +283,34 @@ def _initialise():
         cppcore.setFeatureString(setting_name, str_setting)
 
 
-def setIntSetting(setting_name, new_value):
+def set_int_setting(setting_name: str, new_value: int) -> None:
     """Set a certain integer setting to a new value"""
-
     _int_settings[setting_name] = new_value
 
 
-def setDoubleSetting(setting_name, new_value):
-    """Set a certain double setting to a new value"""
+@deprecated("Use set_int_setting instead")
+def setIntSetting(setting_name: str, new_value: int) -> None:
+    set_int_setting(setting_name, new_value)
 
+
+def set_double_setting(setting_name: str, new_value: float) -> None:
+    """Set a certain double setting to a new value"""
     _double_settings[setting_name] = new_value
 
 
-def setStrSetting(setting_name, new_value):
-    """Set a certain string setting to a new value"""
+@deprecated("Use set_double_setting instead")
+def setDoubleSetting(setting_name: str, new_value: float) -> None:
+    set_double_setting(setting_name, new_value)
 
+
+def set_str_setting(setting_name: str, new_value: str) -> None:
+    """Set a certain string setting to a new value"""
     _string_settings[setting_name] = new_value
+
+
+@deprecated("Use set_str_setting instead")
+def setStrSetting(setting_name: str, new_value: str) -> None:
+    set_str_setting(setting_name, new_value)
 
 
 def getFeatureValues(
