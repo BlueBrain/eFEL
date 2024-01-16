@@ -441,7 +441,6 @@ def get_cpp_feature(featureName, raise_warnings=None):
         return numpy.array(cppcoreFeatureValues)
 
 
-def _get_cpp_data(data_name):
-    """Get cpp data value"""
-
+def _get_cpp_data(data_name: str) -> float:
+    """Get cpp data value."""
     return cppcore.getMapDoubleData(data_name)[0]
