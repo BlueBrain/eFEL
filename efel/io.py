@@ -37,27 +37,31 @@ def load_ascii_input(
     return time, voltage
 
 
-def extract_stim_times_from_neo_data(blocks, stim_start, stim_end):
+def extract_stim_times_from_neo_data(blocks, stim_start, stim_end) -> tuple:
     """
-        Seeks for the stim_start and stim_end parameters inside the Neo data.
+    Seeks for the stim_start and stim_end parameters inside the Neo data.
 
-        Parameters
-        ==========
-        blocks : Neo object blocks
-        stim_start : numerical value (ms) or None
-        stim_end : numerical value (ms) or None
+    Args:
+        blocks (Neo object blocks): Description of what blocks represents.
+        stim_start (numerical value or None): Start time of the stimulation in 
+            milliseconds. If not available, None should be used.
+        stim_end (numerical value or None): End time of the stimulation in 
+            milliseconds. If not available, None should be used.
 
-        Epoch.name should be one of "stim", "stimulus", "stimulation",
-        "current_injection"
-        First Event.name should be "stim_start", "stimulus_start",
-        "stimulation_start", "current_injection_start"
-        Second Event.name should be one of "stim_end",
-        "stimulus_end", "stimulation_end", "current_injection_end"
+    Returns:
+        tuple: A tuple containing:
+            - stim_start (numerical value or None): Start time of the stimulation 
+              in milliseconds.
+            - stim_end (numerical value or None): End time of the stimulation in 
+              milliseconds.
 
-        Returned objects
-        ====================
-        stim_start : numerical value (ms) or None
-        stim_end : numerical value (ms) or None
+    Notes:
+        - Epoch.name should be one of "stim", "stimulus", "stimulation", 
+          "current_injection".
+        - First Event.name should be "stim_start", "stimulus_start", 
+          "stimulation_start", "current_injection_start".
+        - Second Event.name should be one of "stim_end", "stimulus_end", 
+          "stimulation_end", "current_injection_end".
 
     """
     # this part code aims to find informations about stimulations, if
