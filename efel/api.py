@@ -1,3 +1,4 @@
+from __future__ import type_annotations
 """eFEL Python API functions.
 
 This module provides the user-facing Python API of the eFEL.
@@ -26,7 +27,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 
 from pathlib import Path
 from typing_extensions import deprecated
-import numpy
+import numpy as np
 
 import efel
 import efel.cppcore as cppcore
@@ -152,19 +153,16 @@ def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
     set_derivative_threshold(newDerivativeThreshold)
 
 
-def getFeatureNames():
+def get_feature_names() -> list[str]:
     """Return a list with the name of all the available features
 
-    Returns
-    =======
-    feature_names : list of strings
-                    A list that contains all the feature names available in
-                    the eFEL. These names can be used in the featureNames
-                    argument of e.g. getFeatureValues()
+    Returns:
+        A list that contains all the feature names available in
+        the eFEL. These names can be used in the featureNames
+        argument of e.g. getFeatureValues()
     """
-
     cppcore.Initialize(_settings.dependencyfile_path, "log")
-    feature_names = []
+    feature_names: list[str] = []
     cppcore.getFeatureNames(feature_names)
 
     feature_names += pyfeatures.all_pyfeatures
@@ -172,29 +170,27 @@ def getFeatureNames():
     return feature_names
 
 
-def FeatureNameExists(feature_name):
-    """Does a certain feature name exist ?
-
-    Parameters
-    ==========
-    feature_name : string
-                  Name of the feature to check
-
-    Returns
-    =======
-    FeatureNameExists : bool
-                    True if feature_name exists, otherwise False
-    """
-
-    return feature_name in getFeatureNames()
+@deprecated("Use get_feature_names instead")
+def getFeatureNames() -> list[str]:
+    return get_feature_names()
 
 
-def _get_feature(featureName, raise_warnings=None):
+def feature_name_exists(feature_name: str) -> bool:
+    """Returns True if the feature name exists in the eFEL, False otherwise."""
+    return feature_name in get_feature_names()
+
+
+@deprecated("Use feature_name_exists instead")
+def FeatureNameExists(feature_name: str) -> bool:
+    return feature_name_exists(feature_name)
+
+
+def _get_feature(feature_name: str, raise_warnings=False) -> np.ndarray | None:
     """Get feature value, decide to use python or cpp"""
-    if featureName in pyfeatures.all_pyfeatures:
-        return get_py_feature(featureName)
+    if feature_name in pyfeatures.all_pyfeatures:
+        return get_py_feature(feature_name)
     else:
-        return get_cpp_feature(featureName, raise_warnings=raise_warnings)
+        return get_cpp_feature(feature_name, raise_warnings=raise_warnings)
 
 
 def getDistance(
@@ -366,10 +362,9 @@ def getFeatureValues(
         return map_result
 
 
-def get_py_feature(featureName):
-    """Return python feature"""
-
-    return getattr(pyfeatures, featureName)()
+def get_py_feature(feature_name: str) -> np.ndarray | None:
+    """Return values of the given feature name."""
+    return getattr(pyfeatures, feature_name)()
 
 
 def _get_feature_values_serial(trace_featurenames):
@@ -453,7 +448,7 @@ def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
             if values is None or len(values) == 0:
                 featureDict[key] = None
             else:
-                featureDict[key] = numpy.mean(values)
+                featureDict[key] = np.mean(values)
 
     return featureDicts
 
