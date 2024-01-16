@@ -133,20 +133,23 @@ def setThreshold(newThreshold: float) -> None:
     set_threshold(newThreshold)
 
 
-def setDerivativeThreshold(newDerivativeThreshold):
-    """Set the threshold for the derivate for detecting the spike onset
+def set_derivative_threshold(new_derivative_threshold: float) -> None:
+    """Set the threshold for the derivative for detecting the spike onset.
 
-    Some featurea use a threshold on dV/dt to calculate the beginning of an
+    Some features use a threshold on dV/dt to calculate the beginning of an
     action potential. This function allows you to set this threshold.
 
-    Parameters
-    ==========
-    derivative_threshold : float
-                The new derivative threshold value (in the same units
-                as the traces, e.g. mV/ms).
+    Args:
+        new_derivative_threshold: The new derivative threshold value (in the same units
+                                  as the traces, e.g. mV/ms).
     """
-    _settings.derivative_threshold = newDerivativeThreshold
+    _settings.derivative_threshold = new_derivative_threshold
     setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
+
+
+@deprecated("Use set_derivative_threshold instead")
+def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
+    set_derivative_threshold(newDerivativeThreshold)
 
 
 def getFeatureNames():
