@@ -107,20 +107,13 @@ def setDependencyFileLocation(location: str | Path) -> None:
     _settings.dependencyfile_path = str(location)
 
 
-def getDependencyFileLocation():
-    """Get the location of the Dependency file
+@deprecated("Changing the dependency file will not be supported in the future.")
+def getDependencyFileLocation() -> str:
+    """Gets the location of the Dependency file.
 
-    The eFEL uses 'Dependency' files to let the user define which versions
-    of certain features are used to calculate.
-    The installation directory of the eFEL contains a default
-    'DependencyV5.txt' file.
-
-    Returns
-    =======
-    location : string
-               path to the location of a Dependency file
+    Returns:
+        Path to the location of a Dependency file.
     """
-
     return _settings.dependencyfile_path
 
 
