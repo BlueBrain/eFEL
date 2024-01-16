@@ -117,17 +117,20 @@ def getDependencyFileLocation() -> str:
     return _settings.dependencyfile_path
 
 
-def setThreshold(newThreshold):
+def set_threshold(new_threshold: float) -> None:
     """Set the spike detection threshold in the eFEL, default -20.0
 
-    Parameters
-    ==========
-    threshold : float
-                The new spike detection threshold value (in the same units
-                as the traces, e.g. mV).
+    Args:
+        new_threshold: The new spike detection threshold value (in the same units
+                       as the traces, e.g. mV).
     """
-    _settings.threshold = newThreshold
+    _settings.threshold = new_threshold
     setDoubleSetting('Threshold', _settings.threshold)
+
+
+@deprecated("Use set_threshold instead")
+def setThreshold(newThreshold: float) -> None:
+    set_threshold(newThreshold)
 
 
 def setDerivativeThreshold(newDerivativeThreshold):
