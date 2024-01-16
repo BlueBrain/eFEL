@@ -267,7 +267,7 @@ texinfo_documents = [
 epub_title = u'eFEL'
 epub_author = u'BBP, EPFL'
 epub_publisher = u'BBP, EPFL'
-epub_copyright = u'2015-2022, BBP, EPFL'
+epub_copyright = u'2015-2024, BBP, EPFL'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
