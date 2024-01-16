@@ -175,7 +175,7 @@ def test_raise_warnings():
 
         assert feature_value is None
         assert len(warning) == 1
-        assert ("Error while calculating feature AP_amplitude" in
+        assert ("Error while calculating AP_amplitude" in
                 str(warning[0].message))
 
     with warnings.catch_warnings(record=True) as warning:
