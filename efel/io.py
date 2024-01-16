@@ -43,24 +43,24 @@ def extract_stim_times_from_neo_data(blocks, stim_start, stim_end) -> tuple:
 
     Args:
         blocks (Neo object blocks): Description of what blocks represents.
-        stim_start (numerical value or None): Start time of the stimulation in 
+        stim_start (numerical value or None): Start time of the stimulation in
             milliseconds. If not available, None should be used.
-        stim_end (numerical value or None): End time of the stimulation in 
+        stim_end (numerical value or None): End time of the stimulation in
             milliseconds. If not available, None should be used.
 
     Returns:
         tuple: A tuple containing:
-            - stim_start (numerical value or None): Start time of the stimulation 
+            - stim_start (numerical value or None): Start time of the stimulation
               in milliseconds.
-            - stim_end (numerical value or None): End time of the stimulation in 
+            - stim_end (numerical value or None): End time of the stimulation in
               milliseconds.
 
     Notes:
-        - Epoch.name should be one of "stim", "stimulus", "stimulation", 
+        - Epoch.name should be one of "stim", "stimulus", "stimulation",
           "current_injection".
-        - First Event.name should be "stim_start", "stimulus_start", 
+        - First Event.name should be "stim_start", "stimulus_start",
           "stimulation_start", "current_injection_start".
-        - Second Event.name should be one of "stim_end", "stimulus_end", 
+        - Second Event.name should be one of "stim_end", "stimulus_end",
           "stimulation_end", "current_injection_end".
 
     """
@@ -160,24 +160,24 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
 
     Args:
         blocks (Neo object blocks): Description of what blocks represents.
-        stim_start (numerical value or None): Start time of the stimulation in 
+        stim_start (numerical value or None): Start time of the stimulation in
             milliseconds. If not available, None should be used.
-        stim_end (numerical value or None): End time of the stimulation in 
+        stim_end (numerical value or None): End time of the stimulation in
             milliseconds. If not available, None should be used.
 
     Returns:
         tuple: A tuple containing:
-            - stim_start (numerical value or None): Start time of the stimulation 
+            - stim_start (numerical value or None): Start time of the stimulation
               in milliseconds.
-            - stim_end (numerical value or None): End time of the stimulation in 
+            - stim_end (numerical value or None): End time of the stimulation in
               milliseconds.
 
     Notes:
-        - Epoch.name should be one of "stim", "stimulus", "stimulation", 
+        - Epoch.name should be one of "stim", "stimulus", "stimulation",
           "current_injection".
-        - First Event.name should be "stim_start", "stimulus_start", 
+        - First Event.name should be "stim_start", "stimulus_start",
           "stimulation_start", "current_injection_start".
-        - Second Event.name should be one of "stim_end", "stimulus_end", 
+        - Second Event.name should be one of "stim_end", "stimulus_end",
           "stimulation_end", "current_injection_end".
 
     """
