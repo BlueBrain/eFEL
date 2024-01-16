@@ -426,39 +426,35 @@ def _get_feature_values_serial(trace_featurenames):
     return featureDict
 
 
-def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
-    """Convenience function that returns mean values from getFeatureValues()
+def get_mean_feature_values(
+        traces: list[dict],
+        feature_names: list[str],
+        raise_warnings: bool = True) -> list[dict]:
+    """Convenience function that returns mean values from get_feature_values()
 
-    Instead of return a list of values for every feature as getFeatureValues()
+    Instead of return a list of values for every feature as get_feature_values()
     does, this function returns per trace one value for every feature, namely
     the mean value.
 
-    Parameters
-    ==========
-    traces : list of trace dicts
-             Every trace dict represent one trace. The dict should have the
-             following keys: 'T', 'V', 'stim_start', 'stim_end'
-    feature_names : list of string
-                    List with the names of the features to be calculated on all
-                    the traces.
-    raise_warnings: boolean
-                    Raise warning when efel c++ returns an error
+    Args:
+        traces: Every trace dict represent one trace. The dict should have the
+                following keys: 'T', 'V', 'stim_start', 'stim_end'
+        feature_names: List with the names of the features to be calculated on all
+                       the traces.
+        raise_warnings: Raise warning when efel c++ returns an error
 
-    Returns
-    =======
-    feature_values : list of dicts
-                     For every input trace a feature value dict is return (in
-                     the same order). The dict contains the keys of
-                     'feature_names', every key contains the mean of the array
-                     that is returned by getFeatureValues()
-                     The value is None if an error occured during the
-                     calculation of the feature, or if the feature value array
-                     was empty.
+    Returns:
+        For every input trace a feature value dict is return (in
+        the same order). The dict contains the keys of
+        'feature_names', every key contains the mean of the array
+        that is returned by get_feature_values()
+        The value is None if an error occured during the
+        calculation of the feature, or if the feature value array
+        was empty.
     """
-
     featureDicts = getFeatureValues(
         traces,
-        featureNames,
+        feature_names,
         raise_warnings=raise_warnings)
     for featureDict in featureDicts:
         for (key, values) in list(featureDict.items()):
@@ -468,6 +464,14 @@ def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
                 featureDict[key] = np.mean(values)
 
     return featureDicts
+
+
+@deprecated("Use get_mean_feature_values instead")
+def getMeanFeatureValues(
+        traces,
+        featureNames,
+        raise_warnings=True):
+    return get_mean_feature_values(traces, featureNames, raise_warnings)
 
 
 reset()
