@@ -103,7 +103,7 @@ def test_setDependencyFileLocation_wrongpath():
     import efel
     efel.reset()
     pytest.raises(
-        Exception,
+        FileNotFoundError,
         efel.setDependencyFileLocation, "thisfiledoesntexist")
 
 

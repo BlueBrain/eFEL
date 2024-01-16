@@ -3,8 +3,6 @@
 This module provides the user-facing Python API of the eFEL.
 The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
-All functions in this module can be called as efel.functionname, it is
-not necessary to include 'api' as in efel.api.functionname.
 
 
 Copyright (c) 2015, EPFL/Blue Brain Project
@@ -26,7 +24,8 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 """
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 
-import os
+from pathlib import Path
+from typing_extensions import deprecated
 import numpy
 
 import efel
@@ -88,27 +87,24 @@ def reset():
     _initialise()
 
 
-def setDependencyFileLocation(location):
-    """Set the location of the Dependency file
+@deprecated("Changing the dependency file will not be supported in the future.")
+def setDependencyFileLocation(location: str | Path) -> None:
+    """Sets the location of the Dependency file.
 
-    The eFEL uses 'Dependency' files to let the user define which versions
-    of certain features are used to calculate.
-    The installation directory of the eFEL contains a default
-    'DependencyV5.txt' file. Unless the user wants to change this file,
-    it is not necessary to call this function.
+    eFEL uses 'Dependency' files to let the user define versions of features to use.
+    The installation directory of the eFEL contains a default 'DependencyV5.txt' file.
+    Unless users want to change this file, it is not necessary to call this function.
 
-    Parameters
-    ==========
-    location : string
-               path to the location of a Dependency file
+    Args:
+        location: Path to the location of a Dependency file.
+
+    Raises:
+        FileNotFoundError: If the path to the dependency file doesn't exist.
     """
-
-    global dependencyFileLocation
-    if not os.path.exists(location):
-        raise Exception(
-            "Path to dependency file {%s} doesn't exist" %
-            location)
-    _settings.dependencyfile_path = location
+    location = Path(location)
+    if not location.exists():
+        raise FileNotFoundError(f"Path to dependency file {location} doesn't exist")
+    _settings.dependencyfile_path = str(location)
 
 
 def getDependencyFileLocation():
