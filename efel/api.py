@@ -35,21 +35,6 @@ import efel.cppcore as cppcore
 import efel.pyfeatures as pyfeatures
 from efel.pyfeatures.pyfeatures import get_cpp_feature
 
-"""
-Disabling cppcore importerror override, it confuses users in case the error
-is caused by something else
-try:
-except ImportError:
-    six.reraise(ImportError, ImportError(
-        '\n'
-        'It looks like the efel.cppcore package could not be found.\n'
-        'Could it be that you are running the \'import efel\' in a directory '
-        'that has a subdirectory called \'efel\' '
-        '(like e.g. the eFEL source directory) ?\n'
-        'If this is the case, please try to import from another directory.\n'
-        'If the issue persists, please create a ticket at '
-        'github.com/BlueBrain/eFEL/issues.\n'), sys.exc_info()[2])
-"""
 
 _settings = efel.Settings()
 _int_settings = {}
@@ -64,7 +49,6 @@ def reset():
     These values are persisten. This function will reset these value to their
     original state.
     """
-
     global _settings, _int_settings, _double_settings, _string_settings
     _settings = efel.Settings()
     _int_settings = {}
