@@ -14,9 +14,7 @@ calculated. The library will then extract the requested eFeatures and return the
 values to the user.
 
 The core of the library is written in C++, and a Python wrapper is included.
-At the moment we provide a way to automatically compile and install the library
-as a Python module. Soon instructions will be added on how to link C++ code
-directly with the eFEL.
+You can automatically compile and install the library as a Python module.
 
 The source code of the eFEL is located on github:
 `BlueBrain/eFEL <https://github.com/BlueBrain/eFEL>`_
