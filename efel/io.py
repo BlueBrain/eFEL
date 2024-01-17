@@ -156,30 +156,27 @@ def extract_stim_times_from_neo_data(blocks, stim_start, stim_end) -> tuple:
 
 def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> list:
     """
-    Seeks for the stim_start and stim_end parameters inside the Neo data.
+    Loads a data file using neo and converts it for eFEL readability.
 
     Args:
-        blocks (Neo object blocks): Description of what blocks represents.
-        stim_start (numerical value or None): Start time of the stimulation in
-            milliseconds. If not available, None should be used.
-        stim_end (numerical value or None): End time of the stimulation in
-            milliseconds. If not available, None should be used.
+        file_name (string): Path to the Dependency file location.
+        stim_start (numerical value, optional): Start time in ms. Optional if an Epoch
+            or two Events are in the file.
+        stim_end (numerical value, optional): End time in ms. Optional if an Epoch
+            or two Events are in the file.
+        **kwargs: Additional arguments for the read() method of Neo IO class.
 
     Returns:
-        tuple: A tuple containing:
-            - stim_start (numerical value or None): Start time of the stimulation
-              in milliseconds.
-            - stim_end (numerical value or None): End time of the stimulation in
-              milliseconds.
+        list of Segments: Segments containing traces, formatted as
+            [Segments_1, Segments_2, ..., Segments_n], where each Segments_i is
+            [Traces_1, Traces_2, ..., Traces_n].
 
     Notes:
-        - Epoch.name should be one of "stim", "stimulus", "stimulation",
-          "current_injection".
-        - First Event.name should be "stim_start", "stimulus_start",
-          "stimulation_start", "current_injection_start".
-        - Second Event.name should be one of "stim_end", "stimulus_end",
-          "stimulation_end", "current_injection_end".
-
+        - Epoch.name should be "stim", "stimulus", "stimulation", "current_injection".
+        - First Event.name: "stim_start", "stimulus_start", "stimulation_start",
+          "current_injection_start".
+        - Second Event.name: "stim_end", "stimulus_end", "stimulation_end",
+          "current_injection_end".
     """
     reader = neo.io.get_io(file_name)
     blocks = reader.read(**kwargs)

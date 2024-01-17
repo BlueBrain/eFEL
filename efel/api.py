@@ -1,8 +1,6 @@
-from __future__ import annotations
-from typing import Callable
 """eFEL Python API functions.
 
-This module provides the user-facing Python API of the eFEL.
+This module provides the user-facing Python API of eFEL.
 The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
 
@@ -25,8 +23,10 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
+from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 from typing_extensions import deprecated
 import numpy as np
 
@@ -94,7 +94,7 @@ def setDependencyFileLocation(location: str | Path) -> None:
     """Sets the location of the Dependency file.
 
     eFEL uses 'Dependency' files to let the user define versions of features to use.
-    The installation directory of the eFEL contains a default 'DependencyV5.txt' file.
+    The installation directory of eFEL contains a default 'DependencyV5.txt' file.
     Unless users want to change this file, it is not necessary to call this function.
 
     Args:
@@ -159,8 +159,8 @@ def get_feature_names() -> list[str]:
 
     Returns:
         A list that contains all the feature names available in
-        the eFEL. These names can be used in the featureNames
-        argument of e.g. getFeatureValues()
+        the eFEL. These names can be used in the feature_names
+        argument of e.g. get_feature_values()
     """
     cppcore.Initialize(_settings.dependencyfile_path, "log")
     feature_names: list[str] = []
@@ -177,7 +177,7 @@ def getFeatureNames() -> list[str]:
 
 
 def feature_name_exists(feature_name: str) -> bool:
-    """Returns True if the feature name exists in the eFEL, False otherwise."""
+    """Returns True if the feature name exists in eFEL, False otherwise."""
     return feature_name in get_feature_names()
 
 
@@ -322,7 +322,7 @@ def get_feature_values(
         raise_warnings: bool = True) -> list | map:
     """Calculate feature values for a list of traces.
 
-    This function is the core of the eFEL API. A list of traces (in the form
+    This function is the core of eFEL API. A list of traces (in the form
     of dictionaries) is passed as argument, together with a list of feature
     names.
 
@@ -333,7 +333,7 @@ def get_feature_values(
     will return a list with the amplitude of every action potential.
 
     Args:
-        traces: Every trace dict represent one trace. The dict should have the
+        traces: Every trace dict represents one trace. The dict should have the
                 following keys: 'T', 'V', 'stim_start', 'stim_end'
         feature_names: List with the names of the features to be calculated on all
                        the traces.
@@ -346,7 +346,7 @@ def get_feature_values(
         raise_warnings: Raise warning when efel c++ returns an error
 
     Returns:
-        For every input trace a feature value dict is return (in
+        For every input trace a feature value dict is returned (in
         the same order). The dict contains the keys of
         'feature_names', every key contains a numpy array with
         the feature values returned by the C++ efel code.
@@ -437,14 +437,14 @@ def get_mean_feature_values(
     the mean value.
 
     Args:
-        traces: Every trace dict represent one trace. The dict should have the
+        traces: Every trace dict represents one trace. The dict should have the
                 following keys: 'T', 'V', 'stim_start', 'stim_end'
         feature_names: List with the names of the features to be calculated on all
                        the traces.
         raise_warnings: Raise warning when efel c++ returns an error
 
     Returns:
-        For every input trace a feature value dict is return (in
+        For every input trace a feature value dict is returned (in
         the same order). The dict contains the keys of
         'feature_names', every key contains the mean of the array
         that is returned by get_feature_values()

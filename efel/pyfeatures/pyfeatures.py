@@ -436,8 +436,7 @@ def get_cpp_feature(feature_name: str, raise_warnings=False) -> np.ndarray | Non
                 f"Error while calculating {feature_name}, {cppcore.getgError()}",
                 RuntimeWarning)
         return None
-    else:
-        return np.array(cppcoreFeatureValues)
+    return np.array(cppcoreFeatureValues)
 
 
 def _get_cpp_data(data_name: str) -> float:
