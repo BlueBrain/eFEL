@@ -433,9 +433,9 @@ def phaseslope_max():
     time = time[:len(voltage)]
 
     from numpy import diff
-    
+
     phaseslope = diff(voltage) / diff(time)
-    phaseslope_max= max(phaseslope)
+    phaseslope_max = max(phaseslope)
 
     if phaseslope_max.size == 0:
         return None
