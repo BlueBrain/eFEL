@@ -428,8 +428,8 @@ def spikes_in_burst1_burstlast_diff():
 def phaseslope_max():
     """Calculate the maximum phase slope"""
 
-    voltage = _get_cpp_feature("voltage")
-    time = _get_cpp_feature("time")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
     time = time[:len(voltage)]
 
     from numpy import diff

@@ -326,3 +326,13 @@ def test_trace_check():
     mf1_trace["V"] = [0] * len(mf1_trace["V"])
     feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
     assert feature_values[0]['trace_check'][0] == 0
+
+
+def test_phaseslope_max():
+    """Unit test for phaseslope_max."""
+    expected_values = {
+        "mean_frequency1": 574.86769012,
+        "depol_block_spiking": 93.51242208,
+        "depol_block_db": 180.7325033,
+    }
+    _test_expected_value("phaseslope_max", expected_values)
