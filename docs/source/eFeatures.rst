@@ -1936,7 +1936,8 @@ Attention, this feature is sensitive to interpolation timestep.
 - **Units**: V/s
 - **Pseudocode**: ::
 
-    phaseslope_max= max(numpy.diff(voltage) / numpy.diff(time))
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
 
 
 

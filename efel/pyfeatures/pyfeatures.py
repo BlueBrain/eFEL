@@ -435,11 +435,10 @@ def phaseslope_max():
     from numpy import diff
 
     phaseslope = diff(voltage) / diff(time)
-    phaseslope_max = max(phaseslope)
-
-    if phaseslope_max.size == 0:
+    try:
+        return numpy.array([numpy.max(phaseslope)])
+    except ValueError:
         return None
-    return numpy.array([phaseslope_max])
 
 
 def get_cpp_feature(featureName, raise_warnings=None):
