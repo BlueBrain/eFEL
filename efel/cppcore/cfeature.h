@@ -43,7 +43,7 @@ class cFeature {
   void fillfeaturetypes();
 
  public:
-  std::map<string, vector<featureStringPair > > fptrlookup;
+  std::map<string, vector<feature_function > > fptrlookup;
   eFELLogger logger;
 
   cFeature(const string& depFile, const string& outdir);
@@ -51,7 +51,6 @@ class cFeature {
   const vector<T> getMapData(const string& strName, const map<string, vector<T>>& mapData);
   const vector<int> getmapIntData(string strName);
   const vector<double> getmapDoubleData(string strName);
-  int getmapfptrVec(string strName, vector<feature_function>& vFptr);
   int calc_features(const string& name);
   template <typename T>
   int getFeature(string strName, vector<T>& vec);
@@ -59,16 +58,10 @@ class cFeature {
   int setFeatureDouble(string strName, vector<double>& DoubleVec);
   int setFeatureString(const string& key, const string& value);
   int getFeatureString(const string& key, string& value);
-  void getTraces(const string& wildcard, vector<string>& traces);
-  int printFeature(const char* strFileName);
-  int printMapMember(FILE* fp);
 
   string featuretype(string featurename);
   string getGError();
   void get_feature_names(vector<string>& feature_names);
-  int setVersion(string strDepFile);
-  double getDistance(string strName, double mean, double std, 
-          bool trace_check=true, double error_dist=250);
 
 };
 

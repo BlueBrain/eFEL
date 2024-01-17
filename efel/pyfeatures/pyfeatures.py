@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Python implementation of features"""
 
 """
@@ -25,9 +26,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from typing_extensions import deprecated
 
 import numpy
-import efel.cppcore
+from efel import cppcore
 from numpy.fft import *
 
 
@@ -41,23 +43,100 @@ all_pyfeatures = [
     'initburst_sahp_ssse',
     'depol_block',
     'depol_block_bool',
+    'Spikecount',
+    'Spikecount_stimint',
+    'spike_count',
+    'spike_count_stimint',
     'spikes_per_burst',
     'spikes_per_burst_diff',
     'spikes_in_burst1_burst2_diff',
     'spikes_in_burst1_burstlast_diff',
     'impedance',
+    'burst_number',
+    'strict_burst_number',
+    'trace_check',
     'phaseslope_max',
 ]
 
 
 def voltage():
     """Get voltage trace"""
-    return _get_cpp_feature("voltage")
+    return get_cpp_feature("voltage")
 
 
 def time():
     """Get time trace"""
-    return _get_cpp_feature("time")
+    return get_cpp_feature("time")
+
+
+@deprecated("Use spike_count instead.")
+def Spikecount() -> numpy.ndarray:
+    return spike_count()
+
+
+def spike_count() -> numpy.ndarray:
+    """Get spike count."""
+    peak_indices = get_cpp_feature("peak_indices")
+    if peak_indices is None:
+        return numpy.array([0])
+    return numpy.array([peak_indices.size])
+
+
+@deprecated("Use spike_count_stimint instead.")
+def Spikecount_stimint() -> numpy.ndarray:
+    return spike_count_stimint()
+
+
+def spike_count_stimint() -> numpy.ndarray:
+    """Get spike count within stimulus interval."""
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = get_cpp_feature("peak_time")
+    if peak_times is None:
+        return numpy.array([0])
+
+    res = sum(1 for time in peak_times if stim_start <= time <= stim_end)
+    return numpy.array([res])
+
+
+def trace_check() -> numpy.ndarray | None:
+    """Returns np.array([0]) if there are no spikes outside stimulus boundaries.
+
+    Returns None upon failure.
+    """
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = get_cpp_feature("peak_time")
+    if peak_times is None:  # If no spikes, then no problem
+        return numpy.array([0])
+    # Check if there are no spikes or if all spikes are within the stimulus interval
+    if numpy.all((peak_times >= stim_start) & (peak_times <= stim_end * 1.05)):
+        return numpy.array([0])  # 0 if trace is valid
+    else:
+        return None  # None if trace is invalid due to spike outside stimulus interval
+
+
+def burst_number() -> numpy.ndarray:
+    """The number of bursts."""
+    burst_mean_freq = get_cpp_feature("burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
+
+
+def strict_burst_number() -> numpy.ndarray:
+    """Calculate the strict burst number.
+
+    This implementation does not assume that every spike belongs to a burst.
+    The first spike is ignored by default. This can be changed by setting
+    ignore_first_ISI to 0.
+
+    The burst detection can be fine-tuned by changing the setting
+    strict_burst_factor. Default value is 2.0."""
+    burst_mean_freq = get_cpp_feature("strict_burst_mean_freq")
+    if burst_mean_freq is None:
+        return numpy.array([0])
+    return numpy.array([burst_mean_freq.size])
 
 
 def impedance():
@@ -66,14 +145,14 @@ def impedance():
     dt = _get_cpp_data("interp_step")
     Z_max_freq = _get_cpp_data("impedance_max_freq")
     voltage_trace = voltage()
-    holding_voltage = _get_cpp_feature("voltage_base")
+    holding_voltage = get_cpp_feature("voltage_base")
     normalized_voltage = voltage_trace - holding_voltage
     current_trace = current()
     if current_trace is not None:
-        holding_current = _get_cpp_feature("current_base")
+        holding_current = get_cpp_feature("current_base")
         normalized_current = current_trace - holding_current
-        spike_count = _get_cpp_feature("Spikecount")
-        if spike_count < 1:  # if there is no spikes in ZAP
+        n_spikes = spike_count()
+        if n_spikes < 1:  # if there is no spikes in ZAP
             fft_volt = numpy.fft.fft(normalized_voltage)
             fft_cur = numpy.fft.fft(normalized_current)
             if any(fft_cur) == 0:
@@ -96,14 +175,16 @@ def impedance():
 
 def current():
     """Get current trace"""
-    return _get_cpp_feature("current")
+    return get_cpp_feature("current")
 
 
 def ISIs():
-    """Get all ISIs"""
-
-    peak_times = _get_cpp_feature("peak_time")
-    return numpy.diff(peak_times)
+    """Get all ISIs."""
+    peak_times = get_cpp_feature("peak_time")
+    if peak_times is None:
+        return None
+    else:
+        return numpy.diff(peak_times)
 
 
 def initburst_sahp_vb():
@@ -111,7 +192,7 @@ def initburst_sahp_vb():
 
     # Required cpp features
     initburst_sahp_value = initburst_sahp()
-    voltage_base = _get_cpp_feature("voltage_base")
+    voltage_base = get_cpp_feature("voltage_base")
 
     if initburst_sahp_value is None or voltage_base is None or \
             len(initburst_sahp_value) != 1 or len(voltage_base) != 1:
@@ -125,7 +206,7 @@ def initburst_sahp_ssse():
 
     # Required cpp features
     initburst_sahp_value = initburst_sahp()
-    ssse = _get_cpp_feature("steady_state_voltage_stimend")
+    ssse = get_cpp_feature("steady_state_voltage_stimend")
 
     if initburst_sahp_value is None or ssse is None or \
             len(initburst_sahp_value) != 1 or len(ssse) != 1:
@@ -138,10 +219,10 @@ def initburst_sahp():
     """SlowAHP voltage after initial burst"""
 
     # Required cpp features
-    voltage = _get_cpp_feature("voltage")
-    time = _get_cpp_feature("time")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
     time = time[:len(voltage)]
-    peak_times = _get_cpp_feature("peak_time")
+    peak_times = get_cpp_feature("peak_time")
 
     # Required python features
     all_isis = ISIs()
@@ -157,6 +238,8 @@ def initburst_sahp():
     last_isi = None
 
     # Loop over ISIs until frequency higher than initburst_freq_threshold
+    if all_isis is None:
+        return None
     for isi_counter, isi in enumerate(all_isis):
         # Convert to Hz
         freq = 1000.0 / isi
@@ -228,9 +311,9 @@ def depol_block():
     stim_end = _get_cpp_data("stim_end")
 
     # Required cpp features
-    voltage = _get_cpp_feature("voltage")
-    time = _get_cpp_feature("time")
-    AP_begin_voltage = _get_cpp_feature("AP_begin_voltage")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+    AP_begin_voltage = get_cpp_feature("AP_begin_voltage")
     stim_start_idx = numpy.flatnonzero(time >= stim_start)[0]
     stim_end_idx = numpy.flatnonzero(time >= stim_end)[0]
 
@@ -298,8 +381,8 @@ def depol_block_bool():
 def spikes_per_burst():
     """Calculate the number of spikes per burst"""
 
-    burst_begin_indices = _get_cpp_feature("burst_begin_indices")
-    burst_end_indices = _get_cpp_feature("burst_end_indices")
+    burst_begin_indices = get_cpp_feature("burst_begin_indices")
+    burst_end_indices = get_cpp_feature("burst_end_indices")
 
     if burst_begin_indices is None:
         return None
@@ -360,18 +443,23 @@ def phaseslope_max():
         return numpy.array([phaseslope_max])
 
 
-def _get_cpp_feature(feature_name):
-    """Get cpp feature"""
+def get_cpp_feature(featureName, raise_warnings=None):
+    """Return value of feature implemented in cpp"""
     cppcoreFeatureValues = list()
-    exitCode = efel.cppcore.getFeature(feature_name, cppcoreFeatureValues)
+    exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
 
     if exitCode < 0:
+        if raise_warnings:
+            import warnings
+            warnings.warn(
+                "Error while calculating feature %s: %s" %
+                (featureName, cppcore.getgError()),
+                RuntimeWarning)
         return None
     else:
         return numpy.array(cppcoreFeatureValues)
 
 
-def _get_cpp_data(data_name):
-    """Get cpp data value"""
-
-    return efel.cppcore.getMapDoubleData(data_name)[0]
+def _get_cpp_data(data_name: str) -> float:
+    """Get cpp data value."""
+    return cppcore.getMapDoubleData(data_name)[0]

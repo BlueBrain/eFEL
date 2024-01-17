@@ -33,6 +33,7 @@ import efel
 import efel.cppcore as cppcore
 
 import efel.pyfeatures as pyfeatures
+from efel.pyfeatures.pyfeatures import get_cpp_feature
 
 """
 Disabling cppcore importerror override, it confuses users in case the error
@@ -209,64 +210,6 @@ def FeatureNameExists(feature_name):
     return feature_name in getFeatureNames()
 
 
-def _getDistance_cpp(
-        trace,
-        featureName,
-        mean,
-        std,
-        trace_check=None,
-        error_dist=None):
-    """Calculate distance value for a list of traces.
-
-    Parameters
-    ==========
-    trace : trace dicts
-            Trace dict that represents one trace. The dict should have the
-            following keys: 'T', 'V', 'stim_start', 'stim_end'
-    featureName : string
-                  Name of the the features for which to calculate the distance
-    mean : float
-           Mean to calculate the distance from
-    std : float
-          Std to scale the distance with
-    trace_check : float
-          Let the library check if there are spikes outside of stimulus
-          interval
-    error_dist : float
-          Distance returned when error, default is 250
-
-    Returns
-    =======
-    distance : float
-               The absolute number of standard deviation the feature is away
-               from the mean. In case of anomalous results a value of
-               'error_dist' standard deviations is returned.
-               This can happen if: a feature generates an error, there are
-               spikes outside of the stimulus interval, the feature returns
-               a NaN, etc.
-    """
-
-    _initialise()
-
-    # Next set time, voltage and the stimulus start and end
-    for item in list(trace.keys()):
-        cppcore.setFeatureDouble(item, [x for x in trace[item]])
-
-    kwargs = {}
-
-    kwargs['feature_name'] = featureName
-    kwargs['mean'] = mean
-    kwargs['std'] = std
-
-    if trace_check is not None:
-        kwargs['trace_check'] = 1 if trace_check else 0
-
-    if error_dist is not None:
-        kwargs['error_dist'] = error_dist
-
-    return efel.cppcore.getDistance(**kwargs)
-
-
 def _get_feature(featureName, raise_warnings=None):
     """Get feature value, decide to use python or cpp"""
     if featureName in pyfeatures.all_pyfeatures:
@@ -319,9 +262,8 @@ def getDistance(
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     if trace_check:
-        cppcoreFeatureValues = list()
-        retval = cppcore.getFeature('trace_check', cppcoreFeatureValues)
-        if retval < 0:
+        trace_check_success = getFeatureValues([trace], ['trace_check'])[0]
+        if trace_check_success["trace_check"] is None:
             return error_dist
 
     feature_values = _get_feature(featureName)
@@ -347,6 +289,8 @@ def getDistance(
 def _initialise():
     """Set cppcore initial values"""
     cppcore.Initialize(_settings.dependencyfile_path, "log")
+    # flush the GErrorString from previous runs by calling getgError()
+    cppcore.getgError()
 
     # First set some settings that are used by the feature extraction
 
@@ -489,23 +433,6 @@ def _get_feature_values_serial(trace_featurenames):
             featureName, raise_warnings=raise_warnings)
 
     return featureDict
-
-
-def get_cpp_feature(featureName, raise_warnings=None):
-    """Return value of feature implemented in cpp"""
-    cppcoreFeatureValues = list()
-    exitCode = cppcore.getFeature(featureName, cppcoreFeatureValues)
-
-    if exitCode < 0:
-        if raise_warnings:
-            import warnings
-            warnings.warn(
-                "Error while calculating feature %s: %s" %
-                (featureName, cppcore.getgError()),
-                RuntimeWarning)
-        return None
-    else:
-        return numpy.array(cppcoreFeatureValues)
 
 
 def getMeanFeatureValues(traces, featureNames, raise_warnings=True):

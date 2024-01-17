@@ -56,6 +56,7 @@ spiking_from_beginning_to_end_url = (
     / 'basic'
     / 'spiking_from_beginning_to_end.txt'
 )
+spontaneous_url = testdata_dir / 'basic' / 'spontaneous.txt'
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -201,9 +202,9 @@ def test_failing_int_feature():
 
     feature_value = efel.getFeatureValues(
         [trace],
-        ['burst_number'], raise_warnings=False)[0]['burst_number']
+        ['burst_number'], raise_warnings=False)[0]['burst_number'][0]
 
-    assert feature_value is None
+    assert feature_value == 0
 
 
 def test_empty_trace():
@@ -242,7 +243,7 @@ def test_empty_trace():
     for feature, value in \
             efel.getFeatureValues([trace], features)[0].items():
 
-        assert value[0] == 0.0
+        assert value is None or value[0] == 0.0
 
 
 def test_multiprocessing_traces():
@@ -616,7 +617,7 @@ def test_strict_stiminterval():
         trace['stim_start'] = [stim_start]
         trace['stim_end'] = [stim_end]
 
-        features = ['peak_indices', 'peak_time', 'Spikecount']
+        features = ['peak_indices', 'peak_time', 'spike_count']
 
         feature_values = \
             efel.getFeatureValues(
@@ -625,8 +626,7 @@ def test_strict_stiminterval():
 
         peak_indices = feature_values[0]['peak_indices']
         peak_time = feature_values[0]['peak_time']
-        spikecount = feature_values[0]['Spikecount']
-
+        spikecount = feature_values[0]['spike_count']
         assert len(peak_indices) == n_of_spikes
         assert len(peak_time) == n_of_spikes
         assert spikecount == n_of_spikes
@@ -1018,7 +1018,6 @@ def test_currentbase():
     current_base = numpy.mean(current[numpy.where(
         (time >= 0.9 * stim_start) & (time <= stim_start))])
 
-    # nt.set_trace()
     numpy.testing.assert_allclose(current_base,
                                   feature_values[0]['current_base'][0],
                                   rtol=0, atol=1e-8)
@@ -1133,9 +1132,8 @@ def test_getDistance_trace_check():
     trace['stim_start'] = [10]
     trace['stim_end'] = [70]
     traces.append(trace)
-
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'Spikecount', 0, 1), 3.0
+        efel.getDistance(trace, 'spike_count', 0, 1), 3.0
     )
 
     trace['stim_end'] = [50]
@@ -1144,7 +1142,7 @@ def test_getDistance_trace_check():
     numpy.testing.assert_allclose(
         efel.getDistance(
             trace,
-            'Spikecount',
+            'spike_count',
             0,
             1,
             trace_check=False),
@@ -1152,7 +1150,7 @@ def test_getDistance_trace_check():
 
     efel.reset()
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'Spikecount', 0, 1), 250.0
+        efel.getDistance(trace, 'spike_count', 0, 1), 250.0
     )
 
 
@@ -1264,8 +1262,8 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.505521563640386)
 
 
-def test_spikecount1():
-    """basic: Test Spikecount 1"""
+def test_spike_count1():
+    """basic: Test spike_count 1"""
 
     import efel
     efel.reset()
@@ -1282,7 +1280,7 @@ def test_spikecount1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['peak_indices', 'Spikecount']
+    features = ['peak_indices', 'spike_count']
 
     feature_values = \
         efel.getFeatureValues(
@@ -1290,12 +1288,12 @@ def test_spikecount1():
             features)
 
     peak_indices = feature_values[0]['peak_indices']
-    spikecount = feature_values[0]['Spikecount'][0]
+    spikecount = feature_values[0]['spike_count'][0]
     assert len(peak_indices) == spikecount
 
 
-def test_spikecount_stimint1():
-    """basic: Test Spikecount_stimint 1."""
+def test_spike_count_stimint1():
+    """basic: Test spike_count_stimint 1."""
     import efel
     efel.reset()
 
@@ -1310,7 +1308,7 @@ def test_spikecount_stimint1():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['peak_time', 'Spikecount_stimint', 'Spikecount']
+    features = ['peak_time', 'spike_count_stimint', 'spike_count']
 
     feature_values = \
         efel.getFeatureValues(
@@ -1318,8 +1316,8 @@ def test_spikecount_stimint1():
             features)
 
     peak_times = feature_values[0]['peak_time']
-    spikecount = feature_values[0]['Spikecount'][0]
-    spikecount_stimint = feature_values[0]['Spikecount_stimint'][0]
+    spikecount = feature_values[0]['spike_count'][0]
+    spikecount_stimint = feature_values[0]['spike_count_stimint'][0]
 
     interval_peaktimes, = \
         numpy.where((peak_times >= stim_start) & (peak_times <= stim_end))
@@ -1366,6 +1364,23 @@ def test_ohmic_inputresistance():
         ohmic_input_resistance ==
         voltage_deflection /
         stimulus_current)
+
+
+def test_ohmic_input_resistance_zero_stimulus_current():
+    """Test the edge case of having 0.0 stimulus current."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    trace = {'T': time, 'V': voltage, 'stim_start': [500], 'stim_end': [900]}
+    features = ['ohmic_input_resistance']
+
+    stimulus_current = 0.0
+    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    feature_values = efel.getFeatureValues([trace], features)
+
+    ohmic_input_resistance = feature_values[0]['ohmic_input_resistance']
+    assert ohmic_input_resistance is None
 
 
 def test_sag_amplitude():
@@ -1580,8 +1595,24 @@ def test_ohmic_input_resistance_vb_ssse():
         stimulus_current)
 
 
-def test_spikecount2():
-    """basic: Test Spikecount 2: test empty trace"""
+def test_ohmic_input_resistance_vb_ssse_zero_stimulus_current():
+    """edge case of having zero stimulus current."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    # start and end times are not used for this feature
+    trace = {'T': time, 'V': voltage, 'stim_start': [500.0], 'stim_end': [900.0]}
+
+    stimulus_current = 0.0
+    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    feature_values = efel.getFeatureValues([trace], ['ohmic_input_resistance_vb_ssse'])
+    ohmic_input_resistance = feature_values[0]['ohmic_input_resistance_vb_ssse']
+    assert ohmic_input_resistance is None
+
+
+def test_spike_count2():
+    """basic: Test spike_count 2: test empty trace"""
 
     import efel
     efel.reset()
@@ -1599,14 +1630,14 @@ def test_spikecount2():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    features = ['Spikecount']
+    features = ['spike_count']
 
     feature_values = \
         efel.getFeatureValues(
             [trace],
             features)
 
-    spikecount = feature_values[0]['Spikecount'][0]
+    spikecount = feature_values[0]['spike_count'][0]
     assert spikecount == 0
 
 
@@ -1652,6 +1683,26 @@ def test_min_voltage_between_spikes1():
             min_voltage_between_spikes_value)
 
 
+def test_min_voltage_between_spikes_single_spike():
+    """basic: Test min_voltage_between_spikes testing the edge case of 1 spike."""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(meanfrequency1_url)
+    # get the last 45% of time and voltage (contains a single spike)
+    time = time[-int(len(time) * 0.45):]
+    voltage = voltage[-int(len(voltage) * 0.45):]
+    # stim_start and stim_end are not effective for this feature
+    trace = {'T': time, 'V': voltage, 'stim_start': [-2], 'stim_end': [-1]}
+
+    features = ['min_voltage_between_spikes']
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features)
+    assert feature_values[0]['min_voltage_between_spikes'] is None
+
+
 def test_getFeatureNames():
     """basic: Test getting all feature names"""
     import efel
@@ -1661,6 +1712,8 @@ def test_getFeatureNames():
     test_data_path = testdata_dir.parent / 'featurenames.json'
     with open(test_data_path, 'r') as featurenames_json:
         expected_featurenames = json.load(featurenames_json)
+    # add the new names for the deprecated ones
+    expected_featurenames += ["Spikecount", "Spikecount_stimint"]
     assert set(efel.getFeatureNames()) == set(expected_featurenames)
 
 
@@ -1948,11 +2001,11 @@ def test_getmeanfeaturevalues():
     feature_values = \
         efel.getFeatureValues(
             [trace],
-            ['AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
+            ['AP_amplitude'], raise_warnings=False)
 
     mean_feature_values = efel.getMeanFeatureValues(
         [trace], [
-            'AP_amplitude', 'BPAPHeightLoc1'], raise_warnings=False)
+            'AP_amplitude'], raise_warnings=False)
 
     assert (numpy.mean(feature_values[0]['AP_amplitude']) ==
             mean_feature_values[0]['AP_amplitude'])
@@ -1986,7 +2039,7 @@ def test_mean_AP_amplitude():
 
 
 def test_unfinished_peak():
-    """basic: Test if unfinished peak doesn't break Spikecount"""
+    """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
     efel.setIntSetting('strict_stiminterval', True)
@@ -2003,17 +2056,17 @@ def test_unfinished_peak():
     trace['stim_start'] = [10]
     trace['stim_end'] = [70]
 
-    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
-    spikecount = traces_results[0]['Spikecount'][0]
+    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
 
     # When the signal at the end of the trace is larger than the threshold,
-    # Spikecount and possibly other features cannont be estimated.
+    # spike_count and possibly other features cannont be estimated.
     v[int(80 / dt):] = -19
 
-    traces_results = efel.getFeatureValues([trace], ['Spikecount'])
-    spikecount = traces_results[0]['Spikecount'][0]
+    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
 
@@ -2415,6 +2468,8 @@ def test_burst_mean_freq():
 
         if i == 1:
             assert burst_mean_freq == burst_mean_freq_py
+            assert burst_mean_freq is None
+        elif i == 2:
             assert burst_mean_freq is None
         else:
             numpy.testing.assert_allclose(burst_mean_freq, burst_mean_freq_py)
@@ -3670,3 +3725,193 @@ def test_spikes_in_burst1_burstlast_diff():
         'spikes_in_burst1_burstlast_diff'
     ]
     assert list(spikes_in_burst1_burstlast_diff) == [1]
+
+
+def test_spontaneous_firing():
+    """basic: Test features with spontaneous firing"""
+    import efel
+    efel.reset()
+
+    time, voltage = load_ascii_input(spontaneous_url)
+    trace = {}
+    trace['T'] = time
+    trace['V'] = voltage
+    trace['stim_start'] = [200]
+    trace['stim_end'] = [400]
+
+    features = [
+        "AP_begin_indices",
+        "AP_end_indices",
+        "AP_duration",
+        "AP_rise_time",
+        "AP_fall_time",
+        "AP_rise_rate",
+        "AP_fall_rate"
+    ]
+    feature_values = \
+        efel.getFeatureValues(
+            [trace],
+            features, raise_warnings=False)
+
+    ap_begin_indices = feature_values[0]["AP_begin_indices"]
+    ap_end_indices = feature_values[0]["AP_end_indices"]
+    ap_duration = feature_values[0]["AP_duration"]
+    ap_rise_time = feature_values[0]["AP_rise_time"]
+    ap_fall_time = feature_values[0]["AP_fall_time"]
+    ap_rise_rate = feature_values[0]["AP_rise_rate"]
+    ap_fall_rate = feature_values[0]["AP_fall_rate"]
+
+    assert len(ap_begin_indices) == len(ap_end_indices) == 17
+    assert len(ap_rise_time) == len(ap_fall_time) == 17
+    assert len(ap_rise_rate) == len(ap_fall_rate) == 17
+
+    ap_begin_indices_expected = [
+        2018,
+        2156,
+        2291,
+        2426,
+        2561,
+        2695,
+        2830,
+        2965,
+        3100,
+        3235,
+        3369,
+        3504,
+        3639,
+        3774,
+        3908,
+        4564,
+        5352
+    ]
+    ap_end_indices_expected = [
+        2052,
+        2188,
+        2323,
+        2458,
+        2593,
+        2728,
+        2863,
+        2997,
+        3132,
+        3267,
+        3402,
+        3536,
+        3671,
+        3806,
+        3941,
+        4596,
+        5384
+    ]
+    ap_duration_expected = numpy.asarray(
+        [
+            3.4,
+            3.2,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2,
+            3.2,
+            3.3,
+            3.2,
+            3.2
+        ]
+    )
+    ap_rise_time_expected = numpy.asarray(
+        [
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.1,
+            1.,
+            1.1
+        ]
+    )
+    ap_fall_time_expected = numpy.asarray(
+        [
+            2.3,
+            2.1,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.1,
+            2.1,
+            2.1,
+            2.2,
+            2.2,
+            2.1
+        ]
+    )
+    ap_rise_rate_expected = numpy.asarray(
+        [
+            82.71999369,
+            75.10676844,
+            74.81153,
+            74.49859629,
+            74.06181713,
+            74.79034563,
+            74.81447401,
+            74.625776,
+            74.25400107,
+            73.72304677,
+            74.83236875,
+            74.72279679,
+            74.41938034,
+            73.94843724,
+            74.81475705,
+            82.5914875,
+            75.61000111
+        ]
+    )
+    ap_fall_rate_expected = numpy.asarray(
+        [
+            -50.29279717,
+            -51.47121886,
+            -51.17771356,
+            -51.17143474,
+            -51.1426409,
+            -48.8666936,
+            -49.0424941,
+            -51.14053045,
+            -51.15984648,
+            -51.0874205,
+            -48.98788642,
+            -51.10475374,
+            -51.16398341,
+            -51.12579796,
+            -48.91465101,
+            -49.87112779,
+            -52.17949364
+        ]
+    )
+    assert list(ap_begin_indices) == ap_begin_indices_expected
+    assert list(ap_end_indices) == ap_end_indices_expected
+    numpy.testing.assert_allclose(ap_duration, ap_duration_expected)
+    numpy.testing.assert_allclose(ap_rise_time, ap_rise_time_expected)
+    numpy.testing.assert_allclose(ap_fall_time, ap_fall_time_expected)
+    numpy.testing.assert_allclose(ap_rise_rate, ap_rise_rate_expected)
+    numpy.testing.assert_allclose(ap_fall_rate, ap_fall_rate_expected)

@@ -4,3 +4,4 @@ include LICENSE.txt
 include COPYING
 include COPYING.lesser
 include AUTHORS.txt
+include efel/*.pyi

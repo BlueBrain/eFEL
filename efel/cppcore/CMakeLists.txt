@@ -25,7 +25,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_BUILD_TYPE Debug)
 
 set(FEATURESRCS Utils.cpp LibV1.cpp LibV2.cpp LibV3.cpp LibV5.cpp
-    FillFptrTable.cpp DependencyTree.cpp efel.cpp cfeature.cpp
+    FillFptrTable.cpp DependencyTree.cpp cfeature.cpp
     mapoperations.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -39,7 +39,7 @@ install(TARGETS efelStatic ARCHIVE DESTINATION lib)
 add_library(efel SHARED ${FEATURESRCS})
 install(TARGETS efel LIBRARY DESTINATION lib)
 
-install(FILES efel.h cfeature.h FillFptrTable.h LibV1.h LibV2.h LibV3.h
+install(FILES cfeature.h FillFptrTable.h LibV1.h LibV2.h LibV3.h
     LibV5.h mapoperations.h Utils.h DependencyTree.h eFELLogger.h EfelExceptions.h
     types.h
     DESTINATION include)

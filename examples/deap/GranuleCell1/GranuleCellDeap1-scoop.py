@@ -39,7 +39,7 @@ from deap import creator
 from deap import tools
 
 FEATURES = ['voltage_base',
-            'Spikecount',
+            'spike_count',
             'min_voltage_between_spikes',
             'steady_state_voltage_stimend']
 

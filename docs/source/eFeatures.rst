@@ -150,8 +150,8 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-`LibV1`_ : Spikecount
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : spike_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes in the trace, including outside of stimulus interval
 
@@ -159,10 +159,13 @@ number of spikes in the trace, including outside of stimulus interval
 - **Units**: constant
 - **Pseudocode**: ::
 
-    Spikecount = len(peak_indices)
+    spike_count = len(peak_indices)
 
-`LibV5`_ : Spikecount_stimint
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Note**: "spike_count" is the new name for the feature "Spikecount".
+"Spikecount", while still available, will be removed in the future.
+
+`Python efeature`_ : spike_count_stimint
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes inside the stimulus interval
 
@@ -171,7 +174,10 @@ number of spikes inside the stimulus interval
 - **Pseudocode**: ::
 
     peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
-    Spikecount_stimint = len(peaktimes_stimint)
+    spike_count_stimint = len(peaktimes_stimint)
+
+**Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
+"Spikecount_stimint", while still available, will be removed in the future.
 
 `LibV5`_ : number_initial_spikes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -343,23 +349,6 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     ISI_sub = ISI_values[1:] - ISI_values[:-1]
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
-
-`LibV5`_ : check_AISInitiation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Check initiation of AP in AIS
-
-- **Required features**: t, V, stim_start, stim_end, AP_begin_time, AP_begin_time;location_AIS
-- **Units**: constant
-- **Pseudocode**: ::
-
-    if len(AP_begin_time) != len(AP_begin_time;location_AIS):
-        return None
-    for soma_time, ais_time in zip(AP_begin_time, AP_begin_time;location_AIS):
-        if soma_time < ais_time:
-            return None
-    return [1]
-
 `LibV1`_ : burst_mean_freq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -419,8 +408,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             )
         )
 
-`LibV1`_ : burst_number
-~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 
@@ -430,8 +419,8 @@ The number of bursts
 
     burst_number = len(burst_mean_freq)
 
-`LibV5`_ : strict_burst_number
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : strict_burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 
@@ -1287,98 +1276,6 @@ Slope of the V, dVdt phasespace plot at the beginning of every spike
     range_min_idxs = AP_begin_indices - AP_phseslope_range
     AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
 
-`LibV5`_ : AP_phaseslope_AIS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Same as AP_phaseslope, but for AIS location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_AIS, V;location_AIS, stim_start;location_AIS, stim_end;location_AIS, LibV5:AP_begin_indices;location_AIS
-- **Parameters**: AP_phaseslope_range
-- **Units**: 1/(ms)
-- **Pseudocode**: ::
-
-    range_max_idxs = AP_begin_indices + AP_phseslope_range
-    range_min_idxs = AP_begin_indices - AP_phseslope_range
-    AP_phaseslope_AIS = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
-
-`LibV5`_ : BPAPHeightLoc1
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage height (difference betwen peaks and voltage base) at dendrite location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_dend1, V;location_dend1, stim_start;location_dend1, stim_end;location_dend1, peak_voltage;location_dend1, voltage_base;location_dend1
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPHeightLoc1 = peak_voltage - voltage_base
-
-`LibV5`_ : BPAPHeightLoc2
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Same as BPAPHeightLoc1, but for dend2 location
-
-- **Required features**: T;location_dend2, V;location_dend2, stim_start;location_dend2, stim_end;location_dend2, peak_voltage;location_dend2, voltage_base;location_dend2
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPHeightLoc2 = peak_voltage - voltage_base
-
-`LibV5`_ : BPAPAmplitudeLoc1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Amplitude at dendrite location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_dend1, V;location_dend1, stim_start;location_dend1, stim_end;location_dend1, peak_voltage;location_dend1, AP_begin_voltage;location_dend1
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPAmplitudeLoc1 = peak_voltage - AP_begin_voltage
-
-`LibV5`_ : BPAPAmplitudeLoc2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Same as BPAPAmplitudeLoc1, but for dend2 location
-
-- **Required features**: T;location_dend2, V;location_dend2, stim_start;location_dend2, stim_end;location_dend2, peak_voltage;location_dend2, AP_begin_voltage;location_dend2
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPAmplitudeLoc2 = peak_voltage - AP_begin_voltage
-
-`LibV5`_ : BAC_width
-~~~~~~~~~~~~~~~~~~~~
-
-AP width at epsp location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_epsp, V;location_epsp, stim_start;location_epsp, stim_end;location_epsp, AP_width;location_epsp
-- **Units**: ms
-- **Pseudocode**: ::
-
-    BAC_width = AP_width
-
-`LibV5`_ : BAC_maximum_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Maximuum voltage at epsp location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_epsp, V;location_epsp, stim_start;location_epsp, stim_end;location_epsp, maximum_voltage;location_epsp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BAC_maximum_voltage = maximum_voltage
-
-
-
 Voltage features
 ----------------
 
@@ -2007,7 +1904,7 @@ Computes the impedance given a ZAP current input and its voltage response.
 It will return the frequency at which the impedance is maximal, in the range (0, impedance_max_freq] Hz,
 with impedance_max_freq being a setting with 50.0 as a default value.
 
-- **Required features**: current, LibV1:Spikecount, LibV5:voltage_base, LibV5:current_base
+- **Required features**: current, spike_count, LibV5:voltage_base, LibV5:current_base
 - **Units**: Hz
 - **Pseudocode**: ::
 

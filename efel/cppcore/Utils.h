@@ -57,9 +57,16 @@ double vec_median(vector<T> v);
 template <class T>
 double vec_mean(const vector<T> &v);
 
-std::pair<size_t, size_t> get_time_index(std::vector<double> &t, double startTime,
+std::pair<size_t, size_t> get_time_index(const std::vector<double> &t, double startTime,
                                      double endTime, double precisionThreshold);
-      
+
+vector<int> peaks_after_stim_start(const double stimstart,
+                           const vector<int>& peakindices,
+                           const vector<double>& t);
+
+vector<int> peaks_after_stim_start(const double stimstartindex,
+                           const vector<int>& peakindices);
+
 template <class ForwardIterator>
 ForwardIterator first_min_element(ForwardIterator first, ForwardIterator last) {
   ForwardIterator lowest = first;
