@@ -430,6 +430,8 @@ def phaseslope_max() -> np.ndarray | None:
     """Calculate the maximum phase slope."""
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
+    if voltage is None or time is None:
+        return None
     time = time[:len(voltage)]
 
     from numpy import diff
