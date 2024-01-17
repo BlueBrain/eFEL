@@ -55,7 +55,8 @@ all_pyfeatures = [
     'impedance',
     'burst_number',
     'strict_burst_number',
-    'trace_check'
+    'trace_check',
+    'phaseslope_max',
 ]
 
 
@@ -425,11 +426,25 @@ def spikes_in_burst1_burstlast_diff():
     ])
 
 
+def phaseslope_max() -> np.ndarray | None:
+    """Calculate the maximum phase slope."""
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+    time = time[:len(voltage)]
+
+    from numpy import diff
+
+    phaseslope = diff(voltage) / diff(time)
+    try:
+        return np.array([np.max(phaseslope)])
+    except ValueError:
+        return None
+
+
 def get_cpp_feature(feature_name: str, raise_warnings=False) -> np.ndarray | None:
     """Return value of feature implemented in cpp."""
     cppcoreFeatureValues: list[int | float] = list()
     exitCode = cppcore.getFeature(feature_name, cppcoreFeatureValues)
-
     if exitCode < 0:
         if raise_warnings:
             warnings.warn(

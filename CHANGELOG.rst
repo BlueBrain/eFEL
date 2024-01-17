@@ -5,9 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-5.5.4 - 2024-01
+5.5.5 - 2024-01
 ----------------
-
 - Type annotate api.py's functions.
 - Deprecate camel case function names in api.py.
 - Start using same requirements_docs.txt in readthedocs and tox.
@@ -15,6 +14,9 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 - Fix docstring errors in the io module.
 - Add changelog to the documentation.
 
+[5.5.4] - 2024-01
+-----------------
+- New feature: phaseslope_max
 
 5.5.3 - 2024-01
 ----------------
