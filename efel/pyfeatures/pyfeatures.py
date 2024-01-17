@@ -439,8 +439,7 @@ def phaseslope_max():
 
     if phaseslope_max.size == 0:
         return None
-    else:
-        return numpy.array([phaseslope_max])
+    return numpy.array([phaseslope_max])
 
 
 def get_cpp_feature(featureName, raise_warnings=None):
