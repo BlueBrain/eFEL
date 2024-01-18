@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+5.5.6 - 2024-01
+----------------
+
+- New function `to_json_ld` to output the feature results with ids and units in JSON-LD format.
+
 5.5.5 - 2024-01
 ----------------
 - Type annotate api.py's functions.
