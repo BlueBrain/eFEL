@@ -286,7 +286,7 @@ def test_to_json_ld():
     ]
     # test_data values are for for testing purposes they are not scientifically accurate
     expected_output = {
-        "@context": "https://neuroshapes.org/",
+        "@context": "https://bbp.neuroshapes.org",
         "data": [
             {
                 "AHP_depth": [

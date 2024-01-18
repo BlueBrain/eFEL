@@ -214,7 +214,7 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
 
 def to_json_ld(feature_values: list[dict[str, np.ndarray]]) -> str:
     """Converts the extracted features to the JSON-LD format."""
-    context = "https://neuroshapes.org/"
+    context = "https://bbp.neuroshapes.org"
     ontology_ns = "https://bbp.epfl.ch/ontologies/core/efeatures/"
     units_ns = "https://neuroshapes.org/units"
     json_ld: dict[str, Any] = {"@context": context, "data": []}
