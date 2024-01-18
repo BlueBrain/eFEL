@@ -1,12 +1,13 @@
 """Test eFEL io module"""
 
+import json
 import os
 from pathlib import Path
 import numpy as np
 
 import pytest
 
-from efel.io import load_ascii_input
+from efel.io import load_ascii_input, to_json_ld
 
 
 testdata_dir = Path(__file__).parent / 'testdata'
@@ -269,3 +270,54 @@ def test_load_neo_file_stim_time_events_incomplete():
                              "neo_test_file_events_time_incomplete.mat")
 
     pytest.raises(ValueError, efel.io.load_neo_file, file_name)
+
+
+def test_to_json_ld():
+    """Tests the conversion of extracted feature values to JSON-LD."""
+    test_data = [
+        {
+            "AHP_depth": np.array([26.998080940503804, 27.3636342342]),
+            "AP_amplitude": np.array([72.0, 72.0]),
+        },
+        {
+            "AHP_depth": np.array([56.3645747546, 55.142543543]),
+            "AP_amplitude": np.array([74.2, 73.2]),
+        },
+    ]
+    # test_data values are for for testing purposes they are not scientifically accurate
+    expected_output = {
+        "@context": "https://neuroshapes.org/",
+        "data": [
+            {
+                "AHP_depth": [
+                    26.998080940503804,
+                    27.3636342342
+                ],
+                "AP_amplitude": [
+                    72.0,
+                    72.0
+                ]
+            },
+            {
+                "AHP_depth": [
+                    56.3645747546,
+                    55.142543543
+                ],
+                "AP_amplitude": [
+                    74.2,
+                    73.2
+                ]
+            }
+        ],
+        "AHP_depth": {
+            "@id": "https://bbp.epfl.ch/ontologies/core/efeatures/AHP_depth",
+            "unit": "https://neuroshapes.org/units/mV"
+        },
+        "AP_amplitude": {
+            "@id": "https://bbp.epfl.ch/ontologies/core/efeatures/AP_amplitude",
+            "unit": "https://neuroshapes.org/units/mV"
+        }
+    }
+
+    result = to_json_ld(test_data)
+    assert result == json.dumps(expected_output, indent=2)

@@ -1,4 +1,8 @@
 from __future__ import annotations
+import json
+from typing import Any
+
+from efel.units import get_unit
 """IO handler for eFEL"""
 
 """
@@ -206,3 +210,25 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
         efel_blocks.append(efel_segments)
 
     return efel_blocks
+
+
+def to_json_ld(feature_values: list[dict[str, np.ndarray]]) -> str:
+    """Converts the extracted features to the JSON-LD format."""
+    context = "https://neuroshapes.org/"
+    ontology_ns = "https://bbp.epfl.ch/ontologies/core/efeatures/"
+    units_ns = "https://neuroshapes.org/units"
+    json_ld: dict[str, Any] = {"@context": context, "data": []}
+
+    for feature_dict in feature_values:
+        data_entry = {}
+        for feature_name, values in feature_dict.items():
+            # @id and units for each feature
+            json_ld[feature_name] = {
+                "@id": f"{ontology_ns}{feature_name}",
+                "unit": f"{units_ns}/{get_unit(feature_name)}"
+            }
+            # Add feature values to data entry
+            data_entry[feature_name] = values.tolist()
+        json_ld["data"].append(data_entry)
+
+    return json.dumps(json_ld, indent=2)
