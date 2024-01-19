@@ -124,7 +124,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP_width"] = "double";
   featuretypes["doublet_ISI"] = "double";
   featuretypes["adaptation_index2"] = "double";
-  featuretypes["ISI_CV"] = "double";
   featuretypes["AHP_depth_abs_slow"] = "double";
   featuretypes["AHP_slow_time"] = "double";
   featuretypes["AHP_depth"] = "double";

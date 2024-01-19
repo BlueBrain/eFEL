@@ -38,6 +38,7 @@ all_pyfeatures = [
     'time',
     'current',
     'ISIs',
+    'ISI_CV',
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',

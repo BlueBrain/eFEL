@@ -98,38 +98,6 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
   return VecISI.size();
 }
 
-// *** ISI_CV ***
-// the coefficient of variation of the ISI
-static int __ISI_CV(const vector<double>& isivalues, vector<double>& isicv) {
-  // mean
-  double isi_mean = 0.;
-  for (size_t i = 0; i < isivalues.size(); i++) {
-    isi_mean += isivalues[i];
-  }
-  isi_mean /= isivalues.size();
-
-  // sigma^2
-  double variance = 0.;
-  for (size_t i = 0; i < isivalues.size(); i++) {
-    double dev = isivalues[i] - isi_mean;
-    variance += dev * dev;
-  }
-  // variation coefficient cv = sigma / mean
-  isicv.push_back(sqrt(variance / (isivalues.size() - 1)) / isi_mean);
-  return isicv.size();
-}
-int LibV1::ISI_CV(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
-  if (doubleFeatures.at("ISI_values").size() < 2) return -1;
-
-  vector<double> isicv;
-  int retval = __ISI_CV(doubleFeatures.at("ISI_values"), isicv);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "ISI_CV", isicv);
-  }
-  return retval;
-}
 
 int LibV1::peak_voltage(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,

@@ -26,7 +26,6 @@ LibV1:maximum_voltage #LibV1:interpolate
 LibV1:minimum_voltage #LibV1:interpolate 
 LibV1:steady_state_voltage #LibV1:interpolate 
 LibV3:depolarized_base #LibV5:AP_end_indices #LibV5:AP_begin_indices #LibV1:interpolate
-LibV1:ISI_CV	#LibV1:ISI_values #LibV1:interpolate
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values #LibV1:interpolate 
 LibV1:AHP_depth_slow    #LibV5:voltage_base	#LibV1:AHP_depth_abs_slow #LibV1:interpolate
 LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices #LibV1:interpolate

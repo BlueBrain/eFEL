@@ -44,7 +44,6 @@ int FillFptrTable() {
   FptrTableV1["AP_width"] = &LibV1::AP_width;
   FptrTableV1["doublet_ISI"] = &LibV1::doublet_ISI;
   FptrTableV1["adaptation_index2"] = &LibV1::adaptation_index2;
-  FptrTableV1["ISI_CV"] = &LibV1::ISI_CV;
   FptrTableV1["AHP_depth_abs_slow"] = &LibV1::AHP_depth_abs_slow;
   FptrTableV1["AHP_slow_time"] = &LibV1::AHP_slow_time;
   FptrTableV1["AHP_depth"] = &LibV1::AHP_depth;

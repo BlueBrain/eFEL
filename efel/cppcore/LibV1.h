@@ -106,8 +106,6 @@ int doublet_ISI(mapStr2intVec& IntFeatureData,
 int adaptation_index2(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);
-int ISI_CV(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-           mapStr2Str& StringData);
 int AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);

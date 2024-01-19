@@ -265,22 +265,20 @@ However, if this number of ISI values to skip is higher than max_spike_skip, the
 
     ISI_log_slope = slope
 
-`LibV1`_ : ISI_CV
-~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_CV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The coefficient of variation of the ISIs.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
-- **Required features**: ISI_values
+- **Required features**: ISIs
 - **Units**: constant
 - **Pseudocode**: ::
 
     ISI_mean = numpy.mean(ISI_values)
-    ISI_variance = numpy.sum(numpy.square(ISI_values-ISI_mean)) / (len(ISI_values)-1)
-    ISI_std = math.sqrt(ISI_variance)
-    ISI_CV = ISI_std / ISI_mean
+    ISI_CV = np.std(isi_values, ddof=1) / ISI_mean
 
 `LibV5`_ : irregularity_index
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

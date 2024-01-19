@@ -13,6 +13,35 @@ def ISIs() -> np.ndarray | None:
         return np.diff(peak_times)
 
 
+def __ISI_CV(isi_values) -> float | None:
+    if len(isi_values) < 2:
+        return None
+
+    # Calculate mean
+    isi_mean = np.mean(isi_values)
+    # Calculate coefficient of variation
+    cv = np.std(isi_values, ddof=1) / isi_mean  # ddof 1 to replicate C++ impl
+    return cv
+
+
+def ISI_CV() -> np.ndarray | None:
+    """Coefficient of variation of ISIs.
+
+    If the ignore_first_ISI flag is set, the first ISI will be ignored.
+    """
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    result = __ISI_CV(isi_values)
+    return np.array([result])
+
+
 def initburst_sahp() -> np.ndarray | None:
     """SlowAHP voltage after initial burst."""
     # Required cpp features
