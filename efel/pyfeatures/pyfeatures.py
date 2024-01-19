@@ -25,12 +25,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-
+from efel.pyfeatures.cppfeature_access import _get_cpp_data, get_cpp_feature
+from efel.pyfeatures.isi import *
 from typing_extensions import deprecated
-import warnings
 
 import numpy as np
-from efel import cppcore
 from numpy.fft import *
 
 
@@ -125,21 +124,6 @@ def burst_number() -> np.ndarray:
     return np.array([burst_mean_freq.size])
 
 
-def strict_burst_number() -> np.ndarray:
-    """Calculate the strict burst number.
-
-    This implementation does not assume that every spike belongs to a burst.
-    The first spike is ignored by default. This can be changed by setting
-    ignore_first_ISI to 0.
-
-    The burst detection can be fine-tuned by changing the setting
-    strict_burst_factor. Default value is 2.0."""
-    burst_mean_freq = get_cpp_feature("strict_burst_mean_freq")
-    if burst_mean_freq is None:
-        return np.array([0])
-    return np.array([burst_mean_freq.size])
-
-
 def impedance():
     from scipy.ndimage.filters import gaussian_filter1d
 
@@ -179,15 +163,6 @@ def current():
     return get_cpp_feature("current")
 
 
-def ISIs():
-    """Get all ISIs."""
-    peak_times = get_cpp_feature("peak_time")
-    if peak_times is None:
-        return None
-    else:
-        return np.diff(peak_times)
-
-
 def initburst_sahp_vb():
     """SlowAHP voltage from voltage base after initial burst"""
 
@@ -214,90 +189,6 @@ def initburst_sahp_ssse():
         return None
     else:
         return np.array([initburst_sahp_value[0] - ssse[0]])
-
-
-def initburst_sahp():
-    """SlowAHP voltage after initial burst"""
-
-    # Required cpp features
-    voltage = get_cpp_feature("voltage")
-    time = get_cpp_feature("time")
-    time = time[:len(voltage)]
-    peak_times = get_cpp_feature("peak_time")
-
-    # Required python features
-    all_isis = ISIs()
-
-    # Required trace data
-    stim_end = _get_cpp_data("stim_end")
-
-    # Required settings
-    initburst_freq_thresh = _get_cpp_data("initburst_freq_threshold")
-    initburst_sahp_start = _get_cpp_data("initburst_sahp_start")
-    initburst_sahp_end = _get_cpp_data("initburst_sahp_end")
-
-    last_isi = None
-
-    # Loop over ISIs until frequency higher than initburst_freq_threshold
-    if all_isis is None:
-        return None
-    for isi_counter, isi in enumerate(all_isis):
-        # Convert to Hz
-        freq = 1000.0 / isi
-        if freq < initburst_freq_thresh:
-            # Threshold reached
-            break
-        else:
-            # Add isi to initburst
-            last_isi = isi_counter
-
-    if last_isi is None:
-        # No initburst found
-        return None
-    else:
-        # Get index of second peak of last ISI
-        last_peak = last_isi + 1
-
-    # Get time of last peak
-    last_peak_time = peak_times[last_peak]
-
-    # Determine start of sahp interval
-    sahp_interval_start = min(
-        last_peak_time +
-        initburst_sahp_start,
-        stim_end)
-
-    # Get next peak, we wont search beyond that
-    next_peak = last_peak + 1
-
-    # Determine end of sahp interval
-    # Add initburst_slow_ahp_max to last peak time
-    # If next peak or stim_end is earlier, use these
-    # If no next peak, use stim end
-    if next_peak < len(peak_times):
-        next_peak_time = peak_times[next_peak]
-
-        sahp_interval_end = min(
-            last_peak_time + initburst_sahp_end, next_peak_time, stim_end)
-    else:
-        sahp_interval_end = min(
-            last_peak_time + initburst_sahp_end, stim_end)
-
-    if sahp_interval_end <= sahp_interval_start:
-        return None
-    else:
-        sahp_interval = voltage[np.where(
-            (time <= sahp_interval_end) &
-            (time >= sahp_interval_start))]
-
-        if len(sahp_interval) > 0:
-            min_volt_index = np.argmin(sahp_interval)
-        else:
-            return None
-
-        slow_ahp = sahp_interval[min_volt_index]
-
-        return np.array([slow_ahp])
 
 
 def depol_block():
@@ -441,21 +332,3 @@ def phaseslope_max() -> np.ndarray | None:
         return np.array([np.max(phaseslope)])
     except ValueError:
         return None
-
-
-def get_cpp_feature(feature_name: str, raise_warnings=False) -> np.ndarray | None:
-    """Return value of feature implemented in cpp."""
-    cppcoreFeatureValues: list[int | float] = list()
-    exitCode = cppcore.getFeature(feature_name, cppcoreFeatureValues)
-    if exitCode < 0:
-        if raise_warnings:
-            warnings.warn(
-                f"Error while calculating {feature_name}, {cppcore.getgError()}",
-                RuntimeWarning)
-        return None
-    return np.array(cppcoreFeatureValues)
-
-
-def _get_cpp_data(data_name: str) -> float:
-    """Get cpp data value."""
-    return cppcore.getMapDoubleData(data_name)[0]
