@@ -18,6 +18,9 @@ def get_cpp_feature(feature_name: str, raise_warnings=False) -> np.ndarray | Non
     return np.array(cppcoreFeatureValues)
 
 
-def _get_cpp_data(data_name: str) -> float:
+def _get_cpp_data(data_name: str) -> float | int:
     """Get cpp data value."""
-    return cppcore.getMapDoubleData(data_name)[0]
+    try:
+        return cppcore.getMapDoubleData(data_name)[0]
+    except Exception:
+        return cppcore.getMapIntData(data_name)[0]
