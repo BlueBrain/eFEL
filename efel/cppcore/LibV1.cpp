@@ -84,17 +84,16 @@ int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
     throw FeatureComputationError("Three spikes required for calculation of ISI_values.");
 
   const auto& intFeatures = getFeatures(IntFeatureData, {"ignore_first_ISI"});
-  int IgnoreFirstISI = 1;
-  if (intFeatures.at("ignore_first_ISI").size() > 0 &&
-      intFeatures.at("ignore_first_ISI")[0] == 0) {
-    IgnoreFirstISI = 0;
-  }
+    int IgnoreFirstISI = (intFeatures.at("ignore_first_ISI").size() > 0 &&
+                          intFeatures.at("ignore_first_ISI")[0] == 0) ? 0 : 1;
+    auto peakTimes = doubleFeatures.at("peak_time"); // Copy peak times
+    if (IgnoreFirstISI)
+        removeFirstISI(peakTimes); // Remove the first element if requested
 
   vector<double> VecISI;
-  for (size_t i = IgnoreFirstISI + 1; i < doubleFeatures.at("peak_time").size();
-       i++)
-    VecISI.push_back(doubleFeatures.at("peak_time")[i] -
-                     doubleFeatures.at("peak_time")[i - 1]);
+    for (size_t i = 1; i < peakTimes.size(); i++) {
+        VecISI.push_back(peakTimes[i] - peakTimes[i - 1]);
+    }
   setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
   return VecISI.size();
 }
