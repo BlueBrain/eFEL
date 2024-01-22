@@ -103,7 +103,7 @@ def test_setDependencyFileLocation_wrongpath():
     import efel
     efel.reset()
     pytest.raises(
-        Exception,
+        FileNotFoundError,
         efel.setDependencyFileLocation, "thisfiledoesntexist")
 
 
@@ -169,17 +169,21 @@ def test_raise_warnings():
 
     with warnings.catch_warnings(record=True) as warning:
         warnings.simplefilter("always")
+        # Ignore DeprecationWarning
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         feature_value = efel.getFeatureValues(
             [trace],
             ['AP_amplitude'])[0]['AP_amplitude']
 
         assert feature_value is None
         assert len(warning) == 1
-        assert ("Error while calculating feature AP_amplitude" in
+        assert ("Error while calculating AP_amplitude" in
                 str(warning[0].message))
 
     with warnings.catch_warnings(record=True) as warning:
         warnings.simplefilter("always")
+        # Ignore DeprecationWarning
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         feature_value = efel.getFeatureValues(
             [trace],
             ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']

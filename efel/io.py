@@ -37,27 +37,31 @@ def load_ascii_input(
     return time, voltage
 
 
-def extract_stim_times_from_neo_data(blocks, stim_start, stim_end):
+def extract_stim_times_from_neo_data(blocks, stim_start, stim_end) -> tuple:
     """
-        Seeks for the stim_start and stim_end parameters inside the Neo data.
+    Seeks for the stim_start and stim_end parameters inside the Neo data.
 
-        Parameters
-        ==========
-        blocks : Neo object blocks
-        stim_start : numerical value (ms) or None
-        stim_end : numerical value (ms) or None
+    Args:
+        blocks (Neo object blocks): Description of what blocks represents.
+        stim_start (numerical value or None): Start time of the stimulation in
+            milliseconds. If not available, None should be used.
+        stim_end (numerical value or None): End time of the stimulation in
+            milliseconds. If not available, None should be used.
 
-        Epoch.name should be one of "stim", "stimulus", "stimulation",
-        "current_injection"
-        First Event.name should be "stim_start", "stimulus_start",
-        "stimulation_start", "current_injection_start"
-        Second Event.name should be one of "stim_end",
-        "stimulus_end", "stimulation_end", "current_injection_end"
+    Returns:
+        tuple: A tuple containing:
+            - stim_start (numerical value or None): Start time of the stimulation
+              in milliseconds.
+            - stim_end (numerical value or None): End time of the stimulation in
+              milliseconds.
 
-        Returned objects
-        ====================
-        stim_start : numerical value (ms) or None
-        stim_end : numerical value (ms) or None
+    Notes:
+        - Epoch.name should be one of "stim", "stimulus", "stimulation",
+          "current_injection".
+        - First Event.name should be "stim_start", "stimulus_start",
+          "stimulation_start", "current_injection_start".
+        - Second Event.name should be one of "stim_end", "stimulus_end",
+          "stimulation_end", "current_injection_end".
 
     """
     # this part code aims to find informations about stimulations, if
@@ -150,31 +154,29 @@ def extract_stim_times_from_neo_data(blocks, stim_start, stim_end):
     return stim_start, stim_end
 
 
-def load_neo_file(file_name, stim_start=None, stim_end=None, **kwargs):
+def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> list:
     """
-        Use neo to load a data file and convert it to be readable by eFEL.
+    Loads a data file using neo and converts it for eFEL readability.
 
-        Parameters
-        ==========
-        file_name : string
-                    path to the location of a Dependency file
-        stim_start : numerical value (ms)
-                    Optional if there is an Epoch or two Events in the file
-        stim_end : numerical value (ms)
-                Optional if there is an Epoch or two Events in the file
-        kwargs : keyword arguments to be passed to the read() method of the
-                Neo IO class
+    Args:
+        file_name (string): Path to the Dependency file location.
+        stim_start (numerical value, optional): Start time in ms. Optional if an Epoch
+            or two Events are in the file.
+        stim_end (numerical value, optional): End time in ms. Optional if an Epoch
+            or two Events are in the file.
+        **kwargs: Additional arguments for the read() method of Neo IO class.
 
-        Epoch.name should be one of "stim", "stimulus", "stimulation",
-        "current_injection"
-        First Event.name should be "stim_start", "stimulus_start",
-        "stimulation_start", "current_injection_start"
-        Second Event.name should be one of "stim_end", "stimulus_end",
-        "stimulation_end", "current_injection_end"
+    Returns:
+        list of Segments: Segments containing traces, formatted as
+            [Segments_1, Segments_2, ..., Segments_n], where each Segments_i is
+            [Traces_1, Traces_2, ..., Traces_n].
 
-        The returned object is presented like this :
-            returned object : [Segments_1, Segments_2, ..., Segments_n]
-            Segments_1 = [Traces_1, Traces_2, ..., Traces_n]
+    Notes:
+        - Epoch.name should be "stim", "stimulus", "stimulation", "current_injection".
+        - First Event.name: "stim_start", "stimulus_start", "stimulation_start",
+          "current_injection_start".
+        - Second Event.name: "stim_end", "stimulus_end", "stimulation_end",
+          "current_injection_end".
     """
     reader = neo.io.get_io(file_name)
     blocks = reader.read(**kwargs)

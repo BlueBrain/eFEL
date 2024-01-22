@@ -1926,6 +1926,19 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+`Python efeature`_ : phaseslope_max
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes the maximum of the phase slope.
+Attention, this feature is sensitive to interpolation timestep.
+
+- **Required features**: time, voltage
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
+
 
 
 .. _LibV1: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV1.cpp

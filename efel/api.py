@@ -1,10 +1,8 @@
 """eFEL Python API functions.
 
-This module provides the user-facing Python API of the eFEL.
+This module provides the user-facing Python API of eFEL.
 The convenience functions defined here call the underlying 'cppcore' library
 to hide the lower level API from the user.
-All functions in this module can be called as efel.functionname, it is
-not necessary to include 'api' as in efel.api.functionname.
 
 
 Copyright (c) 2015, EPFL/Blue Brain Project
@@ -25,9 +23,12 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
+from __future__ import annotations
 
-import os
-import numpy
+from pathlib import Path
+from typing import Callable
+from typing_extensions import deprecated
+import numpy as np
 
 import efel
 import efel.cppcore as cppcore
@@ -35,21 +36,6 @@ import efel.cppcore as cppcore
 import efel.pyfeatures as pyfeatures
 from efel.pyfeatures.pyfeatures import get_cpp_feature
 
-"""
-Disabling cppcore importerror override, it confuses users in case the error
-is caused by something else
-try:
-except ImportError:
-    six.reraise(ImportError, ImportError(
-        '\n'
-        'It looks like the efel.cppcore package could not be found.\n'
-        'Could it be that you are running the \'import efel\' in a directory '
-        'that has a subdirectory called \'efel\' '
-        '(like e.g. the eFEL source directory) ?\n'
-        'If this is the case, please try to import from another directory.\n'
-        'If the issue persists, please create a ticket at '
-        'github.com/BlueBrain/eFEL/issues.\n'), sys.exc_info()[2])
-"""
 
 _settings = efel.Settings()
 _int_settings = {}
@@ -64,7 +50,6 @@ def reset():
     These values are persisten. This function will reset these value to their
     original state.
     """
-
     global _settings, _int_settings, _double_settings, _string_settings
     _settings = efel.Settings()
     _int_settings = {}
@@ -104,88 +89,81 @@ def reset():
     _initialise()
 
 
-def setDependencyFileLocation(location):
-    """Set the location of the Dependency file
+@deprecated("Changing the dependency file will not be supported in the future.")
+def setDependencyFileLocation(location: str | Path) -> None:
+    """Sets the location of the Dependency file.
 
-    The eFEL uses 'Dependency' files to let the user define which versions
-    of certain features are used to calculate.
-    The installation directory of the eFEL contains a default
-    'DependencyV5.txt' file. Unless the user wants to change this file,
-    it is not necessary to call this function.
+    eFEL uses 'Dependency' files to let the user define versions of features to use.
+    The installation directory of eFEL contains a default 'DependencyV5.txt' file.
+    Unless users want to change this file, it is not necessary to call this function.
 
-    Parameters
-    ==========
-    location : string
-               path to the location of a Dependency file
+    Args:
+        location: Path to the location of a Dependency file.
+
+    Raises:
+        FileNotFoundError: If the path to the dependency file doesn't exist.
     """
-
-    global dependencyFileLocation
-    if not os.path.exists(location):
-        raise Exception(
-            "Path to dependency file {%s} doesn't exist" %
-            location)
-    _settings.dependencyfile_path = location
+    location = Path(location)
+    if not location.exists():
+        raise FileNotFoundError(f"Path to dependency file {location} doesn't exist")
+    _settings.dependencyfile_path = str(location)
 
 
-def getDependencyFileLocation():
-    """Get the location of the Dependency file
+@deprecated("Changing the dependency file will not be supported in the future.")
+def getDependencyFileLocation() -> str:
+    """Gets the location of the Dependency file.
 
-    The eFEL uses 'Dependency' files to let the user define which versions
-    of certain features are used to calculate.
-    The installation directory of the eFEL contains a default
-    'DependencyV5.txt' file.
-
-    Returns
-    =======
-    location : string
-               path to the location of a Dependency file
+    Returns:
+        Path to the location of a Dependency file.
     """
-
     return _settings.dependencyfile_path
 
 
-def setThreshold(newThreshold):
+def set_threshold(new_threshold: float) -> None:
     """Set the spike detection threshold in the eFEL, default -20.0
 
-    Parameters
-    ==========
-    threshold : float
-                The new spike detection threshold value (in the same units
-                as the traces, e.g. mV).
+    Args:
+        new_threshold: The new spike detection threshold value (in the same units
+                       as the traces, e.g. mV).
     """
-    _settings.threshold = newThreshold
+    _settings.threshold = new_threshold
     setDoubleSetting('Threshold', _settings.threshold)
 
 
-def setDerivativeThreshold(newDerivativeThreshold):
-    """Set the threshold for the derivate for detecting the spike onset
+@deprecated("Use set_threshold instead")
+def setThreshold(newThreshold: float) -> None:
+    set_threshold(newThreshold)
 
-    Some featurea use a threshold on dV/dt to calculate the beginning of an
+
+def set_derivative_threshold(new_derivative_threshold: float) -> None:
+    """Set the threshold for the derivative for detecting the spike onset.
+
+    Some features use a threshold on dV/dt to calculate the beginning of an
     action potential. This function allows you to set this threshold.
 
-    Parameters
-    ==========
-    derivative_threshold : float
-                The new derivative threshold value (in the same units
-                as the traces, e.g. mV/ms).
+    Args:
+        new_derivative_threshold: The new derivative threshold value (in the same units
+                                  as the traces, e.g. mV/ms).
     """
-    _settings.derivative_threshold = newDerivativeThreshold
+    _settings.derivative_threshold = new_derivative_threshold
     setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
 
 
-def getFeatureNames():
+@deprecated("Use set_derivative_threshold instead")
+def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
+    set_derivative_threshold(newDerivativeThreshold)
+
+
+def get_feature_names() -> list[str]:
     """Return a list with the name of all the available features
 
-    Returns
-    =======
-    feature_names : list of strings
-                    A list that contains all the feature names available in
-                    the eFEL. These names can be used in the featureNames
-                    argument of e.g. getFeatureValues()
+    Returns:
+        A list that contains all the feature names available in
+        the eFEL. These names can be used in the feature_names
+        argument of e.g. get_feature_values()
     """
-
     cppcore.Initialize(_settings.dependencyfile_path, "log")
-    feature_names = []
+    feature_names: list[str] = []
     cppcore.getFeatureNames(feature_names)
 
     feature_names += pyfeatures.all_pyfeatures
@@ -193,68 +171,56 @@ def getFeatureNames():
     return feature_names
 
 
-def FeatureNameExists(feature_name):
-    """Does a certain feature name exist ?
-
-    Parameters
-    ==========
-    feature_name : string
-                  Name of the feature to check
-
-    Returns
-    =======
-    FeatureNameExists : bool
-                    True if feature_name exists, otherwise False
-    """
-
-    return feature_name in getFeatureNames()
+@deprecated("Use get_feature_names instead")
+def getFeatureNames() -> list[str]:
+    return get_feature_names()
 
 
-def _get_feature(featureName, raise_warnings=None):
+def feature_name_exists(feature_name: str) -> bool:
+    """Returns True if the feature name exists in eFEL, False otherwise."""
+    return feature_name in get_feature_names()
+
+
+@deprecated("Use feature_name_exists instead")
+def FeatureNameExists(feature_name: str) -> bool:
+    return feature_name_exists(feature_name)
+
+
+def _get_feature(feature_name: str, raise_warnings=False) -> np.ndarray | None:
     """Get feature value, decide to use python or cpp"""
-    if featureName in pyfeatures.all_pyfeatures:
-        return get_py_feature(featureName)
+    if feature_name in pyfeatures.all_pyfeatures:
+        return get_py_feature(feature_name)
     else:
-        return get_cpp_feature(featureName, raise_warnings=raise_warnings)
+        return get_cpp_feature(feature_name, raise_warnings=raise_warnings)
 
 
-def getDistance(
-        trace,
-        featureName,
-        mean,
-        std,
-        trace_check=True,
-        error_dist=250):
+def get_distance(
+        trace: dict,
+        feature_name: str,
+        mean: float,
+        std: float,
+        trace_check: bool = True,
+        error_dist: float = 250) -> float:
     """Calculate distance value for a list of traces.
 
-    Parameters
-    ==========
-    trace : trace dicts
-            Trace dict that represents one trace. The dict should have the
-            following keys: 'T', 'V', 'stim_start', 'stim_end'
-    featureName : string
-                  Name of the the features for which to calculate the distance
-    mean : float
-           Mean to calculate the distance from
-    std : float
-          Std to scale the distance with
-    trace_check : float
-          Let the library check if there are spikes outside of stimulus
-          interval, default is True
-    error_dist : float
-          Distance returned when error, default is 250
+    Args:
+        trace: Trace dict that represents one trace. The dict should have the
+               following keys: 'T', 'V', 'stim_start', 'stim_end'
+        feature_name: Name of the the features for which to calculate the distance
+        mean: Mean to calculate the distance from
+        std: Std to scale the distance with
+        trace_check: Let the library check if there are spikes outside of stimulus
+                     interval, default is True
+        error_dist: Distance returned when error, default is 250
 
-    Returns
-    =======
-    distance : float
-               The absolute number of standard deviation the feature is away
-               from the mean. In case of anomalous results a value of
-               'error_dist' standard deviations is returned.
-               This can happen if: a feature generates an error, there are
-               spikes outside of the stimulus interval, the feature returns
-               a NaN, etc.
+    Returns:
+        The absolute number of standard deviation the feature is away
+        from the mean. In case of anomalous results a value of
+        'error_dist' standard deviations is returned.
+        This can happen if: a feature generates an error, there are
+        spikes outside of the stimulus interval, the feature returns
+        a NaN, etc.
     """
-
     _initialise()
 
     # Next set time, voltage and the stimulus start and end
@@ -266,9 +232,9 @@ def getDistance(
         if trace_check_success["trace_check"] is None:
             return error_dist
 
-    feature_values = _get_feature(featureName)
+    feature_values = _get_feature(feature_name)
 
-    distance = 0
+    distance = 0.0
     if feature_values is None or len(feature_values) < 1:
         return error_dist
     else:
@@ -286,8 +252,19 @@ def getDistance(
         return distance
 
 
-def _initialise():
-    """Set cppcore initial values"""
+@deprecated("Use get_distance instead")
+def getDistance(
+        trace,
+        featureName,
+        mean,
+        std,
+        trace_check=True,
+        error_dist=250) -> float:
+    return get_distance(trace, featureName, mean, std, trace_check, error_dist)
+
+
+def _initialise() -> None:
+    """Set cppcore initial values."""
     cppcore.Initialize(_settings.dependencyfile_path, "log")
     # flush the GErrorString from previous runs by calling getgError()
     cppcore.getgError()
@@ -307,33 +284,45 @@ def _initialise():
         cppcore.setFeatureString(setting_name, str_setting)
 
 
-def setIntSetting(setting_name, new_value):
+def set_int_setting(setting_name: str, new_value: int) -> None:
     """Set a certain integer setting to a new value"""
-
     _int_settings[setting_name] = new_value
 
 
-def setDoubleSetting(setting_name, new_value):
-    """Set a certain double setting to a new value"""
+@deprecated("Use set_int_setting instead")
+def setIntSetting(setting_name: str, new_value: int) -> None:
+    set_int_setting(setting_name, new_value)
 
+
+def set_double_setting(setting_name: str, new_value: float) -> None:
+    """Set a certain double setting to a new value"""
     _double_settings[setting_name] = new_value
 
 
-def setStrSetting(setting_name, new_value):
-    """Set a certain string setting to a new value"""
+@deprecated("Use set_double_setting instead")
+def setDoubleSetting(setting_name: str, new_value: float) -> None:
+    set_double_setting(setting_name, new_value)
 
+
+def set_str_setting(setting_name: str, new_value: str) -> None:
+    """Set a certain string setting to a new value"""
     _string_settings[setting_name] = new_value
 
 
-def getFeatureValues(
-        traces,
-        featureNames,
-        parallel_map=None,
-        return_list=True,
-        raise_warnings=True):
+@deprecated("Use set_str_setting instead")
+def setStrSetting(setting_name: str, new_value: str) -> None:
+    set_str_setting(setting_name, new_value)
+
+
+def get_feature_values(
+        traces: list[dict],
+        feature_names: list[str],
+        parallel_map: Callable | None = None,
+        return_list: bool = True,
+        raise_warnings: bool = True) -> list | map:
     """Calculate feature values for a list of traces.
 
-    This function is the core of the eFEL API. A list of traces (in the form
+    This function is the core of eFEL API. A list of traces (in the form
     of dictionaries) is passed as argument, together with a list of feature
     names.
 
@@ -343,41 +332,33 @@ def getFeatureValues(
     Beware that every feature returns an array of values. E.g. AP_amplitude
     will return a list with the amplitude of every action potential.
 
-    Parameters
-    ==========
-    traces : list of trace dicts
-             Every trace dict represent one trace. The dict should have the
-             following keys: 'T', 'V', 'stim_start', 'stim_end'
-    feature_names : list of string
-                  List with the names of the features to be calculated on all
-                  the traces.
-    parallel_map : map function
-                   Map function to parallelise over the traces. Default is the
-                   serial map() function
-    return_list: boolean
-                 By default the function returns a list of dicts. This
-                 optional argument can disable this, so that the result of the
-                 parallel_map() is returned. Can be useful for performance
-                 reasons when an iterator is preferred.
-    raise_warnings: boolean
-                    Raise warning when efel c++ returns an error
+    Args:
+        traces: Every trace dict represents one trace. The dict should have the
+                following keys: 'T', 'V', 'stim_start', 'stim_end'
+        feature_names: List with the names of the features to be calculated on all
+                       the traces.
+        parallel_map: Map function to parallelise over the traces. Default is the
+                      serial map() function
+        return_list: By default the function returns a list of dicts. This
+                     optional argument can disable this, so that the result of the
+                     parallel_map() is returned. Can be useful for performance
+                     reasons when an iterator is preferred.
+        raise_warnings: Raise warning when efel c++ returns an error
 
-    Returns
-    =======
-    feature_values : list of dicts
-                     For every input trace a feature value dict is return (in
-                     the same order). The dict contains the keys of
-                     'feature_names', every key contains a numpy array with
-                     the feature values returned by the C++ efel code.
-                     The value is None if an error occured during the
-                     calculation of the feature.
+    Returns:
+        For every input trace a feature value dict is returned (in
+        the same order). The dict contains the keys of
+        'feature_names', every key contains a numpy array with
+        the feature values returned by the C++ efel code.
+        The value is None if an error occured during the
+        calculation of the feature.
     """
 
     if parallel_map is None:
         parallel_map = map
 
     traces_featurenames = (
-        (trace, featureNames, raise_warnings)
+        (trace, feature_names, raise_warnings)
         for trace in traces)
     map_result = parallel_map(_get_feature_values_serial, traces_featurenames)
 
@@ -387,18 +368,28 @@ def getFeatureValues(
         return map_result
 
 
-def get_py_feature(featureName):
-    """Return python feature"""
+@deprecated("Use get_feature_values instead")
+def getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=None,
+        return_list=True,
+        raise_warnings=True):
+    return get_feature_values(
+        traces, featureNames, parallel_map, return_list, raise_warnings)
 
-    return getattr(pyfeatures, featureName)()
+
+def get_py_feature(feature_name: str) -> np.ndarray | None:
+    """Return values of the given feature name."""
+    return getattr(pyfeatures, feature_name)()
 
 
-def _get_feature_values_serial(trace_featurenames):
-    """Single thread of getFeatureValues"""
-
-    trace, featureNames, raise_warnings = trace_featurenames
-
-    featureDict = {}
+def _get_feature_values_serial(
+    trace_featurenames: tuple[dict, list[str], bool]
+) -> dict:
+    """Single process of get_feature_values."""
+    trace, feature_names, raise_warnings = trace_featurenames
+    result = {}
 
     if 'stim_start' in trace and 'stim_end' in trace:
         try:
@@ -428,55 +419,59 @@ def _get_feature_values_serial(trace_featurenames):
     for item in list(trace.keys()):
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
-    for featureName in featureNames:
-        featureDict[featureName] = _get_feature(
-            featureName, raise_warnings=raise_warnings)
+    for feature_name in feature_names:
+        result[feature_name] = _get_feature(
+            feature_name, raise_warnings=raise_warnings)
 
-    return featureDict
+    return result
 
 
-def getMeanFeatureValues(traces, featureNames, raise_warnings=True):
-    """Convenience function that returns mean values from getFeatureValues()
+def get_mean_feature_values(
+        traces: list[dict],
+        feature_names: list[str],
+        raise_warnings: bool = True) -> list[dict]:
+    """Convenience function that returns mean values from get_feature_values()
 
-    Instead of return a list of values for every feature as getFeatureValues()
+    Instead of return a list of values for every feature as get_feature_values()
     does, this function returns per trace one value for every feature, namely
     the mean value.
 
-    Parameters
-    ==========
-    traces : list of trace dicts
-             Every trace dict represent one trace. The dict should have the
-             following keys: 'T', 'V', 'stim_start', 'stim_end'
-    feature_names : list of string
-                    List with the names of the features to be calculated on all
-                    the traces.
-    raise_warnings: boolean
-                    Raise warning when efel c++ returns an error
+    Args:
+        traces: Every trace dict represents one trace. The dict should have the
+                following keys: 'T', 'V', 'stim_start', 'stim_end'
+        feature_names: List with the names of the features to be calculated on all
+                       the traces.
+        raise_warnings: Raise warning when efel c++ returns an error
 
-    Returns
-    =======
-    feature_values : list of dicts
-                     For every input trace a feature value dict is return (in
-                     the same order). The dict contains the keys of
-                     'feature_names', every key contains the mean of the array
-                     that is returned by getFeatureValues()
-                     The value is None if an error occured during the
-                     calculation of the feature, or if the feature value array
-                     was empty.
+    Returns:
+        For every input trace a feature value dict is returned (in
+        the same order). The dict contains the keys of
+        'feature_names', every key contains the mean of the array
+        that is returned by get_feature_values()
+        The value is None if an error occured during the
+        calculation of the feature, or if the feature value array
+        was empty.
     """
-
     featureDicts = getFeatureValues(
         traces,
-        featureNames,
+        feature_names,
         raise_warnings=raise_warnings)
     for featureDict in featureDicts:
         for (key, values) in list(featureDict.items()):
             if values is None or len(values) == 0:
                 featureDict[key] = None
             else:
-                featureDict[key] = numpy.mean(values)
+                featureDict[key] = np.mean(values)
 
     return featureDicts
+
+
+@deprecated("Use get_mean_feature_values instead")
+def getMeanFeatureValues(
+        traces,
+        featureNames,
+        raise_warnings=True):
+    return get_mean_feature_values(traces, featureNames, raise_warnings)
 
 
 reset()
