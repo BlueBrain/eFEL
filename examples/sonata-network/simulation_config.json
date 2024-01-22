@@ -1,0 +1,43 @@
+{
+    "manifest": {
+      "$OUTPUT_DIR": "."
+    },
+    "run": {
+      "tstop": 100.0,
+      "dt": 0.025,
+      "random_seed": 1
+    },
+    "conditions": {
+      "v_init": -65
+    },
+    "target_simulator": "NEURON",
+    "network": "./O1/circuit_config.json",
+    "node_set": "dSTUT_mini",
+    "output": {
+      "output_dir": "$OUTPUT_DIR/output_sonata",
+      "spikes_file": "out.h5",
+      "spikes_sort_order": "by_time"
+    },
+    "inputs": {
+      "continuous_linear": {
+        "input_type": "current_clamp",
+        "module": "relative_linear",
+        "delay": 20.0,
+        "duration": 70.0,
+        "percent_start": 100,
+        "node_set": "dSTUT_mini"
+      }
+    },
+    "reports": {
+      "soma": {
+        "cells": "dSTUT_mini",
+        "variable_name": "v",
+        "type": "compartment",
+        "dt": 1.0,
+        "start_time": 0.0,
+        "end_time": 20.0,
+        "sections": "soma",
+        "compartments": "center"
+      }
+    }
+  }

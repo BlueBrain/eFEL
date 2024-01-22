@@ -1,0 +1,510 @@
+{
+  "Layer2Excitatory": [
+    "L2_IPC",
+    "L2_TPC:B",
+    "L2_TPC:A"
+  ],
+  "Layer3Excitatory": [
+    "L3_TPC:A",
+    "L3_TPC:C"
+  ],
+  "Layer23Excitatory": [
+    "Layer3Excitatory",
+    "Layer2Excitatory"
+  ],
+  "Layer4Excitatory": [
+    "L4_TPC",
+    "L4_UPC",
+    "L4_SSC"
+  ],
+  "Layer5Excitatory": [
+    "L5_UPC",
+    "L5_TPC:C",
+    "L5_TPC:B",
+    "L5_TPC:A"
+  ],
+  "Layer6Excitatory": [
+    "L6_IPC",
+    "L6_BPC",
+    "L6_TPC:A",
+    "L6_UPC",
+    "L6_HPC",
+    "L6_TPC:C"
+  ],
+  "Layer2346Excitatory": [
+    "Layer4Excitatory",
+    "Layer6Excitatory",
+    "Layer23Excitatory"
+  ],
+  "Layer1Inhibitory": [
+    "L1_NGC-DA",
+    "L1_SAC",
+    "L1_HAC",
+    "L1_LAC",
+    "L1_DAC",
+    "L1_NGC-SA"
+  ],
+  "Layer23Inhibitory": [
+    "L23_NGC",
+    "L23_LBC",
+    "L23_CHC",
+    "L23_DBC",
+    "L23_BP",
+    "L23_BTC",
+    "L23_NBC",
+    "L23_SBC",
+    "L23_MC"
+  ],
+  "Layer4Inhibitory": [
+    "L4_SBC",
+    "L4_DBC",
+    "L4_CHC",
+    "L4_NBC",
+    "L4_LBC",
+    "L4_NGC",
+    "L4_BP",
+    "L4_MC",
+    "L4_BTC"
+  ],
+  "Layer5Inhibitory": [
+    "L5_DBC",
+    "L5_NBC",
+    "L5_SBC",
+    "L5_NGC",
+    "L5_MC",
+    "L5_LBC",
+    "L5_BP",
+    "L5_BTC",
+    "L5_CHC"
+  ],
+  "Layer6Inhibitory": [
+    "L6_BP",
+    "L6_NBC",
+    "L6_CHC",
+    "L6_SBC",
+    "L6_LBC",
+    "L6_MC",
+    "L6_BTC",
+    "L6_DBC",
+    "L6_NGC"
+  ],
+  "hex0": {
+    "node_id": [
+      5,
+      11
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex1": {
+    "node_id": [
+      1
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex2": {
+    "node_id": [
+      2
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex3": {
+    "node_id": [
+      8
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex4": {
+    "node_id": [
+      0,
+      3,
+      12
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex5": {
+    "node_id": [
+      4,
+      13
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex6": {
+    "node_id": [
+      6,
+      7,
+      9,
+      10
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "test_circuit": {
+    "node_id": [],
+    "population": "S1nonbarrel_neurons"
+  },
+  "dSTUT_mini": {
+    "node_id": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "population": "S1nonbarrel_neurons"
+  },
+  "hex_O1": [
+    "hex2",
+    "hex3",
+    "hex0",
+    "hex4",
+    "hex5",
+    "hex6",
+    "hex1"
+  ],
+  "proj_Thalamocortical_VPM_Source": {
+    "population": "VPM"
+  },
+  "proj_Thalamocortical_POM_Source": {
+    "population": "POm"
+  },
+  "Mosaic": [
+    "All"
+  ],
+  "All": [
+    "L5_SBC",
+    "L2_TPC:B",
+    "L2_TPC:A",
+    "L23_NGC",
+    "L4_CHC",
+    "L6_BPC",
+    "L3_TPC:A",
+    "L6_TPC:A",
+    "L23_DBC",
+    "L23_SBC",
+    "L23_BTC",
+    "L1_LAC",
+    "L4_NBC",
+    "L4_LBC",
+    "L4_SSC",
+    "L3_TPC:C",
+    "L6_HPC",
+    "L1_DAC",
+    "L6_MC",
+    "L6_BTC",
+    "L6_TPC:C",
+    "L5_CHC",
+    "L23_MC",
+    "L4_TPC",
+    "L6_BP",
+    "L23_LBC",
+    "L5_LBC",
+    "L6_SBC",
+    "L6_LBC",
+    "L6_NBC",
+    "L2_IPC",
+    "L6_DBC",
+    "L1_NGC-DA",
+    "L4_SBC",
+    "L4_DBC",
+    "L5_UPC",
+    "L5_TPC:B",
+    "L23_BP",
+    "L6_UPC",
+    "L5_MC",
+    "L5_BP",
+    "L5_BTC",
+    "L5_DBC",
+    "L5_NBC",
+    "L1_SAC",
+    "L6_IPC",
+    "L1_HAC",
+    "L4_UPC",
+    "L23_CHC",
+    "L5_TPC:C",
+    "L23_NBC",
+    "L5_NGC",
+    "L6_CHC",
+    "L4_NGC",
+    "L4_BP",
+    "L4_MC",
+    "L6_NGC",
+    "L4_BTC",
+    "L5_TPC:A",
+    "L1_NGC-SA"
+  ],
+  "Excitatory": {
+    "synapse_class": "EXC"
+  },
+  "Inhibitory": {
+    "synapse_class": "INH"
+  },
+  "L1_DAC": {
+    "mtype": "L1_DAC"
+  },
+  "L1_HAC": {
+    "mtype": "L1_HAC"
+  },
+  "L1_LAC": {
+    "mtype": "L1_LAC"
+  },
+  "L1_NGC-DA": {
+    "mtype": "L1_NGC-DA"
+  },
+  "L1_NGC-SA": {
+    "mtype": "L1_NGC-SA"
+  },
+  "L1_SAC": {
+    "mtype": "L1_SAC"
+  },
+  "L23_BP": {
+    "mtype": "L23_BP"
+  },
+  "L23_BTC": {
+    "mtype": "L23_BTC"
+  },
+  "L23_CHC": {
+    "mtype": "L23_CHC"
+  },
+  "L23_DBC": {
+    "mtype": "L23_DBC"
+  },
+  "L23_LBC": {
+    "mtype": "L23_LBC"
+  },
+  "L23_MC": {
+    "mtype": "L23_MC"
+  },
+  "L23_NBC": {
+    "mtype": "L23_NBC"
+  },
+  "L23_NGC": {
+    "mtype": "L23_NGC"
+  },
+  "L23_SBC": {
+    "mtype": "L23_SBC"
+  },
+  "L2_IPC": {
+    "mtype": "L2_IPC"
+  },
+  "L2_TPC:A": {
+    "mtype": "L2_TPC:A"
+  },
+  "L2_TPC:B": {
+    "mtype": "L2_TPC:B"
+  },
+  "L3_TPC:A": {
+    "mtype": "L3_TPC:A"
+  },
+  "L3_TPC:C": {
+    "mtype": "L3_TPC:C"
+  },
+  "L4_BP": {
+    "mtype": "L4_BP"
+  },
+  "L4_BTC": {
+    "mtype": "L4_BTC"
+  },
+  "L4_CHC": {
+    "mtype": "L4_CHC"
+  },
+  "L4_DBC": {
+    "mtype": "L4_DBC"
+  },
+  "L4_LBC": {
+    "mtype": "L4_LBC"
+  },
+  "L4_MC": {
+    "mtype": "L4_MC"
+  },
+  "L4_NBC": {
+    "mtype": "L4_NBC"
+  },
+  "L4_NGC": {
+    "mtype": "L4_NGC"
+  },
+  "L4_SBC": {
+    "mtype": "L4_SBC"
+  },
+  "L4_SSC": {
+    "mtype": "L4_SSC"
+  },
+  "L4_TPC": {
+    "mtype": "L4_TPC"
+  },
+  "L4_UPC": {
+    "mtype": "L4_UPC"
+  },
+  "L5_BP": {
+    "mtype": "L5_BP"
+  },
+  "L5_BTC": {
+    "mtype": "L5_BTC"
+  },
+  "L5_CHC": {
+    "mtype": "L5_CHC"
+  },
+  "L5_DBC": {
+    "mtype": "L5_DBC"
+  },
+  "L5_LBC": {
+    "mtype": "L5_LBC"
+  },
+  "L5_MC": {
+    "mtype": "L5_MC"
+  },
+  "L5_NBC": {
+    "mtype": "L5_NBC"
+  },
+  "L5_NGC": {
+    "mtype": "L5_NGC"
+  },
+  "L5_SBC": {
+    "mtype": "L5_SBC"
+  },
+  "L5_TPC:A": {
+    "mtype": "L5_TPC:A"
+  },
+  "L5_TPC:B": {
+    "mtype": "L5_TPC:B"
+  },
+  "L5_TPC:C": {
+    "mtype": "L5_TPC:C"
+  },
+  "L5_UPC": {
+    "mtype": "L5_UPC"
+  },
+  "L6_BP": {
+    "mtype": "L6_BP"
+  },
+  "L6_BPC": {
+    "mtype": "L6_BPC"
+  },
+  "L6_BTC": {
+    "mtype": "L6_BTC"
+  },
+  "L6_CHC": {
+    "mtype": "L6_CHC"
+  },
+  "L6_DBC": {
+    "mtype": "L6_DBC"
+  },
+  "L6_HPC": {
+    "mtype": "L6_HPC"
+  },
+  "L6_IPC": {
+    "mtype": "L6_IPC"
+  },
+  "L6_LBC": {
+    "mtype": "L6_LBC"
+  },
+  "L6_MC": {
+    "mtype": "L6_MC"
+  },
+  "L6_NBC": {
+    "mtype": "L6_NBC"
+  },
+  "L6_NGC": {
+    "mtype": "L6_NGC"
+  },
+  "L6_SBC": {
+    "mtype": "L6_SBC"
+  },
+  "L6_TPC:A": {
+    "mtype": "L6_TPC:A"
+  },
+  "L6_TPC:C": {
+    "mtype": "L6_TPC:C"
+  },
+  "L6_UPC": {
+    "mtype": "L6_UPC"
+  },
+  "bAC": {
+    "etype": "bAC"
+  },
+  "bIR": {
+    "etype": "bIR"
+  },
+  "bNAC": {
+    "etype": "bNAC"
+  },
+  "bSTUT": {
+    "etype": "bSTUT"
+  },
+  "cACint": {
+    "etype": "cACint"
+  },
+  "cADpyr": {
+    "etype": "cADpyr"
+  },
+  "cIR": {
+    "etype": "cIR"
+  },
+  "cNAC": {
+    "etype": "cNAC"
+  },
+  "cSTUT": {
+    "etype": "cSTUT"
+  },
+  "dNAC": {
+    "etype": "dNAC"
+  },
+  "dSTUT": {
+    "etype": "dSTUT"
+  },
+  "S1DZ": {
+    "region": "S1DZ"
+  },
+  "S1DZO": {
+    "region": "S1DZO"
+  },
+  "S1FL": {
+    "region": "S1FL"
+  },
+  "S1HL": {
+    "region": "S1HL"
+  },
+  "S1J": {
+    "region": "S1J"
+  },
+  "S1Sh": {
+    "region": "S1Sh"
+  },
+  "S1Tr": {
+    "region": "S1Tr"
+  },
+  "S1ULp": {
+    "region": "S1ULp"
+  },
+  "Layer1": {
+    "layer": "1"
+  },
+  "Layer2": {
+    "layer": "2"
+  },
+  "Layer3": {
+    "layer": "3"
+  },
+  "Layer4": {
+    "layer": "4"
+  },
+  "Layer5": {
+    "layer": "5"
+  },
+  "Layer6": {
+    "layer": "6"
+  },
+  "proj_S1nonbarrel_local_neurons": {
+    "population": "external_S1nonbarrel_neurons__S1nonbarrel_neurons__chemical"
+  },
+  "proj_S1nonbarrel_midrange_neurons": {
+    "population": "external_midrange__S1nonbarrel_neurons__chemical"
+  }
+}
