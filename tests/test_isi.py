@@ -47,6 +47,7 @@ class TestRegularISI:
             self.feature_values["irregularity_index"] == pytest.approx(0.0, abs=1e-9)
         )
 
+
 class TestThreeSpikes:
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self):

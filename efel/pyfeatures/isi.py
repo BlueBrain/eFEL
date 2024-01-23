@@ -66,7 +66,7 @@ def single_burst_ratio() -> np.ndarray | None:
 
 def irregularity_index() -> np.ndarray | None:
     """Calculate the irregularity index of ISI values.
-    
+
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
     isi_values = ISIs()
