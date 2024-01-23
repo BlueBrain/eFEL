@@ -39,6 +39,7 @@ all_pyfeatures = [
     'current',
     'ISIs',
     'ISI_CV',
+    'single_burst_ratio',
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',

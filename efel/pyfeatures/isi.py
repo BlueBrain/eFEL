@@ -42,6 +42,28 @@ def ISI_CV() -> np.ndarray | None:
     return np.array([result])
 
 
+def single_burst_ratio() -> np.ndarray | None:
+    """Calculates the single burst ratio.
+
+    The ratio is the length of the first ISI over the average of the rest.
+    If the ignore_first_ISI flag is set, the first ISI will be ignored.
+    """
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    if len(isi_values) < 2:
+        return None
+
+    single_burst_ratio_value = isi_values[0] / np.mean(isi_values)
+    return np.array([single_burst_ratio_value])
+
+
 def initburst_sahp() -> np.ndarray | None:
     """SlowAHP voltage after initial burst."""
     # Required cpp features

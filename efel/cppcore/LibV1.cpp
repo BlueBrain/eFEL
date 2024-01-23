@@ -1024,37 +1024,6 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-// *** single_burst_ratio ***
-// according to Shaul: measures the length of the first isi over the median of
-// the rest of the isis
-static int __single_burst_ratio(const vector<double>& isivalues,
-                                vector<double>& singleburstratio) {
-  if (isivalues.size() < 2) {
-    return 0;
-  }
-  // calculate the average instead of the median
-  double average = 0.;
-  for (size_t i = 1; i < isivalues.size(); i++) {
-    average += isivalues[i];
-  }
-  average /= isivalues.size() - 1;
-  singleburstratio.push_back(isivalues[0] / average);
-  return singleburstratio.size();
-}
-
-int LibV1::single_burst_ratio(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"ISI_values"});
-  vector<double> singleburstratio;
-  int retval =
-      __single_burst_ratio(doubleFeatures.at("ISI_values"), singleburstratio);
-  if (retval > 0) {
-    setVec(DoubleFeatureData, StringData, "single_burst_ratio",
-           singleburstratio);
-  }
-  return retval;
-}
 
 // *** AP_width ***
 //

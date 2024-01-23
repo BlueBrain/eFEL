@@ -42,7 +42,6 @@ LibV2:AP_rise_rate_change	#LibV2:AP_rise_rate
 LibV2:AP_fall_rate_change	#LibV2:AP_fall_rate
 LibV2:fast_AHP_change	#LibV2:fast_AHP
 LibV2:AP_duration_half_width_change	#LibV2:AP_duration_half_width
-LibV1:single_burst_ratio	#LibV1:ISI_values
 LibV2:steady_state_hyper
 LibV2:amp_drop_first_second	#LibV1:peak_voltage
 LibV2:amp_drop_first_last	#LibV1:peak_voltage

@@ -40,7 +40,6 @@ int FillFptrTable() {
 
   FptrTableV1["AP_height"] = &LibV1::AP_height;
   FptrTableV1["AP_amplitude"] = &LibV1::AP_amplitude;
-  FptrTableV1["single_burst_ratio"] = &LibV1::single_burst_ratio;
   FptrTableV1["AP_width"] = &LibV1::AP_width;
   FptrTableV1["doublet_ISI"] = &LibV1::doublet_ISI;
   FptrTableV1["adaptation_index2"] = &LibV1::adaptation_index2;

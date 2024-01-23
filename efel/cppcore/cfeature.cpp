@@ -119,7 +119,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP_duration_half_width_change"] = "double";
   featuretypes["AP_height"] = "double";
   featuretypes["AP_amplitude"] = "double";
-  featuretypes["single_burst_ratio"] = "double";
   featuretypes["steady_state_hyper"] = "double";
   featuretypes["AP_width"] = "double";
   featuretypes["doublet_ISI"] = "double";

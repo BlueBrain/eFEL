@@ -563,8 +563,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
-`LibV1`_ : single_burst_ratio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : single_burst_ratio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.
