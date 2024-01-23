@@ -27,7 +27,7 @@ class TestRegularISI:
         self.trace['V'] = self.voltage
         self.trace['stim_start'] = [0]
         self.trace['stim_end'] = [1000]
-        self.features = ["single_burst_ratio", "ISIs"]
+        self.features = ["single_burst_ratio", "ISIs", "irregularity_index"]
         self.feature_values = get_feature_values(
             [self.trace],
             self.features, raise_warnings=False)[0]
@@ -42,6 +42,10 @@ class TestRegularISI:
         assert "single_burst_ratio" in get_feature_names()
         assert self.feature_values["single_burst_ratio"] == pytest.approx(1.0)
 
+    def test_irregularity_index(self):
+        assert (
+            self.feature_values["irregularity_index"] == pytest.approx(0.0, abs=1e-9)
+        )
 
 class TestThreeSpikes:
     @pytest.fixture(autouse=True)

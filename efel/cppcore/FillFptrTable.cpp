@@ -131,7 +131,6 @@ int FillFptrTable() {
   FptrTableV5["spike_half_width"] = &LibV5::spike_width1;
   FptrTableV5["AP_begin_indices"] = &LibV5::AP_begin_indices;
   FptrTableV5["AP_end_indices"] = &LibV5::AP_end_indices;
-  FptrTableV5["irregularity_index"] = &LibV5::irregularity_index;
   FptrTableV5["number_initial_spikes"] = &LibV5::number_initial_spikes;
   FptrTableV5["AP1_amp"] = &LibV5::AP1_amp;
   FptrTableV5["APlast_amp"] = &LibV5::APlast_amp;

@@ -64,6 +64,27 @@ def single_burst_ratio() -> np.ndarray | None:
     return np.array([single_burst_ratio_value])
 
 
+def irregularity_index() -> np.ndarray | None:
+    """Calculate the irregularity index of ISI values.
+    
+    If the ignore_first_ISI flag is set, the first ISI will be ignored.
+    """
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    # Calculate the absolute differences between consecutive ISI values
+    isi_differences = np.abs(np.diff(isi_values))
+    result = np.mean(isi_differences)
+
+    return np.array([result])
+
+
 def initburst_sahp() -> np.ndarray | None:
     """SlowAHP voltage after initial burst."""
     # Required cpp features

@@ -280,10 +280,10 @@ See Python efeature: ISIs feature for more details.
     ISI_mean = numpy.mean(ISI_values)
     ISI_CV = np.std(isi_values, ddof=1) / ISI_mean
 
-`LibV5`_ : irregularity_index
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : irregularity_index
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mean of the absolute difference of all ISIs, except the first one (see LibV1: ISI_values feature for more details.)
+Mean of the absolute difference of all ISIs, except the first one (see Python efeature: ISIs feature for more details.)
 
 The first ISI can be taken into account if ignore_first_ISI is set to 0.
 

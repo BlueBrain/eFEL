@@ -40,6 +40,7 @@ all_pyfeatures = [
     'ISIs',
     'ISI_CV',
     'single_burst_ratio',
+    'irregularity_index',
     'initburst_sahp',
     'initburst_sahp_vb',
     'initburst_sahp_ssse',

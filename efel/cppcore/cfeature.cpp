@@ -146,7 +146,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["inv_fifth_ISI"] = "double";
   featuretypes["inv_last_ISI"] = "double";
   featuretypes["inv_time_to_first_spike"] = "double";
-  featuretypes["irregularity_index"] = "double";
   featuretypes["number_initial_spikes"] = "int";
   featuretypes["AP1_amp"] = "double";
   featuretypes["APlast_amp"] = "double";

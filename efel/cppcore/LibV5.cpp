@@ -595,35 +595,6 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-static int __irregularity_index(const vector<double>& isiValues,
-                                vector<double>& irregularity_index) {
-  double ISISub, iRI;
-  iRI = ISISub = 0;
-  if (isiValues.size() == 0) return -1;
-
-  for (size_t i = 1; i < isiValues.size(); i++) {
-    ISISub = std::abs(isiValues[i] - isiValues[i - 1]);
-    iRI = iRI + (ISISub);
-  }
-  iRI = iRI / isiValues.size();
-  irregularity_index.clear();
-  irregularity_index.push_back(iRI);
-  return 1;
-}
-
-int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const vector<double>& isiValues = getFeature(DoubleFeatureData, "ISI_values");
-  vector<double> irregularity_index;
-  int retVal = __irregularity_index(isiValues, irregularity_index);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "irregularity_index",
-           irregularity_index);
-  }
-  return retVal;
-}
-
 static int __number_initial_spikes(const vector<double>& peak_times,
                                    double stimstart, double stimend,
                                    double initial_perc,

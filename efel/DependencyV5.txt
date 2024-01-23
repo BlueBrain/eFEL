@@ -57,7 +57,6 @@ LibV1:AHP_depth_diff	#LibV1:AHP_depth #LibV1:interpolate
 LibV5:min_AHP_indices 	    #LibV5:peak_indices #LibV1:interpolate 
 LibV5:min_AHP_values 	    #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV5:number_initial_spikes 	    #LibV1:peak_time #LibV1:interpolate 
-LibV5:irregularity_index 	    #LibV1:ISI_values #LibV1:interpolate 
 LibV5:AP1_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
 LibV5:APlast_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
 LibV5:AP2_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
