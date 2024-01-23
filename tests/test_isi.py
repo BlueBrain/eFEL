@@ -27,7 +27,9 @@ class TestRegularISI:
         self.trace['V'] = self.voltage
         self.trace['stim_start'] = [0]
         self.trace['stim_end'] = [1000]
-        self.features = ["single_burst_ratio", "ISIs", "irregularity_index"]
+        self.features = ["single_burst_ratio", "ISIs", "irregularity_index",
+                         "ISI_log_slope", "ISI_semilog_slope", "ISI_log_slope_skip"
+                         ]
         self.feature_values = get_feature_values(
             [self.trace],
             self.features, raise_warnings=False)[0]
@@ -46,6 +48,22 @@ class TestRegularISI:
         assert (
             self.feature_values["irregularity_index"] == pytest.approx(0.0, abs=1e-9)
         )
+
+    def test_ISI_log_slope(self):
+        assert self.feature_values["ISI_log_slope"] == pytest.approx(0.0)
+
+    def test_ISI_semilog_slope(self):
+        assert self.feature_values["ISI_semilog_slope"] == pytest.approx(0.0)
+
+    def test_ISI_log_slope_skip(self):
+        assert self.feature_values["ISI_log_slope_skip"] == pytest.approx(0.0)
+
+    def test_ISI_log_slope_skip_ValueError(self):
+        with pytest.raises(ValueError):
+            efel.set_double_setting("spike_skipf", 1.0)
+            get_feature_values(
+                [self.trace],
+                ["ISI_log_slope_skip"], raise_warnings=False)[0]
 
 
 class TestThreeSpikes:

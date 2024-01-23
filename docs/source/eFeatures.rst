@@ -214,7 +214,7 @@ The mean frequency of the firing rate
 The slope of a linear fit to a semilog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -226,13 +226,13 @@ See LibV1: ISI_values feature for more details.
 
     ISI_semilog_slope = slope
 
-`LibV5`_ : ISI_log_slope
-~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -244,8 +244,8 @@ See LibV1: ISI_values feature for more details.
 
     ISI_log_slope = slope
 
-`LibV5`_ : ISI_log_slope_skip
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope_skip
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values, but not taking into account the first ISI values.
 

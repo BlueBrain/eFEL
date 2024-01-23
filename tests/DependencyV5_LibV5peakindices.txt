@@ -48,8 +48,6 @@ LibV2:amp_drop_first_last	#LibV1:peak_voltage
 LibV2:amp_drop_second_last	#LibV1:peak_voltage
 LibV2:max_amp_difference	#LibV1:peak_voltage
 LibV1:AP_amplitude_diff	#LibV1:AP_amplitude
-LibV5:ISI_log_slope	#LibV1:ISI_values
-LibV5:ISI_log_slope_skip	#LibV1:ISI_values
 LibV1:AHP_depth_diff	#LibV1:AHP_depth
 LibV5:min_AHP_indices 	    #LibV5:peak_indices
 LibV5:min_AHP_values 	    #LibV5:min_AHP_indices

@@ -50,9 +50,6 @@ LibV2:amp_drop_first_last	#LibV1:peak_voltage #LibV1:interpolate
 LibV2:amp_drop_second_last	#LibV1:peak_voltage #LibV1:interpolate 
 LibV2:max_amp_difference	#LibV1:peak_voltage #LibV1:interpolate 
 LibV1:AP_amplitude_diff	#LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:ISI_log_slope	#LibV1:ISI_values #LibV1:interpolate 
-LibV5:ISI_semilog_slope	#LibV1:ISI_values #LibV1:interpolate 
-LibV5:ISI_log_slope_skip	#LibV1:ISI_values #LibV1:interpolate 
 LibV1:AHP_depth_diff	#LibV1:AHP_depth #LibV1:interpolate 
 LibV5:min_AHP_indices 	    #LibV5:peak_indices #LibV1:interpolate 
 LibV5:min_AHP_values 	    #LibV5:min_AHP_indices #LibV1:interpolate 

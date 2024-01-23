@@ -1,5 +1,6 @@
 """Features that are depending on the inter-spike intervals."""
 from __future__ import annotations
+import warnings
 import numpy as np
 from efel.pyfeatures.cppfeature_access import _get_cpp_data, get_cpp_feature
 
@@ -83,6 +84,88 @@ def irregularity_index() -> np.ndarray | None:
     result = np.mean(isi_differences)
 
     return np.array([result])
+
+
+def _isi_log_slope_core(
+    isi_values, skip=False, spike_skipf=0.0, max_spike_skip=0, semilog=False
+) -> np.ndarray | None:
+    if isi_values is None or len(isi_values) == 0:
+        return None
+
+    if skip:
+        isisToRemove = min(
+            max_spike_skip, int((len(isi_values) + 1) * spike_skipf + 0.5)
+        )
+        isi_values = isi_values[isisToRemove:]
+
+    log_isi_values = np.log(isi_values)
+    x = np.arange(1, len(log_isi_values) + 1)
+    if not semilog:
+        x = np.log(x)
+
+    try:
+        slope, _ = np.polyfit(x, log_isi_values, 1)
+    except np.linalg.LinAlgError as e:
+        warnings.warn(f"Error in polyfit: {e}")
+        return None
+
+    return np.array([slope])
+
+
+def ISI_log_slope() -> np.ndarray | None:
+    """The slope of a linear fit to a loglog plot of the ISI values.
+
+    If the ignore_first_ISI flag is set, the first ISI will be ignored.
+    """
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    return _isi_log_slope_core(isi_values, False, 0.0, 0, False)
+
+
+def ISI_semilog_slope() -> np.ndarray | None:
+    """The slope of a linear fit to a semilog plot of the ISI values.
+
+    If the ignore_first_ISI flag is set, the first ISI will be ignored.
+    """
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    return _isi_log_slope_core(isi_values, False, 0.0, 0, True)
+
+
+def ISI_log_slope_skip() -> np.ndarray | None:
+    """The slope of a linear fit to a loglog plot of the ISI values,
+    but not taking into account the first ISI values.
+
+    Uses the spike_skipf and max_spike_skip settings to determine how many
+    ISIs to skip.
+    ."""
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+
+    spike_skipf = _get_cpp_data("spike_skipf")
+    if spike_skipf < 0 or spike_skipf >= 1:
+        raise ValueError("spike_skipf should lie between [0, 1).")
+    max_spike_skip = _get_cpp_data("max_spike_skip")
+    return _isi_log_slope_core(isi_values, True, spike_skipf, max_spike_skip, False)
 
 
 def initburst_sahp() -> np.ndarray | None:

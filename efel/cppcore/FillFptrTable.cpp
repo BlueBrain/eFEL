@@ -92,10 +92,6 @@ int FillFptrTable() {
   //****************** end of FptrTableV3 *****************************
 
   //******************  FptrTableV5 *****************************
-
-  FptrTableV5["ISI_log_slope"] = &LibV5::ISI_log_slope;
-  FptrTableV5["ISI_semilog_slope"] = &LibV5::ISI_semilog_slope;
-  FptrTableV5["ISI_log_slope_skip"] = &LibV5::ISI_log_slope_skip;
   FptrTableV5["time_to_second_spike"] = &LibV5::time_to_second_spike;
   FptrTableV5["time_to_last_spike"] = &LibV5::time_to_last_spike;
   FptrTableV5["inv_first_ISI"] = [](mapStr2intVec& intData,

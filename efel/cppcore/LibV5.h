@@ -28,14 +28,6 @@
 using std::vector;
 
 namespace LibV5 {
-int ISI_log_slope(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int ISI_semilog_slope(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
-
 int time_to_second_spike(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData);
