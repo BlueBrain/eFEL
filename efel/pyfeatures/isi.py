@@ -184,7 +184,7 @@ def burst_ISI_indices() -> np.ndarray | None:
     count = -1
 
     for i in range(1, len(isi_values) - 1):
-        isi_p_copy = isi_values[count + 1:i]
+        isi_p_copy = isi_values[count + 1: i]
         n = len(isi_p_copy)
 
         if n == 0:
@@ -194,7 +194,9 @@ def burst_ISI_indices() -> np.ndarray | None:
         d_median = np.median(isi_p_copy)
 
         # Check burst condition
-        if isi_values[i] > (burst_factor * d_median) and isi_values[i + 1] < (isi_values[i] / burst_factor):
+        if isi_values[i] > (burst_factor * d_median) and isi_values[i + 1] < (
+            isi_values[i] / burst_factor
+        ):
             burst_indices.append(i + 1)
             count = i - 1
 
