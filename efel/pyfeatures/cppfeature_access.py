@@ -24,3 +24,14 @@ def _get_cpp_data(data_name: str) -> float | int:
         return cppcore.getMapDoubleData(data_name)[0]
     except Exception:
         return cppcore.getMapIntData(data_name)[0]
+
+
+# TODO: avoid list to np.array conversion
+def _get_voltage() -> np.ndarray:
+    """Get voltage."""
+    return np.array(cppcore.getMapDoubleData("V"))
+
+
+def _get_time() -> np.ndarray:
+    """Get time."""
+    return np.array(cppcore.getMapDoubleData("T"))

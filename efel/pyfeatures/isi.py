@@ -2,7 +2,9 @@
 from __future__ import annotations
 import warnings
 import numpy as np
-from efel.pyfeatures.cppfeature_access import _get_cpp_data, get_cpp_feature
+from efel.pyfeatures.cppfeature_access import (
+    _get_cpp_data, _get_time, _get_voltage, get_cpp_feature
+)
 
 
 def ISIs() -> np.ndarray | None:
@@ -233,6 +235,30 @@ def burst_mean_freq() -> np.ndarray | None:
             burst_mean_freq.append(N_peaks * 1000 / span)
 
     return np.array(burst_mean_freq)
+
+
+def interburst_voltage() -> np.ndarray | None:
+    """The voltage average in between two bursts."""
+    peak_idx = get_cpp_feature("peak_indices")
+    v = _get_voltage()
+    t = _get_time()
+    burst_isi_idx = burst_ISI_indices()
+    if peak_idx is None or v is None or t is None or burst_isi_idx is None:
+        return None
+
+    interburst_voltage = []
+    for idx in burst_isi_idx:
+        ts_idx = peak_idx[idx]
+        t_start = t[ts_idx] + 5
+        start_idx = np.argwhere(t < t_start)[-1][0]
+
+        te_idx = peak_idx[idx + 1]
+        t_end = t[te_idx] - 5
+        end_idx = np.argwhere(t > t_end)[0][0]
+
+        interburst_voltage.append(np.mean(v[start_idx:end_idx + 1]))
+
+    return np.array(interburst_voltage)
 
 
 def initburst_sahp() -> np.ndarray | None:

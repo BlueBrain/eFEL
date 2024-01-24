@@ -43,6 +43,7 @@ all_pyfeatures = [
     'irregularity_index',
     'burst_ISI_indices',
     'burst_mean_freq',
+    'interburst_voltage',
     'ISI_log_slope',
     'ISI_semilog_slope',
     'ISI_log_slope_skip',

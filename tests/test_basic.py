@@ -2477,23 +2477,6 @@ def test_segfault_in_AP_begin_width():
         feature_values[0]['AP_begin_width'], expected_values)
 
 
-def py_interburst_voltage(burst_ISI_idxs, peak_idxs, t, v):
-    """Python implementation of interburst_voltage"""
-    interburst_voltage = []
-    for idx in burst_ISI_idxs:
-        ts_idx = peak_idxs[idx]
-        t_start = t[ts_idx] + 5
-        start_idx = numpy.argwhere(t < t_start)[-1][0]
-
-        te_idx = peak_idxs[idx + 1]
-        t_end = t[te_idx] - 5
-        end_idx = numpy.argwhere(t > t_end)[0][0]
-
-        interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
-
-    return numpy.array(interburst_voltage)
-
-
 def test_interburst_voltage():
     """basic: Test interburst_voltage"""
     import efel
@@ -2516,14 +2499,7 @@ def test_interburst_voltage():
             features, raise_warnings=False)
 
     interburst_voltage = feature_values[0]['interburst_voltage']
-    burst_ISI_indices = feature_values[0]['burst_ISI_indices']
-    peak_indices = feature_values[0]['peak_indices']
 
-    interburst_voltage_py = py_interburst_voltage(
-        burst_ISI_indices, peak_indices, time, voltage
-    )
-
-    numpy.testing.assert_allclose(interburst_voltage, interburst_voltage_py)
     numpy.testing.assert_allclose(interburst_voltage, -63.234682)
 
 
