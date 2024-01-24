@@ -172,15 +172,13 @@ def burst_ISI_indices() -> np.ndarray | None:
     """Calculate burst ISI indices based on burst factor and ISI values."""
     # Fetching necessary data
     isi_values = get_cpp_feature("ISI_values")
-    peak_indices = get_cpp_feature("peak_indices")
-
-    if isi_values is None or peak_indices is None:
+    if isi_values is None:
         return None
 
     burst_factor = _get_cpp_data("burst_factor")
 
-    if len(peak_indices) < 5:
-        raise ValueError("More than 5 spikes are needed for burst calculation.")
+    if len(isi_values) < 4:
+        raise ValueError("4 or more spikes are needed for burst calculation.")
 
     burst_indices = []
     count = -1
