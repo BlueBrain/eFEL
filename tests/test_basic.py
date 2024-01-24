@@ -2410,37 +2410,6 @@ def test_AP_width_between_threshold_strict():
     assert AP_width is None
 
 
-def py_mean_freq(peak_time, burst_ISI_indices):
-    """Python implementation of burst_mean_freq."""
-    # There is a discrepancy between peak_time indices and ISI_burst indices
-    # because 1st ISI value is ignored.
-    if burst_ISI_indices is None:
-        return None
-    # if no burst detected, do not consider all peaks in a single burst
-    elif len(burst_ISI_indices) == 0:
-        return []
-    burst_mean_freq = []
-    burst_index_tmp = burst_ISI_indices
-    burst_index = numpy.insert(
-        burst_index_tmp, burst_index_tmp.size, len(peak_time) - 1
-    )
-    burst_index = burst_index.astype(int)
-
-    # 1st burst
-    span = peak_time[burst_index[0]] - peak_time[0]
-    # + 1 because 1st ISI is ignored
-    N_peaks = burst_index[0] + 1
-    burst_mean_freq.append(N_peaks * 1000 / span)
-
-    for i, burst_idx in enumerate(burst_index[:-1]):
-        if burst_index[i + 1] - burst_idx != 1:
-            span = peak_time[burst_index[i + 1]] - peak_time[burst_idx + 1]
-            N_peaks = burst_index[i + 1] - burst_idx
-            burst_mean_freq.append(N_peaks * 1000 / span)
-
-    return burst_mean_freq
-
-
 def test_burst_mean_freq():
     """basic: Test burst_mean_freq"""
     urls = [burst1_url, burst2_url, burst3_url]
@@ -2471,18 +2440,12 @@ def test_burst_mean_freq():
                 features, raise_warnings=False)
 
         burst_mean_freq = feature_values[0]['burst_mean_freq']
-        burst_ISI_indices = feature_values[0]['burst_ISI_indices']
-        peak_time = feature_values[0]['peak_time']
-
-        burst_mean_freq_py = py_mean_freq(peak_time, burst_ISI_indices)
 
         if i == 1:
-            assert burst_mean_freq == burst_mean_freq_py
             assert burst_mean_freq is None
         elif i == 2:
             assert burst_mean_freq is None
         else:
-            numpy.testing.assert_allclose(burst_mean_freq, burst_mean_freq_py)
             numpy.testing.assert_allclose(burst_mean_freq, expected_value)
 
 

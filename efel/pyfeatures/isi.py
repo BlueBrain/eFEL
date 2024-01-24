@@ -205,6 +205,36 @@ def burst_ISI_indices() -> np.ndarray | None:
     return np.array(burst_indices)
 
 
+def burst_mean_freq() -> np.ndarray | None:
+    """Calculate the mean frequency of bursts."""
+    # Fetching required features
+    peak_time = get_cpp_feature("peak_time")
+    burst_isi_idx = burst_ISI_indices()
+    if burst_isi_idx is None or peak_time is None:
+        return None
+
+    burst_mean_freq = []
+    burst_index_tmp = burst_isi_idx
+    burst_index = np.insert(
+        burst_index_tmp, burst_index_tmp.size, len(peak_time) - 1
+    )
+    burst_index = burst_index.astype(int)
+
+    # 1st burst
+    span = peak_time[burst_index[0]] - peak_time[0]
+    # + 1 because 1st ISI is ignored
+    N_peaks = burst_index[0] + 1
+    burst_mean_freq.append(N_peaks * 1000 / span)
+
+    for i, burst_idx in enumerate(burst_index[:-1]):
+        if burst_index[i + 1] - burst_idx != 1:
+            span = peak_time[burst_index[i + 1]] - peak_time[burst_idx + 1]
+            N_peaks = burst_index[i + 1] - burst_idx
+            burst_mean_freq.append(N_peaks * 1000 / span)
+
+    return np.array(burst_mean_freq)
+
+
 def initburst_sahp() -> np.ndarray | None:
     """SlowAHP voltage after initial burst."""
     # Required cpp features
