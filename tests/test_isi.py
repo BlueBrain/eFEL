@@ -28,7 +28,8 @@ class TestRegularISI:
         self.trace['stim_start'] = [0]
         self.trace['stim_end'] = [1000]
         self.features = ["single_burst_ratio", "ISIs", "irregularity_index",
-                         "ISI_log_slope", "ISI_semilog_slope", "ISI_log_slope_skip"
+                         "ISI_log_slope", "ISI_semilog_slope", "ISI_log_slope_skip",
+                         "burst_ISI_indices"
                          ]
         self.feature_values = get_feature_values(
             [self.trace],
@@ -64,6 +65,9 @@ class TestRegularISI:
             get_feature_values(
                 [self.trace],
                 ["ISI_log_slope_skip"], raise_warnings=False)[0]
+
+    def test_burst_ISI_indices(self):
+        assert self.feature_values["burst_ISI_indices"] is None
 
 
 class TestThreeSpikes:
@@ -104,3 +108,26 @@ class TestThreeSpikes:
             [self.trace],
             self.features, raise_warnings=False)[0]
         assert self.feature_values["single_burst_ratio"] == pytest.approx(1.0)
+
+
+class TestBurstISIIndices:
+    @pytest.fixture(autouse=True)
+    def setup_and_teardown(self):
+        efel.reset()
+        self.trace = {  # bypassed values since ISI_values are defined
+            "T": [1, 2, 3],
+            "V": [4, 5, 6],
+            "stim_start": [0],
+            "stim_end": [1],
+        }
+        # Adjusted ISI values to trigger burst conditions
+        self.trace["ISI_values"] = np.array([50, 100, 50, 200, 50])
+        self.features = ["burst_ISI_indices"]
+        self.feature_values = efel.getFeatureValues(
+            [self.trace], self.features, raise_warnings=False
+        )[0]
+        yield
+        efel.reset()
+
+    def test_burst_ISI_indices(self):
+        assert self.feature_values["burst_ISI_indices"].tolist() == [2, 4]
