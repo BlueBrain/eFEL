@@ -41,6 +41,7 @@ all_pyfeatures = [
     'ISI_CV',
     'single_burst_ratio',
     'irregularity_index',
+    'burst_ISI_indices',
     'ISI_log_slope',
     'ISI_semilog_slope',
     'ISI_log_slope_skip',

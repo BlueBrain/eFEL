@@ -168,6 +168,43 @@ def ISI_log_slope_skip() -> np.ndarray | None:
     return _isi_log_slope_core(isi_values, True, spike_skipf, max_spike_skip, False)
 
 
+def burst_ISI_indices() -> np.ndarray | None:
+    """Calculate burst ISI indices based on burst factor and ISI values."""
+    # Fetching necessary data
+    isi_values = get_cpp_feature("ISI_values")
+    peak_indices = get_cpp_feature("peak_indices")
+
+    if isi_values is None or peak_indices is None:
+        return None
+
+    burst_factor = _get_cpp_data("burst_factor")
+
+    if len(peak_indices) < 5:
+        raise ValueError("More than 5 spikes are needed for burst calculation.")
+
+    burst_indices = []
+    count = -1
+
+    for i in range(1, len(isi_values) - 1):
+        isi_p_copy = isi_values[count + 1:i]
+        n = len(isi_p_copy)
+
+        if n == 0:
+            continue
+
+        # Compute median
+        d_median = np.median(isi_p_copy)
+
+        # Check burst condition
+        if isi_values[i] > (burst_factor * d_median) and isi_values[i + 1] < (isi_values[i] / burst_factor):
+            burst_indices.append(i + 1)
+            count = i - 1
+
+    if burst_indices == []:
+        return None
+    return np.array(burst_indices)
+
+
 def initburst_sahp() -> np.ndarray | None:
     """SlowAHP voltage after initial burst."""
     # Required cpp features
