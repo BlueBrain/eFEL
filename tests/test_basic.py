@@ -37,6 +37,12 @@ import numpy
 import pytest
 
 from efel.io import load_ascii_input
+from efel.api import get_feature_values
+from efel.api import set_double_setting
+from efel.api import set_int_setting
+from efel.api import set_derivative_threshold
+from efel.api import set_str_setting
+from efel.api import get_distance
 
 
 testdata_dir = Path(__file__).parent / 'testdata'
@@ -130,7 +136,7 @@ def test_nonexisting_feature():
 
     pytest.raises(
         RuntimeError,
-        efel.getFeatureValues,
+        get_feature_values,
         [trace],
         ['nonexisting_feature'])
 
@@ -146,7 +152,7 @@ def test_failing_double_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
-    feature_value = efel.getFeatureValues(
+    feature_value = get_feature_values(
         [trace],
         ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
 
@@ -171,7 +177,7 @@ def test_raise_warnings():
         warnings.simplefilter("always")
         # Ignore DeprecationWarning
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        feature_value = efel.getFeatureValues(
+        feature_value = get_feature_values(
             [trace],
             ['AP_amplitude'])[0]['AP_amplitude']
 
@@ -184,7 +190,7 @@ def test_raise_warnings():
         warnings.simplefilter("always")
         # Ignore DeprecationWarning
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        feature_value = efel.getFeatureValues(
+        feature_value = get_feature_values(
             [trace],
             ['AP_amplitude'], raise_warnings=False)[0]['AP_amplitude']
 
@@ -204,7 +210,7 @@ def test_failing_int_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
-    feature_value = efel.getFeatureValues(
+    feature_value = get_feature_values(
         [trace],
         ['burst_number'], raise_warnings=False)[0]['burst_number'][0]
 
@@ -242,10 +248,10 @@ def test_empty_trace():
         'inv_fifth_ISI',
         'inv_last_ISI']
 
-    # efel.getFeatureValues([trace], features)
+    # get_feature_values([trace], features)
 
     for feature, value in \
-            efel.getFeatureValues([trace], features)[0].items():
+            get_feature_values([trace], features)[0].items():
 
         assert value is None or value[0] == 0.0
 
@@ -281,7 +287,7 @@ def test_multiprocessing_traces():
     trace2['stim_start'] = [stim_start]
     trace2['stim_end'] = [stim_end]
 
-    feature_values_serial = efel.getFeatureValues(
+    feature_values_serial = get_feature_values(
         [trace1, trace2],
         [feature_name], raise_warnings=False)
 
@@ -289,7 +295,7 @@ def test_multiprocessing_traces():
     import multiprocessing
     pool = multiprocessing.Pool()
 
-    feature_values_parallel = efel.getFeatureValues(
+    feature_values_parallel = get_feature_values(
         [trace1, trace2],
         [feature_name], parallel_map=pool.map, raise_warnings=False)
 
@@ -300,7 +306,7 @@ def test_multiprocessing_traces():
         list(feature_values_serial[1]['peak_time']) ==
         list(feature_values_parallel[1]['peak_time']))
 
-    feature_values_async = efel.getFeatureValues(
+    feature_values_async = get_feature_values(
         [trace1, trace2], [feature_name], parallel_map=pool.map_async,
         return_list=False, raise_warnings=False)
     assert isinstance(
@@ -327,7 +333,7 @@ def test_consecutive_traces():
     feature_name = 'peak_time'
 
     feature_values1 = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace1],
             [feature_name], raise_warnings=False)
 
@@ -345,7 +351,7 @@ def test_consecutive_traces():
     trace2['stim_end'] = [stim_end]
 
     feature_values2 = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace2],
             [feature_name], raise_warnings=False)
 
@@ -374,27 +380,27 @@ def test_stimstart_stimend():
 
     pytest.raises(
         Exception,
-        efel.getFeatureValues, [trace], features)
+        get_feature_values, [trace], features)
 
     trace['stim_start'] = [stim_end]
     trace['stim_end'] = [stim_start]
 
     pytest.raises(
         Exception,
-        efel.getFeatureValues, [trace], features)
+        get_feature_values, [trace], features)
 
     trace['stim_start'] = [stim_start, stim_end]
     trace['stim_end'] = [stim_end]
 
     pytest.raises(
         Exception,
-        efel.getFeatureValues, [trace], features)
+        get_feature_values, [trace], features)
 
     del trace['stim_start']
 
     pytest.raises(
         Exception,
-        efel.getFeatureValues, [trace], features)
+        get_feature_values, [trace], features)
 
 
 def test_setDerivativeThreshold():
@@ -416,14 +422,14 @@ def test_setDerivativeThreshold():
     features = ['AP_begin_voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
     AP_begin_voltage_orig = feature_values[0]['AP_begin_voltage'][1]
 
-    efel.setDerivativeThreshold(5)
+    set_derivative_threshold(5)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][1]
@@ -451,7 +457,7 @@ def test_interpolate():
     features = ['time', 'voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     interp_time = feature_values[0]['time']
@@ -481,7 +487,7 @@ def test_zero_ISI_log_slope_skip():
     features = ['ISI_log_slope_skip']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     assert feature_values[0]['ISI_log_slope_skip'] is None
@@ -506,7 +512,7 @@ def test_peak_indices():
     features = ['peak_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -535,7 +541,7 @@ def test_min_AHP_indices():
     features = ['min_AHP_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -551,7 +557,7 @@ def test_min_AHP_indices_strict():
 
     for strict, n_of_ahp in [(False, 17), (True, 16)]:
         efel.reset()
-        efel.setIntSetting('strict_stiminterval', strict)
+        set_int_setting('strict_stiminterval', strict)
 
         stim_start = 700.0
         stim_end = 2700.0
@@ -568,7 +574,7 @@ def test_min_AHP_indices_strict():
         features = ['min_AHP_indices', 'AHP_time_from_peak', 'peak_time']
 
         feature_values = \
-            efel.getFeatureValues(
+            get_feature_values(
                 [trace],
                 features, raise_warnings=False)
 
@@ -593,7 +599,7 @@ def test_min_AHP_indices_single_peak():
     trace["stim_start"] = [1950]
     trace["stim_end"] = [2050]
 
-    feats = efel.getFeatureValues(
+    feats = get_feature_values(
         [trace], ["min_AHP_values", "min_AHP_indices", "peak_indices"])
 
     assert len(feats[0]["peak_indices"]) == 1
@@ -608,7 +614,7 @@ def test_strict_stiminterval():
 
     for strict, n_of_spikes in [(False, 5), (True, 3)]:
         efel.reset()
-        efel.setIntSetting("strict_stiminterval", strict)
+        set_int_setting("strict_stiminterval", strict)
 
         stim_start = 600.0
         stim_end = 750.0
@@ -624,7 +630,7 @@ def test_strict_stiminterval():
         features = ['peak_indices', 'peak_time', 'spike_count']
 
         feature_values = \
-            efel.getFeatureValues(
+            get_feature_values(
                 [trace],
                 features, raise_warnings=False)
 
@@ -656,7 +662,7 @@ def test_ISI_log_slope():
     features = ['ISI_values', 'ISI_log_slope']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     isi_values = feature_values[0]['ISI_values']
@@ -689,19 +695,19 @@ def test_ISI_values_noIgnore():
 
     features = ['ISI_values']
 
-    efel.setIntSetting("ignore_first_ISI", 0)
+    set_int_setting("ignore_first_ISI", 0)
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     isi_values_no_ignore = feature_values[0]['ISI_values']
 
     efel.reset()
-    efel.setIntSetting("ignore_first_ISI", 1)
+    set_int_setting("ignore_first_ISI", 1)
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     isi_values = feature_values[0]['ISI_values']
@@ -729,7 +735,7 @@ def test_ISI_semilog_slope():
     features = ['ISI_values', 'ISI_semilog_slope']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
     isi_values = feature_values[0]['ISI_values']
@@ -772,7 +778,7 @@ def test_AP_begin_indices1():
         'AP_duration_half_width']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -817,7 +823,7 @@ def test_AP_end_indices():
         'AP_end_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -835,9 +841,9 @@ def test_AP_end_indices():
 
     efel.reset()
 
-    efel.setDoubleSetting("DownDerivativeThreshold", -24)
+    set_double_setting("DownDerivativeThreshold", -24)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -860,7 +866,7 @@ def test_mean_frequency1():
     features = ['mean_frequency', 'peak_time']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -903,7 +909,7 @@ def test_ap_amplitude_outside_stim():
     features = ['AP_amplitude', 'peak_time']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -938,7 +944,7 @@ def test_ap_amplitude_from_voltagebase1():
                 'peak_voltage', 'voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -962,7 +968,7 @@ def test_voltagebase1():
     features = ['voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -981,7 +987,7 @@ def test_voltagebase_median():
 
     import efel
     efel.reset()
-    efel.setStrSetting("voltage_base_mode", "median")
+    set_str_setting("voltage_base_mode", "median")
 
     trace, time, voltage, stim_start, stim_end = load_data(
         'mean_frequency1', interp=True)
@@ -989,7 +995,7 @@ def test_voltagebase_median():
     features = ['voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1017,7 +1023,7 @@ def test_currentbase():
     trace = {'T': time, 'I': current,
              'stim_start': [stim_start], 'stim_end': [stim_end]}
 
-    feature_values = efel.getFeatureValues([trace], ['current_base'])
+    feature_values = get_feature_values([trace], ['current_base'])
 
     current_base = numpy.mean(current[numpy.where(
         (time >= 0.9 * stim_start) & (time <= stim_start))])
@@ -1031,7 +1037,7 @@ def test_currentbase_median():
     """basic: Test currentbase with median"""
     import efel
     efel.reset()
-    efel.setStrSetting("current_base_mode", "median")
+    set_str_setting("current_base_mode", "median")
 
     data = numpy.loadtxt(testdata_dir / 'basic' / 'current.txt')
     current = data[:, 1]
@@ -1042,7 +1048,7 @@ def test_currentbase_median():
     trace = {'T': time, 'I': current,
              'stim_start': [stim_start], 'stim_end': [stim_end]}
 
-    feature_values = efel.getFeatureValues([trace], ['current_base'])
+    feature_values = get_feature_values([trace], ['current_base'])
 
     current_base = numpy.median(current[numpy.where(
         (time >= 0.9 * stim_start) & (time <= stim_start))])
@@ -1072,7 +1078,7 @@ def test_getDistance1():
 
     numpy.testing.assert_allclose(
         3.09045815935,
-        efel.getDistance(
+        get_distance(
             trace,
             'AP_amplitude',
             50,
@@ -1097,12 +1103,12 @@ def test_getDistance_error_dist():
     trace['stim_start'] = [stim_start]
     trace['stim_end'] = [stim_end]
 
-    score_normal = efel.getDistance(
+    score_normal = get_distance(
         trace,
         'AP_amplitude',
         50,
         10)
-    score_150 = efel.getDistance(
+    score_150 = get_distance(
         trace,
         'AP_amplitude',
         50,
@@ -1137,14 +1143,14 @@ def test_getDistance_trace_check():
     trace['stim_end'] = [70]
     traces.append(trace)
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'spike_count', 0, 1), 3.0
+        get_distance(trace, 'spike_count', 0, 1), 3.0
     )
 
     trace['stim_end'] = [50]
 
     efel.reset()
     numpy.testing.assert_allclose(
-        efel.getDistance(
+        get_distance(
             trace,
             'spike_count',
             0,
@@ -1154,7 +1160,7 @@ def test_getDistance_trace_check():
 
     efel.reset()
     numpy.testing.assert_allclose(
-        efel.getDistance(trace, 'spike_count', 0, 1), 250.0
+        get_distance(trace, 'spike_count', 0, 1), 250.0
     )
 
 
@@ -1179,7 +1185,7 @@ def test_APlast_amp():
     features = ['AP_amplitude', 'APlast_amp']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1209,7 +1215,7 @@ def test_APlast_width():
     features = ['spike_half_width', 'APlast_width']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1237,7 +1243,7 @@ def test_derivwindow1():
     features = ['AP_begin_voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1245,9 +1251,9 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.03627393790836)
 
     efel.reset()
-    efel.setDoubleSetting('interp_step', 0.01)
+    set_double_setting('interp_step', 0.01)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1255,10 +1261,10 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.5055215)
 
     efel.reset()
-    efel.setDoubleSetting('interp_step', 0.01)
-    efel.setIntSetting('DerivativeWindow', 30)
+    set_double_setting('interp_step', 0.01)
+    set_int_setting('DerivativeWindow', 30)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1287,7 +1293,7 @@ def test_spike_count1():
     features = ['peak_indices', 'spike_count']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1315,7 +1321,7 @@ def test_spike_count_stimint1():
     features = ['peak_time', 'spike_count_stimint', 'spike_count']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1356,9 +1362,9 @@ def test_ohmic_inputresistance():
     features = ['ohmic_input_resistance', 'voltage_deflection']
 
     stimulus_current = 10.0
-    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    set_double_setting('stimulus_current', stimulus_current)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1380,8 +1386,8 @@ def test_ohmic_input_resistance_zero_stimulus_current():
     features = ['ohmic_input_resistance']
 
     stimulus_current = 0.0
-    efel.setDoubleSetting('stimulus_current', stimulus_current)
-    feature_values = efel.getFeatureValues([trace], features)
+    set_double_setting('stimulus_current', stimulus_current)
+    feature_values = get_feature_values([trace], features)
 
     ohmic_input_resistance = feature_values[0]['ohmic_input_resistance']
     assert ohmic_input_resistance is None
@@ -1411,7 +1417,7 @@ def test_sag_amplitude():
         'minimum_voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1445,7 +1451,7 @@ def test_sag_amplitude_pos_deflect():
     features = ['sag_amplitude']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -1478,7 +1484,7 @@ def test_sag_ratio1():
         'voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1515,7 +1521,7 @@ def test_sag_ratio1_empty():
     features = ['sag_ratio1']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features,
             raise_warnings=False)
@@ -1548,7 +1554,7 @@ def test_sag_ratio2():
         'voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1584,9 +1590,9 @@ def test_ohmic_input_resistance_vb_ssse():
     features = ['ohmic_input_resistance_vb_ssse', 'voltage_deflection_vb_ssse']
 
     stimulus_current = 10.0
-    efel.setDoubleSetting('stimulus_current', stimulus_current)
+    set_double_setting('stimulus_current', stimulus_current)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1609,8 +1615,8 @@ def test_ohmic_input_resistance_vb_ssse_zero_stimulus_current():
     trace = {'T': time, 'V': voltage, 'stim_start': [500.0], 'stim_end': [900.0]}
 
     stimulus_current = 0.0
-    efel.setDoubleSetting('stimulus_current', stimulus_current)
-    feature_values = efel.getFeatureValues([trace], ['ohmic_input_resistance_vb_ssse'])
+    set_double_setting('stimulus_current', stimulus_current)
+    feature_values = get_feature_values([trace], ['ohmic_input_resistance_vb_ssse'])
     ohmic_input_resistance = feature_values[0]['ohmic_input_resistance_vb_ssse']
     assert ohmic_input_resistance is None
 
@@ -1637,7 +1643,7 @@ def test_spike_count2():
     features = ['spike_count']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1666,7 +1672,7 @@ def test_min_voltage_between_spikes1():
     features = ['min_voltage_between_spikes', 'peak_indices', 'voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -1701,7 +1707,7 @@ def test_min_voltage_between_spikes_single_spike():
 
     features = ['min_voltage_between_spikes']
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
     assert feature_values[0]['min_voltage_between_spikes'] is None
@@ -1741,7 +1747,7 @@ def test_steady_state_voltage1():
     features = ['steady_state_voltage']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)[0]
 
@@ -1763,7 +1769,7 @@ def test_steady_state_voltage_stimend():
     features = ['steady_state_voltage_stimend']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)[0]
 
@@ -1792,7 +1798,7 @@ def test_maximum_voltage_from_voltagebase():
     features = ['maximum_voltage_from_voltagebase', 'voltage_base']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)[0]
 
@@ -1844,7 +1850,7 @@ def test_decay_time_constant_after_stim1():
 
     features = ['decay_time_constant_after_stim']
 
-    feature_values = efel.getFeatureValues([trace], features)[0]
+    feature_values = get_feature_values([trace], features)[0]
 
     expected = decay_time_constant_after_stim(
         time,
@@ -1870,7 +1876,7 @@ def test_decay_time_constant_after_stim2():
 
     features = ['decay_time_constant_after_stim']
 
-    feature_values = efel.getFeatureValues([trace], features)[0]
+    feature_values = get_feature_values([trace], features)[0]
 
     numpy.testing.assert_allclose(
         19.9,
@@ -1888,10 +1894,10 @@ def test_multiple_decay_time_constant_after_stim():
 
     features = ['multiple_decay_time_constant_after_stim']
 
-    efel.setDoubleSetting("multi_stim_start", [stim_start])
-    efel.setDoubleSetting("multi_stim_end", [stim_end])
+    set_double_setting("multi_stim_start", [stim_start])
+    set_double_setting("multi_stim_end", [stim_end])
 
-    feature_values = efel.getFeatureValues([trace], features)[0]
+    feature_values = get_feature_values([trace], features)[0]
 
     expected = decay_time_constant_after_stim(
         time,
@@ -1964,7 +1970,7 @@ def test_sag_time_constant():
         'sag_time_constant',
         'sag_amplitude'
     ]
-    feature_values = efel.getFeatureValues([trace], features)[0]
+    feature_values = get_feature_values([trace], features)[0]
 
     min_v = feature_values['minimum_voltage'][0]
     steady_state_v = feature_values['steady_state_voltage_stimend'][0]
@@ -2003,7 +2009,7 @@ def test_getmeanfeaturevalues():
     trace['stim_end'] = [stim_end]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             ['AP_amplitude'], raise_warnings=False)
 
@@ -2034,7 +2040,7 @@ def test_mean_AP_amplitude():
     trace['stim_end'] = [stim_end]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             ['AP_amplitude', 'mean_AP_amplitude'], raise_warnings=False)
 
@@ -2046,7 +2052,7 @@ def test_unfinished_peak():
     """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
-    efel.setIntSetting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', True)
 
     dt = 0.1
     v = numpy.zeros(int(100 / dt)) - 70.0
@@ -2060,7 +2066,7 @@ def test_unfinished_peak():
     trace['stim_start'] = [10]
     trace['stim_end'] = [70]
 
-    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    traces_results = get_feature_values([trace], ['spike_count'])
     spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
@@ -2069,7 +2075,7 @@ def test_unfinished_peak():
     # spike_count and possibly other features cannont be estimated.
     v[int(80 / dt):] = -19
 
-    traces_results = efel.getFeatureValues([trace], ['spike_count'])
+    traces_results = get_feature_values([trace], ['spike_count'])
     spikecount = traces_results[0]['spike_count'][0]
 
     assert spikecount == 3
@@ -2119,7 +2125,7 @@ def test_rise_time_perc():
 
     features = ['AP_rise_time', 'AP_begin_indices', 'peak_indices']
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace], features, raise_warnings=False
     )
     ap_rise_time = feature_values[0]['AP_rise_time']
@@ -2145,7 +2151,7 @@ def test_fall_time():
 
     features = ['AP_fall_time', 'AP_end_indices', 'peak_indices']
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace], features, raise_warnings=False
     )
     ap_fall_time = feature_values[0]['AP_fall_time']
@@ -2171,7 +2177,7 @@ def test_slow_ahp_start():
 
     features = ['AHP_depth_abs_slow', 'peak_indices']
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace], features, raise_warnings=False
     )
     peak_indices = feature_values[0]['peak_indices']
@@ -2198,7 +2204,7 @@ def test_AP_peak_upstroke():
 
     features = ['AP_peak_upstroke', 'peak_indices', 'AP_begin_indices']
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace], features, raise_warnings=False
     )
     peak_indices = feature_values[0]['peak_indices']
@@ -2237,7 +2243,7 @@ def test_AP_peak_downstroke():
 
     features = ['AP_peak_downstroke', 'peak_indices', 'min_AHP_indices']
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace], features, raise_warnings=False
     )
     peak_indices = feature_values[0]['peak_indices']
@@ -2285,7 +2291,7 @@ def test_min_between_peaks_indices():
     features = ['min_AHP_indices', 'min_between_peaks_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2316,7 +2322,7 @@ def test_min_between_peaks_values():
     features = ['min_between_peaks_values', 'peak_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2335,7 +2341,7 @@ def test_AP_width_between_threshold():
     efel.reset()
 
     threshold = -48
-    efel.setDoubleSetting("Threshold", threshold)
+    set_double_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
 
@@ -2355,7 +2361,7 @@ def test_AP_width_between_threshold():
     ]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2376,10 +2382,10 @@ def test_AP_width_between_threshold_strict():
 
     import efel
     efel.reset()
-    efel.setIntSetting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', True)
 
     threshold = -48
-    efel.setDoubleSetting("Threshold", threshold)
+    set_double_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
 
@@ -2395,7 +2401,7 @@ def test_AP_width_between_threshold_strict():
     features = ['AP_width_between_threshold']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2460,7 +2466,7 @@ def test_burst_mean_freq():
         features = ['burst_mean_freq', 'burst_ISI_indices', 'peak_time']
 
         feature_values = \
-            efel.getFeatureValues(
+            get_feature_values(
                 [trace],
                 features, raise_warnings=False)
 
@@ -2498,7 +2504,7 @@ def test_segfault_in_AP_begin_width():
     features = ['AP_begin_width']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2542,7 +2548,7 @@ def test_interburst_voltage():
     features = ['interburst_voltage', 'burst_ISI_indices', 'peak_indices']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2668,7 +2674,7 @@ def test_time_constant():
     features = ["time_constant"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2694,7 +2700,7 @@ def test_depolarized_base():
     features = ["depolarized_base", "AP_begin_time", "AP_duration"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2728,7 +2734,7 @@ def test_AP_duration():
     features = ["AP_duration", "AP_begin_indices", "AP_end_indices"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2754,7 +2760,7 @@ def test_AP_rise_rate():
     features = ["AP_rise_rate", "AP_begin_indices", "peak_indices"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2782,7 +2788,7 @@ def test_AP_fall_rate():
     features = ["AP_fall_rate", "AP_end_indices", "peak_indices"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2810,7 +2816,7 @@ def test_fast_AHP():
     features = ["fast_AHP", "AP_begin_indices", "min_AHP_indices"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2841,7 +2847,7 @@ def check_change_feature(change_name, base_name):
     features = [change_name, base_name]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2914,7 +2920,7 @@ def test_steady_state_hyper():
     features = ["steady_state_hyper"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2939,7 +2945,7 @@ def test_amp_drop_first_second():
     features = ["amp_drop_first_second", "peak_voltage"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2963,7 +2969,7 @@ def test_amp_drop_first_last():
     features = ["amp_drop_first_last", "peak_voltage"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -2987,7 +2993,7 @@ def test_amp_drop_second_last():
     features = ["amp_drop_second_last", "peak_voltage"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3011,7 +3017,7 @@ def test_max_amp_difference():
     features = ["max_amp_difference", "peak_voltage"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3037,7 +3043,7 @@ def test_AP_amplitude_diff():
     features = ["AP_amplitude_diff", "AP_amplitude"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3063,7 +3069,7 @@ def test_AHP_depth_diff():
     features = ["AHP_depth_diff", "AHP_depth"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3089,7 +3095,7 @@ def test_AHP_depth_slow():
     features = ["AHP_depth_slow", "AHP_depth_abs_slow", "voltage_base"]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3143,7 +3149,7 @@ def test_burst_indices():
     """basic: Test burst_begin_indices and burst_end_indices"""
     import efel
     efel.reset()
-    efel.setIntSetting('ignore_first_ISI', 0)
+    set_int_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3157,7 +3163,7 @@ def test_burst_indices():
     features = ['burst_begin_indices', 'burst_end_indices', 'all_ISI_values']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3179,7 +3185,7 @@ def test_strict_burst_mean_freq():
     """basic: Test strict_burst_mean_freq"""
     import efel
     efel.reset()
-    efel.setIntSetting('ignore_first_ISI', 0)
+    set_int_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3198,7 +3204,7 @@ def test_strict_burst_mean_freq():
     ]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3226,7 +3232,7 @@ def test_strict_burst_number():
     """basic: Test strict_burst_number"""
     import efel
     efel.reset()
-    efel.setIntSetting('ignore_first_ISI', 0)
+    set_int_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3240,7 +3246,7 @@ def test_strict_burst_number():
     features = ['strict_burst_number', 'strict_burst_mean_freq']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3274,7 +3280,7 @@ def test_strict_interburst_voltage():
     """basic: Test strict_interburst_voltage"""
     import efel
     efel.reset()
-    efel.setIntSetting('ignore_first_ISI', 0)
+    set_int_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3290,7 +3296,7 @@ def test_strict_interburst_voltage():
     ]
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3328,7 +3334,7 @@ def test_AP_width_spike_before_stim_start():
     features = ['AP_width']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -3336,9 +3342,9 @@ def test_AP_width_spike_before_stim_start():
 
     assert len(ap_width) == 15
 
-    efel.setIntSetting('strict_stiminterval', 1)
+    set_int_setting('strict_stiminterval', 1)
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features)
 
@@ -3374,7 +3380,7 @@ def test_ADP_peak_amplitude():
     """basic: Test ADP_peak_amplitude"""
     import efel
     efel.reset()
-    efel.setIntSetting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', True)
 
     stim_start = 250.0
     stim_end = 1600.0
@@ -3397,7 +3403,7 @@ def test_ADP_peak_amplitude():
         "ADP_peak_amplitude"
     ]
 
-    feature_values = efel.getFeatureValues(
+    feature_values = get_feature_values(
         [trace],
         features,
         raise_warnings=False
@@ -3480,7 +3486,7 @@ def test_interburst_min_values():
             "interburst_min_values",
         ]
 
-        feature_values = efel.getFeatureValues(
+        feature_values = get_feature_values(
             [trace],
             features,
             raise_warnings=False
@@ -3535,7 +3541,7 @@ def test_time_to_interburst_min():
             "time_to_interburst_min",
         ]
 
-        feature_values = efel.getFeatureValues(
+        feature_values = get_feature_values(
             [trace],
             features,
             raise_warnings=False
@@ -3599,7 +3605,7 @@ def test_postburst_min_values():
         import efel
         efel.reset()
         # use this to have all spikes in burst for burst3_url case
-        efel.setDoubleSetting('strict_burst_factor', 4.0)
+        set_double_setting('strict_burst_factor', 4.0)
 
         time, voltage = load_ascii_input(url)
 
@@ -3622,7 +3628,7 @@ def test_postburst_min_values():
             "postburst_min_values",
         ]
 
-        feature_values = efel.getFeatureValues(
+        feature_values = get_feature_values(
             [trace],
             features,
             raise_warnings=False
@@ -3669,7 +3675,7 @@ def test_spikes_per_burst_diff():
     features = ['spikes_per_burst_diff']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3694,7 +3700,7 @@ def test_spikes_in_burst1_burst2_diff():
     features = ['spikes_in_burst1_burst2_diff']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3721,7 +3727,7 @@ def test_spikes_in_burst1_burstlast_diff():
     features = ['spikes_in_burst1_burstlast_diff']
 
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 
@@ -3753,7 +3759,7 @@ def test_spontaneous_firing():
         "AP_fall_rate"
     ]
     feature_values = \
-        efel.getFeatureValues(
+        get_feature_values(
             [trace],
             features, raise_warnings=False)
 

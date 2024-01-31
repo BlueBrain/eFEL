@@ -56,35 +56,35 @@ def reset():
     _double_settings = {}
     _string_settings = {}
 
-    setDoubleSetting('spike_skipf', 0.1)
-    setIntSetting('max_spike_skip', 2)
-    setDoubleSetting('Threshold', _settings.threshold)
-    setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
-    setDoubleSetting(
+    set_double_setting('spike_skipf', 0.1)
+    set_int_setting('max_spike_skip', 2)
+    set_double_setting('Threshold', _settings.threshold)
+    set_double_setting('DerivativeThreshold', _settings.derivative_threshold)
+    set_double_setting(
         'DownDerivativeThreshold',
         _settings.down_derivative_threshold)
-    setDoubleSetting('interp_step', 0.1)
-    setDoubleSetting('burst_factor', 1.5)
-    setDoubleSetting('strict_burst_factor', 2.0)
-    setDoubleSetting('voltage_base_start_perc', 0.9)
-    setDoubleSetting('voltage_base_end_perc', 1.0)
-    setDoubleSetting('current_base_start_perc', 0.9)
-    setDoubleSetting('current_base_end_perc', 1.0)
-    setDoubleSetting('rise_start_perc', 0.0)
-    setDoubleSetting('rise_end_perc', 1.0)
-    setDoubleSetting("initial_perc", 0.1)
-    setDoubleSetting("min_spike_height", 20.0)
-    setIntSetting("strict_stiminterval", 0)
-    setDoubleSetting("initburst_freq_threshold", 50)
-    setDoubleSetting("initburst_sahp_start", 5)
-    setDoubleSetting("initburst_sahp_end", 100)
-    setIntSetting("DerivativeWindow", 3)
-    setStrSetting("voltage_base_mode", "mean")
-    setStrSetting("current_base_mode", "mean")
-    setDoubleSetting("precision_threshold", 1e-10)
-    setDoubleSetting("sahp_start", 5.0)
-    setIntSetting("ignore_first_ISI", 1)
-    setDoubleSetting("impedance_max_freq", 50.0)
+    set_double_setting('interp_step', 0.1)
+    set_double_setting('burst_factor', 1.5)
+    set_double_setting('strict_burst_factor', 2.0)
+    set_double_setting('voltage_base_start_perc', 0.9)
+    set_double_setting('voltage_base_end_perc', 1.0)
+    set_double_setting('current_base_start_perc', 0.9)
+    set_double_setting('current_base_end_perc', 1.0)
+    set_double_setting('rise_start_perc', 0.0)
+    set_double_setting('rise_end_perc', 1.0)
+    set_double_setting("initial_perc", 0.1)
+    set_double_setting("min_spike_height", 20.0)
+    set_int_setting("strict_stiminterval", 0)
+    set_double_setting("initburst_freq_threshold", 50)
+    set_double_setting("initburst_sahp_start", 5)
+    set_double_setting("initburst_sahp_end", 100)
+    set_int_setting("DerivativeWindow", 3)
+    set_str_setting("voltage_base_mode", "mean")
+    set_str_setting("current_base_mode", "mean")
+    set_double_setting("precision_threshold", 1e-10)
+    set_double_setting("sahp_start", 5.0)
+    set_int_setting("ignore_first_ISI", 1)
+    set_double_setting("impedance_max_freq", 50.0)
 
     _initialise()
 
@@ -127,7 +127,7 @@ def set_threshold(new_threshold: float) -> None:
                        as the traces, e.g. mV).
     """
     _settings.threshold = new_threshold
-    setDoubleSetting('Threshold', _settings.threshold)
+    set_double_setting('Threshold', _settings.threshold)
 
 
 @deprecated("Use set_threshold instead")
@@ -146,7 +146,7 @@ def set_derivative_threshold(new_derivative_threshold: float) -> None:
                                   as the traces, e.g. mV/ms).
     """
     _settings.derivative_threshold = new_derivative_threshold
-    setDoubleSetting('DerivativeThreshold', _settings.derivative_threshold)
+    set_double_setting('DerivativeThreshold', _settings.derivative_threshold)
 
 
 @deprecated("Use set_derivative_threshold instead")
@@ -228,7 +228,7 @@ def get_distance(
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     if trace_check:
-        trace_check_success = getFeatureValues([trace], ['trace_check'])[0]
+        trace_check_success = get_feature_values([trace], ['trace_check'])[0]
         if trace_check_success["trace_check"] is None:
             return error_dist
 
@@ -452,7 +452,7 @@ def get_mean_feature_values(
         calculation of the feature, or if the feature value array
         was empty.
     """
-    featureDicts = getFeatureValues(
+    featureDicts = get_feature_values(
         traces,
         feature_names,
         raise_warnings=raise_warnings)
