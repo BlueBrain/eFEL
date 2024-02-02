@@ -12,7 +12,6 @@ LibV1:adaptation_index2	#LibV1:peak_time #LibV1:interpolate
 LibV1:spike_width2	 	    #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV1:AP_width  #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
 LibV1:burst_mean_freq	    #LibV1:burst_ISI_indices    #LibV1:peak_time #LibV1:interpolate 
-LibV1:interburst_voltage	#LibV1:burst_ISI_indices #LibV1:interpolate 
 LibV1:AP_height             #LibV1:peak_voltage #LibV1:interpolate 
 LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage #LibV1:peak_time #LibV1:interpolate 
 LibV1:AHP_depth_abs_slow	#LibV5:peak_indices #LibV1:interpolate 

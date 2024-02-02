@@ -434,8 +434,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     burst_number = len(strict_burst_mean_freq)
 
-`LibV1`_ : interburst_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltage average in between two bursts
 

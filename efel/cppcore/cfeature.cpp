@@ -87,7 +87,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["spike_width2"] = "double";
   featuretypes["spike_half_width"] = "double";
   featuretypes["burst_mean_freq"] = "double";
-  featuretypes["interburst_voltage"] = "double";
   featuretypes["voltage_base"] = "double";
   featuretypes["AHP_depth_abs"] = "double";
   featuretypes["time_constant"] = "double";

@@ -372,65 +372,6 @@ int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-// reminder: first ISI value is ignored in burst_ISI_indices if IgnoreFirstISI=1
-static int __interburst_voltage(const vector<int>& BurstIndex,
-                                const vector<int>& PeakIndex,
-                                const vector<double>& T,
-                                const vector<double>& V, int IgnoreFirstISI,
-                                vector<double>& IBV) {
-  if (BurstIndex.size() < 1) return 0;
-  int j, pIndex, tsIndex, teIndex, cnt;
-  double tStart, tEnd, vTotal = 0;
-  for (size_t i = 0; i < BurstIndex.size(); i++) {
-    pIndex = BurstIndex[i] + IgnoreFirstISI - 1;
-    tsIndex = PeakIndex[pIndex];
-    tStart = T[tsIndex] + 5;  // 5Millisecond after
-    pIndex = BurstIndex[i] + IgnoreFirstISI;
-    teIndex = PeakIndex[pIndex];
-    tEnd = T[teIndex] - 5;  // 5Millisecond before
-
-    for (j = tsIndex; j < teIndex; j++) {
-      if (T[j] > tStart) break;
-    }
-    tsIndex = --j;
-
-    for (j = teIndex; j > tsIndex; j--) {
-      if (T[j] < tEnd) break;
-    }
-    teIndex = ++j;
-    vTotal = 0;
-    for (j = tsIndex, cnt = 1; j <= teIndex; j++, cnt++) vTotal = vTotal + V[j];
-    if (cnt == 0) continue;
-    IBV.push_back(vTotal / (cnt - 1));
-  }
-  return IBV.size();
-}
-
-int LibV1::interburst_voltage(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"T", "V"});
-  const auto& intFeatures =
-      getFeatures(IntFeatureData, {"peak_indices", "burst_ISI_indices"});
-  int IgnoreFirstISI;
-  int retValIgnore;
-  vector<int> retIgnore;
-  retValIgnore = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
-  if ((retValIgnore == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
-    IgnoreFirstISI = 0;
-  } else {
-    IgnoreFirstISI = 1;
-  }
-  vector<double> IBV;
-  int retVal = __interburst_voltage(
-      intFeatures.at("burst_ISI_indices"), intFeatures.at("peak_indices"),
-      doubleFeatures.at("T"), doubleFeatures.at("V"), IgnoreFirstISI, IBV);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "interburst_voltage", IBV);
-  }
-  return retVal;
-}
-
 static int __adaptation_index(double spikeSkipf, int maxnSpike,
                               double StimStart, double StimEnd, double Offset,
                               const vector<double>& peakVTime,
