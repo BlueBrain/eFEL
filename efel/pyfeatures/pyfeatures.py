@@ -127,10 +127,8 @@ def trace_check() -> np.ndarray | None:
 
 def burst_number() -> np.ndarray:
     """The number of bursts."""
-    burst_mean_freq = get_cpp_feature("burst_mean_freq")
-    if burst_mean_freq is None:
-        return np.array([0])
-    return np.array([burst_mean_freq.size])
+    mean_freq = burst_mean_freq()
+    return np.array([0]) if mean_freq is None else np.array([mean_freq.size])
 
 
 def impedance():

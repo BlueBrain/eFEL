@@ -347,8 +347,8 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     ISI_sub = ISI_values[1:] - ISI_values[:-1]
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
-`LibV1`_ : burst_mean_freq
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean frequency during a burst for each burst
 

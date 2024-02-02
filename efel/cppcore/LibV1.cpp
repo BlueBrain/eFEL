@@ -316,62 +316,6 @@ int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
   return retVal;
 }
 
-// discrepancy betwen PVTime indices and BurstIndex indices because
-// first ISI value is ignored
-static int __burst_mean_freq(const vector<double>& PVTime,
-                             const vector<int>& BurstIndex, int IgnoreFirstISI,
-                             vector<double>& BurstMeanFreq) {
-  // if no burst detected, do not consider all peaks in a single burst
-  if (BurstIndex.size() == 0) return BurstMeanFreq.size();
-  double span;
-  size_t i;
-
-  // 1st burst
-  span = PVTime[BurstIndex[0] - 1 + IgnoreFirstISI] - PVTime[0];
-  BurstMeanFreq.push_back((BurstIndex[0] + IgnoreFirstISI) * 1000 / span);
-
-  for (i = 0; i < BurstIndex.size() - 1; i++) {
-    if (BurstIndex[i + 1] - BurstIndex[i] > 1) {
-      span = PVTime[BurstIndex[i + 1] - 1 + IgnoreFirstISI] -
-             PVTime[BurstIndex[i] + IgnoreFirstISI];
-      BurstMeanFreq.push_back((BurstIndex[i + 1] - BurstIndex[i]) * 1000 /
-                              span);
-    }
-  }
-
-  // last burst
-  if (PVTime.size() - IgnoreFirstISI - BurstIndex[i] > 1) {
-    span = PVTime[PVTime.size() - 1] - PVTime[BurstIndex[i] + IgnoreFirstISI];
-    BurstMeanFreq.push_back((PVTime.size() - IgnoreFirstISI - BurstIndex[i]) *
-                            1000 / span);
-  }
-
-  return BurstMeanFreq.size();
-}
-
-int LibV1::burst_mean_freq(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
-  const auto& intFeatures =
-      getFeatures(IntFeatureData, {"burst_ISI_indices"});
-  int IgnoreFirstISI = 1;
-  int retValIgnore;
-  vector<int> retIgnore;
-  retValIgnore = getParam(IntFeatureData, "ignore_first_ISI", retIgnore);
-  if ((retValIgnore == 1) && (retIgnore.size() > 0) && (retIgnore[0] == 0)) {
-    IgnoreFirstISI = 0;
-  }
-  vector<double> BurstMeanFreq;
-  int retVal = __burst_mean_freq(doubleFeatures.at("peak_time"),
-                                 intFeatures.at("burst_ISI_indices"),
-                                 IgnoreFirstISI, BurstMeanFreq);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "burst_mean_freq", BurstMeanFreq);
-  }
-  return retVal;
-}
-
 static int __adaptation_index(double spikeSkipf, int maxnSpike,
                               double StimStart, double StimEnd, double Offset,
                               const vector<double>& peakVTime,

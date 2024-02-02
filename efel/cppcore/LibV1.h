@@ -53,10 +53,6 @@ int burst_ISI_indices(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);
 
-int burst_mean_freq(mapStr2intVec& IntFeatureData,
-                    mapStr2doubleVec& DoubleFeatureData,
-                    mapStr2Str& StringData);
-
 int adaptation_index(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
                      mapStr2Str& StringData);
