@@ -68,13 +68,13 @@ all_pyfeatures = [
 ]
 
 
-def voltage():
-    """Get voltage trace"""
+def voltage() -> np.ndarray | None:
+    """Get voltage trace."""
     return get_cpp_feature("voltage")
 
 
-def time():
-    """Get time trace"""
+def time() -> np.ndarray | None:
+    """Get time trace."""
     return get_cpp_feature("time")
 
 
@@ -138,7 +138,7 @@ def impedance():
 
     dt = _get_cpp_data("interp_step")
     Z_max_freq = _get_cpp_data("impedance_max_freq")
-    voltage_trace = voltage()
+    voltage_trace = get_cpp_feature("voltage")
     holding_voltage = get_cpp_feature("voltage_base")
     normalized_voltage = voltage_trace - holding_voltage
     current_trace = current()

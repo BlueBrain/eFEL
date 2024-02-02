@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 import numpy as np
 from efel.pyfeatures.cppfeature_access import (
-    _get_cpp_data, _get_time, _get_voltage, get_cpp_feature
+    _get_cpp_data, get_cpp_feature
 )
 
 
@@ -240,8 +240,8 @@ def burst_mean_freq() -> np.ndarray | None:
 def interburst_voltage() -> np.ndarray | None:
     """The voltage average in between two bursts."""
     peak_idx = get_cpp_feature("peak_indices")
-    v = _get_voltage()
-    t = _get_time()
+    v = get_cpp_feature("voltage")
+    t = get_cpp_feature("time")
     burst_isi_idx = burst_ISI_indices()
     if peak_idx is None or v is None or t is None or burst_isi_idx is None:
         return None
