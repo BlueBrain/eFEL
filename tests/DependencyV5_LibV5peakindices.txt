@@ -2,7 +2,6 @@ LibV5:peak_indices	    	#LibV1:interpolate
 LibV1:ISI_values  		    #LibV1:peak_time   
 LibV1:doublet_ISI	#LibV1:peak_time
 LibV1:peak_voltage		    #LibV5:peak_indices
-LibV1:burst_ISI_indices 	#LibV5:peak_indices #LibV1:ISI_values
 LibV1:mean_frequency	    #LibV1:peak_time
 LibV1:peak_time 	#LibV5:peak_indices
 LibV1:time_to_first_spike   #LibV1:peak_time

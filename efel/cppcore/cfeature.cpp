@@ -77,7 +77,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["peak_indices"] = "int";
   featuretypes["ISI_values"] = "double";
   featuretypes["peak_voltage"] = "double";
-  featuretypes["burst_ISI_indices"] = "int";
   featuretypes["mean_frequency"] = "double";
   featuretypes["peak_time"] = "double";
   featuretypes["time_to_first_spike"] = "double";

@@ -269,53 +269,6 @@ int LibV1::AHP_slow_time(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-static int __burst_ISI_indices(double BurstFactor, const vector<int>& PeakIndex,
-                               const vector<double>& ISIValues,
-                               vector<int>& BurstIndex) {
-  vector<double> ISIpcopy;
-  int n, count = -1;
-  double dMedian;
-
-  for (size_t i = 1; i < (ISIValues.size() - 1); i++) {
-    ISIpcopy.clear();
-    for (size_t j = count + 1; j < i; j++) ISIpcopy.push_back(ISIValues[j]);
-    sort(ISIpcopy.begin(), ISIpcopy.end());
-    n = ISIpcopy.size();
-    if ((n % 2) == 0) {
-      dMedian =
-          (ISIpcopy[int((n - 1) / 2)] + ISIpcopy[int((n - 1) / 2) + 1]) / 2;
-    } else {
-      dMedian = ISIpcopy[int(n / 2)];
-    }
-    if (ISIValues[i] > (BurstFactor * dMedian) &&
-        (ISIValues[i + 1] < ISIValues[i] / BurstFactor)) {
-      BurstIndex.push_back(i + 1);
-      count = i - 1;
-    }
-  }
-  return BurstIndex.size();
-}
-
-int LibV1::burst_ISI_indices(mapStr2intVec& IntFeatureData,
-                             mapStr2doubleVec& DoubleFeatureData,
-                             mapStr2Str& StringData) {
-  const auto& doubleFeatures =
-      getFeatures(DoubleFeatureData, {"ISI_values", "burst_factor"});
-  const auto& intFeatures = getFeatures(IntFeatureData, {"peak_indices"});
-  if (intFeatures.at("peak_indices").size() < 5)
-    throw FeatureComputationError("More than 5 spikes are needed for burst calculation.");
-  double BurstFactor = (doubleFeatures.at("burst_factor").empty())
-                           ? 2
-                           : doubleFeatures.at("burst_factor")[0];
-  vector<int> BurstIndex;
-  int retVal = __burst_ISI_indices(BurstFactor, intFeatures.at("peak_indices"),
-                                   doubleFeatures.at("ISI_values"), BurstIndex);
-  if (retVal >= 0) {
-    setVec(IntFeatureData, StringData, "burst_ISI_indices", BurstIndex);
-  }
-  return retVal;
-}
-
 static int __adaptation_index(double spikeSkipf, int maxnSpike,
                               double StimStart, double StimEnd, double Offset,
                               const vector<double>& peakVTime,
