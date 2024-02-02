@@ -8,3 +8,6 @@ exclude_lines = [
     "pragma: no cover",
     "raise NotImplementedError"
 ]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
