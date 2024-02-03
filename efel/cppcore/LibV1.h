@@ -30,9 +30,6 @@ namespace LibV1 {
 int interpolate(mapStr2intVec& IntFeatureData,
                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
-int ISI_values(mapStr2intVec& IntFeatureData,
-               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
 int peak_voltage(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 

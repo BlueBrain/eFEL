@@ -76,28 +76,6 @@ int LibV1::interpolate(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-int LibV1::ISI_values(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData) {
-  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"peak_time"});
-  if (doubleFeatures.at("peak_time").size() < 3)
-    throw FeatureComputationError("Three spikes required for calculation of ISI_values.");
-
-  const auto& intFeatures = getFeatures(IntFeatureData, {"ignore_first_ISI"});
-    int IgnoreFirstISI = (intFeatures.at("ignore_first_ISI").size() > 0 &&
-                          intFeatures.at("ignore_first_ISI")[0] == 0) ? 0 : 1;
-    auto peakTimes = doubleFeatures.at("peak_time"); // Copy peak times
-    if (IgnoreFirstISI)
-        removeFirstISI(peakTimes); // Remove the first element if requested
-
-  vector<double> VecISI;
-    for (size_t i = 1; i < peakTimes.size(); i++) {
-        VecISI.push_back(peakTimes[i] - peakTimes[i - 1]);
-    }
-  setVec(DoubleFeatureData, StringData, "ISI_values", VecISI);
-  return VecISI.size();
-}
-
 
 int LibV1::peak_voltage(mapStr2intVec& IntFeatureData,
                         mapStr2doubleVec& DoubleFeatureData,

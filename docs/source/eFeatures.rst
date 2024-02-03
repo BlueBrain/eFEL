@@ -57,11 +57,10 @@ Time from the start of the stimulus to the maximum of the second peak
         inv_time_to_first_spike = 0
 
 
-`LibV1`_ : ISI_values
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The interspike intervals (i.e. time intervals) between adjacent peaks.
-If ignore_first_ISI is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms

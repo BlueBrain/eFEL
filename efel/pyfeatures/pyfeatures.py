@@ -38,6 +38,7 @@ all_pyfeatures = [
     'time',
     'current',
     'ISIs',
+    'ISI_values',
     'ISI_CV',
     'single_burst_ratio',
     'irregularity_index',

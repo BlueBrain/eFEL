@@ -1,5 +1,4 @@
 LibV5:peak_indices	    	#LibV1:interpolate
-LibV1:ISI_values  		    #LibV1:peak_time   
 LibV1:doublet_ISI	#LibV1:peak_time
 LibV1:peak_voltage		    #LibV5:peak_indices
 LibV1:mean_frequency	    #LibV1:peak_time
@@ -21,7 +20,6 @@ LibV1:minimum_voltage
 LibV1:interpolate
 LibV1:steady_state_voltage
 LibV3:depolarized_base
-LibV1:ISI_CV	#LibV1:ISI_values
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values
 LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices
 LibV2:AP_end_indices        #LibV5:peak_indices

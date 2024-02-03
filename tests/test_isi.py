@@ -1,4 +1,5 @@
 from __future__ import annotations
+from unittest.mock import patch
 import numpy as np
 import pytest
 import efel
@@ -115,20 +116,22 @@ class TestBurstISIIndices:
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self):
         efel.reset()
-        self.trace = {  # bypassed values since ISI_values are defined
+        self.trace = {  # bypassed values since ISI_values are defined in the mock
             "T": [1, 2, 3],
             "V": [4, 5, 6],
             "stim_start": [0],
             "stim_end": [1],
         }
-        # Adjusted ISI values to trigger burst conditions
-        self.trace["ISI_values"] = np.array([50, 100, 50, 200, 50])
         self.features = ["burst_ISI_indices"]
-        self.feature_values = efel.getFeatureValues(
-            [self.trace], self.features, raise_warnings=False
-        )[0]
         yield
         efel.reset()
 
-    def test_burst_ISI_indices(self):
+    @patch('efel.pyfeatures.isi.ISI_values')
+    def test_burst_ISI_indices(self, mock_ISI_values):
+        mock_ISI_values.return_value = np.array([50, 100, 50, 200, 50])
+
+        self.feature_values = efel.getFeatureValues(
+            [self.trace], self.features, raise_warnings=False
+        )[0]
+
         assert self.feature_values["burst_ISI_indices"].tolist() == [2, 4]

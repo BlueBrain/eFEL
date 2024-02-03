@@ -1,10 +1,15 @@
 """Features that are depending on the inter-spike intervals."""
 from __future__ import annotations
+import logging
+from typing_extensions import deprecated
 import warnings
 import numpy as np
 from efel.pyfeatures.cppfeature_access import (
     _get_cpp_data, get_cpp_feature
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def ISIs() -> np.ndarray | None:
@@ -14,6 +19,20 @@ def ISIs() -> np.ndarray | None:
         return None
     else:
         return np.diff(peak_times)
+
+
+@deprecated("Use ISIs instead.")
+def ISI_values() -> np.ndarray | None:
+    """Get all ISIs, inter-spike intervals."""
+    isi_values = ISIs()
+    if isi_values is None:
+        return None
+
+    # Check "ignore_first_ISI" flag
+    ignore_first_ISI = _get_cpp_data("ignore_first_ISI")
+    if ignore_first_ISI:
+        isi_values = isi_values[1:]
+    return isi_values
 
 
 def __ISI_CV(isi_values) -> float | None:
@@ -173,14 +192,15 @@ def ISI_log_slope_skip() -> np.ndarray | None:
 def burst_ISI_indices() -> np.ndarray | None:
     """Calculate burst ISI indices based on burst factor and ISI values."""
     # Fetching necessary data
-    isi_values = get_cpp_feature("ISI_values")
+    isi_values = ISI_values()
     if isi_values is None:
         return None
 
     burst_factor = _get_cpp_data("burst_factor")
 
     if len(isi_values) < 4:
-        raise ValueError("4 or more spikes are needed for burst calculation.")
+        logger.warning("4 or more spikes are needed for burst calculation.")
+        return None
 
     burst_indices = []
     count = -1

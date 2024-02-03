@@ -75,7 +75,6 @@ const vector<double> cFeature::getmapDoubleData(string strName) {
 void cFeature::fillfeaturetypes() {
   // initialize feature type information
   featuretypes["peak_indices"] = "int";
-  featuretypes["ISI_values"] = "double";
   featuretypes["peak_voltage"] = "double";
   featuretypes["mean_frequency"] = "double";
   featuretypes["peak_time"] = "double";
