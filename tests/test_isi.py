@@ -19,8 +19,8 @@ def generate_spike_data(
 
 
 def test_ISIs_single_spike():
+    """Test the edge case where there are less than 2 spikes."""
     time, voltage = generate_spike_data(spike_interval=600)
-    # Create a trace dictionary
     trace = {
         "T": time,
         "V": voltage,
@@ -28,11 +28,10 @@ def test_ISIs_single_spike():
         "stim_end": [1000],
     }
 
-    # Get the ISIs feature
-    features = ["ISIs"]
+    features = ["peak_time", "ISIs"]
     feature_values = efel.getFeatureValues([trace], features)[0]
 
-    # Assert that the ISIs feature is None
+    assert len(feature_values["peak_time"]) == 1
     assert feature_values["ISIs"] is None
 
 
