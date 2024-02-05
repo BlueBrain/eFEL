@@ -66,6 +66,13 @@ all_pyfeatures = [
     'strict_burst_number',
     'trace_check',
     'phaseslope_max',
+    'inv_ISI_values',
+    'inv_first_ISI',
+    'inv_second_ISI',
+    'inv_third_ISI',
+    'inv_fourth_ISI',
+    'inv_fifth_ISI',
+    'inv_last_ISI'
 ]
 
 

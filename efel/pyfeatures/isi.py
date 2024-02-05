@@ -385,3 +385,72 @@ def strict_burst_number() -> np.ndarray:
     if burst_mean_freq is None:
         return np.array([0])
     return np.array([burst_mean_freq.size])
+
+
+def calculate_inv_isi(all_isi_values_vec: np.ndarray, index: int) -> float | None:
+    if index < len(all_isi_values_vec):
+        return 1000.0 / all_isi_values_vec[index]
+
+    warnings.warn("Inverse ISI index out of range")
+    return None
+
+
+def inv_ISI_values() -> np.ndarray | None:
+    """Calculate the inverse of ISI values."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array(
+        [
+            calculate_inv_isi(all_isi_values_vec, i)
+            for i in range(len(all_isi_values_vec))
+        ]
+    )
+
+
+def inv_first_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the first ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, 0)])
+
+
+def inv_second_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the second ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, 1)])
+
+
+def inv_third_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the third ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, 2)])
+
+
+def inv_fourth_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the fourth ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, 3)])
+
+
+def inv_fifth_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the fifth ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, 4)])
+
+
+def inv_last_ISI() -> np.ndarray | None:
+    """Calculate the inverse of the last ISI."""
+    all_isi_values_vec = ISIs()
+    if all_isi_values_vec is None:
+        return None
+    return np.array([calculate_inv_isi(all_isi_values_vec, -1)])
