@@ -134,6 +134,17 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     else:
         inv_last_ISI = 0
 
+`Python efeature`: inv_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes all inverse spike interval values.
+
+- **Required features**: peak_time (ms)
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+    inv_isi_values = 1000.0 / all_isi_values_vec
 
 `LibV5`_ : time_to_last_spike
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
