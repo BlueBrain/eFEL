@@ -49,7 +49,7 @@ class TestCppcore:
 
     """Test cppcore"""
 
-    def setup(self):  # pylint: disable=R0201
+    def setup_method(self):  # pylint: disable=R0201
         """Setup"""
         import efel
         efel.cppcore.Initialize(efel.getDependencyFileLocation(), "log")
@@ -130,13 +130,13 @@ class TestCppcore:
 
     @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureDouble_wrong_type(self):  # pylint: disable=R0201
-        """cppcore: Teting getFeatureDouble with wrong type"""
+        """cppcore: Testing getFeatureDouble with wrong type"""
         import efel
         efel.cppcore.getFeatureDouble("AP_fall_indices", list())
 
     @pytest.mark.xfail(raises=TypeError)
     def test_getFeatureInt_wrong_type(self):  # pylint: disable=R0201
-        """cppcore: Teting getFeatureInt with wrong type"""
+        """cppcore: Testing getFeatureInt with wrong type"""
         import efel
         efel.cppcore.getFeatureInt("AP_amplitude", list())
 
