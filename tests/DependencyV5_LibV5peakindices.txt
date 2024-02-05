@@ -62,12 +62,6 @@ LibV5:AHP1_depth_from_peak #LibV5:AHP_depth_from_peak
 LibV5:AHP2_depth_from_peak #LibV5:AHP_depth_from_peak
 LibV5:time_to_second_spike   #LibV1:peak_time
 LibV5:time_to_last_spike   #LibV1:peak_time
-LibV5:inv_first_ISI   #LibV5:all_ISI_values
-LibV5:inv_second_ISI   #LibV5:all_ISI_values
-LibV5:inv_third_ISI   #LibV5:all_ISI_values
-LibV5:inv_fourth_ISI   #LibV5:all_ISI_values
-LibV5:inv_fifth_ISI   #LibV5:all_ISI_values
-LibV5:inv_last_ISI   #LibV5:all_ISI_values
 LibV5:inv_time_to_first_spike   #LibV1:time_to_first_spike
 LibV5:spike_half_width 	    #LibV5:min_AHP_indices	#LibV5:peak_indices
 LibV5:AP_begin_indices      #LibV5:min_AHP_indices

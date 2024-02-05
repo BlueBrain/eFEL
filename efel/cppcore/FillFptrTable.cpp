@@ -90,32 +90,6 @@ int FillFptrTable() {
   //******************  FptrTableV5 *****************************
   FptrTableV5["time_to_second_spike"] = &LibV5::time_to_second_spike;
   FptrTableV5["time_to_last_spike"] = &LibV5::time_to_last_spike;
-  FptrTableV5["inv_first_ISI"] = [](mapStr2intVec& intData,
-                                    mapStr2doubleVec& doubleData,
-                                    mapStr2Str& strData) {
-    return LibV5::inv_ISI_generic(intData, doubleData, strData, 0);
-  };
-  FptrTableV5["inv_second_ISI"] = [](mapStr2intVec& intData,
-                                     mapStr2doubleVec& doubleData,
-                                     mapStr2Str& strData) {
-    return LibV5::inv_ISI_generic(intData, doubleData, strData, 1);
-  };
-  FptrTableV5["inv_third_ISI"] = [](mapStr2intVec& intData,
-                                    mapStr2doubleVec& doubleData,
-                                    mapStr2Str& strData) {
-    return LibV5::inv_ISI_generic(intData, doubleData, strData, 2);
-  };
-  FptrTableV5["inv_fourth_ISI"] = [](mapStr2intVec& intData,
-                                     mapStr2doubleVec& doubleData,
-                                     mapStr2Str& strData) {
-    return LibV5::inv_ISI_generic(intData, doubleData, strData, 3);
-  };
-  FptrTableV5["inv_fifth_ISI"] = [](mapStr2intVec& intData,
-                                    mapStr2doubleVec& doubleData,
-                                    mapStr2Str& strData) {
-    return LibV5::inv_ISI_generic(intData, doubleData, strData, 4);
-  };
-  FptrTableV5["inv_last_ISI"] = &LibV5::inv_last_ISI;
   FptrTableV5["inv_time_to_first_spike"] = &LibV5::inv_time_to_first_spike;
   FptrTableV5["min_AHP_indices"] = &LibV5::min_AHP_indices;
   FptrTableV5["min_AHP_values"] = &LibV5::min_AHP_values;

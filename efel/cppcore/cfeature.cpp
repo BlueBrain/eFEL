@@ -132,12 +132,6 @@ void cFeature::fillfeaturetypes() {
   // LibV5
   featuretypes["time_to_second_spike"] = "double";
   featuretypes["time_to_last_spike"] = "double";
-  featuretypes["inv_first_ISI"] = "double";
-  featuretypes["inv_second_ISI"] = "double";
-  featuretypes["inv_third_ISI"] = "double";
-  featuretypes["inv_fourth_ISI"] = "double";
-  featuretypes["inv_fifth_ISI"] = "double";
-  featuretypes["inv_last_ISI"] = "double";
   featuretypes["inv_time_to_first_spike"] = "double";
   featuretypes["number_initial_spikes"] = "int";
   featuretypes["AP1_amp"] = "double";

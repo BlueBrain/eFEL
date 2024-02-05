@@ -64,66 +64,6 @@ int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-double calculateInvISI(const std::vector<double>& all_isi_values_vec,
-                       size_t index) {
-  if (index < all_isi_values_vec.size()) {
-    return 1000.0 / all_isi_values_vec[index];
-  }
-  throw FeatureComputationError("inverse ISI index out of range");
-}
-
-int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData, size_t index) {
-  const auto& all_isi_values_vec =
-      getFeature(DoubleFeatureData, {"all_ISI_values"});
-  double inv_ISI = calculateInvISI(all_isi_values_vec, index);
-  std::string featureName;
-
-  switch (index) {
-    case 0:
-      featureName = "inv_first_ISI";
-      break;
-    case 1:
-      featureName = "inv_second_ISI";
-      break;
-    case 2:
-      featureName = "inv_third_ISI";
-      break;
-    case 3:
-      featureName = "inv_fourth_ISI";
-      break;
-    case 4:
-      featureName = "inv_fifth_ISI";
-      break;
-    default:
-      if (index == all_isi_values_vec.size() - 1) {
-        featureName = "inv_last_ISI";
-      } else {
-        featureName = "inv_" + std::to_string(index + 1) + "th_ISI";
-      }
-      break;
-  }
-
-  vector<double> inv_ISI_vec = {inv_ISI};
-  setVec(DoubleFeatureData, StringData, featureName, inv_ISI_vec);
-  return 1;
-}
-
-// 1.0 over last ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  const auto& all_isi_values_vec =
-      getFeature(DoubleFeatureData, "all_ISI_values");
-
-  double inv_last_ISI = calculateInvISI(
-      all_isi_values_vec, all_isi_values_vec.size() - 1);  // Last ISI
-  vector<double> inv_last_ISI_vec = {inv_last_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_last_ISI", inv_last_ISI_vec);
-  return 1;
-}
-
 // 1.0 over time to first spike (in Hz); returns 0 when no spike
 int LibV5::inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
