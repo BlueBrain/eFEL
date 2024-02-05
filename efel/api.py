@@ -228,7 +228,9 @@ def get_distance(
         cppcore.setFeatureDouble(item, [x for x in trace[item]])
 
     if trace_check:
-        trace_check_success = get_feature_values([trace], ['trace_check'])[0]
+        trace_check_success = get_feature_values(
+            [trace], ['trace_check'])[0]  # type: ignore
+
         if trace_check_success["trace_check"] is None:
             return error_dist
 
@@ -456,14 +458,14 @@ def get_mean_feature_values(
         traces,
         feature_names,
         raise_warnings=raise_warnings)
-    for featureDict in featureDicts:
+    for featureDict in featureDicts:  # type: ignore
         for (key, values) in list(featureDict.items()):
             if values is None or len(values) == 0:
                 featureDict[key] = None
             else:
                 featureDict[key] = np.mean(values)
 
-    return featureDicts
+    return featureDicts  # type: ignore
 
 
 @deprecated("Use get_mean_feature_values instead")
