@@ -41,11 +41,12 @@ class TestRegularISI:
         # setup
         efel.reset()
         self.time, self.voltage = generate_spike_data()
-        self.trace = {}
-        self.trace['T'] = self.time
-        self.trace['V'] = self.voltage
-        self.trace['stim_start'] = [0]
-        self.trace['stim_end'] = [1000]
+        self.trace = {
+            'T': self.time,
+            'V': self.voltage,
+            'stim_start': [0],
+            'stim_end': [1000],
+        }
         self.features = ["single_burst_ratio", "ISIs", "irregularity_index",
                          "ISI_log_slope", "ISI_semilog_slope", "ISI_log_slope_skip",
                          "burst_ISI_indices"
@@ -97,11 +98,12 @@ class TestThreeSpikes:
         duration = 100
         spike_interval = 25
         self.time, self.voltage = generate_spike_data(duration, spike_interval)
-        self.trace = {}
-        self.trace['T'] = self.time
-        self.trace['V'] = self.voltage
-        self.trace['stim_start'] = [0]
-        self.trace['stim_end'] = [duration]
+        self.trace = {
+            'T': self.time,
+            'V': self.voltage,
+            'stim_start': [0],
+            'stim_end': [duration],
+        }
         self.features = ["single_burst_ratio", "ISIs", "peak_time"]
         self.feature_values = get_feature_values(
             [self.trace],
