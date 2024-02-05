@@ -18,6 +18,24 @@ def generate_spike_data(
     return time, voltage
 
 
+def test_ISIs_single_spike():
+    time, voltage = generate_spike_data(spike_interval=600)
+    # Create a trace dictionary
+    trace = {
+        "T": time,
+        "V": voltage,
+        "stim_start": [0],
+        "stim_end": [1000],
+    }
+
+    # Get the ISIs feature
+    features = ["ISIs"]
+    feature_values = efel.getFeatureValues([trace], features)[0]
+
+    # Assert that the ISIs feature is None
+    assert feature_values["ISIs"] is None
+
+
 class TestRegularISI:
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self):

@@ -17,8 +17,12 @@ def ISIs() -> np.ndarray | None:
     peak_times = get_cpp_feature("peak_time")
     if peak_times is None:
         return None
-    else:
-        return np.diff(peak_times)
+
+    if len(peak_times) < 2:
+        warnings.warn("Two spikes required for calculation of all_ISI_values.")
+        return None
+
+    return np.diff(peak_times)
 
 
 @deprecated("Use ISIs instead.")
