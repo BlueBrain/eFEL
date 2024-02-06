@@ -55,6 +55,7 @@ all_pyfeatures = [
     'impedance',
     'burst_number',
     'strict_burst_number',
+    'all_burst_number',
     'trace_check',
     'phaseslope_max',
 ]
@@ -140,6 +141,45 @@ def strict_burst_number() -> np.ndarray:
     return np.array([burst_mean_freq.size])
 
 
+def all_burst_number():
+    """The number of all the bursts, even if they have a single AP.
+
+    Instead of relying on burst_mean_freq, we split the ISIs into two groups,
+    and count the number of large ISIs. If there are no distinct two groups,
+    there are no bursts. The groups may not be even, which would correspond to
+    bursts with equal number of APs.
+    """
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = get_cpp_feature("peak_time")
+    if peak_times is None:
+        return 0
+
+    peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
+    isis = np.diff(peak_times)
+
+    from sklearn.cluster import KMeans
+
+    if len(isis) <= 1:
+        return 0
+
+    # find a split of isis for inter and intra bursts
+    kmeans = KMeans(n_clusters=2).fit(isis.reshape(len(isis), 1))
+    thresh = kmeans.cluster_centers_.mean(axis=0)[0]
+
+    # here we check is the gap between the two group of ISIs is big enough
+    # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
+    if len(isis[(isis < 1.2 * thresh) & (isis > 0.8 * thresh)]) > 0:
+        warnings.warn(
+            """While calculating all_burst_number,
+            there are spike around the threshold, we return 0 bursts""",
+            RuntimeWarning
+        )
+
+        return 0
+    return len(isis[isis > thresh])
+
+
 def impedance():
     from scipy.ndimage.filters import gaussian_filter1d
 
@@ -186,7 +226,6 @@ def ISIs():
         return None
     else:
         return np.diff(peak_times)
-
 
 def initburst_sahp_vb():
     """SlowAHP voltage from voltage base after initial burst"""
