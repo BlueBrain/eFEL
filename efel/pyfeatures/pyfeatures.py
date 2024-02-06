@@ -141,7 +141,7 @@ def strict_burst_number() -> np.ndarray:
     return np.array([burst_mean_freq.size])
 
 
-def all_burst_number():
+def all_burst_number(raise_warnings: bool = False) -> np.ndarray:
     """The number of all the bursts, even if they have a single AP.
 
     Instead of relying on burst_mean_freq, we split the ISIs into two groups,
@@ -170,11 +170,12 @@ def all_burst_number():
     # here we check is the gap between the two group of ISIs is big enough
     # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
     if len(isis[(isis < 1.2 * thresh) & (isis > 0.8 * thresh)]) > 0:
-        warnings.warn(
-            """While calculating all_burst_number,
-            there are spike around the threshold, we return 0 bursts""",
-            RuntimeWarning
-        )
+        if raise_warnings:
+            warnings.warn(
+                """While calculating all_burst_number,
+                there are spike around the threshold, we return 0 bursts""",
+                RuntimeWarning
+            )
 
         return np.array([0])
     return np.array([len(isis[isis > thresh])])
