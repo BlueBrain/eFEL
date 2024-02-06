@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Python implementation of features"""
 
 """
@@ -30,34 +31,34 @@ from typing_extensions import deprecated
 import warnings
 
 import numpy as np
+from sklearn.cluster import KMeans
 from efel import cppcore
-from numpy.fft import *
 
 
 all_pyfeatures = [
-    'voltage',
-    'time',
-    'current',
-    'ISIs',
-    'initburst_sahp',
-    'initburst_sahp_vb',
-    'initburst_sahp_ssse',
-    'depol_block',
-    'depol_block_bool',
-    'Spikecount',
-    'Spikecount_stimint',
-    'spike_count',
-    'spike_count_stimint',
-    'spikes_per_burst',
-    'spikes_per_burst_diff',
-    'spikes_in_burst1_burst2_diff',
-    'spikes_in_burst1_burstlast_diff',
-    'impedance',
-    'burst_number',
-    'strict_burst_number',
-    'all_burst_number',
-    'trace_check',
-    'phaseslope_max',
+    "voltage",
+    "time",
+    "current",
+    "ISIs",
+    "initburst_sahp",
+    "initburst_sahp_vb",
+    "initburst_sahp_ssse",
+    "depol_block",
+    "depol_block_bool",
+    "Spikecount",
+    "Spikecount_stimint",
+    "spike_count",
+    "spike_count_stimint",
+    "spikes_per_burst",
+    "spikes_per_burst_diff",
+    "spikes_in_burst1_burst2_diff",
+    "spikes_in_burst1_burstlast_diff",
+    "impedance",
+    "burst_number",
+    "strict_burst_number",
+    "all_burst_number",
+    "trace_check",
+    "phaseslope_max",
 ]
 
 
@@ -141,31 +142,46 @@ def strict_burst_number() -> np.ndarray:
     return np.array([burst_mean_freq.size])
 
 
-def all_burst_number(raise_warnings: bool = False) -> np.ndarray:
+def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np.ndarray:
     """The number of all the bursts, even if they have a single AP.
 
     Instead of relying on burst_mean_freq, we split the ISIs into two groups,
     and count the number of large ISIs. If there are no distinct two groups,
     there are no bursts. The groups may not be even, which would correspond to
     bursts with equal number of APs.
+    If there is an initial burst, then regular spiking, this feature will return the
+    number of AP minus the number of additional spikes in the initial burst.
     """
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
     peak_times = get_cpp_feature("peak_time")
-    if peak_times is None:
+
+    # if we have no or one spike, there cannot be a burst
+    if peak_times is None or len(peak_times) == 1:
         return np.array([0])
 
     peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
     isis = np.diff(peak_times)
 
-    from sklearn.cluster import KMeans
+    # if all isis are less than max_isis, we assume it is a single burst
+    if max(isis) < max_isis:
+        return np.array([1])
 
-    if len(isis) <= 1:
+    # if we have only two large isis, we assume it is not a burst
+    if len(isis) < 2:
         return np.array([0])
 
     # find a split of isis for inter and intra bursts
     kmeans = KMeans(n_clusters=2).fit(isis.reshape(len(isis), 1))
     thresh = kmeans.cluster_centers_.mean(axis=0)[0]
+
+    # if the largest isis in the left group is larger than max_isis, it is not bursting
+    if max(isis[isis < thresh]) > max_isis:
+        return np.array([0])
+
+    # if the smallest of right group is to large, it is not bursting
+    if min(isis[isis > thresh]) > 1000:
+        return np.array([0])
 
     # here we check is the gap between the two group of ISIs is big enough
     # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
@@ -174,11 +190,11 @@ def all_burst_number(raise_warnings: bool = False) -> np.ndarray:
             warnings.warn(
                 """While calculating all_burst_number,
                 there are spike around the threshold, we return 0 bursts""",
-                RuntimeWarning
+                RuntimeWarning,
             )
 
         return np.array([0])
-    return np.array([len(isis[isis > thresh])])
+    return np.array([len(isis[isis > thresh]) + 1])
 
 
 def impedance():
@@ -200,12 +216,10 @@ def impedance():
             if any(fft_cur) == 0:
                 return None
             # convert dt from ms to s to have freq in Hz
-            freq = np.fft.fftfreq(len(normalized_voltage), d=dt / 1000.)
+            freq = np.fft.fftfreq(len(normalized_voltage), d=dt / 1000.0)
             Z = fft_volt / fft_cur
             norm_Z = abs(Z) / max(abs(Z))
-            select_idxs = np.swapaxes(
-                np.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1
-            )[0]
+            select_idxs = np.swapaxes(np.argwhere((freq > 0) & (freq <= Z_max_freq)), 0, 1)[0]
             smooth_Z = gaussian_filter1d(norm_Z[select_idxs], 10)
             ind_max = np.argmax(smooth_Z)
             return freq[ind_max]
@@ -228,6 +242,7 @@ def ISIs():
     else:
         return np.diff(peak_times)
 
+
 def initburst_sahp_vb():
     """SlowAHP voltage from voltage base after initial burst"""
 
@@ -235,8 +250,12 @@ def initburst_sahp_vb():
     initburst_sahp_value = initburst_sahp()
     voltage_base = get_cpp_feature("voltage_base")
 
-    if initburst_sahp_value is None or voltage_base is None or \
-            len(initburst_sahp_value) != 1 or len(voltage_base) != 1:
+    if (
+        initburst_sahp_value is None
+        or voltage_base is None
+        or len(initburst_sahp_value) != 1
+        or len(voltage_base) != 1
+    ):
         return None
     else:
         return np.array([initburst_sahp_value[0] - voltage_base[0]])
@@ -249,8 +268,12 @@ def initburst_sahp_ssse():
     initburst_sahp_value = initburst_sahp()
     ssse = get_cpp_feature("steady_state_voltage_stimend")
 
-    if initburst_sahp_value is None or ssse is None or \
-            len(initburst_sahp_value) != 1 or len(ssse) != 1:
+    if (
+        initburst_sahp_value is None
+        or ssse is None
+        or len(initburst_sahp_value) != 1
+        or len(ssse) != 1
+    ):
         return None
     else:
         return np.array([initburst_sahp_value[0] - ssse[0]])
@@ -262,7 +285,7 @@ def initburst_sahp():
     # Required cpp features
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
-    time = time[:len(voltage)]
+    time = time[: len(voltage)]
     peak_times = get_cpp_feature("peak_time")
 
     # Required python features
@@ -302,10 +325,7 @@ def initburst_sahp():
     last_peak_time = peak_times[last_peak]
 
     # Determine start of sahp interval
-    sahp_interval_start = min(
-        last_peak_time +
-        initburst_sahp_start,
-        stim_end)
+    sahp_interval_start = min(last_peak_time + initburst_sahp_start, stim_end)
 
     # Get next peak, we wont search beyond that
     next_peak = last_peak + 1
@@ -317,18 +337,16 @@ def initburst_sahp():
     if next_peak < len(peak_times):
         next_peak_time = peak_times[next_peak]
 
-        sahp_interval_end = min(
-            last_peak_time + initburst_sahp_end, next_peak_time, stim_end)
+        sahp_interval_end = min(last_peak_time + initburst_sahp_end, next_peak_time, stim_end)
     else:
-        sahp_interval_end = min(
-            last_peak_time + initburst_sahp_end, stim_end)
+        sahp_interval_end = min(last_peak_time + initburst_sahp_end, stim_end)
 
     if sahp_interval_end <= sahp_interval_start:
         return None
     else:
-        sahp_interval = voltage[np.where(
-            (time <= sahp_interval_end) &
-            (time >= sahp_interval_start))]
+        sahp_interval = voltage[
+            np.where((time <= sahp_interval_end) & (time >= sahp_interval_start))
+        ]
 
         if len(sahp_interval) > 0:
             min_volt_index = np.argmin(sahp_interval)
@@ -382,24 +400,26 @@ def depol_block():
         # if it stays in the depolarization block more than min_duration, flag
         # as depolarization block
         max_depol_duration = np.max(
-            [time[down_indexes[k]] - time[up_idx] for k,
-             up_idx in enumerate(up_indexes)])
+            [time[down_indexes[k]] - time[up_idx] for k, up_idx in enumerate(up_indexes)]
+        )
         if max_depol_duration > block_min_duration:
             return None
 
     bool_voltage = np.array(voltage > long_hyperpol_threshold, dtype=int)
     up_indexes = np.flatnonzero(np.diff(bool_voltage) == 1)
     down_indexes = np.flatnonzero(np.diff(bool_voltage) == -1)
-    down_indexes = down_indexes[(down_indexes > stim_start_idx) & (
-        down_indexes < stim_end_idx)]
+    down_indexes = down_indexes[(down_indexes > stim_start_idx) & (down_indexes < stim_end_idx)]
     if len(down_indexes) != 0:
-        up_indexes = up_indexes[(up_indexes > stim_start_idx) & (
-            up_indexes < stim_end_idx) & (up_indexes > down_indexes[0])]
+        up_indexes = up_indexes[
+            (up_indexes > stim_start_idx)
+            & (up_indexes < stim_end_idx)
+            & (up_indexes > down_indexes[0])
+        ]
         if len(up_indexes) < len(down_indexes):
             up_indexes = np.append(up_indexes, [stim_end_idx])
         max_hyperpol_duration = np.max(
-            [time[up_indexes[k]] - time[down_idx] for k,
-             down_idx in enumerate(down_indexes)])
+            [time[up_indexes[k]] - time[down_idx] for k, down_idx in enumerate(down_indexes)]
+        )
 
         # if it stays in hyperpolarized stage for more than min_duration,
         # flag as depolarization block
@@ -447,9 +467,7 @@ def spikes_per_burst_diff():
 def spikes_in_burst1_burst2_diff():
     """Calculate the diff between the spikes in 1st and 2nd bursts"""
     spikes_per_burst_diff_values = spikes_per_burst_diff()
-    if spikes_per_burst_diff_values is None or len(
-        spikes_per_burst_diff_values
-    ) < 1:
+    if spikes_per_burst_diff_values is None or len(spikes_per_burst_diff_values) < 1:
         return None
 
     return np.array([spikes_per_burst_diff_values[0]])
@@ -461,9 +479,7 @@ def spikes_in_burst1_burstlast_diff():
     if spikes_per_burst_values is None or len(spikes_per_burst_values) < 2:
         return None
 
-    return np.array([
-        spikes_per_burst_values[0] - spikes_per_burst_values[-1]
-    ])
+    return np.array([spikes_per_burst_values[0] - spikes_per_burst_values[-1]])
 
 
 def phaseslope_max() -> np.ndarray | None:
@@ -472,7 +488,7 @@ def phaseslope_max() -> np.ndarray | None:
     time = get_cpp_feature("time")
     if voltage is None or time is None:
         return None
-    time = time[:len(voltage)]
+    time = time[: len(voltage)]
 
     from numpy import diff
 
@@ -490,8 +506,8 @@ def get_cpp_feature(feature_name: str, raise_warnings=False) -> np.ndarray | Non
     if exitCode < 0:
         if raise_warnings:
             warnings.warn(
-                f"Error while calculating {feature_name}, {cppcore.getgError()}",
-                RuntimeWarning)
+                f"Error while calculating {feature_name}, {cppcore.getgError()}", RuntimeWarning
+            )
         return None
     return np.array(cppcoreFeatureValues)
 
