@@ -153,7 +153,7 @@ def all_burst_number():
     stim_end = _get_cpp_data("stim_end")
     peak_times = get_cpp_feature("peak_time")
     if peak_times is None:
-        return 0
+        return np.array([0])
 
     peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
     isis = np.diff(peak_times)
@@ -161,7 +161,7 @@ def all_burst_number():
     from sklearn.cluster import KMeans
 
     if len(isis) <= 1:
-        return 0
+        return np.array([0])
 
     # find a split of isis for inter and intra bursts
     kmeans = KMeans(n_clusters=2).fit(isis.reshape(len(isis), 1))
@@ -176,8 +176,8 @@ def all_burst_number():
             RuntimeWarning
         )
 
-        return 0
-    return len(isis[isis > thresh])
+        return np.array([0])
+    return np.array([len(isis[isis > thresh])])
 
 
 def impedance():
