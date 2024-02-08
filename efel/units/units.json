@@ -75,6 +75,7 @@
     "fast_AHP_change": "constant",
     "interburst_min_values": "mV",
     "interburst_voltage": "mV",
+    "inv_ISI_values": "Hz",
     "inv_fifth_ISI": "Hz",
     "inv_first_ISI": "Hz",
     "inv_fourth_ISI": "Hz",
