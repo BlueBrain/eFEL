@@ -105,7 +105,7 @@ When you use this eFEL software for your research, we ask you to cite the follow
 Requirements
 ============
 
-* [Python 3.8+](https://www.python.org/downloads/)
+* [Python 3.9+](https://www.python.org/downloads/)
 * [Pip](https://pip.pypa.io) (installed by default in newer versions of Python)
 * C++ compiler that can be used by pip
 * [Numpy](http://www.numpy.org) (will be installed automatically by pip)
