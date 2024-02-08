@@ -12,23 +12,16 @@ from efel.pyfeatures.cppfeature_access import (
 logger = logging.getLogger(__name__)
 
 
+@deprecated("Use all_ISI_values instead")
 def ISIs() -> np.ndarray | None:
     """Get all ISIs, inter-spike intervals."""
-    peak_times = get_cpp_feature("peak_time")
-    if peak_times is None:
-        return None
-
-    if len(peak_times) < 2:
-        warnings.warn("Two spikes required for calculation of all_ISI_values.")
-        return None
-
-    return np.diff(peak_times)
+    return get_cpp_feature("all_ISI_values")
 
 
 @deprecated("Use ISIs instead.")
 def ISI_values() -> np.ndarray | None:
     """Get all ISIs, inter-spike intervals."""
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -55,7 +48,7 @@ def ISI_CV() -> np.ndarray | None:
 
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -74,7 +67,7 @@ def single_burst_ratio() -> np.ndarray | None:
     The ratio is the length of the first ISI over the average of the rest.
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -95,7 +88,7 @@ def irregularity_index() -> np.ndarray | None:
 
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -142,7 +135,7 @@ def ISI_log_slope() -> np.ndarray | None:
 
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -159,7 +152,7 @@ def ISI_semilog_slope() -> np.ndarray | None:
 
     If the ignore_first_ISI flag is set, the first ISI will be ignored.
     """
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
 
@@ -178,7 +171,7 @@ def ISI_log_slope_skip() -> np.ndarray | None:
     Uses the spike_skipf and max_spike_skip settings to determine how many
     ISIs to skip.
     ."""
-    isi_values = ISIs()
+    isi_values = get_cpp_feature("all_ISI_values")
     if isi_values is None:
         return None
     # Check "ignore_first_ISI" flag
@@ -298,7 +291,7 @@ def initburst_sahp() -> np.ndarray | None:
         return None
 
     # Required python features
-    all_isis = ISIs()
+    all_isis = get_cpp_feature("all_ISI_values")
 
     # Required trace data
     stim_end = _get_cpp_data("stim_end")
@@ -389,7 +382,7 @@ def strict_burst_number() -> np.ndarray:
 
 def inv_ISI_values() -> np.ndarray | None:
     """Calculate the inverse of ISI values."""
-    all_isi_values_vec = ISIs()
+    all_isi_values_vec = get_cpp_feature("all_ISI_values")
     return None if all_isi_values_vec is None else 1000.0 / all_isi_values_vec
 
 
