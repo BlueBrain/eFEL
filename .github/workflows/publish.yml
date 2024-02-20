@@ -49,7 +49,7 @@ jobs:
 
   wheels:
     needs: [call-test-workflow, tag]
-    uses: ./.github/workflows/build-wheels.yml@master
+    uses: ./.github/workflows/build-wheels.yml
     with:
       python-version: '3.9'
       os: 'ubuntu-22.04'
