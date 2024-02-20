@@ -50,11 +50,6 @@ jobs:
   wheels:
     needs: [call-test-workflow, tag]
     uses: ./.github/workflows/build-wheels.yml
-    with:
-      python-version: '3.9'
-      os: 'ubuntu-22.04'
-      arch: 'x86_64'
-
   
   tarball:
     name: Build tarball
