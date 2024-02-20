@@ -1,8 +1,6 @@
 LibV5:peak_indices	    	#LibV1:interpolate
-LibV1:ISI_values  		    #LibV1:peak_time   
 LibV1:doublet_ISI	#LibV1:peak_time
 LibV1:peak_voltage		    #LibV5:peak_indices
-LibV1:burst_ISI_indices 	#LibV5:peak_indices #LibV1:ISI_values
 LibV1:mean_frequency	    #LibV1:peak_time
 LibV1:peak_time 	#LibV5:peak_indices
 LibV1:time_to_first_spike   #LibV1:peak_time
@@ -10,8 +8,6 @@ LibV1:adaptation_index 	    #LibV1:peak_time
 LibV1:adaptation_index2	#LibV1:peak_time
 LibV1:spike_width2	 	    #LibV5:min_AHP_indices
 LibV1:AP_width  #LibV5:peak_indices #LibV5:min_AHP_indices
-LibV1:burst_mean_freq	    #LibV1:burst_ISI_indices    #LibV1:peak_time
-LibV1:interburst_voltage	#LibV1:burst_ISI_indices
 LibV1:AP_height             #LibV1:peak_voltage
 LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage
 LibV1:AHP_depth_abs_slow	#LibV5:peak_indices
@@ -24,7 +20,6 @@ LibV1:minimum_voltage
 LibV1:interpolate
 LibV1:steady_state_voltage
 LibV3:depolarized_base
-LibV1:ISI_CV	#LibV1:ISI_values
 LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values
 LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices
 LibV2:AP_end_indices        #LibV5:peak_indices
@@ -42,20 +37,16 @@ LibV2:AP_rise_rate_change	#LibV2:AP_rise_rate
 LibV2:AP_fall_rate_change	#LibV2:AP_fall_rate
 LibV2:fast_AHP_change	#LibV2:fast_AHP
 LibV2:AP_duration_half_width_change	#LibV2:AP_duration_half_width
-LibV1:single_burst_ratio	#LibV1:ISI_values
 LibV2:steady_state_hyper
 LibV2:amp_drop_first_second	#LibV1:peak_voltage
 LibV2:amp_drop_first_last	#LibV1:peak_voltage
 LibV2:amp_drop_second_last	#LibV1:peak_voltage
 LibV2:max_amp_difference	#LibV1:peak_voltage
 LibV1:AP_amplitude_diff	#LibV1:AP_amplitude
-LibV5:ISI_log_slope	#LibV1:ISI_values
-LibV5:ISI_log_slope_skip	#LibV1:ISI_values
 LibV1:AHP_depth_diff	#LibV1:AHP_depth
 LibV5:min_AHP_indices 	    #LibV5:peak_indices
 LibV5:min_AHP_values 	    #LibV5:min_AHP_indices
 LibV5:number_initial_spikes 	    #LibV1:peak_time
-LibV5:irregularity_index 	    #LibV1:ISI_values
 LibV5:AP1_amp 	    #LibV1:AP_amplitude
 LibV5:APlast_amp 	    #LibV1:AP_amplitude
 LibV5:AP2_amp 	    #LibV1:AP_amplitude
@@ -71,12 +62,6 @@ LibV5:AHP1_depth_from_peak #LibV5:AHP_depth_from_peak
 LibV5:AHP2_depth_from_peak #LibV5:AHP_depth_from_peak
 LibV5:time_to_second_spike   #LibV1:peak_time
 LibV5:time_to_last_spike   #LibV1:peak_time
-LibV5:inv_first_ISI   #LibV5:all_ISI_values
-LibV5:inv_second_ISI   #LibV5:all_ISI_values
-LibV5:inv_third_ISI   #LibV5:all_ISI_values
-LibV5:inv_fourth_ISI   #LibV5:all_ISI_values
-LibV5:inv_fifth_ISI   #LibV5:all_ISI_values
-LibV5:inv_last_ISI   #LibV5:all_ISI_values
 LibV5:inv_time_to_first_spike   #LibV1:time_to_first_spike
 LibV5:spike_half_width 	    #LibV5:min_AHP_indices	#LibV5:peak_indices
 LibV5:AP_begin_indices      #LibV5:min_AHP_indices

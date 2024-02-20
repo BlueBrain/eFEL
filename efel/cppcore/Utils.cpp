@@ -256,5 +256,13 @@ double vec_median(vector<T> v) {
   return (double)(v[(n - 1) / 2] + v[n / 2]) / 2.0;  // even
 }
 
+void removeFirstISI(vector<double>& vec) {
+    if (vec.empty()) {
+        throw std::runtime_error("Cannot remove from an empty vector.");
+    }
+
+    vec.erase(vec.begin()); // Remove the first element from the vector.
+}
+
 template double vec_mean(const vector<double>& v);
 template double vec_median(vector<double> v);

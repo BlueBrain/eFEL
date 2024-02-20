@@ -75,9 +75,7 @@ const vector<double> cFeature::getmapDoubleData(string strName) {
 void cFeature::fillfeaturetypes() {
   // initialize feature type information
   featuretypes["peak_indices"] = "int";
-  featuretypes["ISI_values"] = "double";
   featuretypes["peak_voltage"] = "double";
-  featuretypes["burst_ISI_indices"] = "int";
   featuretypes["mean_frequency"] = "double";
   featuretypes["peak_time"] = "double";
   featuretypes["time_to_first_spike"] = "double";
@@ -86,8 +84,6 @@ void cFeature::fillfeaturetypes() {
   featuretypes["adaptation_index"] = "double";
   featuretypes["spike_width2"] = "double";
   featuretypes["spike_half_width"] = "double";
-  featuretypes["burst_mean_freq"] = "double";
-  featuretypes["interburst_voltage"] = "double";
   featuretypes["voltage_base"] = "double";
   featuretypes["AHP_depth_abs"] = "double";
   featuretypes["time_constant"] = "double";
@@ -119,12 +115,10 @@ void cFeature::fillfeaturetypes() {
   featuretypes["AP_duration_half_width_change"] = "double";
   featuretypes["AP_height"] = "double";
   featuretypes["AP_amplitude"] = "double";
-  featuretypes["single_burst_ratio"] = "double";
   featuretypes["steady_state_hyper"] = "double";
   featuretypes["AP_width"] = "double";
   featuretypes["doublet_ISI"] = "double";
   featuretypes["adaptation_index2"] = "double";
-  featuretypes["ISI_CV"] = "double";
   featuretypes["AHP_depth_abs_slow"] = "double";
   featuretypes["AHP_slow_time"] = "double";
   featuretypes["AHP_depth"] = "double";
@@ -136,19 +130,9 @@ void cFeature::fillfeaturetypes() {
   featuretypes["depolarized_base"] = "double";
 
   // LibV5
-  featuretypes["ISI_log_slope"] = "double";
-  featuretypes["ISI_semilog_slope"] = "double";
-  featuretypes["ISI_log_slope_skip"] = "double";
   featuretypes["time_to_second_spike"] = "double";
   featuretypes["time_to_last_spike"] = "double";
-  featuretypes["inv_first_ISI"] = "double";
-  featuretypes["inv_second_ISI"] = "double";
-  featuretypes["inv_third_ISI"] = "double";
-  featuretypes["inv_fourth_ISI"] = "double";
-  featuretypes["inv_fifth_ISI"] = "double";
-  featuretypes["inv_last_ISI"] = "double";
   featuretypes["inv_time_to_first_spike"] = "double";
-  featuretypes["irregularity_index"] = "double";
   featuretypes["number_initial_spikes"] = "int";
   featuretypes["AP1_amp"] = "double";
   featuretypes["APlast_amp"] = "double";

@@ -78,8 +78,17 @@ setup(
     name="efel",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    install_requires=['numpy>=1.6', 'neo>=0.5.2', 'typing-extensions>=4.8.0'],
-    packages=['efel', 'efel.pyfeatures', 'efel.units'],
+    install_requires=[
+        'numpy>=1.6', 
+        'neo>=0.5.2', 
+        'typing-extensions>=4.8.0', 
+        'scipy>=1.12.0,<2.0.0',
+    ],
+    packages=[
+        'efel', 
+        'efel.pyfeatures', 
+        'efel.units'
+    ],
     author="BlueBrain Project, EPFL",
     maintainer="Werner Van Geit",
     maintainer_email="werner.vangeit@epfl.ch",

@@ -57,11 +57,10 @@ Time from the start of the stimulus to the maximum of the second peak
         inv_time_to_first_spike = 0
 
 
-`LibV1`_ : ISI_values
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The interspike intervals (i.e. time intervals) between adjacent peaks.
-If ignore_first_ISI is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
@@ -94,8 +93,8 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     all_isi_values_vec = numpy.diff(peak_time)
 
 
-`LibV5`_ : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
 
@@ -135,6 +134,17 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     else:
         inv_last_ISI = 0
 
+`Python efeature`: inv_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes all inverse spike interval values.
+
+- **Required features**: peak_time (ms)
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+    inv_isi_values = 1000.0 / all_isi_values_vec
 
 `LibV5`_ : time_to_last_spike
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,7 +224,7 @@ The mean frequency of the firing rate
 The slope of a linear fit to a semilog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -226,13 +236,13 @@ See LibV1: ISI_values feature for more details.
 
     ISI_semilog_slope = slope
 
-`LibV5`_ : ISI_log_slope
-~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -244,8 +254,8 @@ See LibV1: ISI_values feature for more details.
 
     ISI_log_slope = slope
 
-`LibV5`_ : ISI_log_slope_skip
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope_skip
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values, but not taking into account the first ISI values.
 
@@ -265,27 +275,25 @@ However, if this number of ISI values to skip is higher than max_spike_skip, the
 
     ISI_log_slope = slope
 
-`LibV1`_ : ISI_CV
-~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_CV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The coefficient of variation of the ISIs.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
-- **Required features**: ISI_values
+- **Required features**: ISIs
 - **Units**: constant
 - **Pseudocode**: ::
 
     ISI_mean = numpy.mean(ISI_values)
-    ISI_variance = numpy.sum(numpy.square(ISI_values-ISI_mean)) / (len(ISI_values)-1)
-    ISI_std = math.sqrt(ISI_variance)
-    ISI_CV = ISI_std / ISI_mean
+    ISI_CV = np.std(isi_values, ddof=1) / ISI_mean
 
-`LibV5`_ : irregularity_index
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : irregularity_index
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mean of the absolute difference of all ISIs, except the first one (see LibV1: ISI_values feature for more details.)
+Mean of the absolute difference of all ISIs, except the first one (see Python efeature: ISIs feature for more details.)
 
 The first ISI can be taken into account if ignore_first_ISI is set to 0.
 
@@ -349,8 +357,8 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     ISI_sub = ISI_values[1:] - ISI_values[:-1]
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
-`LibV1`_ : burst_mean_freq
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean frequency during a burst for each burst
 
@@ -436,8 +444,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     burst_number = len(strict_burst_mean_freq)
 
-`LibV1`_ : interburst_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltage average in between two bursts
 
@@ -565,8 +573,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
-`LibV1`_ : single_burst_ratio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : single_burst_ratio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.

@@ -81,6 +81,7 @@
     "initburst_sahp_ssse",
     "initburst_sahp_vb",
     "interburst_voltage",
+    "inv_ISI_values",
     "inv_fifth_ISI",
     "inv_first_ISI",
     "inv_fourth_ISI",

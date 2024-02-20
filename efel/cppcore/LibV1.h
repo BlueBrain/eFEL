@@ -30,9 +30,6 @@ namespace LibV1 {
 int interpolate(mapStr2intVec& IntFeatureData,
                 mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
-int ISI_values(mapStr2intVec& IntFeatureData,
-               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
 int peak_voltage(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
@@ -48,18 +45,6 @@ int first_spike_time(mapStr2intVec& IntFeatureData,
 
 int spike_width2(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-int burst_ISI_indices(mapStr2intVec& IntFeatureData,
-                      mapStr2doubleVec& DoubleFeatureData,
-                      mapStr2Str& StringData);
-
-int burst_mean_freq(mapStr2intVec& IntFeatureData,
-                    mapStr2doubleVec& DoubleFeatureData,
-                    mapStr2Str& StringData);
-
-int interburst_voltage(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
 
 int adaptation_index(mapStr2intVec& IntFeatureData,
                      mapStr2doubleVec& DoubleFeatureData,
@@ -94,11 +79,6 @@ int AP_amplitude(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 int AHP_depth(mapStr2intVec& IntFeatureData,
               mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-int single_burst_ratio(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
-
 int AP_width(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
              mapStr2Str& StringData);
 int doublet_ISI(mapStr2intVec& IntFeatureData,
@@ -106,8 +86,6 @@ int doublet_ISI(mapStr2intVec& IntFeatureData,
 int adaptation_index2(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);
-int ISI_CV(mapStr2intVec& IntFeatureData, mapStr2doubleVec& DoubleFeatureData,
-           mapStr2Str& StringData);
 int AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);

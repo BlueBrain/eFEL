@@ -32,105 +32,6 @@
 using std::distance;
 using std::find_if;
 
-// slope of loglog of ISI curve
-static int __ISI_log_slope(const vector<double>& isiValues,
-                           vector<double>& slope, bool skip, double spikeSkipf,
-                           size_t maxnSpike, bool semilog) {
-  std::deque<double> skippedISIValues;
-
-  vector<double> log_isivalues;
-  vector<double> x;
-
-  for (size_t i = 0; i < isiValues.size(); i++) {
-    skippedISIValues.push_back(isiValues[i]);
-  }
-
-  if (skip) {
-    // Remove n spikes given by spike_skipf or max_spike_skip
-    size_t isisToRemove = (size_t)((isiValues.size() + 1) * spikeSkipf + .5);
-
-    isisToRemove = std::min(maxnSpike, isisToRemove);
-
-    // Remove spikeToRemove spike from SpikeTime list
-    for (size_t i = 0; i < isisToRemove; i++) {
-      skippedISIValues.pop_front();
-    }
-  }
-
-  for (size_t i = 0; i < skippedISIValues.size(); i++) {
-    log_isivalues.push_back(log(skippedISIValues[i]));
-    if (semilog) {
-      x.push_back((double)i + 1);
-    } else {
-      x.push_back(log((double)i + 1));
-    }
-  }
-
-  if (x.size() == 0 || log_isivalues.size() == 0) return -1;
-
-  linear_fit_result fit;
-  fit = slope_straight_line_fit(x, log_isivalues);
-
-  if (fit.slope == 0. || is_nan(fit.slope)) return -1;
-
-  slope.push_back(fit.slope);
-
-  return slope.size();
-}
-
-int LibV5::ISI_log_slope(mapStr2intVec& IntFeatureData,
-                         mapStr2doubleVec& DoubleFeatureData,
-                         mapStr2Str& StringData) {
-  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
-  vector<double> slope;
-  bool semilog = false;
-  int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "ISI_log_slope", slope);
-    return static_cast<int>(slope.size());
-  } else {
-    return retval;
-  }
-}
-
-int LibV5::ISI_semilog_slope(mapStr2intVec& IntFeatureData,
-                             mapStr2doubleVec& DoubleFeatureData,
-                             mapStr2Str& StringData) {
-  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
-  vector<double> slope;
-  bool semilog = true;
-  int retval = __ISI_log_slope(isivalues, slope, false, 0.0, 0, semilog);
-  if (retval >= 0) {
-    setVec(DoubleFeatureData, StringData, "ISI_semilog_slope", slope);
-    return static_cast<int>(slope.size());
-  } else {
-    return retval;
-  }
-}
-
-int LibV5::ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const auto& isivalues = getFeature(DoubleFeatureData, {"ISI_values"});
-  const auto spikeSkipf =
-      getFeature(DoubleFeatureData, {"spike_skipf"}).front();
-  const auto maxnSpike = getFeature(IntFeatureData, {"max_spike_skip"}).front();
-
-  // Check the validity of spikeSkipf value
-  if (spikeSkipf < 0 || spikeSkipf >= 1)
-    throw FeatureComputationError("spike_skipf should lie between [0 1).");
-
-  vector<double> slope;
-  bool semilog = false;
-  int retVal =
-      __ISI_log_slope(isivalues, slope, true, spikeSkipf, maxnSpike, semilog);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "ISI_log_slope_skip", slope);
-    return static_cast<int>(slope.size());
-  } else {
-    return retVal;
-  }
-}
 
 // time from stimulus start to second threshold crossing
 int LibV5::time_to_second_spike(mapStr2intVec& IntFeatureData,
@@ -160,66 +61,6 @@ int LibV5::time_to_last_spike(mapStr2intVec& IntFeatureData,
   vector<double> last_spike = {peaktime.back() - stimstart[0]};
 
   setVec(DoubleFeatureData, StringData, "time_to_last_spike", last_spike);
-  return 1;
-}
-
-double calculateInvISI(const std::vector<double>& all_isi_values_vec,
-                       size_t index) {
-  if (index < all_isi_values_vec.size()) {
-    return 1000.0 / all_isi_values_vec[index];
-  }
-  throw FeatureComputationError("inverse ISI index out of range");
-}
-
-int LibV5::inv_ISI_generic(mapStr2intVec& IntFeatureData,
-                           mapStr2doubleVec& DoubleFeatureData,
-                           mapStr2Str& StringData, size_t index) {
-  const auto& all_isi_values_vec =
-      getFeature(DoubleFeatureData, {"all_ISI_values"});
-  double inv_ISI = calculateInvISI(all_isi_values_vec, index);
-  std::string featureName;
-
-  switch (index) {
-    case 0:
-      featureName = "inv_first_ISI";
-      break;
-    case 1:
-      featureName = "inv_second_ISI";
-      break;
-    case 2:
-      featureName = "inv_third_ISI";
-      break;
-    case 3:
-      featureName = "inv_fourth_ISI";
-      break;
-    case 4:
-      featureName = "inv_fifth_ISI";
-      break;
-    default:
-      if (index == all_isi_values_vec.size() - 1) {
-        featureName = "inv_last_ISI";
-      } else {
-        featureName = "inv_" + std::to_string(index + 1) + "th_ISI";
-      }
-      break;
-  }
-
-  vector<double> inv_ISI_vec = {inv_ISI};
-  setVec(DoubleFeatureData, StringData, featureName, inv_ISI_vec);
-  return 1;
-}
-
-// 1.0 over last ISI (in Hz); returns 0 when no ISI
-int LibV5::inv_last_ISI(mapStr2intVec& IntFeatureData,
-                        mapStr2doubleVec& DoubleFeatureData,
-                        mapStr2Str& StringData) {
-  const auto& all_isi_values_vec =
-      getFeature(DoubleFeatureData, "all_ISI_values");
-
-  double inv_last_ISI = calculateInvISI(
-      all_isi_values_vec, all_isi_values_vec.size() - 1);  // Last ISI
-  vector<double> inv_last_ISI_vec = {inv_last_ISI};
-  setVec(DoubleFeatureData, StringData, "inv_last_ISI", inv_last_ISI_vec);
   return 1;
 }
 
@@ -591,35 +432,6 @@ int LibV5::AP_end_indices(mapStr2intVec& IntFeatureData,
                             downDerivativeThreshold);
   if (retVal >= 0) {
     setVec(IntFeatureData, StringData, "AP_end_indices", AP_end_indices);
-  }
-  return retVal;
-}
-
-static int __irregularity_index(const vector<double>& isiValues,
-                                vector<double>& irregularity_index) {
-  double ISISub, iRI;
-  iRI = ISISub = 0;
-  if (isiValues.size() == 0) return -1;
-
-  for (size_t i = 1; i < isiValues.size(); i++) {
-    ISISub = std::abs(isiValues[i] - isiValues[i - 1]);
-    iRI = iRI + (ISISub);
-  }
-  iRI = iRI / isiValues.size();
-  irregularity_index.clear();
-  irregularity_index.push_back(iRI);
-  return 1;
-}
-
-int LibV5::irregularity_index(mapStr2intVec& IntFeatureData,
-                              mapStr2doubleVec& DoubleFeatureData,
-                              mapStr2Str& StringData) {
-  const vector<double>& isiValues = getFeature(DoubleFeatureData, "ISI_values");
-  vector<double> irregularity_index;
-  int retVal = __irregularity_index(isiValues, irregularity_index);
-  if (retVal >= 0) {
-    setVec(DoubleFeatureData, StringData, "irregularity_index",
-           irregularity_index);
   }
   return retVal;
 }
