@@ -49,7 +49,7 @@ jobs:
 
   wheels:
     needs: [call-test-workflow, tag]
-    uses: BlueBrain/eFEL/.github/workflows/build-wheels.yml@master
+    uses: ./.github/workflows/build-wheels.yml@master
     with:
       python-version: '3.9'
       os: 'ubuntu-22.04'
