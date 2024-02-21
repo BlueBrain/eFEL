@@ -1,4 +1,4 @@
-name: Build
+name: Publish
 
 on:
   push:
@@ -46,47 +46,10 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           name: ${{ env.TAG_NAME }}
           generate_release_notes: true
-  
+
   wheels:
     needs: [call-test-workflow, tag]
-    name: Build wheels for ${{ matrix.python }} ${{ matrix.os }} ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, macos-latest, windows-latest]
-        python: [cp39, cp310, cp311, cp312]
-        arch: [x86_64, amd64]
-        exclude:
-          - os: macos-latest
-            arch: amd64
-          - os: ubuntu-22.04
-            arch: amd64
-          - os: windows-latest
-            arch: x86_64
-
-    env:
-      CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
-      CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1 pytest-xdist>=3.3.1
-      CIBW_TEST_COMMAND: pytest -sx -n auto {project}/tests
-      CIBW_SKIP: "*-musllinux_*"
-      
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-      - name: Install cibuildwheel
-        run: pip install cibuildwheel
-      - name: Build wheels
-        run: cibuildwheel --output-dir wheelhouse
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.arch }}
-          path: ./wheelhouse/*.whl
+    uses: ./.github/workflows/build-wheels.yml
   
   tarball:
     name: Build tarball
