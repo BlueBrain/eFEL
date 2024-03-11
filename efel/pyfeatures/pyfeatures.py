@@ -148,10 +148,12 @@ def _get_burst_thresh(isis):
     """Find a split of isis for inter and intra bursts.
 
     We remove large outlier isis, which often occur as random single AP long after end of burst.
+    We do this only in traces with more then 20 APs, to prevent missing 2 bursts cases, with only
+    one large ISI that will be discarded.
     """
-    perc_isis = np.percentile(isis, 95)
     _isis = isis
-    if len(isis) > 3:
+    if len(isis) > 20:
+        perc_isis = np.percentile(isis, 95)
         _isis = isis[isis < perc_isis]
     kmeans = KMeans(n_clusters=2).fit(_isis.reshape(len(_isis), 1))
     return kmeans.cluster_centers_.mean(axis=0)[0]
@@ -187,6 +189,11 @@ def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np
         return np.array([0])
 
     thresh = _get_burst_thresh(isis)
+    import matplotlib.pyplot as plt
+    plt.hist(isis, bins=100)
+    plt.axvline(thresh)
+    plt.savefig("isis.pdf")
+    print(thresh)
 
     # if more that 10% of isis in the left group larger than max_isis, it is not bursting
     small_isis = isis[isis < thresh]
