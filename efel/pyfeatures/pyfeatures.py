@@ -196,7 +196,7 @@ def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np
         return np.array([0])
 
     # if the smallest of right group is to large, it is not bursting
-    if min(isis[isis > thresh]) > 2000:
+    if min(isis[isis > thresh]) > 4000:
         return np.array([0])
 
     # here we check is the gap between the two group of ISIs is big enough
