@@ -148,11 +148,11 @@ def _get_burst_thresh(isis):
     """Find a split of isis for inter and intra bursts.
 
     We remove large outlier isis, which often occur as random single AP long after end of burst.
-    We do this only in traces with more then 20 APs, to prevent missing 2 bursts cases, with only
+    We do this only in traces with more then 15 APs, to prevent missing 2 bursts cases, with only
     one large ISI that will be discarded.
     """
     _isis = isis
-    if len(isis) > 20:
+    if len(isis) > 15:
         perc_isis = np.percentile(isis, 95)
         _isis = isis[isis < perc_isis]
     kmeans = KMeans(n_clusters=2).fit(_isis.reshape(len(_isis), 1))
@@ -189,11 +189,6 @@ def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np
         return np.array([0])
 
     thresh = _get_burst_thresh(isis)
-    import matplotlib.pyplot as plt
-    plt.hist(isis, bins=100)
-    plt.axvline(thresh)
-    plt.savefig("isis.pdf")
-    print(thresh)
 
     # if more that 10% of isis in the left group larger than max_isis, it is not bursting
     small_isis = isis[isis < thresh]
@@ -284,29 +279,29 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
 
     # if we have no or one spike, there cannot be a burst
     if peak_times is None or len(peak_times) == 1:
-        return np.array([np.inf])
+        return np.array([10.0])
 
     peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
     isis = np.diff(peak_times)
 
     # if all isis are less than max_isis, we assume it is a single burst
     if max(isis) < max_isis:
-        return np.array([np.inf])
+        return np.array([10.0])
 
     # if we have only two large isis, we assume it is not a burst
     if len(isis) < 2:
-        return np.array([np.inf])
+        return np.array([10.0])
 
     thresh = _get_burst_thresh(isis)
 
     # if more that 10% of isis in the left group larger than max_isis, it is not bursting
     small_isis = isis[isis < thresh]
     if len(small_isis[small_isis > max_isis]) > 0.1 * len(isis):
-        return np.array([np.inf])
+        return np.array([10.0])
 
     # if the smallest of right group is to large, it is not bursting
     if min(isis[isis > thresh]) > 2000:
-        return np.array([np.inf])
+        return np.array([10.0])
 
     # here we check is the gap between the two group of ISIs is big enough
     # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
@@ -318,7 +313,7 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
                 RuntimeWarning,
             )
 
-        return np.array([np.inf])
+        return np.array([10.0])
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
 
@@ -330,10 +325,10 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
         times.append(time[mask][np.argmin(voltage[mask])])
 
     if len(voltages) < 4:
-        return np.array([np.inf])
+        return np.array([10.0])
 
     # we use the second burst ahp, to get rid of any transient behavior in the first burst
-    return np.array([(voltages[-2] - voltages[1]) / (times[-2] - times[1]) * 1000.0])
+    return np.array([min(10.0, (voltages[-2] - voltages[1]) / (times[-2] - times[1]) * 1000.0)])
 
 
 def impedance():
