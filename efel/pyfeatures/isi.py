@@ -58,6 +58,8 @@ def ISI_CV() -> np.ndarray | None:
         isi_values = isi_values[1:]
 
     result = __ISI_CV(isi_values)
+    if result is None:
+        return None
     return np.array([result])
 
 
