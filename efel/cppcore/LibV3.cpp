@@ -36,16 +36,11 @@ static int __depolarized_base(const vector<double>& t, const vector<double>& v,
   int i, n, k, startIndex, endIndex, nPt;
   double baseValue;
   // to make sure it access minimum index of both length
-  if (apendi.size() < apbi.size())
-    n = apendi.size();
-  else
-    n = apbi.size();
-
-  if (apendi.size() == apbi.size()) n = apendi.size() - 1;
+  n = std::min(apendi.size(), apbi.size());
 
   if (n > 2) {
     dep_base.clear();
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n - 1; i++) {
       nPt = 0;
       baseValue = 0;
       startIndex = apendi[i];
