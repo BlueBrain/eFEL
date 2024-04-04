@@ -45,7 +45,7 @@ def get_allfeature_values():
     """Get back all the feature names and value"""
     efel.reset()
 
-    all_featurenames = efel.getFeatureNames()
+    all_featurenames = efel.get_feature_names()
 
     def load_data(filename):
         data = np.loadtxt(os.path.join(testdata_dir, filename))
@@ -109,11 +109,11 @@ def get_allfeature_values():
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        feature_values = efel.getFeatureValues(traces, soma_featurenames)[0]
+        feature_values = efel.get_feature_values(traces, soma_featurenames)[0]
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        feature_values.update(efel.getFeatureValues([trace_db], db_featurenames)[0])
+        feature_values.update(efel.get_feature_values([trace_db], db_featurenames)[0])
 
     for feature_name in feature_values:
         if feature_values[feature_name] is not None:
@@ -162,8 +162,8 @@ def test_allfeatures_on_constant_voltage():
 
     efel.reset()
     traces = [{'T': time, 'V': voltage, 'stim_start': [100], 'stim_end': [999]}]
-    all_featurenames = efel.getFeatureNames()
-    feature_values = efel.getFeatureValues(traces, all_featurenames)[0]
+    all_featurenames = efel.get_feature_names()
+    feature_values = efel.get_feature_values(traces, all_featurenames)[0]
     assert all(feature_values["voltage"] == -80.0)
     # Assert that each element in time is greater than or equal to the previous element
     assert np.all(feature_values["time"][1:] >= feature_values["time"][:-1])

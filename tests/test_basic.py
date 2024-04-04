@@ -1039,8 +1039,8 @@ def test_currentbase_median():
                                   rtol=0, atol=1e-8)
 
 
-def test_getDistance1():
-    """basic: Test getDistance 1"""
+def test_get_distance1():
+    """basic: Test get_distance 1"""
 
     import efel
     efel.reset()
@@ -1066,8 +1066,8 @@ def test_getDistance1():
             10))
 
 
-def test_getDistance_error_dist():
-    """basic: Test getDistance error_dist option"""
+def test_get_distance_error_dist():
+    """basic: Test get_distance error_dist option"""
 
     import efel
     efel.reset()
@@ -1100,8 +1100,8 @@ def test_getDistance_error_dist():
     numpy.testing.assert_allclose(score_150, 150)
 
 
-def test_getDistance_trace_check():
-    """basic: Test getDistance trace_check option"""
+def test_get_distance_trace_check():
+    """basic: Test get_distance trace_check option"""
 
     import efel
     efel.reset()
@@ -1694,7 +1694,7 @@ def test_min_voltage_between_spikes_single_spike():
     assert feature_values[0]['min_voltage_between_spikes'] is None
 
 
-def test_getFeatureNames():
+def test_get_feature_names():
     """basic: Test getting all feature names"""
     import efel
     efel.reset()
@@ -1705,15 +1705,15 @@ def test_getFeatureNames():
         expected_featurenames = json.load(featurenames_json)
     # add the new names for the deprecated ones
     expected_featurenames += ["Spikecount", "Spikecount_stimint"]
-    assert set(efel.getFeatureNames()) == set(expected_featurenames)
+    assert set(efel.get_feature_names()) == set(expected_featurenames)
 
 
-def test_getFeatureNameExists():
-    """basic: Test FeatureNameExists"""
+def test_feature_name_exists():
+    """basic: Test feature_name_exists"""
     import efel
     efel.reset()
-    assert efel.FeatureNameExists('voltage_base')
-    assert not efel.FeatureNameExists('voltage_base_wrong')
+    assert efel.feature_name_exists('voltage_base')
+    assert not efel.feature_name_exists('voltage_base_wrong')
 
 
 def test_steady_state_voltage1():
@@ -1971,8 +1971,8 @@ def test_sag_time_constant():
         feature_values['sag_time_constant'][0])
 
 
-def test_getmeanfeaturevalues():
-    """basic: Test getMeanFeatureValues"""
+def test_get_mean_feature_values():
+    """basic: Test get_mean_feature_values"""
 
     import efel
     efel.reset()
@@ -1994,7 +1994,7 @@ def test_getmeanfeaturevalues():
             [trace],
             ['AP_amplitude'], raise_warnings=False)
 
-    mean_feature_values = efel.getMeanFeatureValues(
+    mean_feature_values = efel.get_mean_feature_values(
         [trace], [
             'AP_amplitude'], raise_warnings=False)
 

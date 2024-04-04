@@ -50,7 +50,7 @@ def evaluate(individual, target_voltage1=-80, target_voltage2=-60):
     trace['stim_end'] = [stim_end]
     traces = [trace]
 
-    features = efel.getFeatureValues(traces, ["voltage_base",
+    features = efel.get_feature_values(traces, ["voltage_base",
                                              "steady_state_voltage"])
     voltage_base = features[0]["voltage_base"][0]
     steady_state_voltage = features[0]["steady_state_voltage"][0]

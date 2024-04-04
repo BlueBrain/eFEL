@@ -125,7 +125,7 @@ def _test_expected_value(feature_name, expected_values):
     for trace_name, expected_value in expected_values.items():
         trace = _load_trace(trace_name)
 
-        feature_values = efel.getFeatureValues([trace], [feature_name])
+        feature_values = efel.get_feature_values([trace], [feature_name])
 
         if expected_value is None:
             assert feature_values[0][feature_name] is None
@@ -184,14 +184,14 @@ def test_ISIs():
 
     mf1_trace = _load_trace('mean_frequency1')
 
-    feature_values = efel.getFeatureValues([mf1_trace], ['ISI_values', 'ISIs'])
+    feature_values = efel.get_feature_values([mf1_trace], ['ISI_values', 'ISIs'])
 
     assert numpy.allclose(
         feature_values[0]['ISIs'][1:],
         feature_values[0]['ISI_values'])
 
     numpy.testing.assert_allclose(
-        efel.getDistance(
+        efel.get_distance(
             mf1_trace,
             'ISIs',
             1.0,
@@ -234,7 +234,7 @@ def test_pydistance():
     mf1_trace['stim_start'] = [0]
     mf1_trace['stim_end'] = [900]
     # with successful trace_check
-    numpy.testing.assert_allclose(efel.getDistance(
+    numpy.testing.assert_allclose(efel.get_distance(
         mf1_trace,
         feature_name,
         mean,
@@ -245,7 +245,7 @@ def test_pydistance():
     # with failed trace_check
     mf1_trace["stim_end"] = [600]
     error_value = 250.0
-    res = efel.getDistance(
+    res = efel.get_distance(
         mf1_trace,
         feature_name,
         mean,
@@ -256,7 +256,7 @@ def test_pydistance():
 
 
 def test_pydistance_featurefail():
-    """pyfeatures: Test failure of feature in getdistance"""
+    """pyfeatures: Test failure of feature in get_distance"""
     mf1_trace = _load_trace('mean_frequency1')
 
     feature_name = 'initburst_sahp'
@@ -264,7 +264,7 @@ def test_pydistance_featurefail():
     std = 1.0
 
     efel.reset()
-    numpy.testing.assert_allclose(efel.getDistance(
+    numpy.testing.assert_allclose(efel.get_distance(
         mf1_trace,
         feature_name,
         mean,
@@ -289,7 +289,7 @@ def test_interpolate_current():
 
     feature_name = ['time', 'current', 'voltage']
     trace = _load_trace('current')
-    feature_values = efel.getFeatureValues([trace], feature_name)
+    feature_values = efel.get_feature_values([trace], feature_name)
     feature_time = feature_values[0]["time"]
     feature_current = feature_values[0]["current"]
     feature_voltage = feature_values[0]["voltage"]
@@ -316,15 +316,15 @@ def test_trace_check():
     efel.reset()
 
     mf1_trace = _load_trace('mean_frequency1')
-    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    feature_values = efel.get_feature_values([mf1_trace], ['trace_check'])
     assert feature_values[0]['trace_check'][0] == 0
     # failure
     mf1_trace["stim_end"] = [600]
-    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    feature_values = efel.get_feature_values([mf1_trace], ['trace_check'])
     assert feature_values[0]['trace_check'] is None
     # no spikes
     mf1_trace["V"] = [0] * len(mf1_trace["V"])
-    feature_values = efel.getFeatureValues([mf1_trace], ['trace_check'])
+    feature_values = efel.get_feature_values([mf1_trace], ['trace_check'])
     assert feature_values[0]['trace_check'][0] == 0
 
 

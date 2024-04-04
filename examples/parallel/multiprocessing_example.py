@@ -47,7 +47,7 @@ def main():
 
     import multiprocessing
     pool = multiprocessing.Pool()
-    traces_results = efel.getFeatureValues(
+    traces_results = efel.get_feature_values(
         traces, [
             'AP_amplitude', 'voltage_base'], parallel_map=pool.map)
 
