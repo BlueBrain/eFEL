@@ -90,26 +90,6 @@ def reset():
 
 
 @deprecated("Changing the dependency file will not be supported in the future.")
-def setDependencyFileLocation(location: str | Path) -> None:
-    """Sets the location of the Dependency file.
-
-    eFEL uses 'Dependency' files to let the user define versions of features to use.
-    The installation directory of eFEL contains a default 'DependencyV5.txt' file.
-    Unless users want to change this file, it is not necessary to call this function.
-
-    Args:
-        location: Path to the location of a Dependency file.
-
-    Raises:
-        FileNotFoundError: If the path to the dependency file doesn't exist.
-    """
-    location = Path(location)
-    if not location.exists():
-        raise FileNotFoundError(f"Path to dependency file {location} doesn't exist")
-    _settings.dependencyfile_path = str(location)
-
-
-@deprecated("Changing the dependency file will not be supported in the future.")
 def getDependencyFileLocation() -> str:
     """Gets the location of the Dependency file.
 
