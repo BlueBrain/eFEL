@@ -25,7 +25,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Iterator, Literal, overload
 from typing_extensions import deprecated
 import numpy as np
 
@@ -249,13 +249,35 @@ def set_str_setting(setting_name: str, new_value: str) -> None:
     _string_settings[setting_name] = new_value
 
 
+@overload
+def get_feature_values(
+    traces: list[dict],
+    feature_names: list[str],
+    parallel_map: Callable | None,
+    return_list: Literal[True],
+    raise_warnings: bool = True,
+) -> list:
+    ...
+
+
+@overload
+def get_feature_values(
+    traces: list[dict],
+    feature_names: list[str],
+    parallel_map: Callable | None,
+    return_list: Literal[False],
+    raise_warnings: bool = True,
+) -> Iterator:
+    ...
+
+
 def get_feature_values(
     traces: list[dict],
     feature_names: list[str],
     parallel_map: Callable | None = None,
     return_list: bool = True,
     raise_warnings: bool = True,
-) -> list | map:
+) -> list | Iterator:
     """Calculate feature values for a list of traces.
 
     This function is the core of eFEL API. A list of traces (in the form
@@ -378,6 +400,8 @@ def get_mean_feature_values(
     featureDicts = get_feature_values(
         traces,
         feature_names,
+        parallel_map=None,
+        return_list=True,
         raise_warnings=raise_warnings)
     for featureDict in featureDicts:  # type: ignore
         for (key, values) in list(featureDict.items()):
