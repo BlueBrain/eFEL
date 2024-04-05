@@ -46,11 +46,15 @@ static int __depolarized_base(const vector<double>& t, const vector<double>& v,
       startIndex = apendi[i];
       endIndex = apbi[i + 1];
       for (k = startIndex; k < endIndex; k++) {
-        baseValue += v[k];
-        nPt++;
+        if (k >= 0 && k < v.size()) {
+          baseValue += v[k];
+          ++nPt;
+        }
+        if (nPt > 0) {
+          baseValue /= nPt;
+          dep_base.push_back(baseValue);
+        }
       }
-      baseValue = baseValue / nPt;
-      dep_base.push_back(baseValue);
     }
     return dep_base.size();
   }
