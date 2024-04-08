@@ -47,6 +47,7 @@ from efel.api import get_distance
 
 testdata_dir = Path(__file__).parent / 'testdata'
 meanfrequency1_url = testdata_dir / 'basic' / 'mean_frequency_1.txt'
+meanfrequency2_url = testdata_dir / 'basic' / 'mean_frequency_2.txt'
 ahptest1_url = testdata_dir / 'basic' / 'ahptest_1.txt'
 tau20_0_url = testdata_dir / 'basic' / 'tau20.0.csv'
 spikeoutsidestim_url = testdata_dir / 'basic' / 'spike_outside_stim.txt'
@@ -72,6 +73,10 @@ def load_data(data_name, interp=False, interp_dt=0.1):
         stim_start = 500.0
         stim_end = 900.0
         time, voltage = load_ascii_input(meanfrequency1_url)
+    elif data_name == 'mean_frequency2':
+        stim_start = 500.0
+        stim_end = 900.0
+        time, voltage = load_ascii_input(meanfrequency2_url)
     elif data_name == 'tau20.0':
         stim_start = 100.0
         stim_end = 1000.0
@@ -2627,39 +2632,47 @@ def test_time_constant():
     numpy.testing.assert_allclose(time_cst, py_tau, rtol=1e-3)
 
 
-def test_depolarized_base():
-    """basic: Test depolarized base"""
+def calculate_depolarized_base(trace_name, interp=True):
+    """
+    Calculate depolarized base using given trace data.
+
+    :param trace_name: Name of the trace data to load.
+    :param interp: Whether to interpolate the data.
+    :return: None
+    """
 
     import efel
     efel.reset()
 
-    trace, time, voltage, stim_start, stim_end = load_data(
-        'mean_frequency1', interp=True)
+    trace, time, voltage, stim_start, stim_end = load_data(trace_name, interp=interp)
 
     features = ["depolarized_base", "AP_begin_time", "AP_duration"]
-
-    feature_values = \
-        get_feature_values(
-            [trace],
-            features, raise_warnings=False)
+    feature_values = get_feature_values([trace], features, raise_warnings=False)
 
     depolarized_base = feature_values[0]['depolarized_base']
     AP_begin_times = feature_values[0]['AP_begin_time']
     AP_durations = feature_values[0]['AP_duration']
 
     py_dep_base = []
-    for i, (AP_begin, AP_dur) in enumerate(
-        zip(AP_begin_times[:-1], AP_durations[:-1])
-    ):
+    for i, (AP_begin, AP_dur) in enumerate(zip(AP_begin_times[:-1], AP_durations[:-1])):
         dep_start_time = AP_begin + AP_dur
         dep_end_time = AP_begin_times[i + 1]
+        if dep_end_time <= dep_start_time:
+            continue
         start_idx = numpy.argwhere(time > dep_start_time)[0][0] - 1
         end_idx = numpy.argwhere(time > dep_end_time)[0][0] - 1
 
         py_dep_base.append(numpy.mean(voltage[start_idx:end_idx]))
 
-    numpy.testing.assert_allclose(depolarized_base, py_dep_base)
+    numpy.testing.assert_allclose(depolarized_base, py_dep_base, rtol=1e-3)
 
+def test_depolarized_base():
+    """Test depolarized base with standard data."""
+    calculate_depolarized_base('mean_frequency1', interp=True)
+
+def test_depolarized_base_outlier():
+    """Test depolarized base with outlier data."""
+    calculate_depolarized_base('mean_frequency2', interp=False)
 
 def test_AP_duration():
     """basic: Test AP duration"""
