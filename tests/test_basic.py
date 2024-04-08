@@ -2666,13 +2666,16 @@ def calculate_depolarized_base(trace_name, interp=True):
 
     numpy.testing.assert_allclose(depolarized_base, py_dep_base, rtol=1e-3)
 
+
 def test_depolarized_base():
     """Test depolarized base with standard data."""
     calculate_depolarized_base('mean_frequency1', interp=True)
 
+
 def test_depolarized_base_outlier():
     """Test depolarized base with outlier data."""
     calculate_depolarized_base('mean_frequency2', interp=False)
+
 
 def test_AP_duration():
     """basic: Test AP duration"""
