@@ -402,15 +402,22 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   peak_indices.push_back(v.size() - 1);
 
   for (size_t i = 0; i < peak_indices.size() - 1; i++) {
-    max_slope =
-        distance(dvdt.begin(), std::min_element(dvdt.begin() + peak_indices[i] + 1,
-                                                dvdt.begin() + peak_indices[i + 1]));
+    size_t start_index = peak_indices[i] + 1;
+    size_t end_index = peak_indices[i + 1];
+
+    if (start_index >= end_index || start_index >= dvdt.size() || end_index >= dvdt.size()) {
+      continue;
+    }
+
+    auto min_element_it = std::min_element(dvdt.begin() + start_index, dvdt.begin() + end_index);
+    auto max_slope = std::distance(dvdt.begin(), min_element_it);
     // assure that the width of the slope is bigger than 4
-    apei.push_back(distance(dvdt.begin(), find_if(dvdt.begin() + max_slope,
-                                             dvdt.begin() + peak_indices[i + 1],
-                                             [derivativethreshold](double x) {
-                                               return x >= derivativethreshold;
-                                             })));
+    auto threshold_it = std::find_if(dvdt.begin() + max_slope, dvdt.begin() + end_index,
+                                    [derivativethreshold](double x) { return x >= derivativethreshold; });
+
+    if (threshold_it != dvdt.begin() + end_index) {
+      apei.push_back(std::distance(dvdt.begin(), threshold_it));
+    }
   }
   return apei.size();
 }
@@ -1343,7 +1350,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
 
   if (decayTimes.size() < 1 || decayValues.size() < 1) {
     throw FeatureComputationError("No data points to calculate decay_time_constant_after_stim");
-  } 
+  }
   linear_fit_result fit;
   fit = slope_straight_line_fit(decayTimes, decayValues);
 
