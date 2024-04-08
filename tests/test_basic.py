@@ -2632,9 +2632,9 @@ def test_time_constant():
     numpy.testing.assert_allclose(time_cst, py_tau, rtol=1e-3)
 
 
-def calculate_depolarized_base(trace_name, interp=True):
+def assert_depolarized_base(trace_name, interp=True):
     """
-    Calculate depolarized base using given trace data.
+    Calculates depolarized base using given trace data and checks for correctness.
 
     :param trace_name: Name of the trace data to load.
     :param interp: Whether to interpolate the data.
@@ -2669,12 +2669,12 @@ def calculate_depolarized_base(trace_name, interp=True):
 
 def test_depolarized_base():
     """Test depolarized base with standard data."""
-    calculate_depolarized_base('mean_frequency1', interp=True)
+    assert_depolarized_base('mean_frequency1', interp=True)
 
 
 def test_depolarized_base_outlier():
     """Test depolarized base with outlier data."""
-    calculate_depolarized_base('mean_frequency2', interp=False)
+    assert_depolarized_base('mean_frequency2', interp=False)
 
 
 def test_AP_duration():
