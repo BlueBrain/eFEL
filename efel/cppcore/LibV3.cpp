@@ -50,10 +50,10 @@ static int __depolarized_base(const vector<double>& t, const vector<double>& v,
           baseValue += v[k];
           ++nPt;
         }
-        if (nPt > 0) {
-          baseValue /= nPt;
-          dep_base.push_back(baseValue);
-        }
+      }
+      if (nPt > 0) {
+        baseValue /= nPt;
+        dep_base.push_back(baseValue);
       }
     }
     return dep_base.size();
