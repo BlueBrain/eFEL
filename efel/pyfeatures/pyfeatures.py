@@ -37,6 +37,7 @@ from efel import cppcore
 
 all_pyfeatures = [
     "voltage",
+    "voltage_std",
     "time",
     "current",
     "ISIs",
@@ -67,6 +68,15 @@ all_pyfeatures = [
 def voltage():
     """Get voltage trace"""
     return get_cpp_feature("voltage")
+
+
+def voltage_std():
+    """Get standard deviation of voltage between stimulus interval."""
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    return np.array([np.std(voltage[(time > stim_start) & (time < stim_end)])])
 
 
 def time():
@@ -284,12 +294,12 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
     peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
     isis = np.diff(peak_times)
 
-    # if all isis are less than max_isis, we assume it is a single burst
-    if max(isis) < max_isis:
-        return np.array([10.0])
-
     # if we have only two large isis, we assume it is not a burst
     if len(isis) < 2:
+        return np.array([10.0])
+
+    # if all isis are less than max_isis, we assume it is a single burst
+    if max(isis) < max_isis:
         return np.array([10.0])
 
     thresh = _get_burst_thresh(isis)
