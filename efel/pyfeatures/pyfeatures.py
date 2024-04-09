@@ -155,17 +155,8 @@ def strict_burst_number() -> np.ndarray:
 
 
 def _get_burst_thresh(isis):
-    """Find a split of isis for inter and intra bursts.
-
-    We remove large outlier isis, which often occur as random single AP long after end of burst.
-    We do this only in traces with more then 15 APs, to prevent missing 2 bursts cases, with only
-    one large ISI that will be discarded.
-    """
-    _isis = isis
-    if len(isis) > 15:
-        perc_isis = np.percentile(isis, 95)
-        _isis = isis[isis < perc_isis]
-    kmeans = KMeans(n_clusters=2).fit(_isis.reshape(len(_isis), 1))
+    """Find a split of isis for inter and intra bursts."""
+    kmeans = KMeans(n_clusters=2).fit(isis.reshape(len(isis), 1))
     return kmeans.cluster_centers_.mean(axis=0)[0]
 
 
@@ -308,7 +299,7 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
     small_isis = isis[isis < thresh]
     if len(small_isis[small_isis > max_isis]) > 0.1 * len(isis):
         return np.array([10.0])
-
+    print(thresh)
     # if the smallest of right group is to large, it is not bursting
     if min(isis[isis > thresh]) > 2000:
         return np.array([10.0])
