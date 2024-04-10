@@ -60,6 +60,7 @@ all_pyfeatures = [
     "all_burst_number",
     "all_postburst_min_values",
     "burst_runaway",
+    "tonic_after_burst",
     "trace_check",
     "phaseslope_max",
 ]
@@ -155,12 +156,15 @@ def strict_burst_number() -> np.ndarray:
 
 
 def _get_burst_thresh(isis):
-    """Find a split of isis for inter and intra bursts."""
-    kmeans = KMeans(n_clusters=2).fit(isis.reshape(len(isis), 1))
+    """Find a split of isis for inter and intra bursts.
+
+    The high number of n_init increases stability of the algorithm.
+    """
+    kmeans = KMeans(n_clusters=2, n_init=100).fit(isis.reshape(len(isis), 1))
     return kmeans.cluster_centers_.mean(axis=0)[0]
 
 
-def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np.ndarray:
+def all_burst_number(max_isis: float = 50.0) -> np.ndarray:
     """The number of all the bursts, even if they have a single AP.
 
     Instead of relying on burst_mean_freq, we split the ISIs into two groups,
@@ -191,27 +195,53 @@ def all_burst_number(max_isis: float = 50.0, raise_warnings: bool = False) -> np
 
     thresh = _get_burst_thresh(isis)
 
-    # if more that 10% of isis in the left group larger than max_isis, it is not bursting
+    # if som isis in the left group larger than max_isis, it may contain tonic, so we remove one
+    # burst in final computation
     small_isis = isis[isis < thresh]
-    if len(small_isis[small_isis > max_isis]) > 0.1 * len(isis):
-        return np.array([0])
+    tonic = False
+    if len(small_isis[small_isis > max_isis]) > 0:
+        tonic = True
 
     # if the smallest of right group is to large, it is not bursting
     if min(isis[isis > thresh]) > 4000:
         return np.array([0])
 
-    # here we check is the gap between the two group of ISIs is big enough
-    # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
-    if len(isis[(isis < 1.2 * thresh) & (isis > 0.8 * thresh)]) > 0:
-        if raise_warnings:
-            warnings.warn(
-                """While calculating all_burst_number,
-                there are spike around the threshold, we return 0 bursts""",
-                RuntimeWarning,
-            )
-
-        return np.array([0])
+    if tonic:
+        return np.array([len(isis[isis > thresh])])
     return np.array([len(isis[isis > thresh]) + 1])
+
+
+def tonic_after_burst(max_isis: float = 50.0) -> np.ndarray:
+    """Computes the number of spikes in the tonic phase or bursting, returns 0 if no tonic.
+
+    This is based on all_burst_number feature.
+    """
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    peak_times = get_cpp_feature("peak_time")
+
+    # if we have no or one spike, there cannot be a burst
+    if peak_times is None or len(peak_times) == 1:
+        return np.array([0])
+
+    peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
+    isis = np.diff(peak_times)
+
+    # if all isis are less than max_isis, we assume it is a single burst
+    if max(isis) < max_isis:
+        return np.array([1])
+
+    # if we have only two large isis, we assume it is not a burst
+    if len(isis) < 2:
+        return np.array([0])
+
+    thresh = _get_burst_thresh(isis)
+
+    small_isis = isis[isis < thresh]
+    tonic = 0.0
+    if len(small_isis[small_isis > max_isis]) > 0:
+        tonic = len(small_isis[small_isis > max_isis]) + 1
+    return np.array([tonic])
 
 
 def all_postburst_min_values(max_isis: float = 50.0, raise_warnings: bool = False) -> np.ndarray:
@@ -267,7 +297,9 @@ def all_postburst_min_values(max_isis: float = 50.0, raise_warnings: bool = Fals
     )
 
 
-def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.ndarray:
+def burst_runaway(
+    max_isis: float = 50.0, raise_warnings: bool = False, max_runaway: float = 10.0
+) -> np.ndarray:
     """Measure of runaway bursting, based on differences between first and last AHP depths.
 
     A small values, usually less than 0.2 corresponds to a runnaway burst.
@@ -280,29 +312,28 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
 
     # if we have no or one spike, there cannot be a burst
     if peak_times is None or len(peak_times) == 1:
-        return np.array([10.0])
+        return np.array([max_runaway])
 
     peak_times = peak_times[(peak_times > stim_start) & (peak_times < stim_end)]
     isis = np.diff(peak_times)
 
     # if we have only two large isis, we assume it is not a burst
     if len(isis) < 2:
-        return np.array([10.0])
+        return np.array([max_runaway])
 
     # if all isis are less than max_isis, we assume it is a single burst
     if max(isis) < max_isis:
-        return np.array([10.0])
-
+        return np.array([max_runaway])
     thresh = _get_burst_thresh(isis)
 
     # if more that 10% of isis in the left group larger than max_isis, it is not bursting
     small_isis = isis[isis < thresh]
     if len(small_isis[small_isis > max_isis]) > 0.1 * len(isis):
-        return np.array([10.0])
-    print(thresh)
+        return np.array([max_runaway])
+
     # if the smallest of right group is to large, it is not bursting
-    if min(isis[isis > thresh]) > 2000:
-        return np.array([10.0])
+    if len(isis[isis > thresh]) and min(isis[isis > thresh]) > 2000:
+        return np.array([max_runaway])
 
     # here we check is the gap between the two group of ISIs is big enough
     # to be considered a burst behaviour, the 1.2 and 0.8 are fairly arbitrary
@@ -314,7 +345,7 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
                 RuntimeWarning,
             )
 
-        return np.array([10.0])
+        return np.array([max_runaway])
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
 
@@ -326,10 +357,12 @@ def burst_runaway(max_isis: float = 50.0, raise_warnings: bool = False) -> np.nd
         times.append(time[mask][np.argmin(voltage[mask])])
 
     if len(voltages) < 4:
-        return np.array([10.0])
+        return np.array([max_runaway])
 
     # we use the second burst ahp, to get rid of any transient behavior in the first burst
-    return np.array([min(10.0, (voltages[-2] - voltages[1]) / (times[-2] - times[1]) * 1000.0)])
+    return np.array(
+        [min(max_runaway, (voltages[-2] - voltages[1]) / (times[-2] - times[1]) * 1000.0)]
+    )
 
 
 def impedance():
