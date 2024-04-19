@@ -76,6 +76,9 @@ static int __AP_fall_indices(const vector<double>& v, const vector<int>& apbi,
                              vector<int>& apfi) {
   apfi.resize(std::min(apbi.size(), pi.size()));
   for (size_t i = 0; i < apfi.size(); i++) {
+    if (pi[i] >= v.size() || apbi[i] >= v.size() || apei[i] >= v.size() || pi[i] > apei[i]) {
+        continue;
+    }
     double halfheight = (v[pi[i]] + v[apbi[i]]) / 2.;
     vector<double> vpeak(&v[pi[i]], &v[apei[i]]);
     transform(vpeak.begin(), vpeak.end(), vpeak.begin(),

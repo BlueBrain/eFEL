@@ -618,6 +618,16 @@ The voltages at the maxima of the peaks
 
     peak_voltage = voltage[peak_indices]
 
+`LibV1`_ : AP_height
+~~~~~~~~~~~~~~~~~~~~
+
+Same as peak_voltage: The voltages at the maxima of the peaks
+
+- **Required features**: LibV1:peak_voltage
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_height = peak_voltage
 
 `LibV1`_ : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
