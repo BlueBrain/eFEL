@@ -25,6 +25,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 # pylint: disable=W0602,W0603,W0702, F0401, W0612, R0912
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Callable, Iterator, Literal, overload
 from typing_extensions import deprecated
 import numpy as np
