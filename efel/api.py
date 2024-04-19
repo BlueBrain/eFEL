@@ -435,3 +435,69 @@ def get_mean_feature_values(
 
 
 reset()
+
+
+# Deprecated functions
+@deprecated("Use set_threshold instead")
+def setThreshold(newThreshold: float) -> None:
+    set_threshold(newThreshold)
+
+
+@deprecated("Use set_derivative_threshold instead")
+def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
+    set_derivative_threshold(newDerivativeThreshold)
+
+
+@deprecated("Use get_feature_names instead")
+def getFeatureNames() -> list[str]:
+    return get_feature_names()
+
+
+@deprecated("Use feature_name_exists instead")
+def FeatureNameExists(feature_name: str) -> bool:
+    return feature_name_exists(feature_name)
+
+
+@deprecated("Use get_distance instead")
+def getDistance(
+        trace,
+        featureName,
+        mean,
+        std,
+        trace_check=True,
+        error_dist=250) -> float:
+    return get_distance(trace, featureName, mean, std, trace_check, error_dist)
+
+
+@deprecated("Use set_int_setting instead")
+def setIntSetting(setting_name: str, new_value: int) -> None:
+    set_int_setting(setting_name, new_value)
+
+
+@deprecated("Use set_double_setting instead")
+def setDoubleSetting(setting_name: str, new_value: float) -> None:
+    set_double_setting(setting_name, new_value)
+
+
+@deprecated("Use set_str_setting instead")
+def setStrSetting(setting_name: str, new_value: str) -> None:
+    set_str_setting(setting_name, new_value)
+
+
+@deprecated("Use get_feature_values instead")
+def getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=None,
+        return_list=True,
+        raise_warnings=True):
+    return get_feature_values(
+        traces, featureNames, parallel_map, return_list, raise_warnings)
+
+
+@deprecated("Use get_mean_feature_values instead")
+def getMeanFeatureValues(
+        traces,
+        featureNames,
+        raise_warnings=True):
+    return get_mean_feature_values(traces, featureNames, raise_warnings)
