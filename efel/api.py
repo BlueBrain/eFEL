@@ -89,13 +89,13 @@ def reset():
     _initialise()
 
 
-@deprecated("Changing the dependency file will not be supported in the future.")
-def setDependencyFileLocation(location: str | Path) -> None:
+def set_dependency_file_location(location: str | Path) -> None:
     """Sets the location of the Dependency file.
 
     eFEL uses 'Dependency' files to let the user define versions of features to use.
     The installation directory of eFEL contains a default 'DependencyV5.txt' file.
     Unless users want to change this file, it is not necessary to call this function.
+    Modifying the Dependency file can be useful in debugging.
 
     Args:
         location: Path to the location of a Dependency file.
@@ -109,8 +109,7 @@ def setDependencyFileLocation(location: str | Path) -> None:
     _settings.dependencyfile_path = str(location)
 
 
-@deprecated("Changing the dependency file will not be supported in the future.")
-def getDependencyFileLocation() -> str:
+def get_dependency_file_location() -> str:
     """Gets the location of the Dependency file.
 
     Returns:
@@ -501,3 +500,13 @@ def getMeanFeatureValues(
         featureNames,
         raise_warnings=True):
     return get_mean_feature_values(traces, featureNames, raise_warnings)
+
+
+@deprecated("Use get_dependency_file_location instead")
+def getDependencyFileLocation() -> str:
+    return get_dependency_file_location()
+
+
+@deprecated("Use set_dependency_file_location instead")
+def setDependencyFileLocation(location: str | Path) -> None:
+    return set_dependency_file_location(location)
