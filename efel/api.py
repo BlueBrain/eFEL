@@ -26,7 +26,7 @@ Copyright (c) 2015, EPFL/Blue Brain Project
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterator, Literal, overload
 from typing_extensions import deprecated
 import numpy as np
 
@@ -89,13 +89,13 @@ def reset():
     _initialise()
 
 
-@deprecated("Changing the dependency file will not be supported in the future.")
-def setDependencyFileLocation(location: str | Path) -> None:
+def set_dependency_file_location(location: str | Path) -> None:
     """Sets the location of the Dependency file.
 
     eFEL uses 'Dependency' files to let the user define versions of features to use.
     The installation directory of eFEL contains a default 'DependencyV5.txt' file.
     Unless users want to change this file, it is not necessary to call this function.
+    Modifying the Dependency file can be useful in debugging.
 
     Args:
         location: Path to the location of a Dependency file.
@@ -109,8 +109,7 @@ def setDependencyFileLocation(location: str | Path) -> None:
     _settings.dependencyfile_path = str(location)
 
 
-@deprecated("Changing the dependency file will not be supported in the future.")
-def getDependencyFileLocation() -> str:
+def get_dependency_file_location() -> str:
     """Gets the location of the Dependency file.
 
     Returns:
@@ -130,11 +129,6 @@ def set_threshold(new_threshold: float) -> None:
     set_double_setting('Threshold', _settings.threshold)
 
 
-@deprecated("Use set_threshold instead")
-def setThreshold(newThreshold: float) -> None:
-    set_threshold(newThreshold)
-
-
 def set_derivative_threshold(new_derivative_threshold: float) -> None:
     """Set the threshold for the derivative for detecting the spike onset.
 
@@ -147,11 +141,6 @@ def set_derivative_threshold(new_derivative_threshold: float) -> None:
     """
     _settings.derivative_threshold = new_derivative_threshold
     set_double_setting('DerivativeThreshold', _settings.derivative_threshold)
-
-
-@deprecated("Use set_derivative_threshold instead")
-def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
-    set_derivative_threshold(newDerivativeThreshold)
 
 
 def get_feature_names() -> list[str]:
@@ -171,19 +160,9 @@ def get_feature_names() -> list[str]:
     return feature_names
 
 
-@deprecated("Use get_feature_names instead")
-def getFeatureNames() -> list[str]:
-    return get_feature_names()
-
-
 def feature_name_exists(feature_name: str) -> bool:
     """Returns True if the feature name exists in eFEL, False otherwise."""
     return feature_name in get_feature_names()
-
-
-@deprecated("Use feature_name_exists instead")
-def FeatureNameExists(feature_name: str) -> bool:
-    return feature_name_exists(feature_name)
 
 
 def _get_feature(feature_name: str, raise_warnings=False) -> np.ndarray | None:
@@ -254,17 +233,6 @@ def get_distance(
         return distance
 
 
-@deprecated("Use get_distance instead")
-def getDistance(
-        trace,
-        featureName,
-        mean,
-        std,
-        trace_check=True,
-        error_dist=250) -> float:
-    return get_distance(trace, featureName, mean, std, trace_check, error_dist)
-
-
 def _initialise() -> None:
     """Set cppcore initial values."""
     cppcore.Initialize(_settings.dependencyfile_path, "log")
@@ -291,19 +259,9 @@ def set_int_setting(setting_name: str, new_value: int) -> None:
     _int_settings[setting_name] = new_value
 
 
-@deprecated("Use set_int_setting instead")
-def setIntSetting(setting_name: str, new_value: int) -> None:
-    set_int_setting(setting_name, new_value)
-
-
 def set_double_setting(setting_name: str, new_value: float) -> None:
     """Set a certain double setting to a new value"""
     _double_settings[setting_name] = new_value
-
-
-@deprecated("Use set_double_setting instead")
-def setDoubleSetting(setting_name: str, new_value: float) -> None:
-    set_double_setting(setting_name, new_value)
 
 
 def set_str_setting(setting_name: str, new_value: str) -> None:
@@ -311,17 +269,35 @@ def set_str_setting(setting_name: str, new_value: str) -> None:
     _string_settings[setting_name] = new_value
 
 
-@deprecated("Use set_str_setting instead")
-def setStrSetting(setting_name: str, new_value: str) -> None:
-    set_str_setting(setting_name, new_value)
+@overload
+def get_feature_values(
+    traces: list[dict],
+    feature_names: list[str],
+    parallel_map: Callable | None,
+    return_list: Literal[True],
+    raise_warnings: bool = True,
+) -> list:
+    ...
+
+
+@overload
+def get_feature_values(
+    traces: list[dict],
+    feature_names: list[str],
+    parallel_map: Callable | None,
+    return_list: Literal[False],
+    raise_warnings: bool = True,
+) -> Iterator:
+    ...
 
 
 def get_feature_values(
-        traces: list[dict],
-        feature_names: list[str],
-        parallel_map: Callable | None = None,
-        return_list: bool = True,
-        raise_warnings: bool = True) -> list | map:
+    traces: list[dict],
+    feature_names: list[str],
+    parallel_map: Callable | None = None,
+    return_list: bool = True,
+    raise_warnings: bool = True,
+) -> list | Iterator:
     """Calculate feature values for a list of traces.
 
     This function is the core of eFEL API. A list of traces (in the form
@@ -359,26 +335,13 @@ def get_feature_values(
     if parallel_map is None:
         parallel_map = map
 
-    traces_featurenames = (
-        (trace, feature_names, raise_warnings)
-        for trace in traces)
+    traces_featurenames = ((trace, feature_names, raise_warnings) for trace in traces)
     map_result = parallel_map(_get_feature_values_serial, traces_featurenames)
 
     if return_list:
         return list(map_result)
     else:
         return map_result
-
-
-@deprecated("Use get_feature_values instead")
-def getFeatureValues(
-        traces,
-        featureNames,
-        parallel_map=None,
-        return_list=True,
-        raise_warnings=True):
-    return get_feature_values(
-        traces, featureNames, parallel_map, return_list, raise_warnings)
 
 
 def get_py_feature(feature_name: str) -> np.ndarray | None:
@@ -457,6 +420,8 @@ def get_mean_feature_values(
     featureDicts = get_feature_values(
         traces,
         feature_names,
+        parallel_map=None,
+        return_list=True,
         raise_warnings=raise_warnings)
     for featureDict in featureDicts:  # type: ignore
         for (key, values) in list(featureDict.items()):
@@ -468,6 +433,67 @@ def get_mean_feature_values(
     return featureDicts  # type: ignore
 
 
+reset()
+
+
+# Deprecated functions
+@deprecated("Use set_threshold instead")
+def setThreshold(newThreshold: float) -> None:
+    set_threshold(newThreshold)
+
+
+@deprecated("Use set_derivative_threshold instead")
+def setDerivativeThreshold(newDerivativeThreshold: float) -> None:
+    set_derivative_threshold(newDerivativeThreshold)
+
+
+@deprecated("Use get_feature_names instead")
+def getFeatureNames() -> list[str]:
+    return get_feature_names()
+
+
+@deprecated("Use feature_name_exists instead")
+def FeatureNameExists(feature_name: str) -> bool:
+    return feature_name_exists(feature_name)
+
+
+@deprecated("Use get_distance instead")
+def getDistance(
+        trace,
+        featureName,
+        mean,
+        std,
+        trace_check=True,
+        error_dist=250) -> float:
+    return get_distance(trace, featureName, mean, std, trace_check, error_dist)
+
+
+@deprecated("Use set_int_setting instead")
+def setIntSetting(setting_name: str, new_value: int) -> None:
+    set_int_setting(setting_name, new_value)
+
+
+@deprecated("Use set_double_setting instead")
+def setDoubleSetting(setting_name: str, new_value: float) -> None:
+    set_double_setting(setting_name, new_value)
+
+
+@deprecated("Use set_str_setting instead")
+def setStrSetting(setting_name: str, new_value: str) -> None:
+    set_str_setting(setting_name, new_value)
+
+
+@deprecated("Use get_feature_values instead")
+def getFeatureValues(
+        traces,
+        featureNames,
+        parallel_map=None,
+        return_list=True,
+        raise_warnings=True):
+    return get_feature_values(
+        traces, featureNames, parallel_map, return_list, raise_warnings)
+
+
 @deprecated("Use get_mean_feature_values instead")
 def getMeanFeatureValues(
         traces,
@@ -476,4 +502,11 @@ def getMeanFeatureValues(
     return get_mean_feature_values(traces, featureNames, raise_warnings)
 
 
-reset()
+@deprecated("Use get_dependency_file_location instead")
+def getDependencyFileLocation() -> str:
+    return get_dependency_file_location()
+
+
+@deprecated("Use set_dependency_file_location instead")
+def setDependencyFileLocation(location: str | Path) -> None:
+    return set_dependency_file_location(location)

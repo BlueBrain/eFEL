@@ -46,7 +46,7 @@ def main():
     # values
 
     from scoop import futures
-    traces_results = efel.getFeatureValues(
+    traces_results = efel.get_feature_values(
         traces, [
             'AP_amplitude', 'voltage_base'], parallel_map=futures.map)
 

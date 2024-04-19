@@ -23,3 +23,4 @@ lib
 fllog.txt
 *.DS_Store
 pyvenv.cfg
+x86_64
