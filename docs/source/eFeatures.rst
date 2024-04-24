@@ -134,8 +134,8 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     else:
         inv_last_ISI = 0
 
-`Python efeature`: inv_ISI_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : inv_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Computes all inverse spike interval values.
 
