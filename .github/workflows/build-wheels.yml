@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-latest, windows-latest]
+        os: [ubuntu-22.04, macos-12, windows-latest]
         python: [cp39, cp310, cp311, cp312]
         arch: [x86_64, amd64]
         exclude:
