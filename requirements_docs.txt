@@ -29,3 +29,6 @@ sphinx_rtd_theme>=2.0.0
 sphinx-autobuild>=2021.3.14
 sphinx-autorun>=1.1.1
 sphinx-autodoc-typehints>=1.25.2
+ipython
+jupyter
+pandoc
