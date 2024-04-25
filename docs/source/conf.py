@@ -55,7 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'eFEL'
-copyright = u'2015-2024, BBP, EPFL'
+# do not define copyright here, in order to use the default Blue Brain project copyright
+# copyright = u'2015-2024, BBP, EPFL'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
