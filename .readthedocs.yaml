@@ -12,12 +12,9 @@ build:
     python: "3.10"
   jobs:
     pre_build:
-      jupyter nbconvert --to rst ../examples/sonata-network/sonata-network.ipynb
-      jupyter nbconvert --to rst ../examples/nmc-portal/L5TTPC2.ipynb
-      cp ../examples/sonata-network/sonata-network.rst source/
-      cp -r ../examples/sonata-network/sonata-network_files source/
-      cp ../examples/nmc-portal/L5TTPC2.rst source/nmc-portal.rst
-      cp -r ../examples/nmc-portal/L5TTPC2_files source/
+      cd docs
+      sh examples_to_rst.sh
+      cd -
 
 python:
   # Install our python package before building the docs
