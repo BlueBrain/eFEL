@@ -1,3 +1,5 @@
+# to call from root
+
 # clean up
 rm docs/source/sonata-network.rst
 rm -rf docs/source/sonata-network_files

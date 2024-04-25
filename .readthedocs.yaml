@@ -12,7 +12,7 @@ build:
     python: "3.10"
   jobs:
     pre_build:
-      - sh examples_to_rst.sh
+      - sh docs/examples_to_rst.sh
 
 python:
   # Install our python package before building the docs
