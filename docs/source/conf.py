@@ -55,7 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'eFEL'
-copyright = u'2015-2024, BBP, EPFL'
+# do not define copyright here, in order to use the default Blue Brain project copyright
+# copyright = u'2015-2024, BBP, EPFL'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -108,7 +109,8 @@ tolerate_sphinx_warnings = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx-bluebrain-theme"
+# html_theme = 'sphinx_rtd_theme'
 # html_theme = 'haiku-bbp'
 
 # Theme options are theme-specific and customize the look and feel of a theme
