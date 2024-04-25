@@ -13,6 +13,7 @@ build:
   jobs:
     pre_build:
       - cd docs
+      - ls
       - sh examples_to_rst.sh
       - cd -
 
