@@ -81,7 +81,7 @@ setup(
     install_requires=[
         'numpy>=1.6',
         'neo>=0.5.2',
-        'pynwb>2.6.0'
+        'pynwb>=2.6.0',
         'typing-extensions>=4.8.0',
         'scipy>=1.12.0,<2.0.0',
     ],
