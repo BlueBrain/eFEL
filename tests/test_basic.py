@@ -65,9 +65,7 @@ spiking_from_beginning_to_end_url = (
 )
 spontaneous_url = testdata_dir / 'basic' / 'spontaneous.txt'
 
-testdata_url = 'file://%s' % os.path.join(os.path.abspath(testdata_dir),
-                                          'allfeatures',
-                                          'testdata.txt')
+testdata_url = testdata_dir / 'allfeatures' / 'testdata.txt'
 
 
 def load_data(data_name, interp=False, interp_dt=0.1):
@@ -3705,8 +3703,7 @@ def test_postburst_slow_ahp_values():
         # use this to have all spikes in burst for burst3_url case
         efel.setDoubleSetting('strict_burst_factor', 4.0)
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3759,8 +3756,7 @@ def test_time_to_postburst_slow_ahp():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3860,8 +3856,7 @@ def test_postburst_fast_ahp_values():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -3958,8 +3953,7 @@ def test_postburst_adp_peak_values():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -4043,8 +4037,7 @@ def test_time_to_postburst_fast_ahp():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -4134,8 +4127,7 @@ def test_time_to_postburst_adp_peak():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -4253,8 +4245,7 @@ def test_interburst_XXpercent_values():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
@@ -4323,8 +4314,7 @@ def test_interburst_duration():
         import efel
         efel.reset()
 
-        time = efel.io.load_fragment('%s#col=1' % url)
-        voltage = efel.io.load_fragment('%s#col=2' % url)
+        time, voltage = load_ascii_input(url)
 
         trace = {}
         trace['T'] = time

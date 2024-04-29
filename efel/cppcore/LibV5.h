@@ -289,42 +289,10 @@ int time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,
 int time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int interburst_15percent_indices(mapStr2intVec& IntFeatureData,
+int interburst_XXpercent_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_15percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_20percent_indices(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_20percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_25percent_indices(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_25percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_30percent_indices(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_30percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_40percent_indices(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_40percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_60percent_indices(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int interburst_60percent_values(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
+                            mapStr2Str& StringData,
+                            int percent);
 int interburst_duration(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);                            
