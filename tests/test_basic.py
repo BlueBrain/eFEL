@@ -4300,7 +4300,7 @@ def test_interburst_XXpercent_values():
             feature_values, interp_time, interp_voltage, 30
         )
         interburst_XXpercent_values_compare_with_py(
-            feature_values, interp_time, interp_voltage, 30
+            feature_values, interp_time, interp_voltage, 40
         )
         interburst_XXpercent_values_compare_with_py(
             feature_values, interp_time, interp_voltage, 60
