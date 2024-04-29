@@ -734,33 +734,10 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return time_to_postburst_adp_peaks
 
 
-`LibV5`_ : interburst_15percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`LibV5`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Voltage value after 15% of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_15percent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_15percent = t[postburst_fahp_i] + time_interval * 0.15
-            index_at_15percent = numpy.argwhere(t >= time_at_15percent)[0][0]
-            interburst_15percent_values.append(v[index_at_15percent])
-
-`LibV5`_ : interburst_20percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage value after 20% of the interburst duration after the fast AHP.
+Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
 
 This implementation does not assume that every spike belongs to a burst.
 
@@ -772,105 +749,13 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 - **Units**: mV
 - **Pseudocode**: ::
 
-    interburst_20percent_values = []
+    interburst_XXpercent_values = []
     for i, postburst_fahp_i in enumerate(postburst_fahpi):
         if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
             time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_20percent = t[postburst_fahp_i] + time_interval * 0.2
-            index_at_20percent = numpy.argwhere(t >= time_at_20percent)[0][0]
-            interburst_20percent_values.append(v[index_at_20percent])
-
-`LibV5`_ : interburst_25percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage value after 25% of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_25percent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_25percent = t[postburst_fahp_i] + time_interval * 0.25
-            index_at_25percent = numpy.argwhere(t >= time_at_25percent)[0][0]
-            interburst_25percent_values.append(v[index_at_25percent])
-
-`LibV5`_ : interburst_30percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage value after 30% of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_30percent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_30percent = t[postburst_fahp_i] + time_interval * 0.30
-            index_at_30percent = numpy.argwhere(t >= time_at_30percent)[0][0]
-            interburst_30percent_values.append(v[index_at_30percent])
-
-`LibV5`_ : interburst_40percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage value after 40% of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_40percent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_40percent = t[postburst_fahp_i] + time_interval * 0.4
-            index_at_40percent = numpy.argwhere(t >= time_at_40percent)[0][0]
-            interburst_40percent_values.append(v[index_at_40percent])
-
-`LibV5`_ : interburst_60percent_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Voltage value after 60% of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_60percent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_60percent = t[postburst_fahp_i] + time_interval * 0.6
-            index_at_60percent = numpy.argwhere(t >= time_at_60percent)[0][0]
-            interburst_60percent_values.append(v[index_at_60percent])
+            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percentage / 100.
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            interburst_XXpercent_values.append(v[index_at_XXpercent])
 
 `LibV5`_ : interburst_duration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
