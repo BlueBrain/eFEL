@@ -13,6 +13,7 @@ testdata_dir = Path(__file__).parent / 'testdata'
 neo_test_files_dir = Path(__file__).parent / 'neo_test_files'
 meanfrequency1_filename = testdata_dir / 'basic' / 'mean_frequency_1.txt'
 meanfrequency1_url = str(meanfrequency1_filename)
+nwb1_filename = testdata_dir / 'JY180308_A_1.nwb'
 
 
 def test_load_ascii_input():
@@ -269,3 +270,27 @@ def test_load_neo_file_stim_time_events_incomplete():
                              "neo_test_file_events_time_incomplete.mat")
 
     pytest.raises(ValueError, efel.io.load_neo_file, file_name)
+
+
+def test_load_neo_file_nwb():
+    """Test loading of data from an NWB file."""
+    import efel
+    import neo
+
+    efel_blocks = efel.io.load_neo_file(nwb1_filename, 250, 600)
+    efel_trace = efel_blocks[0][0][0]
+
+    reader = neo.io.NWBIO(filename=nwb1_filename)
+    neo_blocks = reader.read()
+    neo_trace = neo_blocks[0].segments[0].analogsignals[0]
+    time_shifted = neo_trace.times[-1] - neo_trace.times[0]
+    rescaled_time_shifted = time_shifted.rescale('ms').magnitude
+
+    assert neo_trace[0].rescale('mV').magnitude == efel_trace['V'][0]
+    assert rescaled_time_shifted == efel_trace['T'][-1]
+
+    for efel_seg in efel_blocks:
+        for traces in efel_seg:
+            for trace in traces:
+                assert trace['stim_start'] == [250]
+                assert trace['stim_end'] == [600]
