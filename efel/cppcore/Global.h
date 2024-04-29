@@ -26,7 +26,6 @@
 feature2function FptrTableV1;
 feature2function FptrTableV2;
 feature2function FptrTableV3;
-feature2function FptrTableV4;
 feature2function FptrTableV5;
 feature2function FptrTable;
 

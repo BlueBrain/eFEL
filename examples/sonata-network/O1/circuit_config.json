@@ -1,0 +1,75 @@
+{
+    "manifest": {
+        "$BASE_DIR": "./"
+    },
+    "version": 2.3,
+    "components": {
+        "morphologies_dir": "",
+        "synaptic_models_dir": "",
+        "point_neuron_models_dir": "",
+        "mechanisms_dir": "",
+        "biophysical_neuron_models_dir": "",
+        "templates_dir": "",
+        "provenance": {
+            "atlas_dir": "$BASE_DIR/atlas"
+        }
+    },
+    "node_sets_file": "$BASE_DIR/node_sets.json",
+    "networks": {
+        "nodes": [{
+                "nodes_file": "$BASE_DIR/S1nonbarrel_neurons/nodes.h5",
+                "populations": {
+                    "S1nonbarrel_neurons": {
+                        "type": "biophysical",
+                        "morphologies_dir": "",
+                        "biophysical_neuron_models_dir": "$BASE_DIR/emodels_hoc",
+                        "alternate_morphologies": {
+                            "neurolucida-asc": "$BASE_DIR/morphologies/ascii"
+                        }
+                    }
+                }
+            },
+            {
+                "nodes_file": "$BASE_DIR/VPM/nodes.h5",
+                "populations": {
+                    "VPM": {
+                        "type": "virtual"
+                    }
+                }
+            },
+            {
+                "nodes_file": "$BASE_DIR/POm/nodes.h5",
+                "populations": {
+                    "POm": {
+                        "type": "virtual"
+                    }
+                }
+            }
+        ],
+        "edges": [{
+                "edges_file": "$BASE_DIR/S1nonbarrel_neurons__S1nonbarrel_neurons__chemical/edges.h5",
+                "populations": {
+                    "S1nonbarrel_neurons__S1nonbarrel_neurons__chemical": {
+                        "type": "chemical"
+                    }
+                }
+            },
+            {
+                "edges_file": "$BASE_DIR/VPM__S1nonbarrel_neurons__chemical/edges.h5",
+                "populations": {
+                    "VPM__S1nonbarrel_neurons__chemical": {
+                        "type": "chemical"
+                    }
+                }
+            },
+            {
+                "edges_file": "$BASE_DIR/POm__S1nonbarrel_neurons__chemical/edges.h5",
+                "populations": {
+                    "POm__S1nonbarrel_neurons__chemical": {
+                        "type": "chemical"
+                    }
+                }
+            }
+        ]
+    }
+}

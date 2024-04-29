@@ -29,7 +29,15 @@ needs_sphinx = '1.3'
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode',
-              'sphinx.ext.autosummary', 'sphinx.ext.napoleon']
+              'sphinx.ext.autosummary', 'sphinx.ext.napoleon', "sphinx_autodoc_typehints"]
+autosummary_generate = True  # Turn on sphinx.ext.autosummary
+autodoc_default_options = {
+    "members": True,
+}
+
+# Autodoc-typehints settings
+always_document_param_types = True
+typehints_use_rtype = True
 
 napoleon_numpy_docstring = True
 
@@ -47,7 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'eFEL'
-copyright = u'2015-2022, BBP, EPFL'
+# do not define copyright here, in order to use the default Blue Brain project copyright
+# copyright = u'2015-2024, BBP, EPFL'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -100,7 +109,8 @@ tolerate_sphinx_warnings = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx-bluebrain-theme"
+# html_theme = 'sphinx_rtd_theme'
 # html_theme = 'haiku-bbp'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -259,7 +269,7 @@ texinfo_documents = [
 epub_title = u'eFEL'
 epub_author = u'BBP, EPFL'
 epub_publisher = u'BBP, EPFL'
-epub_copyright = u'2015-2022, BBP, EPFL'
+epub_copyright = u'2015-2024, BBP, EPFL'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

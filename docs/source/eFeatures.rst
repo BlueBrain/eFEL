@@ -45,23 +45,22 @@ Time from the start of the stimulus to the maximum of the second peak
 `LibV5`_ : inv_time_to_first_spike
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1.0 over time to first spike; returns 0 when no spike
+1.0 over time to first spike (times 1000 to convert it to Hz); returns 0 when no spike
 
 - **Required features**: time_to_first_spike
 - **Units**: Hz
 - **Pseudocode**: ::
 
     if len(time_to_first_spike) > 0:
-        inv_time_to_first_spike = 1.0 / time_to_first_spike[0]
+        inv_time_to_first_spike = 1000.0 / time_to_first_spike[0]
     else:
         inv_time_to_first_spike = 0
 
 
-`LibV1`_ : ISI_values
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The interspike intervals (i.e. time intervals) between adjacent peaks.
-If ignore_first_ISI is True, the 1st spike will not be taken into account, because some cells spike right after the stimulus onset and then stay silent for a while.
 
 - **Required features**: peak_time (ms)
 - **Units**: ms
@@ -94,8 +93,8 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     all_isi_values_vec = numpy.diff(peak_time)
 
 
-`LibV5`_ : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over first/second/third/fourth/fith/last ISI; returns 0 when no ISI
 
@@ -135,6 +134,17 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     else:
         inv_last_ISI = 0
 
+`Python efeature`_ : inv_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes all inverse spike interval values.
+
+- **Required features**: peak_time (ms)
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+    inv_isi_values = 1000.0 / all_isi_values_vec
 
 `LibV5`_ : time_to_last_spike
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,8 +160,8 @@ time from stimulus start to last spike
     else:
         time_to_last_spike = 0
 
-`LibV1`_ : Spikecount
-~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : spike_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes in the trace, including outside of stimulus interval
 
@@ -159,10 +169,13 @@ number of spikes in the trace, including outside of stimulus interval
 - **Units**: constant
 - **Pseudocode**: ::
 
-    Spikecount = len(peak_indices)
+    spike_count = len(peak_indices)
 
-`LibV5`_ : Spikecount_stimint
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Note**: "spike_count" is the new name for the feature "Spikecount".
+"Spikecount", while still available, will be removed in the future.
+
+`Python efeature`_ : spike_count_stimint
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes inside the stimulus interval
 
@@ -171,7 +184,10 @@ number of spikes inside the stimulus interval
 - **Pseudocode**: ::
 
     peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
-    Spikecount_stimint = len(peaktimes_stimint)
+    spike_count_stimint = len(peaktimes_stimint)
+
+**Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
+"Spikecount_stimint", while still available, will be removed in the future.
 
 `LibV5`_ : number_initial_spikes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,7 +224,7 @@ The mean frequency of the firing rate
 The slope of a linear fit to a semilog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -220,13 +236,13 @@ See LibV1: ISI_values feature for more details.
 
     ISI_semilog_slope = slope
 
-`LibV5`_ : ISI_log_slope
-~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
 - **Units**: ms
@@ -238,8 +254,8 @@ See LibV1: ISI_values feature for more details.
 
     ISI_log_slope = slope
 
-`LibV5`_ : ISI_log_slope_skip
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_log_slope_skip
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a loglog plot of the ISI values, but not taking into account the first ISI values.
 
@@ -259,27 +275,25 @@ However, if this number of ISI values to skip is higher than max_spike_skip, the
 
     ISI_log_slope = slope
 
-`LibV1`_ : ISI_CV
-~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_CV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The coefficient of variation of the ISIs.
 
 Attention: the 1st ISI is not taken into account unless ignore_first_ISI is set to 0.
-See LibV1: ISI_values feature for more details.
+See Python efeature: ISIs feature for more details.
 
-- **Required features**: ISI_values
+- **Required features**: ISIs
 - **Units**: constant
 - **Pseudocode**: ::
 
     ISI_mean = numpy.mean(ISI_values)
-    ISI_variance = numpy.sum(numpy.square(ISI_values-ISI_mean)) / (len(ISI_values)-1)
-    ISI_std = math.sqrt(ISI_variance)
-    ISI_CV = ISI_std / ISI_mean
+    ISI_CV = np.std(isi_values, ddof=1) / ISI_mean
 
-`LibV5`_ : irregularity_index
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : irregularity_index
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mean of the absolute difference of all ISIs, except the first one (see LibV1: ISI_values feature for more details.)
+Mean of the absolute difference of all ISIs, except the first one (see Python efeature: ISIs feature for more details.)
 
 The first ISI can be taken into account if ignore_first_ISI is set to 0.
 
@@ -343,25 +357,8 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     ISI_sub = ISI_values[1:] - ISI_values[:-1]
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
-
-`LibV5`_ : check_AISInitiation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Check initiation of AP in AIS
-
-- **Required features**: t, V, stim_start, stim_end, AP_begin_time, AP_begin_time;location_AIS
-- **Units**: constant
-- **Pseudocode**: ::
-
-    if len(AP_begin_time) != len(AP_begin_time;location_AIS):
-        return None
-    for soma_time, ais_time in zip(AP_begin_time, AP_begin_time;location_AIS):
-        if soma_time < ais_time:
-            return None
-    return [1]
-
-`LibV1`_ : burst_mean_freq
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean frequency during a burst for each burst
 
@@ -419,8 +416,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             )
         )
 
-`LibV1`_ : burst_number
-~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 
@@ -430,8 +427,8 @@ The number of bursts
 
     burst_number = len(burst_mean_freq)
 
-`LibV5`_ : strict_burst_number
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : strict_burst_number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The number of bursts
 
@@ -447,8 +444,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     burst_number = len(strict_burst_mean_freq)
 
-`LibV1`_ : interburst_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltage average in between two bursts
 
@@ -896,8 +893,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         if idx + 1 < len(peak_time)
     ]
 
-`LibV1`_ : single_burst_ratio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : single_burst_ratio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.
@@ -912,6 +909,67 @@ the length of the first isi over the median of the rest of the isis.
 
     single_burst_ratio = ISI_values[0] / numpy.mean(ISI_values)
 
+`Python efeature`_ : spikes_per_burst
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Number of spikes in each burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spike_per_bursts = []
+    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
+        spike_per_bursts.append(idx_end - idx_begin + 1)
+
+`Python efeature`_ : spikes_per_burst_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between each burst and the next one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spikes_per_burst[:-1] - spikes_per_burst[1:]
+
+`Python efeature`_ : spikes_in_burst1_burst2_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the second one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst_diff
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst_diff[0]])
+
+`Python efeature`_ : spikes_in_burst1_burstlast_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the last one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
 Spike shape features
 --------------------
@@ -941,6 +999,16 @@ The voltages at the maxima of the peaks
 
     peak_voltage = voltage[peak_indices]
 
+`LibV1`_ : AP_height
+~~~~~~~~~~~~~~~~~~~~
+
+Same as peak_voltage: The voltages at the maxima of the peaks
+
+- **Required features**: LibV1:peak_voltage
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_height = peak_voltage
 
 `LibV1`_ : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1607,100 +1675,56 @@ Slope of the V, dVdt phasespace plot at the beginning of every spike
     range_min_idxs = AP_begin_indices - AP_phseslope_range
     AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
 
-`LibV5`_ : AP_phaseslope_AIS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : phaseslope_max
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Same as AP_phaseslope, but for AIS location
+Computes the maximum of the phase slope.
+Attention, this feature is sensitive to interpolation timestep.
 
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_AIS, V;location_AIS, stim_start;location_AIS, stim_end;location_AIS, LibV5:AP_begin_indices;location_AIS
-- **Parameters**: AP_phaseslope_range
-- **Units**: 1/(ms)
+- **Required features**: time, voltage
+- **Units**: V/s
 - **Pseudocode**: ::
 
-    range_max_idxs = AP_begin_indices + AP_phseslope_range
-    range_min_idxs = AP_begin_indices - AP_phseslope_range
-    AP_phaseslope_AIS = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
 
-`LibV5`_ : BPAPHeightLoc1
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : initburst_sahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Voltage height (difference betwen peaks and voltage base) at dendrite location
+Slow AHP voltage after initial burst
 
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
+The end of the initial burst is detected when the ISIs frequency gets lower than initburst_freq_threshold, in Hz.
+Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
+and initburst_sahp_end (in ms) after the last spike of the burst.
 
-- **Required features**: T;location_dend1, V;location_dend1, stim_start;location_dend1, stim_end;location_dend1, peak_voltage;location_dend1, voltage_base;location_dend1
+- **Required features**: LibV1: peak_time 
+- **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
+- **Units**: mV
+
+`Python efeature`_ : initburst_sahp_ssse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage from steady_state_voltage_stimend after initial burst
+
+- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
 - **Units**: mV
 - **Pseudocode**: ::
 
-    BPAPHeightLoc1 = peak_voltage - voltage_base
+    numpy.array([initburst_sahp_value[0] - ssse[0]])
 
-`LibV5`_ : BPAPHeightLoc2
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : initburst_sahp_vb
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Same as BPAPHeightLoc1, but for dend2 location
+Slow AHP voltage from voltage base after initial burst
 
-- **Required features**: T;location_dend2, V;location_dend2, stim_start;location_dend2, stim_end;location_dend2, peak_voltage;location_dend2, voltage_base;location_dend2
+- **Required features**: LibV5: voltage_base, initburst_sahp
 - **Units**: mV
 - **Pseudocode**: ::
 
-    BPAPHeightLoc2 = peak_voltage - voltage_base
+    numpy.array([initburst_sahp_value[0] - voltage_base[0]])
 
-`LibV5`_ : BPAPAmplitudeLoc1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Amplitude at dendrite location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_dend1, V;location_dend1, stim_start;location_dend1, stim_end;location_dend1, peak_voltage;location_dend1, AP_begin_voltage;location_dend1
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPAmplitudeLoc1 = peak_voltage - AP_begin_voltage
-
-`LibV5`_ : BPAPAmplitudeLoc2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Same as BPAPAmplitudeLoc1, but for dend2 location
-
-- **Required features**: T;location_dend2, V;location_dend2, stim_start;location_dend2, stim_end;location_dend2, peak_voltage;location_dend2, AP_begin_voltage;location_dend2
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BPAPAmplitudeLoc2 = peak_voltage - AP_begin_voltage
-
-`LibV5`_ : BAC_width
-~~~~~~~~~~~~~~~~~~~~
-
-AP width at epsp location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_epsp, V;location_epsp, stim_start;location_epsp, stim_end;location_epsp, AP_width;location_epsp
-- **Units**: ms
-- **Pseudocode**: ::
-
-    BAC_width = AP_width
-
-`LibV5`_ : BAC_maximum_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Maximuum voltage at epsp location
-
-Please, notice that you have to provide t, v, stim_start and stim_end for location.
-
-- **Required features**: T;location_epsp, V;location_epsp, stim_start;location_epsp, stim_end;location_epsp, maximum_voltage;location_epsp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    BAC_maximum_voltage = maximum_voltage
-
-
-
-Voltage features
-----------------
+Subthreshold features
+---------------------
 
 .. image:: _static/figures/voltage_features.png
 
@@ -2211,40 +2235,6 @@ Difference between minimum and steady state during stimulation
 Python features
 ---------------
 
-`Python efeature`_ : initburst_sahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage after initial burst
-
-The end of the initial burst is detected when the ISIs frequency gets lower than initburst_freq_threshold, in Hz.
-Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
-and initburst_sahp_end (in ms) after the last spike of the burst.
-
-- **Required features**: LibV1: peak_time 
-- **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
-- **Units**: mV
-
-`Python efeature`_ : initburst_sahp_ssse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage from steady_state_voltage_stimend after initial burst
-
-- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    numpy.array([initburst_sahp_value[0] - ssse[0]])
-
-`Python efeature`_ : initburst_sahp_vb
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage from voltage base after initial burst
-
-- **Required features**: LibV5: voltage_base, initburst_sahp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    numpy.array([initburst_sahp_value[0] - voltage_base[0]])
 
 `Python efeature`_ : depol_block_bool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2258,68 +2248,6 @@ A hyperpolarization block is detected when, after stimulus start, the voltage st
 - **Required features**: LibV5: AP_begin_voltage
 - **Units**: constant
 
-`Python efeature`_ : spikes_per_burst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Number of spikes in each burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spike_per_bursts = []
-    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
-        spike_per_bursts.append(idx_end - idx_begin + 1)
-
-`Python efeature`_ : spikes_per_burst_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between each burst and the next one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spikes_per_burst[:-1] - spikes_per_burst[1:]
-
-`Python efeature`_ : spikes_in_burst1_burst2_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between the first burst and the second one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst_diff
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst_diff[0]])
-
-`Python efeature`_ : spikes_in_burst1_burstlast_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between the first burst and the last one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
-
 `Python efeature`_ : impedance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2327,7 +2255,7 @@ Computes the impedance given a ZAP current input and its voltage response.
 It will return the frequency at which the impedance is maximal, in the range (0, impedance_max_freq] Hz,
 with impedance_max_freq being a setting with 50.0 as a default value.
 
-- **Required features**: current, LibV1:Spikecount, LibV5:voltage_base, LibV5:current_base
+- **Required features**: current, spike_count, LibV5:voltage_base, LibV5:current_base
 - **Units**: Hz
 - **Pseudocode**: ::
 

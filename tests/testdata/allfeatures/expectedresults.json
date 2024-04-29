@@ -281,7 +281,6 @@
         40.98143755958056
     ],
     "AP_phaseslope": null,
-    "AP_phaseslope_AIS": null,
     "AP_rise_indices": [
         7074,
         9104,
@@ -335,40 +334,6 @@
     "APlast_width": [
         3.1545523959582193
     ],
-    "BAC_maximum_voltage": [
-        -50.69687269736847
-    ],
-    "BPAPatt2": null,
-    "BPAPatt3": null,
-    "E10": null,
-    "E11": null,
-    "E12": null,
-    "E13": null,
-    "E14": null,
-    "E15": null,
-    "E16": null,
-    "E17": null,
-    "E18": null,
-    "E19": null,
-    "E2": null,
-    "E20": null,
-    "E21": null,
-    "E22": null,
-    "E23": null,
-    "E24": null,
-    "E25": null,
-    "E26": null,
-    "E27": null,
-    "E3": null,
-    "E39": null,
-    "E39_cod": null,
-    "E4": null,
-    "E40": null,
-    "E5": null,
-    "E6": null,
-    "E7": null,
-    "E8": null,
-    "E9": null,
     "ISI_CV": [
         0.44788080327644053
     ],
@@ -387,10 +352,10 @@
         675.4999999993856,
         250.29999999977235
     ],
-    "Spikecount": [
+    "spike_count": [
         6
     ],
-    "Spikecount_stimint": [
+    "spike_count_stimint": [
         6
     ],
     "adaptation_index": [
@@ -430,9 +395,6 @@
     ],
     "burst_number": [
         2
-    ],
-    "check_AISInitiation": [
-        1.0
     ],
     "decay_time_constant_after_stim": [
         13.45188514197874
@@ -478,6 +440,13 @@
     "interburst_voltage": [
         -38.820613862535545
     ],
+    "inv_ISI_values": [
+        4.918839153958547,
+        2.021427127553367,
+        3.2679738562121226,
+        1.4803849000753657,
+        3.995205753099918
+    ],
     "inv_fifth_ISI": [
         3.995205753099918
     ],
@@ -500,7 +469,7 @@
         124.99999999855582
     ],
     "irregularity_index": [
-        245.8499999998084
+        327.79999999974456
     ],
     "is_not_stuck": [
         1
@@ -623,7 +592,7 @@
     ],
     "sag_time_constant": null,
     "single_burst_ratio": [
-        1.204822211398266
+        1.1461337966987346
     ],
     "spike_half_width": [
         1.563889523951499,
@@ -60718,19 +60687,81 @@
     "depol_block_bool": [
         1
     ],
-    "BPAPHeightLoc1": [
-        44.759481866542046
+    "min_between_peaks_indices": [
+        7115,
+        9833,
+        14285,
+        17215,
+        23960,
+        28300
     ],
-    "BPAPHeightLoc2": [
-        36.96503266314145
+    "min_between_peaks_values": [
+        -47.716407064147894,
+        -45.90401077270508,
+        -42.68541014226824,
+        -42.06044280547385,
+        -41.279199137952354,
+        -80.43351009404397
     ],
-    "BPAPAmplitudeLoc1": [
-        33.683406087334944
+    "AP_width_between_threshold": [
+        1.7000000000003865,
+        2.700000000000614,
+        2.8999999999973625,
+        2.9999999999972715,
+        3.2999999999969987,
+        3.2999999999969987
     ],
-    "BPAPAmplitudeLoc2": [
-        25.779005513879177
+    "burst_begin_indices": [
+        4
     ],
-    "BAC_width": [
-        5.9000000000013415
-    ]
+    "burst_end_indices": [
+        5
+    ],
+    "strict_burst_number": [
+        1
+    ],
+    "strict_burst_mean_freq": [
+        7.99041151
+    ],
+    "strict_interburst_voltage": [],
+    "ADP_peak_amplitude": [
+        0.0,
+        2.6873666528663236,
+        0.48122323161050673,
+        0.06877493979540361,
+        0.0,
+        2.99957475153942
+    ],
+    "ADP_peak_indices": [
+        7115,
+        9317,
+        14162,
+        17198,
+        23943,
+        27000
+    ],
+    "ADP_peak_values": [
+        -47.716407064147894,
+        -41.60422947192351,
+        -42.066708105903004,
+        -41.97919073015028,
+        -41.12299346923828,
+        -38.12341871769886
+    ],
+    "interburst_min_indices": [],
+    "interburst_min_values": [],
+    "postburst_min_indices": [
+        26465
+    ],
+    "postburst_min_values": [
+        -41.52919675004766
+    ],
+    "time_to_interburst_min": null,
+    "AHP_depth_slow": [
+        28.81047723194662,
+        32.02907786238346,
+        32.65404519917785,
+        33.435288866699345
+    ],
+    "phaseslope_max": [111.6276337625179]
 }

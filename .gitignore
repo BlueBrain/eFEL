@@ -16,8 +16,15 @@ cpp_coverage.xml
 docs/bin
 docs/lib
 docs/source/lib
+docs/source/sonata-network.rst
+docs/source/sonata-network_files/
+docs/source/nmc-portal.rst
+docs/source/L5TTPC2_files/
 bin
 *.tox-info.json
 *.ipynb_checkpoints
 lib
 fllog.txt
+*.DS_Store
+pyvenv.cfg
+x86_64

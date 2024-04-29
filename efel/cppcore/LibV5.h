@@ -28,14 +28,6 @@
 using std::vector;
 
 namespace LibV5 {
-int ISI_log_slope(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int ISI_semilog_slope(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int ISI_log_slope_skip(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
-
 int time_to_second_spike(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData);
@@ -45,16 +37,10 @@ int time_to_last_spike(mapStr2intVec& IntFeatureData,
 int inv_time_to_first_spike(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
-int inv_first_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_second_ISI(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_third_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_fourth_ISI(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int inv_fifth_ISI(mapStr2intVec& IntFeatureData,
-                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
+int inv_ISI_generic(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData,
+                           size_t index);
 int inv_last_ISI(mapStr2intVec& IntFeatureData,
                  mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
 
@@ -77,10 +63,6 @@ int AP_begin_indices(mapStr2intVec& IntFeatureData,
 int AP_end_indices(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData,
                    mapStr2Str& StringData);
-
-int irregularity_index(mapStr2intVec& IntFeatureData,
-                       mapStr2doubleVec& DoubleFeatureData,
-                       mapStr2Str& StringData);
 
 int number_initial_spikes(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
@@ -170,23 +152,7 @@ int AP2_AP1_begin_width_diff(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData);
 
-int BPAPHeightLoc1(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPAmplitudeLoc1(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPAmplitudeLoc2(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-int BPAPHeightLoc2(mapStr2intVec& IntFeatureData,
-                   mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
-
-int check_AISInitiation(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
 int AP_phaseslope(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
-int AP_phaseslope_AIS(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-
-int BAC_width(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
-int BAC_maximum_voltage(mapStr2intVec&, mapStr2doubleVec&, mapStr2Str&);
 
 int all_ISI_values(mapStr2intVec& IntFeatureData,
                    mapStr2doubleVec& DoubleFeatureData, mapStr2Str& StringData);
@@ -233,9 +199,6 @@ int ohmic_input_resistance_vb_ssse(mapStr2intVec& IntFeatureData,
 int maximum_voltage_from_voltagebase(mapStr2intVec& IntFeatureData,
                                    mapStr2doubleVec& DoubleFeatureData,
                                    mapStr2Str& StringData);
-int Spikecount_stimint(mapStr2intVec& IntFeatureData,                                    
-                       mapStr2doubleVec& DoubleFeatureData, 
-                       mapStr2Str& StringData); 
 int peak_indices(mapStr2intVec& IntFeatureData,                                    
                        mapStr2doubleVec& DoubleFeatureData, 
                        mapStr2Str& StringData); 
@@ -270,9 +233,6 @@ int burst_end_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
 int strict_burst_mean_freq(mapStr2intVec& IntFeatureData,
-                            mapStr2doubleVec& DoubleFeatureData,
-                            mapStr2Str& StringData);
-int strict_burst_number(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData);
 int strict_interburst_voltage(mapStr2intVec& IntFeatureData,
