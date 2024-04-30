@@ -185,12 +185,11 @@ int LibV1::AP_amplitude(mapStr2intVec& IntFeatureData,
 // same as AHP_depth_abs but the minimum search starts
 // 5 ms (or custom duration) after the spike,
 // first ISI is ignored
-static int __AHP_depth_abs_slow_indices(const vector<double>& t,
-                                        const vector<double>& v,
-                                        const vector<int>& peakindices,
-                                        double sahp_start,
-                                        vector<int>& adas_indices) {
-  adas_indices.resize(peakindices.size() - 2);
+static vector<int> __AHP_depth_abs_slow_indices(const vector<double>& t,
+                                                const vector<double>& v,
+                                                const vector<int>& peakindices,
+                                                double sahp_start) {
+  vector<int> adas_indices(peakindices.size() - 2);
   for (size_t i = 0; i < adas_indices.size(); i++) {
     // start 5 ms (or custom duration) after last spike
     double t_start = t[peakindices[i + 1]] + sahp_start;
@@ -204,7 +203,7 @@ static int __AHP_depth_abs_slow_indices(const vector<double>& t,
                                                  })),
                     v.begin() + peakindices[i + 2]));
   }
-  return adas_indices.size();
+  return adas_indices;
 }
 
 int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
@@ -218,10 +217,9 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
   double sahp_start = (doubleFeatures.at("sahp_start").empty())
                           ? 5
                           : doubleFeatures.at("sahp_start")[0];
-  vector<int> adas_indices;
-  int retval = __AHP_depth_abs_slow_indices(
+  vector<int> adas_indices = __AHP_depth_abs_slow_indices(
       doubleFeatures.at("T"), doubleFeatures.at("V"),
-      intFeatures.at("peak_indices"), sahp_start, adas_indices);
+      intFeatures.at("peak_indices"), sahp_start);
   vector<double> ahpdepthabsslow(adas_indices.size());
   vector<double> ahpslowtime(adas_indices.size());
   for (size_t i = 0; i < adas_indices.size(); i++) {
@@ -232,12 +230,12 @@ int LibV1::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
         (doubleFeatures.at("T")[intFeatures.at("peak_indices")[i + 2]] -
          doubleFeatures.at("T")[intFeatures.at("peak_indices")[i + 1]]);
   }
-  if (retval >= 0) {
+  if (!adas_indices.empty()) {
     setVec(DoubleFeatureData, StringData, "AHP_depth_abs_slow",
            ahpdepthabsslow);
     setVec(DoubleFeatureData, StringData, "AHP_slow_time", ahpslowtime);
   }
-  return retval;
+  return adas_indices.size();
 }
 // end of AHP_depth_abs_slow
 
