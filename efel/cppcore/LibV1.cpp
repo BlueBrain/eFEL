@@ -663,9 +663,9 @@ int LibV1::time_constant(mapStr2intVec& IntFeatureData,
 
 // *** voltage deflection ***
 
-static int __voltage_deflection(const vector<double>& v,
-                                const vector<double>& t, double stimStart,
-                                double stimEnd, vector<double>& vd) {
+static vector<double> __voltage_deflection(const vector<double>& v,
+                                           const vector<double>& t, double stimStart,
+                                           double stimEnd) {
   const size_t window_size = 5;
 
   size_t stimendindex = 0;
@@ -681,20 +681,21 @@ static int __voltage_deflection(const vector<double>& v,
       break;
     }
   }
-  if (base_size == 0) return -1;
+  if (base_size == 0) throw std::runtime_error("Base size is zero.");
   base /= base_size;
   double wind_mean = 0.;
   if (!(stimendindex >= 2 * window_size && v.size() > 0 &&
         stimendindex > window_size && stimendindex - window_size < v.size())) {
-    return -1;
+    throw std::runtime_error("Invalid index or vector size.");
   }
   for (size_t i = stimendindex - 2 * window_size;
        i < stimendindex - window_size; i++) {
     wind_mean += v[i];
   }
   wind_mean /= window_size;
+  vector<double> vd;
   vd.push_back(wind_mean - base);
-  return 1;
+  return vd;
 }
 
 int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
@@ -702,14 +703,13 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> vd;
-  int retVal = __voltage_deflection(
+  vector<double> vd = __voltage_deflection(
       doubleFeatures.at("V"), doubleFeatures.at("T"),
-      doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0], vd);
-  if (retVal > 0) {
+      doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0]);
+  if (!vd.empty()) {
     setVec(DoubleFeatureData, StringData, "voltage_deflection", vd);
   }
-  return retVal;
+  return vd.size();
 }
 
 // *** ohmic input resistance ***
