@@ -84,6 +84,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools
         pip install tox tox-gh-actions
+    - name: Install pandoc  # needed by nbconvert
+      uses: pandoc/actions/setup@main
+      with:
+        version: 2.19
     - name: Run tox
       run: tox -e docs
 

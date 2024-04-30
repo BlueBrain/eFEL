@@ -98,7 +98,7 @@ This translates into the following file (let's call it 'deap_efel_eval1.py')::
         trace['stim_end'] = [stim_end]
         traces = [trace]
 
-        features = efel.getFeatureValues(traces, ["voltage_base",
+        features = efel.get_feature_values(traces, ["voltage_base",
                                                  "steady_state_voltage"])
         voltage_base = features[0]["voltage_base"][0]
         steady_state_voltage = features[0]["steady_state_voltage"][0]

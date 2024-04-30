@@ -15,7 +15,9 @@ def bpap_attenuation(soma_trace: dict, dendrite_trace: dict) -> float:
     The attenuation is computed by first subtracting the resting potential
     from the voltage traces.
     """
-    f_values = efel.getFeatureValues([soma_trace, dendrite_trace], ["voltage_base"])
+    f_values = efel.get_feature_values(
+        [soma_trace, dendrite_trace], ["voltage_base"],
+        parallel_map=None, return_list=True, raise_warnings=True)
     vb_soma = f_values[0]["voltage_base"][0]
     vb_dend = f_values[1]["voltage_base"][0]
     v_soma = soma_trace["V"]

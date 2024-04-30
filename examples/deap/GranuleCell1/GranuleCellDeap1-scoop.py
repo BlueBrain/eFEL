@@ -58,7 +58,7 @@ def get_features(conductances):
         trace['stim_end'] = [500]
         traces = [trace]  # a think is a list from a dictionary
 
-        result = efel.getFeatureValues(traces, FEATURES, raise_warnings=False)
+        result = efel.get_feature_values(traces, FEATURES, raise_warnings=False)
 
         for feature_name, feature_list in result[0].items():
             if feature_list is not None and len(feature_list) > 0:

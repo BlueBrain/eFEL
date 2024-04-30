@@ -27,7 +27,7 @@ Since our file contains only a single recording episode, our list of traces is::
 
 which we pass to eFEL as follows::
 
-   features = efel.getFeatureValues(traces, ['AP_amplitude', 'voltage_base'])
+   features = efel.get_feature_values(traces, ['AP_amplitude', 'voltage_base'])
 
 Stimulus information within the file
 ------------------------------------

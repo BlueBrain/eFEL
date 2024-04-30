@@ -43,7 +43,7 @@ def main():
 
     # Now we pass 'traces' to the efel and ask it to calculate the feature
     # values
-    traces_results = efel.getFeatureValues(traces,
+    traces_results = efel.get_feature_values(traces,
                                            ['AP_amplitude', 'voltage_base'])
 
     # The return value is a list of trace_results, every trace_results

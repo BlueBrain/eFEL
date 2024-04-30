@@ -29,7 +29,7 @@ def test_ISIs_single_spike():
     }
 
     features = ["peak_time", "ISIs"]
-    feature_values = efel.getFeatureValues([trace], features)[0]
+    feature_values = efel.get_feature_values([trace], features)[0]
 
     assert len(feature_values["peak_time"]) == 1
     assert feature_values["ISIs"] is None
@@ -149,7 +149,7 @@ class TestBurstISIIndices:
     def test_burst_ISI_indices(self, mock_ISI_values):
         mock_ISI_values.return_value = np.array([50, 100, 50, 200, 50])
 
-        self.feature_values = efel.getFeatureValues(
+        self.feature_values = efel.get_feature_values(
             [self.trace], self.features, raise_warnings=False
         )[0]
 

@@ -181,7 +181,77 @@ int FillFptrTable() {
   FptrTableV5["interburst_min_values"] = &LibV5::interburst_min_values;
   FptrTableV5["postburst_min_indices"] = &LibV5::postburst_min_indices;
   FptrTableV5["postburst_min_values"] = &LibV5::postburst_min_values;
+  FptrTableV5["postburst_slow_ahp_indices"] = &LibV5::postburst_slow_ahp_indices;
+  FptrTableV5["postburst_slow_ahp_values"] = &LibV5::postburst_slow_ahp_values;
   FptrTableV5["time_to_interburst_min"] = &LibV5::time_to_interburst_min;
+  FptrTableV5["time_to_postburst_slow_ahp"] = &LibV5::time_to_postburst_slow_ahp;
+  FptrTableV5["postburst_fast_ahp_indices"] = &LibV5::postburst_fast_ahp_indices;
+  FptrTableV5["postburst_fast_ahp_values"] = &LibV5::postburst_fast_ahp_values;
+  FptrTableV5["postburst_adp_peak_indices"] = &LibV5::postburst_adp_peak_indices;
+  FptrTableV5["postburst_adp_peak_values"] = &LibV5::postburst_adp_peak_values;
+  FptrTableV5["time_to_postburst_fast_ahp"] = &LibV5::time_to_postburst_fast_ahp;
+  FptrTableV5["time_to_postburst_adp_peak"] = &LibV5::time_to_postburst_adp_peak;
+  FptrTableV5["interburst_15percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 15);
+  };
+  FptrTableV5["interburst_15percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 15);
+  };
+  FptrTableV5["interburst_20percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 20);
+  };
+  FptrTableV5["interburst_20percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 20);
+  };
+  FptrTableV5["interburst_25percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 25);
+  };
+  FptrTableV5["interburst_25percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 25);
+  };
+  FptrTableV5["interburst_30percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 30);
+  };
+  FptrTableV5["interburst_30percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 30);
+  };
+  FptrTableV5["interburst_40percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 40);
+  };
+  FptrTableV5["interburst_40percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 40);
+  };
+  FptrTableV5["interburst_60percent_indices"] = [](mapStr2intVec& intData,
+                                                   mapStr2doubleVec& doubleData,
+                                                   mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 60);
+  };
+  FptrTableV5["interburst_60percent_values"] = [](mapStr2intVec& intData,
+                                                  mapStr2doubleVec& doubleData,
+                                                  mapStr2Str& strData) {
+    return LibV5::interburst_XXpercent_indices(intData, doubleData, strData, 60);
+  };
+  FptrTableV5["interburst_duration"] = &LibV5::interburst_duration;
 
   //****************** end of FptrTableV5 *****************************
 

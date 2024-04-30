@@ -7,9 +7,9 @@ First you need to import the module::
 
 To get a list with all the available eFeature names::
 
-    efel.getFeatureNames()
+    efel.get_feature_names()
 
-The python function to extract eFeatures is getFeatureValues(...).
+The python function to extract eFeatures is get_feature_values(...).
 Below is a short example on how to use this function.
 
 The code and example trace are available
@@ -57,7 +57,7 @@ The code and example trace are available
 
         # Now we pass 'traces' to the efel and ask it to calculate the feature
         # values
-        traces_results = efel.getFeatureValues(traces,
+        traces_results = efel.get_feature_values(traces,
                                                ['AP_amplitude', 'voltage_base'])
 
         # The return value is a list of trace_results, every trace_results

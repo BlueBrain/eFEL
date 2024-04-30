@@ -47,6 +47,7 @@ from efel.api import get_distance
 
 testdata_dir = Path(__file__).parent / 'testdata'
 meanfrequency1_url = testdata_dir / 'basic' / 'mean_frequency_1.txt'
+meanfrequency2_url = testdata_dir / 'basic' / 'mean_frequency_2.txt'
 ahptest1_url = testdata_dir / 'basic' / 'ahptest_1.txt'
 tau20_0_url = testdata_dir / 'basic' / 'tau20.0.csv'
 spikeoutsidestim_url = testdata_dir / 'basic' / 'spike_outside_stim.txt'
@@ -64,6 +65,8 @@ spiking_from_beginning_to_end_url = (
 )
 spontaneous_url = testdata_dir / 'basic' / 'spontaneous.txt'
 
+testdata_url = testdata_dir / 'allfeatures' / 'testdata.txt'
+
 
 def load_data(data_name, interp=False, interp_dt=0.1):
     """Load data file"""
@@ -72,6 +75,10 @@ def load_data(data_name, interp=False, interp_dt=0.1):
         stim_start = 500.0
         stim_end = 900.0
         time, voltage = load_ascii_input(meanfrequency1_url)
+    elif data_name == 'mean_frequency2':
+        stim_start = 500.0
+        stim_end = 900.0
+        time, voltage = load_ascii_input(meanfrequency2_url)
     elif data_name == 'tau20.0':
         stim_start = 100.0
         stim_end = 1000.0
@@ -1058,8 +1065,8 @@ def test_currentbase_median():
                                   rtol=0, atol=1e-8)
 
 
-def test_getDistance1():
-    """basic: Test getDistance 1"""
+def test_get_distance1():
+    """basic: Test get_distance 1"""
 
     import efel
     efel.reset()
@@ -1085,8 +1092,8 @@ def test_getDistance1():
             10))
 
 
-def test_getDistance_error_dist():
-    """basic: Test getDistance error_dist option"""
+def test_get_distance_error_dist():
+    """basic: Test get_distance error_dist option"""
 
     import efel
     efel.reset()
@@ -1119,8 +1126,8 @@ def test_getDistance_error_dist():
     numpy.testing.assert_allclose(score_150, 150)
 
 
-def test_getDistance_trace_check():
-    """basic: Test getDistance trace_check option"""
+def test_get_distance_trace_check():
+    """basic: Test get_distance trace_check option"""
 
     import efel
     efel.reset()
@@ -1713,7 +1720,7 @@ def test_min_voltage_between_spikes_single_spike():
     assert feature_values[0]['min_voltage_between_spikes'] is None
 
 
-def test_getFeatureNames():
+def test_get_feature_names():
     """basic: Test getting all feature names"""
     import efel
     efel.reset()
@@ -1724,15 +1731,15 @@ def test_getFeatureNames():
         expected_featurenames = json.load(featurenames_json)
     # add the new names for the deprecated ones
     expected_featurenames += ["Spikecount", "Spikecount_stimint"]
-    assert set(efel.getFeatureNames()) == set(expected_featurenames)
+    assert set(efel.get_feature_names()) == set(expected_featurenames)
 
 
-def test_getFeatureNameExists():
-    """basic: Test FeatureNameExists"""
+def test_feature_name_exists():
+    """basic: Test feature_name_exists"""
     import efel
     efel.reset()
-    assert efel.FeatureNameExists('voltage_base')
-    assert not efel.FeatureNameExists('voltage_base_wrong')
+    assert efel.feature_name_exists('voltage_base')
+    assert not efel.feature_name_exists('voltage_base_wrong')
 
 
 def test_steady_state_voltage1():
@@ -1990,8 +1997,8 @@ def test_sag_time_constant():
         feature_values['sag_time_constant'][0])
 
 
-def test_getmeanfeaturevalues():
-    """basic: Test getMeanFeatureValues"""
+def test_get_mean_feature_values():
+    """basic: Test get_mean_feature_values"""
 
     import efel
     efel.reset()
@@ -2013,7 +2020,7 @@ def test_getmeanfeaturevalues():
             [trace],
             ['AP_amplitude'], raise_warnings=False)
 
-    mean_feature_values = efel.getMeanFeatureValues(
+    mean_feature_values = efel.get_mean_feature_values(
         [trace], [
             'AP_amplitude'], raise_warnings=False)
 
@@ -2627,38 +2634,49 @@ def test_time_constant():
     numpy.testing.assert_allclose(time_cst, py_tau, rtol=1e-3)
 
 
-def test_depolarized_base():
-    """basic: Test depolarized base"""
+def assert_depolarized_base(trace_name, interp=True):
+    """
+    Calculates depolarized base using given trace data and checks for correctness.
+
+    :param trace_name: Name of the trace data to load.
+    :param interp: Whether to interpolate the data.
+    :return: None
+    """
 
     import efel
     efel.reset()
 
-    trace, time, voltage, stim_start, stim_end = load_data(
-        'mean_frequency1', interp=True)
+    trace, time, voltage, stim_start, stim_end = load_data(trace_name, interp=interp)
 
     features = ["depolarized_base", "AP_begin_time", "AP_duration"]
-
-    feature_values = \
-        get_feature_values(
-            [trace],
-            features, raise_warnings=False)
+    feature_values = get_feature_values([trace], features, raise_warnings=False)
 
     depolarized_base = feature_values[0]['depolarized_base']
     AP_begin_times = feature_values[0]['AP_begin_time']
     AP_durations = feature_values[0]['AP_duration']
 
     py_dep_base = []
-    for i, (AP_begin, AP_dur) in enumerate(
-        zip(AP_begin_times[:-1], AP_durations[:-1])
-    ):
+    for i, (AP_begin, AP_dur) in enumerate(zip(AP_begin_times[:-1], AP_durations[:-1])):
         dep_start_time = AP_begin + AP_dur
         dep_end_time = AP_begin_times[i + 1]
+        if dep_end_time <= dep_start_time:
+            continue
         start_idx = numpy.argwhere(time > dep_start_time)[0][0] - 1
         end_idx = numpy.argwhere(time > dep_end_time)[0][0] - 1
 
         py_dep_base.append(numpy.mean(voltage[start_idx:end_idx]))
 
-    numpy.testing.assert_allclose(depolarized_base, py_dep_base)
+    numpy.testing.assert_allclose(depolarized_base, py_dep_base, rtol=1e-3)
+
+
+def test_depolarized_base():
+    """Test depolarized base with standard data."""
+    assert_depolarized_base('mean_frequency1', interp=True)
+
+
+def test_depolarized_base_outlier():
+    """Test depolarized base with outlier data."""
+    assert_depolarized_base('mean_frequency2', interp=False)
 
 
 def test_AP_duration():
@@ -3538,7 +3556,7 @@ def py_postburst_min_values(t, v, peak_indices, burst_end_indices, stim_end):
 
 
 def test_postburst_min_values():
-    """basic: Test interburst_min_values"""
+    """basic: Test postburst_min_values"""
     urls = [burst1_url, burst2_url, burst3_url]
     for i, url in enumerate(urls):
         import efel
@@ -3674,6 +3692,668 @@ def test_spikes_in_burst1_burstlast_diff():
         'spikes_in_burst1_burstlast_diff'
     ]
     assert list(spikes_in_burst1_burstlast_diff) == [1]
+
+
+def test_postburst_slow_ahp_values():
+    """basic: Test postburst_slow_ahp_values when no fast AHP is present"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+        # use this to have all spikes in burst for burst3_url case
+        efel.setDoubleSetting('strict_burst_factor', 4.0)
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            "postburst_slow_ahp_values",
+            "postburst_min_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        postburst_slow_ahp_values = feature_values[0][
+            "postburst_slow_ahp_values"
+        ]
+        postburst_min_values = feature_values[0]["postburst_min_values"]
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        postburst_slow_ahp_values = numpy.array(
+            postburst_slow_ahp_values, dtype=numpy.float64
+        )
+        postburst_min_values = numpy.array(
+            postburst_min_values, dtype=numpy.float64
+        )
+
+        # are equal when there is no fast AHP
+        numpy.testing.assert_allclose(
+            postburst_slow_ahp_values, postburst_min_values
+        )
+
+
+def test_time_to_postburst_slow_ahp():
+    """basic: Test time_to_postburst_slow_ahp"""
+    urls = [burst1_url, burst2_url, burst3_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+
+        features = [
+            "burst_end_indices",
+            "peak_time",
+            "time_to_postburst_slow_ahp",
+            "postburst_slow_ahp_indices",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        peak_time = feature_values[0]["peak_time"]
+        burst_end_indices = feature_values[0]["burst_end_indices"]
+        postburst_slow_ahp_indices = feature_values[0][
+            "postburst_slow_ahp_indices"
+        ]
+        time_to_postburst_slow_ahp = feature_values[0][
+            "time_to_postburst_slow_ahp"
+        ]
+
+        if (
+            postburst_slow_ahp_indices is None or len(postburst_slow_ahp_indices) == 0
+            or burst_end_indices is None or len(burst_end_indices) == 0
+        ):
+            time_to_postburst_slow_ahp_py = None
+        else:
+            time_to_postburst_slow_ahp_py = interp_time[
+                postburst_slow_ahp_indices
+            ] - peak_time[burst_end_indices]
+
+        # convert to float so that None edge case get converted to nan
+        # and can pass in assert_allclose
+        time_to_postburst_slow_ahp_py = numpy.array(
+            time_to_postburst_slow_ahp_py, dtype=numpy.float64
+        )
+        time_to_postburst_slow_ahp = numpy.array(
+            time_to_postburst_slow_ahp, dtype=numpy.float64
+        )
+
+        numpy.testing.assert_allclose(
+            time_to_postburst_slow_ahp_py, time_to_postburst_slow_ahp
+        )
+
+
+def py_postburst_fahp(v, peak_indices, burst_end_indices, stim_end_index):
+    """python implementation of post burst fast ahp."""
+    if burst_end_indices is None:
+        return None, None
+
+    postburst_fahp = []
+    postburst_fahp_idxs = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            stop_i = peak_indices[i + 1]
+        elif i + 1 < stim_end_index:
+            stop_i = stim_end_index
+        else:
+            stop_i = len(v) - 1
+
+        v_crop = v[peak_indices[i]:stop_i]
+        # get where the voltage is going up
+        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:, 0]
+        # the voltage should go up for at least two consecutive points
+        crop_arg_arg = numpy.argwhere(numpy.diff(crop_args) == 1)[0][0]
+        crop_arg = crop_args[crop_arg_arg]
+        end_i = peak_indices[i] + crop_arg + 1
+        # the fast ahp is between the last peak of the burst and
+        # the point where the voltage is going back up
+        postburst_fahp.append(numpy.min(v[peak_indices[i]:end_i]))
+        postburst_fahp_idxs.append(
+            numpy.argmin(v[peak_indices[i]:end_i]) + peak_indices[i]
+        )
+
+    return postburst_fahp_idxs, postburst_fahp
+
+
+def test_postburst_fast_ahp_values():
+    """basic: Test postburst_fast_ahp_values"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "burst_end_indices",
+            "peak_indices",
+            "postburst_fast_ahp_indices",
+            "postburst_fast_ahp_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        peak_indices = feature_values[0]["peak_indices"]
+        burst_end_indices = feature_values[0]["burst_end_indices"]
+        postburst_fahpi = feature_values[0][
+            "postburst_fast_ahp_indices"
+        ]
+        postburst_fahp = feature_values[0][
+            "postburst_fast_ahp_values"
+        ]
+
+        stim_end_index = numpy.argwhere(trace['stim_end'] > interp_time)[0][0]
+        postburst_fahpi_py, postburst_fahp_py = py_postburst_fahp(
+            interp_voltage, peak_indices, burst_end_indices, stim_end_index
+        )
+
+        postburst_fahp = numpy.array(
+            postburst_fahp, dtype=numpy.float64
+        )
+        postburst_fahp_py = numpy.array(
+            postburst_fahp_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            postburst_fahp, postburst_fahp_py
+        )
+
+        postburst_fahpi = numpy.array(
+            postburst_fahpi, dtype=numpy.float64
+        )
+        postburst_fahpi_py = numpy.array(
+            postburst_fahpi_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            postburst_fahpi, postburst_fahpi_py
+        )
+
+
+def py_postburst_adppeak(
+    v, postburst_sahpi, postburst_fahpi,
+):
+    """python implementation of adp peak after burst."""
+    if postburst_sahpi is None or postburst_fahpi is None:
+        return None, None
+
+    adp_peak_indices = []
+    adp_peak_values = []
+    for i, sahpi in enumerate(postburst_sahpi):
+        if sahpi < postburst_fahpi[i]:
+            continue
+        adppeaki = numpy.argmax(
+            v[postburst_fahpi[i]:sahpi]
+        ) + postburst_fahpi[i]
+        if adppeaki != sahpi - 1:
+            adp_peak_indices.append(adppeaki)
+            adp_peak_values.append(v[adppeaki])
+
+    if len(adp_peak_indices) == 0:
+        return None, None
+    return adp_peak_indices, adp_peak_values
+
+
+def test_postburst_adp_peak_values():
+    """basic: Test postburst_adp_peak_values"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "postburst_fast_ahp_indices",
+            "postburst_slow_ahp_indices",
+            "postburst_adp_peak_indices",
+            "postburst_adp_peak_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        postburst_fahpi = feature_values[0][
+            "postburst_fast_ahp_indices"
+        ]
+        postburst_sahpi = feature_values[0][
+            "postburst_slow_ahp_indices"
+        ]
+        postburst_adppeaki = feature_values[0][
+            "postburst_adp_peak_indices"
+        ]
+        postburst_adppeak = feature_values[0][
+            "postburst_adp_peak_values"
+        ]
+
+        postburst_adppeaki_py, postburst_adppeak_py = py_postburst_adppeak(
+            interp_voltage, postburst_sahpi, postburst_fahpi,
+        )
+
+        postburst_adppeak = numpy.array(
+            postburst_adppeak, dtype=numpy.float64
+        )
+        postburst_adppeak_py = numpy.array(
+            postburst_adppeak_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            postburst_adppeak, postburst_adppeak_py
+        )
+
+        postburst_adppeaki = numpy.array(
+            postburst_adppeaki, dtype=numpy.float64
+        )
+        postburst_adppeaki_py = numpy.array(
+            postburst_adppeaki_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            postburst_adppeaki, postburst_adppeaki_py
+        )
+
+
+def py_time_to_postburst_fast_ahp(t, postburst_fahpi, burst_endi, peak_time):
+    """python implementation of time to post burst fast ahp."""
+    if postburst_fahpi is None or burst_endi is None:
+        return None
+    return [t[fahpi] - peak_time[burst_endi[i]] for (i, fahpi) in
+            enumerate(postburst_fahpi)]
+
+
+def test_time_to_postburst_fast_ahp():
+    """basic: Test time_to_postburst_fast_ahp"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "time_to_postburst_fast_ahp",
+            "postburst_fast_ahp_indices",
+            "burst_end_indices",
+            "peak_time",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        time_to_postburst_fast_ahp = feature_values[0][
+            "time_to_postburst_fast_ahp"
+        ]
+        postburst_fahpi = feature_values[0][
+            "postburst_fast_ahp_indices"
+        ]
+        burst_endi = feature_values[0][
+            "burst_end_indices"
+        ]
+        peak_time = feature_values[0][
+            "peak_time"
+        ]
+
+        time_to_postburst_fast_ahp_py = py_time_to_postburst_fast_ahp(
+            interp_time, postburst_fahpi, burst_endi, peak_time
+        )
+
+        time_to_postburst_fast_ahp = numpy.array(
+            time_to_postburst_fast_ahp, dtype=numpy.float64
+        )
+        time_to_postburst_fast_ahp_py = numpy.array(
+            time_to_postburst_fast_ahp_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            time_to_postburst_fast_ahp, time_to_postburst_fast_ahp_py
+        )
+
+
+def py_time_to_postburst_adp_peak(
+    t, postburst_adppeaki, burst_endi, peak_time
+):
+    """python implementation of time to post burst ADP peak."""
+    if postburst_adppeaki is None or burst_endi is None:
+        return None
+
+    time_to_postburst_adp_peaks = []
+    n_peaks = len(peak_time)
+    for i, adppeaki in enumerate(postburst_adppeaki):
+        # there are not always an adp peak after each burst
+        # so make sure that the burst and adp peak indices are consistent
+        k = 0
+        while (burst_endi[i] + k + 1 < n_peaks and
+               peak_time[burst_endi[i] + k + 1] < t[adppeaki]):
+            k += 1
+
+        time_to_postburst_adp_peaks.append(
+            t[adppeaki] - peak_time[burst_endi[i] + k]
+        )
+
+    return time_to_postburst_adp_peaks
+
+
+def test_time_to_postburst_adp_peak():
+    """basic: Test time_to_postburst_adp_peak"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "time_to_postburst_adp_peak",
+            "postburst_adp_peak_indices",
+            "burst_end_indices",
+            "peak_time",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        time_to_postburst_adp_peak = feature_values[0][
+            "time_to_postburst_adp_peak"
+        ]
+        postburst_adppeaki = feature_values[0][
+            "postburst_adp_peak_indices"
+        ]
+        burst_endi = feature_values[0][
+            "burst_end_indices"
+        ]
+        peak_time = feature_values[0][
+            "peak_time"
+        ]
+
+        time_to_postburst_adp_peak_py = py_time_to_postburst_adp_peak(
+            interp_time, postburst_adppeaki, burst_endi, peak_time
+        )
+
+        time_to_postburst_adp_peak = numpy.array(
+            time_to_postburst_adp_peak, dtype=numpy.float64
+        )
+        time_to_postburst_adp_peak_py = numpy.array(
+            time_to_postburst_adp_peak_py, dtype=numpy.float64
+        )
+        numpy.testing.assert_allclose(
+            time_to_postburst_adp_peak, time_to_postburst_adp_peak_py
+        )
+
+
+def py_XXpercent_interburst_values(
+    t, v, postburst_fahpi, burst_endi, peaki, percent=20.
+):
+    """python implementation of 20% / 25% / 30% interburst values."""
+    if postburst_fahpi is None or burst_endi is None:
+        return None, None
+
+    XXpercent_interburst = []
+    XXpercent_interburst_i = []
+    for i, postburst_fahp_i in enumerate(postburst_fahpi):
+        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
+            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
+            time_at_XXpercent = (t[postburst_fahp_i]
+                                 + time_interval * percent / 100.)
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            XXpercent_interburst_i.append(index_at_XXpercent)
+            XXpercent_interburst.append(v[index_at_XXpercent])
+
+    return XXpercent_interburst_i, XXpercent_interburst
+
+
+def interburst_XXpercent_values_compare_with_py(
+    feature_values, interp_time, interp_voltage, percent
+):
+    """compare python implementation with efel output for interburst values"""
+    postburst_fahpi = feature_values[0]["postburst_fast_ahp_indices"]
+    burst_endi = feature_values[0]["burst_end_indices"]
+    peaki = feature_values[0]["peak_indices"]
+    interbursti = feature_values[0][f"interburst_{percent}percent_indices"]
+    interburst = feature_values[0][f"interburst_{percent}percent_values"]
+
+    interbursti_py, interburst_py = py_XXpercent_interburst_values(
+        interp_time,
+        interp_voltage,
+        postburst_fahpi,
+        burst_endi,
+        peaki,
+        percent,
+    )
+
+    interburst = numpy.array(interburst, dtype=numpy.float64)
+    interburst_py = numpy.array(interburst_py, dtype=numpy.float64)
+    numpy.testing.assert_allclose(interburst, interburst_py)
+
+    interbursti = numpy.array(interbursti, dtype=numpy.float64)
+    interbursti_py = numpy.array(interbursti_py, dtype=numpy.float64)
+    numpy.testing.assert_allclose(interbursti, interbursti_py)
+
+
+def test_interburst_XXpercent_values():
+    """basic: Test interburst_15percent_values, interburst_20percent_values,
+        interburst_25percent_values, interburst_30percent_values,
+        interburst_40percent_values, interburst_60percent_values
+    """
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        interp_time, interp_voltage = interpolate(time, voltage, 0.1)
+
+        trace = {}
+
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = [
+            "postburst_fast_ahp_indices",
+            "burst_end_indices",
+            "peak_indices",
+            "interburst_15percent_indices",
+            "interburst_15percent_values",
+            "interburst_20percent_indices",
+            "interburst_20percent_values",
+            "interburst_25percent_indices",
+            "interburst_25percent_values",
+            "interburst_30percent_indices",
+            "interburst_30percent_values",
+            "interburst_40percent_indices",
+            "interburst_40percent_values",
+            "interburst_60percent_indices",
+            "interburst_60percent_values",
+        ]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 15
+        )
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 20
+        )
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 25
+        )
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 30
+        )
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 40
+        )
+        interburst_XXpercent_values_compare_with_py(
+            feature_values, interp_time, interp_voltage, 60
+        )
+
+
+def test_interburst_duration():
+    """basic: Test interburst_duration"""
+    urls = [burst1_url, burst2_url, burst3_url, testdata_url]
+    for i, url in enumerate(urls):
+        import efel
+        efel.reset()
+
+        time, voltage = load_ascii_input(url)
+
+        trace = {}
+        trace['T'] = time
+        trace['V'] = voltage
+        if i in [0, 1]:
+            trace['stim_start'] = [250]
+            trace['stim_end'] = [1600]
+        elif i == 2:
+            trace['stim_start'] = [800]
+            trace['stim_end'] = [2150]
+        elif i == 3:
+            trace['stim_start'] = [700]
+            trace['stim_end'] = [2700]
+
+        features = ["burst_end_indices", "peak_time", "interburst_duration"]
+
+        feature_values = efel.getFeatureValues(
+            [trace],
+            features,
+            raise_warnings=False
+        )
+
+        burst_endi = feature_values[0]["burst_end_indices"]
+        peak_time = feature_values[0]["peak_time"]
+        inter_dur = feature_values[0]["interburst_duration"]
+
+        inter_dur_py = None
+        if burst_endi is not None:
+            print(peak_time)
+            print(burst_endi)
+            inter_dur_py = [
+                peak_time[idx + 1] - peak_time[idx]
+                for idx in burst_endi
+                if idx + 1 < len(peak_time)
+            ]
+
+        inter_dur = numpy.array(inter_dur, dtype=numpy.float64)
+        inter_dur_py = numpy.array(inter_dur_py, dtype=numpy.float64)
+        numpy.testing.assert_allclose(inter_dur, inter_dur_py)
 
 
 def test_spontaneous_firing():

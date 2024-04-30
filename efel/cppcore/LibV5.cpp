@@ -26,6 +26,7 @@
 #include <deque>
 #include <functional>
 #include <iterator>
+#include <iostream>
 
 #include "EfelExceptions.h"
 
@@ -402,15 +403,22 @@ static int __AP_end_indices(const vector<double>& t, const vector<double>& v,
   peak_indices.push_back(v.size() - 1);
 
   for (size_t i = 0; i < peak_indices.size() - 1; i++) {
-    max_slope =
-        distance(dvdt.begin(), std::min_element(dvdt.begin() + peak_indices[i] + 1,
-                                                dvdt.begin() + peak_indices[i + 1]));
+    size_t start_index = peak_indices[i] + 1;
+    size_t end_index = peak_indices[i + 1];
+
+    if (start_index >= end_index || start_index >= dvdt.size() || end_index >= dvdt.size()) {
+      continue;
+    }
+
+    auto min_element_it = std::min_element(dvdt.begin() + start_index, dvdt.begin() + end_index);
+    auto max_slope = std::distance(dvdt.begin(), min_element_it);
     // assure that the width of the slope is bigger than 4
-    apei.push_back(distance(dvdt.begin(), find_if(dvdt.begin() + max_slope,
-                                             dvdt.begin() + peak_indices[i + 1],
-                                             [derivativethreshold](double x) {
-                                               return x >= derivativethreshold;
-                                             })));
+    auto threshold_it = std::find_if(dvdt.begin() + max_slope, dvdt.begin() + end_index,
+                                    [derivativethreshold](double x) { return x >= derivativethreshold; });
+
+    if (threshold_it != dvdt.begin() + end_index) {
+      apei.push_back(std::distance(dvdt.begin(), threshold_it));
+    }
   }
   return apei.size();
 }
@@ -1343,7 +1351,7 @@ double __decay_time_constant_after_stim(const vector<double>& times,
 
   if (decayTimes.size() < 1 || decayValues.size() < 1) {
     throw FeatureComputationError("No data points to calculate decay_time_constant_after_stim");
-  } 
+  }
   linear_fit_result fit;
   fit = slope_straight_line_fit(decayTimes, decayValues);
 
@@ -2257,21 +2265,27 @@ static int __postburst_min_indices(const vector<double>& t,
                          [stim_end](double x) { return x >= stim_end; }));
   end_index = distance(t.begin(), t.end());
   for (size_t i = 0; i < burst_end_indices.size(); i++) {
-    if (burst_end_indices[i] + 1 < peak_indices.size()) {
-      postburst_min_index =
-          min_element(v.begin() + peak_indices[burst_end_indices[i]],
-                      v.begin() + peak_indices[burst_end_indices[i] + 1]) -
-          v.begin();
-    } else if (peak_indices[burst_end_indices[i]] < stim_end_index) {
-      postburst_min_index =
-          min_element(v.begin() + peak_indices[burst_end_indices[i]],
-                      v.begin() + stim_end_index) -
-          v.begin();
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + peak_indices[burst_end_indices[i] + 1]
+      ) - v.begin();
+    } else if (peak_indices[burst_end_indices[i]] < stim_end_index){
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + stim_end_index
+      ) - v.begin();
+      if (postburst_min_index == stim_end_index){
+        continue;
+      }
     } else {
-      postburst_min_index =
-          min_element(v.begin() + peak_indices[burst_end_indices[i]],
-                      v.begin() + end_index) -
-          v.begin();
+      postburst_min_index = min_element(
+        v.begin() + peak_indices[burst_end_indices[i]],
+        v.begin() + end_index
+      ) - v.begin();
+      if (postburst_min_index == end_index){
+        continue;
+      }
     }
 
     postburst_min_indices.push_back(postburst_min_index);
@@ -2310,6 +2324,106 @@ int LibV5::postburst_min_values(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
+static int __postburst_slow_ahp_indices(const vector<double>& t,
+                                   const vector<double>& v,
+                                   const vector<int>& peak_indices,
+                                   const vector<int>& burst_end_indices,
+                                   vector<int>& postburst_slow_ahp_indices,
+                                   vector<double>& postburst_slow_ahp_values,
+                                   const double stim_end,
+                                   const double sahp_start) {
+  unsigned postburst_slow_ahp_index, stim_end_index, end_index, t_start_index;
+  stim_end_index =
+      distance(t.begin(),
+                find_if(t.begin(), t.end(),
+                        [stim_end](double x) { return x >= stim_end; }));
+  end_index = distance(t.begin(), t.end());
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    double t_start = t[peak_indices[burst_end_indices[i]]] + sahp_start;
+
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + peak_indices[burst_end_indices[i] + 1],
+        [t_start](double x) { return x >= t_start; }
+      ) - t.begin();
+      postburst_slow_ahp_index = min_element(
+        v.begin() + t_start_index,
+        v.begin() + peak_indices[burst_end_indices[i] + 1]
+      ) - v.begin();
+    } else if (peak_indices[burst_end_indices[i]] < stim_end_index){
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + stim_end_index,
+        [t_start](double x) { return x >= t_start; }
+      ) - t.begin();
+      if (t_start_index < stim_end_index){
+        postburst_slow_ahp_index = min_element(
+          v.begin() + t_start_index, v.begin() + stim_end_index
+        ) - v.begin();
+      } else {
+        // edge case: stim_end_index is 1 index after stim_end
+        continue;
+      }
+    } else {
+      t_start_index = find_if(
+        t.begin() + peak_indices[burst_end_indices[i]],
+        t.begin() + end_index,
+        [t_start](double x) { return x >= t_start; }
+      ) - t.begin();
+      if (t_start_index < end_index){
+        postburst_slow_ahp_index = min_element(
+          v.begin() + t_start_index, v.begin() + end_index
+        ) - v.begin();
+      } else{
+        // edge case: end_index is 1 index after end
+        continue;
+      }
+    }
+    
+    postburst_slow_ahp_indices.push_back(postburst_slow_ahp_index);
+    postburst_slow_ahp_values.push_back(v[postburst_slow_ahp_index]);
+  }
+
+  return postburst_slow_ahp_indices.size();
+}
+
+int LibV5::postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
+                                  mapStr2doubleVec& DoubleFeatureData,
+                                  mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "V", "stim_end", "sahp_start"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"peak_indices", "burst_end_indices"});
+
+  vector<double> postburst_slow_ahp_values;
+  vector<int> postburst_slow_ahp_indices;
+  int retVal = __postburst_slow_ahp_indices(
+      doubleFeatures.at("T"),
+      doubleFeatures.at("V"),
+      intFeatures.at("peak_indices"),
+      intFeatures.at("burst_end_indices"),
+      postburst_slow_ahp_indices,
+      postburst_slow_ahp_values,
+      doubleFeatures.at("stim_end").front(),
+      // time after the spike in ms after which to start searching for minimum
+      doubleFeatures.at("sahp_start").empty() ? 5.0 : doubleFeatures.at("sahp_start").front()
+  );
+  if (retVal >= 0) {
+    setVec(IntFeatureData, StringData, "postburst_slow_ahp_indices",
+           postburst_slow_ahp_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_slow_ahp_values",
+           postburst_slow_ahp_values);
+  }
+  return retVal;
+}
+
+int LibV5::postburst_slow_ahp_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  return 1;
+}
+
 int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
                                   mapStr2doubleVec& DoubleFeatureData,
                                   mapStr2Str& StringData) {
@@ -2338,4 +2452,347 @@ int LibV5::time_to_interburst_min(mapStr2intVec& IntFeatureData,
   setVec(DoubleFeatureData, StringData, "time_to_interburst_min",
          time_to_interburst_min);
   return time_to_interburst_min.size();
+}
+
+int LibV5::time_to_postburst_slow_ahp(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "peak_time"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"postburst_slow_ahp_indices", "burst_end_indices"});
+
+  vector<double> time_to_postburst_slow_ahp;
+  const vector<double>& time = doubleFeatures.at("T");
+  const vector<double>& peak_time = doubleFeatures.at("peak_time");
+  const vector<int>& burst_end_indices = intFeatures.at("burst_end_indices");
+  const vector<int>& postburst_slow_ahp_indices = intFeatures.at("postburst_slow_ahp_indices");
+
+  if (burst_end_indices.size() < postburst_slow_ahp_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than postburst_slow_ahp_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < postburst_slow_ahp_indices.size(); i++) {
+    time_to_postburst_slow_ahp.push_back(time[postburst_slow_ahp_indices[i]] -
+                                         peak_time[burst_end_indices[i]]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_postburst_slow_ahp",
+         time_to_postburst_slow_ahp);
+  return (time_to_postburst_slow_ahp.size());
+}
+
+static int __postburst_fast_ahp_indices(const vector<double>& t, const vector<double>& v,
+                                        const vector<int>& peak_indices,
+                                        const vector<int>& burst_end_indices,
+                                        const double stim_end,
+                                        vector<int>& postburst_fast_ahp_indices,
+                                        vector<double>& postburst_fast_ahp_values) {
+  vector<int> start_indices, end_indices;
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    start_indices.push_back(peak_indices[burst_end_indices[i]]);
+    if (burst_end_indices[i] + 1 < peak_indices.size()){
+      end_indices.push_back(peak_indices[burst_end_indices[i] + 1]);
+    }
+  }
+
+  unsigned end_index = 0;
+  if (t[start_indices.back()] < stim_end) {
+    end_index =
+        distance(t.begin(),
+                 find_if(t.begin(), t.end(),
+                         [stim_end](double x) { return x >= stim_end; }));
+  } else {
+    end_index = distance(t.begin(), t.end());
+  }
+
+  if (end_indices.size() < start_indices.size()){
+    end_indices.push_back(end_index);
+  }
+
+  size_t fahpindex = 0;
+  for (size_t i = 0; i < start_indices.size(); i++) {
+    // can use first_min_element because dv/dt is very steep before fash ahp
+    // and noise is very unlikely to make voltage go up before reaching fast ahp
+    fahpindex = distance(
+        v.begin(), first_min_element(v.begin() + start_indices[i],
+                                     v.begin() + end_indices[i]));
+
+    if (fahpindex != end_index - 1) {
+      postburst_fast_ahp_indices.push_back(fahpindex);
+
+      EFEL_ASSERT(fahpindex < v.size(),
+                  "fast AHP index falls outside of voltage array");
+      postburst_fast_ahp_values.push_back(v[fahpindex]);
+    }
+  }
+
+  return postburst_fast_ahp_indices.size();
+}
+
+int LibV5::postburst_fast_ahp_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "V", "stim_end"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"peak_indices", "burst_end_indices"});
+
+  vector<int> postburst_fast_ahp_indices;
+  vector<double> postburst_fast_ahp_values;
+  int retVal =
+      __postburst_fast_ahp_indices(
+        doubleFeatures.at("T"),
+        doubleFeatures.at("V"),
+        intFeatures.at("peak_indices"),
+        intFeatures.at("burst_end_indices"),
+        doubleFeatures.at("stim_end").front(),
+        postburst_fast_ahp_indices,
+        postburst_fast_ahp_values
+      );
+
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "postburst_fast_ahp_indices", postburst_fast_ahp_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_fast_ahp_values",
+                 postburst_fast_ahp_values);
+    return postburst_fast_ahp_indices.size();
+  }
+  return -1;
+}
+
+int LibV5::postburst_fast_ahp_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  return 1;
+}
+
+static int __postburst_adp_peak_indices(const vector<double>& t, const vector<double>& v,
+                                        const vector<int>& postburst_fast_ahp_indices,
+                                        const vector<int>& postburst_slow_ahp_indices,
+                                        vector<int>& postburst_adp_peak_indices,
+                                        vector<double>& postburst_adp_peak_values) {
+
+  if (postburst_slow_ahp_indices.size() > postburst_fast_ahp_indices.size()){
+    GErrorStr +=
+        "\n postburst_slow_ahp should not have more elements than "
+        "postburst_fast_ahp for postburst_adp_peak_indices calculation.\n";
+    return -1;
+  }
+  size_t adppeakindex = 0;
+  for (size_t i = 0; i < postburst_slow_ahp_indices.size(); i++) {
+    if (postburst_slow_ahp_indices[i] < postburst_fast_ahp_indices[i]){
+      continue;
+    }
+    adppeakindex = distance(
+        v.begin(), max_element(v.begin() + postburst_fast_ahp_indices[i],
+                               v.begin() + postburst_slow_ahp_indices[i]));
+
+    if (adppeakindex < postburst_slow_ahp_indices[i] - 1) {
+      postburst_adp_peak_indices.push_back(adppeakindex);
+
+      EFEL_ASSERT(adppeakindex < v.size(),
+                  "ADP peak index falls outside of voltage array");
+      postburst_adp_peak_values.push_back(v[adppeakindex]);
+    }
+  }
+
+  return postburst_adp_peak_indices.size();
+}
+
+int LibV5::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"postburst_fast_ahp_indices", "postburst_slow_ahp_indices"});
+  vector<int> postburst_adp_peak_indices;
+  vector<double> postburst_adp_peak_values;
+  int retVal =
+      __postburst_adp_peak_indices(
+        doubleFeatures.at("T"),
+        doubleFeatures.at("V"),
+        intFeatures.at("postburst_fast_ahp_indices"),
+        intFeatures.at("postburst_slow_ahp_indices"),
+        postburst_adp_peak_indices,
+        postburst_adp_peak_values
+      );
+
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, "postburst_adp_peak_indices", postburst_adp_peak_indices);
+    setVec(DoubleFeatureData, StringData, "postburst_adp_peak_values",
+                 postburst_adp_peak_values);
+    return retVal;
+  }
+  return -1;
+}
+
+int LibV5::postburst_adp_peak_values(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData) {
+  return 1;
+}
+
+int LibV5::time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "peak_time"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"postburst_fast_ahp_indices", "burst_end_indices"});
+
+  vector<double> time_to_postburst_fast_ahp;
+  const vector<double>& time = doubleFeatures.at("T");
+  const vector<double>& peak_time = doubleFeatures.at("peak_time");
+  const vector<int>& burst_end_indices = intFeatures.at("burst_end_indices");
+  const vector<int>& postburst_fast_ahp_indices = intFeatures.at("postburst_fast_ahp_indices");
+
+  if (burst_end_indices.size() < postburst_fast_ahp_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than postburst_fast_ahp_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
+    time_to_postburst_fast_ahp.push_back(time[postburst_fast_ahp_indices[i]] -
+                                         peak_time[burst_end_indices[i]]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_postburst_fast_ahp",
+         time_to_postburst_fast_ahp);
+  return (time_to_postburst_fast_ahp.size());
+}
+
+int LibV5::time_to_postburst_adp_peak(mapStr2intVec& IntFeatureData,
+                                      mapStr2doubleVec& DoubleFeatureData,
+                                      mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "peak_time"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"postburst_adp_peak_indices", "burst_end_indices"});
+
+  vector<double> time_to_postburst_adp_peak;
+  const vector<double>& time = doubleFeatures.at("T");
+  const vector<double>& peak_time = doubleFeatures.at("peak_time");
+  const vector<int>& burst_end_indices = intFeatures.at("burst_end_indices");
+  const vector<int>& postburst_adp_peak_indices = intFeatures.at("postburst_adp_peak_indices");
+
+  if (burst_end_indices.size() < postburst_adp_peak_indices.size()){
+    GErrorStr +=
+        "\nburst_end_indices should not have less elements than postburst_adp_peak_indices\n";
+    return -1;
+  }
+
+  for (size_t i = 0; i < postburst_adp_peak_indices.size(); i++) {
+    // there are not always an adp peak after each burst
+    // so make sure that the burst and adp peak indices are consistent
+    size_t k = 0;
+    while (burst_end_indices[i] + k + 1 < peak_time.size() &&
+           peak_time[burst_end_indices[i] + k + 1] < time[postburst_adp_peak_indices[i]]){
+      k++;
+    }
+    time_to_postburst_adp_peak.push_back(time[postburst_adp_peak_indices[i]] -
+                                        peak_time[burst_end_indices[i] + k]);
+  }
+  setVec(DoubleFeatureData, StringData, "time_to_postburst_adp_peak",
+         time_to_postburst_adp_peak);
+  return (time_to_postburst_adp_peak.size());
+}
+
+// index and voltage value at a given percentage of the duration of the interburst after fast AHP
+int __interburst_percent_indices(const vector<double>& t, const vector<double>& v,
+                                        const vector<int>& postburst_fast_ahp_indices,
+                                        const vector<int>& peak_indices,
+                                        const vector<int>& burst_end_indices,
+                                        vector<int>& interburst_percent_indices,
+                                        vector<double>& interburst_percent_values,
+                                        // percentage should be a value between 0 and 1
+                                        double fraction) {
+
+  double time_interval, time_at_fraction;
+  size_t index_at_fraction;
+  for (size_t i = 0; i < postburst_fast_ahp_indices.size(); i++) {
+    if (i < burst_end_indices.size()){
+      if (burst_end_indices[i] + 1 < peak_indices.size()){
+        time_interval = t[peak_indices[burst_end_indices[i] + 1]] - t[postburst_fast_ahp_indices[i]];
+        time_at_fraction = t[postburst_fast_ahp_indices[i]] + time_interval * fraction;
+        index_at_fraction =
+          distance(t.begin(),
+                    find_if(t.begin(), t.end(),
+                            [time_at_fraction](double x){ return x >= time_at_fraction; }));
+        interburst_percent_indices.push_back(index_at_fraction);
+        interburst_percent_values.push_back(v[index_at_fraction]);
+      }
+    }
+  }
+  return interburst_percent_indices.size();
+}
+
+int LibV5::interburst_XXpercent_indices(mapStr2intVec& IntFeatureData,
+                           mapStr2doubleVec& DoubleFeatureData,
+                           mapStr2Str& StringData, int percent) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"T", "V"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"peak_indices", "burst_end_indices", "postburst_fast_ahp_indices"});
+
+  vector<int> interburst_XXpercent_indices;
+  vector<double> interburst_XXpercent_values;
+  char featureNameIndices[30], featureNameValues[30];
+  sprintf(featureNameIndices, "interburst_%dpercent_indices", percent);
+  sprintf(featureNameValues, "interburst_%dpercent_values", percent);
+
+  int retVal =
+      __interburst_percent_indices(
+        doubleFeatures.at("T"),
+        doubleFeatures.at("V"),
+        intFeatures.at("postburst_fast_ahp_indices"),
+        intFeatures.at("peak_indices"),
+        intFeatures.at("burst_end_indices"),
+        interburst_XXpercent_indices,
+        interburst_XXpercent_values,
+        percent / 100.
+      );
+
+  if (retVal > 0) {
+    setVec(IntFeatureData, StringData, featureNameIndices, interburst_XXpercent_indices);
+    setVec(DoubleFeatureData, StringData, featureNameValues,
+                 interburst_XXpercent_values);
+    return interburst_XXpercent_indices.size();
+  }
+  return -1;
+}
+
+static int __interburst_duration(const vector<double>& peak_time,
+                                const vector<int>& burst_end_indices,
+                                vector<double>& interburst_duration) {
+
+  double duration;
+  for (size_t i = 0; i < burst_end_indices.size(); i++) {
+    if (burst_end_indices[i] + 1 < peak_time.size()){
+      duration = peak_time[burst_end_indices[i] + 1] - peak_time[burst_end_indices[i]];
+      interburst_duration.push_back(duration);
+    }
+  }
+  return interburst_duration.size();
+}
+
+int LibV5::interburst_duration(mapStr2intVec& IntFeatureData,
+                              mapStr2doubleVec& DoubleFeatureData,
+                              mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"peak_time"});
+  const auto& intFeatures =
+      getFeatures(IntFeatureData, {"burst_end_indices"});
+
+  vector<double> interburst_duration;
+  int retVal =
+      __interburst_duration(
+        doubleFeatures.at("peak_time"), intFeatures.at("burst_end_indices"), interburst_duration);
+
+  if (retVal > 0) {
+    setVec(DoubleFeatureData, StringData, "interburst_duration", interburst_duration);
+    return interburst_duration.size();
+  }
+  return -1;
 }

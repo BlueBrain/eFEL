@@ -195,13 +195,14 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
         for seg in bl.segments:
             traces = []
             for sig in seg.analogsignals:
-                trace = {
-                    'T': sig.times.rescale('ms').magnitude,
-                    'V': sig.rescale('mV').magnitude,
-                    'stim_start': [stim_start],
-                    'stim_end': [stim_end]
-                }
-                traces.append(trace)
+                if 'V' in sig.units.dimensionality.string:
+                    trace = {
+                        'T': (sig.times - sig.times[0]).rescale('ms').magnitude,
+                        'V': sig.rescale('mV').magnitude,
+                        'stim_start': [stim_start],
+                        'stim_end': [stim_end]
+                    }
+                    traces.append(trace)
             efel_segments.append(traces)
         efel_blocks.append(efel_segments)
 

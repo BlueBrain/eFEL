@@ -134,8 +134,8 @@ The interspike intervals, i.e., the time intervals between adjacent peaks.
     else:
         inv_last_ISI = 0
 
-`Python efeature`: inv_ISI_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : inv_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Computes all inverse spike interval values.
 
@@ -534,7 +534,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 - **Units**: mV
 - **Pseudocode**: ::
 
-    interburst_min = [
+    postburst_min = [
         numpy.min(
             v[peak_indices[i]:peak_indices[i + 1]]
         ) for i in burst_end_indices if i + 1 < len(peak_indices)
@@ -550,6 +550,36 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             postburst_min.append(numpy.min(
                 v[peak_indices[burst_end_indices[-1]]:]
             ))
+
+`LibV5`_ : postburst_slow_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The slow AHP voltage after the end of a burst.
+
+The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    postburst_slow_ahp = []
+    for i in burst_end_indices:
+        i_start = numpy.where(t >= t[peak_indices[i]] + sahp_start)[0][0]
+        if i + 1 < len(peak_indices):
+            postburst_slow_ahp.append(numpy.min(v[i_start:peak_indices[i + 1]]))
+        else:
+            if t[burst_end_indices[-1]] < stim_end:
+                end_idx = numpy.where(t >= stim_end)[0][0]
+                postburst_slow_ahp.append(numpy.min(v[i_start:end_idx]))
+            else:
+                postburst_slow_ahp.append(numpy.min(v[i_start:]))
 
 `LibV5`_ : time_to_interburst_min
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -573,6 +603,181 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
+`LibV5`_ : time_to_postburst_slow_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The time between the last spike of a burst and the slow ahp afterwards.
+
+The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_slow_ahp_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
+
+`LibV5`_ : postburst_fast_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The fast AHP voltage after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    postburst_fahp = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            stop_i = peak_indices[i + 1]
+        elif i + 1 < stim_end_index:
+            stop_i = stim_end_index
+        else:
+            stop_i = len(v) - 1
+        
+        v_crop = v[peak_indices[i]:stop_i]
+        # get where the voltage is going up
+        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
+        # the voltage should go up for at least two consecutive points
+        crop_arg_arg = numpy.argwhere(numpy.diff(crop_args) == 1)[0][0]
+        crop_arg = crop_args[crop_arg_arg]
+        end_i = peak_indices[i] + crop_arg + 1
+        # the fast ahp is between last peak of burst and the point where voltage is going back up
+        postburst_fahp.append(numpy.min(v[peak_indices[i]:end_i]))
+
+    return postburst_fahp
+
+`LibV5`_ : postburst_adp_peak_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The small ADP peak after the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, postburst_slow_ahp_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    adp_peak_values = []
+    for i, sahpi in enumerate(postburst_sahpi):
+        if sahpi < postburst_fahpi[i]:
+            continue
+        adppeaki = numpy.argmax(v[postburst_fahpi[i]:sahpi]) + postburst_fahpi[i]
+        if adppeaki != sahpi - 1:
+            adp_peak_values.append(v[adppeaki])
+
+    if len(adp_peak_values) == 0:
+        return None
+    return adp_peak_values
+
+`LibV5`_ : time_to_postburst_fast_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time to the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
+
+`LibV5`_ : time_to_postburst_adp_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time to the small ADP peak after the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_adp_peak_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_postburst_adp_peaks = []
+    n_peaks = len(peak_time)
+    for i, adppeaki in enumerate(postburst_adppeaki):
+        # there are not always an adp peak after each burst
+        # so make sure that the burst and adp peak indices are consistent
+        k = 0
+        while (
+            burst_endi[i] + k + 1 < n_peaks and peak_time[burst_endi[i] + k + 1] < t[adppeaki]
+        ):
+            k += 1
+
+        time_to_postburst_adp_peaks.append(t[adppeaki] - peak_time[burst_endi[i] + k])
+
+    return time_to_postburst_adp_peaks
+
+
+`LibV5`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_XXpercent_values = []
+    for i, postburst_fahp_i in enumerate(postburst_fahpi):
+        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
+            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
+            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percentage / 100.
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            interburst_XXpercent_values.append(v[index_at_XXpercent])
+
+`LibV5`_ : interburst_duration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Duration between the last spike of each burst and the next spike.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    interburst_duration = [
+        peak_time[idx + 1] - peak_time[idx]
+        for idx in burst_end_indices
+        if idx + 1 < len(peak_time)
+    ]
+
 `Python efeature`_ : single_burst_ratio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -589,6 +794,67 @@ the length of the first isi over the median of the rest of the isis.
 
     single_burst_ratio = ISI_values[0] / numpy.mean(ISI_values)
 
+`Python efeature`_ : spikes_per_burst
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Number of spikes in each burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spike_per_bursts = []
+    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
+        spike_per_bursts.append(idx_end - idx_begin + 1)
+
+`Python efeature`_ : spikes_per_burst_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between each burst and the next one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spikes_per_burst[:-1] - spikes_per_burst[1:]
+
+`Python efeature`_ : spikes_in_burst1_burst2_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the second one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst_diff
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst_diff[0]])
+
+`Python efeature`_ : spikes_in_burst1_burstlast_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difference of number of spikes between the first burst and the last one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
 Spike shape features
 --------------------
@@ -618,6 +884,16 @@ The voltages at the maxima of the peaks
 
     peak_voltage = voltage[peak_indices]
 
+`LibV1`_ : AP_height
+~~~~~~~~~~~~~~~~~~~~
+
+Same as peak_voltage: The voltages at the maxima of the peaks
+
+- **Required features**: LibV1:peak_voltage
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AP_height = peak_voltage
 
 `LibV1`_ : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1284,8 +1560,56 @@ Slope of the V, dVdt phasespace plot at the beginning of every spike
     range_min_idxs = AP_begin_indices - AP_phseslope_range
     AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
 
-Voltage features
-----------------
+`Python efeature`_ : phaseslope_max
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Computes the maximum of the phase slope.
+Attention, this feature is sensitive to interpolation timestep.
+
+- **Required features**: time, voltage
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
+
+`Python efeature`_ : initburst_sahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage after initial burst
+
+The end of the initial burst is detected when the ISIs frequency gets lower than initburst_freq_threshold, in Hz.
+Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
+and initburst_sahp_end (in ms) after the last spike of the burst.
+
+- **Required features**: LibV1: peak_time 
+- **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
+- **Units**: mV
+
+`Python efeature`_ : initburst_sahp_ssse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage from steady_state_voltage_stimend after initial burst
+
+- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
+- **Units**: mV
+- **Pseudocode**: ::
+
+    numpy.array([initburst_sahp_value[0] - ssse[0]])
+
+`Python efeature`_ : initburst_sahp_vb
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Slow AHP voltage from voltage base after initial burst
+
+- **Required features**: LibV5: voltage_base, initburst_sahp
+- **Units**: mV
+- **Pseudocode**: ::
+
+    numpy.array([initburst_sahp_value[0] - voltage_base[0]])
+
+Subthreshold features
+---------------------
 
 .. image:: _static/figures/voltage_features.png
 
@@ -1796,40 +2120,6 @@ Difference between minimum and steady state during stimulation
 Python features
 ---------------
 
-`Python efeature`_ : initburst_sahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage after initial burst
-
-The end of the initial burst is detected when the ISIs frequency gets lower than initburst_freq_threshold, in Hz.
-Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
-and initburst_sahp_end (in ms) after the last spike of the burst.
-
-- **Required features**: LibV1: peak_time 
-- **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
-- **Units**: mV
-
-`Python efeature`_ : initburst_sahp_ssse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage from steady_state_voltage_stimend after initial burst
-
-- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    numpy.array([initburst_sahp_value[0] - ssse[0]])
-
-`Python efeature`_ : initburst_sahp_vb
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Slow AHP voltage from voltage base after initial burst
-
-- **Required features**: LibV5: voltage_base, initburst_sahp
-- **Units**: mV
-- **Pseudocode**: ::
-
-    numpy.array([initburst_sahp_value[0] - voltage_base[0]])
 
 `Python efeature`_ : depol_block_bool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1842,68 +2132,6 @@ A hyperpolarization block is detected when, after stimulus start, the voltage st
 
 - **Required features**: LibV5: AP_begin_voltage
 - **Units**: constant
-
-`Python efeature`_ : spikes_per_burst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Number of spikes in each burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spike_per_bursts = []
-    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
-        spike_per_bursts.append(idx_end - idx_begin + 1)
-
-`Python efeature`_ : spikes_per_burst_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between each burst and the next one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spikes_per_burst[:-1] - spikes_per_burst[1:]
-
-`Python efeature`_ : spikes_in_burst1_burst2_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between the first burst and the second one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst_diff
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst_diff[0]])
-
-`Python efeature`_ : spikes_in_burst1_burstlast_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Difference of number of spikes between the first burst and the last one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
 `Python efeature`_ : impedance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1933,19 +2161,6 @@ with impedance_max_freq being a setting with 50.0 as a default value.
         return freq[ind_max]
     else:
         return None
-
-`Python efeature`_ : phaseslope_max
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Computes the maximum of the phase slope.
-Attention, this feature is sensitive to interpolation timestep.
-
-- **Required features**: time, voltage
-- **Units**: V/s
-- **Pseudocode**: ::
-
-    phaseslope = numpy.diff(voltage) / numpy.diff(time)
-    phaseslope_max = numpy.array([numpy.max(phaseslope)])
 
 
 

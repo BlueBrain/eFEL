@@ -85,7 +85,7 @@ class TestCppcore:
 
         efel.cppcore.setFeatureInt("DerivativeWindow", [3])
 
-    def test_getFeatureNames(self):  # pylint: disable=R0201
+    def test_get_feature_names(self):  # pylint: disable=R0201
         """cppcore: Testing getting all feature names"""
         import efel
         feature_names = []
@@ -268,4 +268,4 @@ def test_efel_assertion_error():
         "stim_end": [75],
     }
     with pytest.raises(AssertionError):
-        efel.getFeatureValues([trace], ["__test_efel_assertion__"])
+        efel.get_feature_values([trace], ["__test_efel_assertion__"])
