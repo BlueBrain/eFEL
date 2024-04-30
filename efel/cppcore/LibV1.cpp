@@ -719,9 +719,8 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
   return 1;
 }
 
-static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
-                            double stimStart, double stimEnd,
-                            vector<double>& maxV, vector<double>& minV) {
+static std::pair<double, double> __maxmin_voltage(const vector<double>& v, const vector<double>& t,
+                                             double stimStart, double stimEnd) {
   if (stimStart > t[t.size() - 1])
     throw FeatureComputationError("Stimulus start larger than max time in trace");
 
@@ -743,10 +742,10 @@ static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
     throw FeatureComputationError("Stimulus end index not found");
   }
 
-  maxV.push_back(*max_element(&v[stimstartindex], &v[stimendindex]));
-  minV.push_back(*min_element(&v[stimstartindex], &v[stimendindex]));
+  double maxV = *max_element(&v[stimstartindex], &v[stimendindex]);
+  double minV = *min_element(&v[stimstartindex], &v[stimendindex]);
 
-  return 1;
+  return std::make_pair(maxV, minV);
 }
 
 int LibV1::maximum_voltage(mapStr2intVec& IntFeatureData,
@@ -754,14 +753,12 @@ int LibV1::maximum_voltage(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> maxV, minV;
-  int retVal = __maxmin_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
-                                doubleFeatures.at("stim_start")[0],
-                                doubleFeatures.at("stim_end")[0], maxV, minV);
-  if (retVal > 0) {
-    setVec(DoubleFeatureData, StringData, "maximum_voltage", maxV);
-  }
-  return retVal;
+  std::pair<double, double> maxminV = __maxmin_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
+                                                       doubleFeatures.at("stim_start")[0],
+                                                       doubleFeatures.at("stim_end")[0]);
+  
+  setVec(DoubleFeatureData, StringData, "maximum_voltage", {maxminV.first});
+  return 1;
 }
 
 // *** maximum voltage ***
@@ -771,20 +768,18 @@ int LibV1::minimum_voltage(mapStr2intVec& IntFeatureData,
                            mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> maxV, minV;
-  int retVal = __maxmin_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
-                                doubleFeatures.at("stim_start")[0],
-                                doubleFeatures.at("stim_end")[0], maxV, minV);
-  if (retVal > 0) {
-    setVec(DoubleFeatureData, StringData, "minimum_voltage", minV);
-  }
-  return retVal;
+  
+  std::pair<double, double> maxminV = __maxmin_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
+                                                       doubleFeatures.at("stim_start")[0],
+                                                       doubleFeatures.at("stim_end")[0]);
+  
+  setVec(DoubleFeatureData, StringData, "minimum_voltage", {maxminV.second});
+  return 1;
 }
 
 // *** steady state voltage ***
-static int __steady_state_voltage(const vector<double>& v,
-                                  const vector<double>& t, double stimEnd,
-                                  vector<double>& ssv) {
+static double __steady_state_voltage(const vector<double>& v,
+                                     const vector<double>& t, double stimEnd) {
   int mean_size = 0;
   double mean = 0;
   for (int i = t.size() - 1; t[i] > stimEnd; i--) {
@@ -792,8 +787,7 @@ static int __steady_state_voltage(const vector<double>& v,
     mean_size++;
   }
   mean /= mean_size;
-  ssv.push_back(mean);
-  return 1;
+  return mean;
 }
 
 int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
@@ -803,14 +797,10 @@ int LibV1::steady_state_voltage(mapStr2intVec& IntFeatureData,
       getFeatures(DoubleFeatureData, {"V", "T", "stim_end"});
   if (doubleFeatures.at("stim_end").size() != 1) return -1;
 
-  vector<double> ssv;
-  int retVal =
-      __steady_state_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
-                             doubleFeatures.at("stim_end")[0], ssv);
-  if (retVal > 0) {
-    setVec(DoubleFeatureData, StringData, "steady_state_voltage", ssv);
-  }
-  return retVal;
+  double ssv = __steady_state_voltage(doubleFeatures.at("V"), doubleFeatures.at("T"),
+                                      doubleFeatures.at("stim_end")[0]); 
+  setVec(DoubleFeatureData, StringData, "steady_state_voltage", {ssv});
+  return 1;
 }
 
 
