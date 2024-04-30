@@ -508,9 +508,9 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
 //
 // the exponential fit works iteratively
 //
-static int __time_constant(const vector<double>& v, const vector<double>& t,
-                           double stimStart, double stimEnd,
-                           vector<double>& tc) {
+static vector<double> __time_constant(const vector<double>& v, const vector<double>& t,
+                                      double stimStart, double stimEnd) {
+  vector<double> tc;
   // value of the derivative near the minimum
   double min_derivative = 5e-3;
   // minimal required length of the decay (indices)
@@ -533,7 +533,7 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
 
   if (stimstartindex >= v.size() || stimmiddleindex < 0 ||
       static_cast<size_t>(stimmiddleindex) >= v.size()) {
-    return -1;
+    throw std::out_of_range("Indices are out of range for the vector 'v'.");
   }
   vector<double> part_v(&v[stimstartindex], &v[stimmiddleindex]);
 
@@ -645,21 +645,20 @@ static int __time_constant(const vector<double>& v, const vector<double>& t,
     }
   }
   tc.push_back(-1. / fit.slope);
-  return 1;
+  return tc;
 }
 int LibV1::time_constant(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> tc;
-  int retVal = __time_constant(doubleFeatures.at("V"), doubleFeatures.at("T"),
-                               doubleFeatures.at("stim_start")[0],
-                               doubleFeatures.at("stim_end")[0], tc);
-  if (retVal >= 0) {
+  vector<double> tc = __time_constant(doubleFeatures.at("V"), doubleFeatures.at("T"),
+                                      doubleFeatures.at("stim_start")[0],
+                                      doubleFeatures.at("stim_end")[0]);
+  if (!tc.empty()) {
     setVec(DoubleFeatureData, StringData, "time_constant", tc);
   }
-  return retVal;
+  return tc.size();
 }
 
 // *** voltage deflection ***
