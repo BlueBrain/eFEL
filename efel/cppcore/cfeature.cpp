@@ -204,7 +204,29 @@ void cFeature::fillfeaturetypes() {
   featuretypes["interburst_min_values"] = "double";
   featuretypes["postburst_min_indices"] = "int";
   featuretypes["postburst_min_values"] = "double";
+  featuretypes["postburst_slow_ahp_indices"] = "int";
+  featuretypes["postburst_slow_ahp_values"] = "double";
   featuretypes["time_to_interburst_min"] = "double";
+  featuretypes["time_to_postburst_slow_ahp"] = "double";
+  featuretypes["postburst_fast_ahp_indices"] = "int";
+  featuretypes["postburst_fast_ahp_values"] = "double";
+  featuretypes["postburst_adp_peak_indices"] = "int";
+  featuretypes["postburst_adp_peak_values"] = "double";
+  featuretypes["time_to_postburst_fast_ahp"] = "double";
+  featuretypes["time_to_postburst_adp_peak"] = "double";
+  featuretypes["interburst_15percent_indices"] = "int";
+  featuretypes["interburst_15percent_values"] = "double";
+  featuretypes["interburst_20percent_indices"] = "int";
+  featuretypes["interburst_20percent_values"] = "double";
+  featuretypes["interburst_25percent_indices"] = "int";
+  featuretypes["interburst_25percent_values"] = "double";
+  featuretypes["interburst_30percent_indices"] = "int";
+  featuretypes["interburst_30percent_values"] = "double";
+  featuretypes["interburst_40percent_indices"] = "int";
+  featuretypes["interburst_40percent_values"] = "double";
+  featuretypes["interburst_60percent_indices"] = "int";
+  featuretypes["interburst_60percent_values"] = "double";
+  featuretypes["interburst_duration"] = "double";
 
   // end of feature types
 }
