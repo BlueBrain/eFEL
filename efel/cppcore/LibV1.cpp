@@ -245,9 +245,9 @@ int LibV1::AHP_slow_time(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-static vector<double> __adaptation_index(double spikeSkipf, int maxnSpike,
-                                         double StimStart, double StimEnd, double Offset,
-                                         const vector<double>& peakVTime) {
+static double __adaptation_index(double spikeSkipf, int maxnSpike,
+                                 double StimStart, double StimEnd, double Offset,
+                                 const vector<double>& peakVTime) {
   list<double> SpikeTime;
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
@@ -291,9 +291,7 @@ static vector<double> __adaptation_index(double spikeSkipf, int maxnSpike,
     ADI = ADI + (ISISub / ISISum);
   }
   ADI = ADI / (ISI.size() - 1);
-  vector<double> adaptation_index;
-  adaptation_index.push_back(ADI);
-  return adaptation_index;
+  return ADI;
 }
 
 int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
@@ -317,21 +315,21 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
     Offset = OffSetVec[0];  // Use the first element of OffSetVec if found
   }
 
-  vector<double> adaptation_index = __adaptation_index(
+  double adaptation_index = __adaptation_index(
       doubleFeatures.at("spike_skipf")[0], intFeatures.at("max_spike_skip")[0],
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
       Offset, doubleFeatures.at("peak_time"));
-  if (!adaptation_index.empty()) {
-    setVec(DoubleFeatureData, StringData, "adaptation_index", adaptation_index);
-  }
-  return adaptation_index.size();
+  
+  setVec(DoubleFeatureData, StringData, "adaptation_index", {adaptation_index});
+  
+  return 1;
 }
 
 // *** adaptation_index2 ***
 // as adaptation_index, but start at the second ISI instead of the round(N *
 // spikeskipf)
-static vector<double> __adaptation_index2(double StimStart, double StimEnd, double Offset,
-                                          const vector<double>& peakVTime) {
+static double __adaptation_index2(double StimStart, double StimEnd, double Offset,
+                                  const vector<double>& peakVTime) {
   list<double> SpikeTime;
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
@@ -366,9 +364,7 @@ static vector<double> __adaptation_index2(double StimStart, double StimEnd, doub
     ADI = ADI + (ISISub / ISISum);
   }
   ADI = ADI / (ISI.size() - 1);
-  vector<double> adaptation_index;
-  adaptation_index.push_back(ADI);
-  return adaptation_index;
+  return ADI;
 }
 
 int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
@@ -388,15 +384,13 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
     throw FeatureComputationError("At least 4 spikes needed for adaptation_index2.");
   }
 
-  vector<double> adaptationindex2 = __adaptation_index2(
+  double adaptationindex2 = __adaptation_index2(
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
       Offset, doubleFeatures.at("peak_time"));
 
-  if (!adaptationindex2.empty()) {
-    setVec(DoubleFeatureData, StringData, "adaptation_index2",
-           adaptationindex2);
-  }
-  return adaptationindex2.size();
+  setVec(DoubleFeatureData, StringData, "adaptation_index2",
+         {adaptationindex2});
+  return 1;
 }
 
 // end of adaptation_index2
@@ -508,9 +502,8 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
 //
 // the exponential fit works iteratively
 //
-static vector<double> __time_constant(const vector<double>& v, const vector<double>& t,
-                                      double stimStart, double stimEnd) {
-  vector<double> tc;
+static double __time_constant(const vector<double>& v, const vector<double>& t,
+                              double stimStart, double stimEnd) {
   // value of the derivative near the minimum
   double min_derivative = 5e-3;
   // minimal required length of the decay (indices)
@@ -644,28 +637,26 @@ static vector<double> __time_constant(const vector<double>& v, const vector<doub
       right = !right;
     }
   }
-  tc.push_back(-1. / fit.slope);
-  return tc;
+  return -1. / fit.slope;
+
 }
 int LibV1::time_constant(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> tc = __time_constant(doubleFeatures.at("V"), doubleFeatures.at("T"),
-                                      doubleFeatures.at("stim_start")[0],
-                                      doubleFeatures.at("stim_end")[0]);
-  if (!tc.empty()) {
-    setVec(DoubleFeatureData, StringData, "time_constant", tc);
-  }
-  return tc.size();
+  double tc = __time_constant(doubleFeatures.at("V"), doubleFeatures.at("T"),
+                              doubleFeatures.at("stim_start")[0],
+                              doubleFeatures.at("stim_end")[0]);
+  setVec(DoubleFeatureData, StringData, "time_constant", {tc});
+  return 1;
 }
 
 // *** voltage deflection ***
 
-static vector<double> __voltage_deflection(const vector<double>& v,
-                                           const vector<double>& t, double stimStart,
-                                           double stimEnd) {
+static double __voltage_deflection(const vector<double>& v,
+                                   const vector<double>& t, double stimStart,
+                                   double stimEnd) {
   const size_t window_size = 5;
 
   size_t stimendindex = 0;
@@ -693,9 +684,7 @@ static vector<double> __voltage_deflection(const vector<double>& v,
     wind_mean += v[i];
   }
   wind_mean /= window_size;
-  vector<double> vd;
-  vd.push_back(wind_mean - base);
-  return vd;
+  return wind_mean - base;
 }
 
 int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
@@ -703,13 +692,11 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
                               mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"V", "T", "stim_start", "stim_end"});
-  vector<double> vd = __voltage_deflection(
+  double vd = __voltage_deflection(
       doubleFeatures.at("V"), doubleFeatures.at("T"),
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0]);
-  if (!vd.empty()) {
-    setVec(DoubleFeatureData, StringData, "voltage_deflection", vd);
-  }
-  return vd.size();
+  setVec(DoubleFeatureData, StringData, "voltage_deflection", {vd});
+  return 1;
 }
 
 // *** ohmic input resistance ***
