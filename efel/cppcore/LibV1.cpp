@@ -714,13 +714,11 @@ int LibV1::voltage_deflection(mapStr2intVec& IntFeatureData,
 
 // *** ohmic input resistance ***
 
-static int __ohmic_input_resistance(double voltage_deflection,
-                                    double stimulus_current,
-                                    vector<double>& oir) {
+static double __ohmic_input_resistance(double voltage_deflection,
+                                       double stimulus_current) {
   if (stimulus_current == 0)
     throw FeatureComputationError("Stimulus current is zero which will result in division by zero.");
-  oir.push_back(voltage_deflection / stimulus_current);
-  return 1;
+  return voltage_deflection / stimulus_current;
 }
 
 int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
@@ -728,14 +726,10 @@ int LibV1::ohmic_input_resistance(mapStr2intVec& IntFeatureData,
                                   mapStr2Str& StringData) {
   const auto& doubleFeatures = getFeatures(
       DoubleFeatureData, {"voltage_deflection", "stimulus_current"});
-  vector<double> oir;
-  int retVal =
-      __ohmic_input_resistance(doubleFeatures.at("voltage_deflection")[0],
-                               doubleFeatures.at("stimulus_current")[0], oir);
-  if (retVal > 0) {
-    setVec(DoubleFeatureData, StringData, "ohmic_input_resistance", oir);
-  }
-  return retVal;
+  double oir = __ohmic_input_resistance(doubleFeatures.at("voltage_deflection")[0],
+                                        doubleFeatures.at("stimulus_current")[0]);
+  setVec(DoubleFeatureData, StringData, "ohmic_input_resistance", {oir});
+  return 1;
 }
 
 static int __maxmin_voltage(const vector<double>& v, const vector<double>& t,
