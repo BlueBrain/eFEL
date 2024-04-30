@@ -1,9 +1,10 @@
 from __future__ import annotations
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 import efel
 from efel import get_feature_names, get_feature_values
+from efel.pyfeatures import isi
 
 
 def generate_spike_data(
@@ -33,6 +34,23 @@ def test_ISIs_single_spike():
 
     assert len(feature_values["peak_time"]) == 1
     assert feature_values["ISIs"] is None
+
+
+def test_isi_log_slope_core_exception():
+    """Test that _isi_log_slope_core handles np.polyfit raising a LinAlgError."""
+    # Mock np.polyfit to raise a LinAlgError
+    np.polyfit = MagicMock(side_effect=np.linalg.LinAlgError("Singular matrix"))
+
+    # Call _isi_log_slope_core with some dummy data
+    isi_values = np.array([1, 2, 3, 4, 5])
+    with pytest.warns(UserWarning) as record:
+        result = isi._isi_log_slope_core(isi_values)
+
+    assert "Error in polyfit: Singular matrix" in str(record[0].message)
+    assert result is None
+
+    # Reset np.polyfit to its original state
+    np.polyfit = np.lib.polynomial.polyfit
 
 
 class TestRegularISI:
