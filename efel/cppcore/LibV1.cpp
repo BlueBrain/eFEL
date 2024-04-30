@@ -330,13 +330,12 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
 // *** adaptation_index2 ***
 // as adaptation_index, but start at the second ISI instead of the round(N *
 // spikeskipf)
-static int __adaptation_index2(double StimStart, double StimEnd, double Offset,
-                               const vector<double>& peakVTime,
-                               vector<double>& adaptation_index) {
+static vector<double> __adaptation_index2(double StimStart, double StimEnd, double Offset,
+                                          const vector<double>& peakVTime) {
   list<double> SpikeTime;
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
-  // considet Offset also if it is given as input
+  // consider Offset also if it is given as input
   for (size_t i = 0; i < peakVTime.size(); i++) {
     if ((peakVTime[i] >= (StimStart - Offset)) &&
         (peakVTime[i] <= (StimEnd + Offset))) {
@@ -367,9 +366,9 @@ static int __adaptation_index2(double StimStart, double StimEnd, double Offset,
     ADI = ADI + (ISISub / ISISum);
   }
   ADI = ADI / (ISI.size() - 1);
-  adaptation_index.clear();
+  vector<double> adaptation_index;
   adaptation_index.push_back(ADI);
-  return 1;
+  return adaptation_index;
 }
 
 int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
@@ -389,16 +388,15 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
     throw FeatureComputationError("At least 4 spikes needed for adaptation_index2.");
   }
 
-  vector<double> adaptationindex2;
-  retval = __adaptation_index2(
+  vector<double> adaptationindex2 = __adaptation_index2(
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
-      Offset, doubleFeatures.at("peak_time"), adaptationindex2);
+      Offset, doubleFeatures.at("peak_time"));
 
-  if (retval >= 0) {
+  if (!adaptationindex2.empty()) {
     setVec(DoubleFeatureData, StringData, "adaptation_index2",
            adaptationindex2);
   }
-  return retval;
+  return adaptationindex2.size();
 }
 
 // end of adaptation_index2
