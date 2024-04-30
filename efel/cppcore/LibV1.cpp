@@ -404,13 +404,13 @@ int LibV1::adaptation_index2(mapStr2intVec& IntFeatureData,
 // To find spike width using Central difference derivative vec1[i] =
 // ((vec[i+1]+vec[i-1])/2)/dx  and half width is between
 // MinAHP and APThreshold
-static int __spike_width2(const vector<double>& t, const vector<double>& V,
-                          const vector<int>& PeakIndex,
-                          const vector<int>& minAHPIndex,
-                          vector<double>& spike_width2) {
+static vector<double> __spike_width2(const vector<double>& t, const vector<double>& V,
+                                     const vector<int>& PeakIndex,
+                                     const vector<int>& minAHPIndex) {
   vector<double> v, dv1, dv2;
   double dx = t[1] - t[0];
   double VoltThreshold, VoltMax, HalfV, T0, V0, V1, fraction, TStart, TEnd;
+  vector<double> spike_width2;
   for (size_t i = 0; i < minAHPIndex.size() && i < PeakIndex.size() - 1; i++) {
     v.clear();
     dv1.clear();
@@ -480,7 +480,7 @@ static int __spike_width2(const vector<double>& t, const vector<double>& V,
     spike_width2.push_back(TEnd - TStart);
   }
 
-  return spike_width2.size();
+  return spike_width2;
 }
 
 int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
@@ -492,14 +492,13 @@ int LibV1::spike_width2(mapStr2intVec& IntFeatureData,
   if (intFeatures.at("peak_indices").size() <= 1) {
     throw FeatureComputationError("More than one spike is needed for spikewidth2 calculation.");
   }
-  vector<double> spike_width2;
-  int retVal = __spike_width2(doubleFeatures.at("T"), doubleFeatures.at("V"),
-                              intFeatures.at("peak_indices"),
-                              intFeatures.at("min_AHP_indices"), spike_width2);
-  if (retVal > 0) {
+  vector<double> spike_width2 = __spike_width2(doubleFeatures.at("T"), doubleFeatures.at("V"),
+                                               intFeatures.at("peak_indices"),
+                                               intFeatures.at("min_AHP_indices"));
+  if (!spike_width2.empty()) {
     setVec(DoubleFeatureData, StringData, "spike_width2", spike_width2);
   }
-  return retVal;
+  return spike_width2.size();
 }
 
 // passive properties implementation
