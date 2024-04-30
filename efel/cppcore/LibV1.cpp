@@ -245,10 +245,9 @@ int LibV1::AHP_slow_time(mapStr2intVec& IntFeatureData,
   return -1;
 }
 
-static int __adaptation_index(double spikeSkipf, int maxnSpike,
-                              double StimStart, double StimEnd, double Offset,
-                              const vector<double>& peakVTime,
-                              vector<double>& adaptation_index) {
+static vector<double> __adaptation_index(double spikeSkipf, int maxnSpike,
+                                         double StimStart, double StimEnd, double Offset,
+                                         const vector<double>& peakVTime) {
   list<double> SpikeTime;
   vector<double> ISI;
   // Select spike time between given time scale (stim_start and stim_end )
@@ -292,9 +291,9 @@ static int __adaptation_index(double spikeSkipf, int maxnSpike,
     ADI = ADI + (ISISub / ISISum);
   }
   ADI = ADI / (ISI.size() - 1);
-  adaptation_index.clear();
+  vector<double> adaptation_index;
   adaptation_index.push_back(ADI);
-  return 1;
+  return adaptation_index;
 }
 
 int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
@@ -318,15 +317,14 @@ int LibV1::adaptation_index(mapStr2intVec& IntFeatureData,
     Offset = OffSetVec[0];  // Use the first element of OffSetVec if found
   }
 
-  vector<double> adaptation_index;
-  int retVal = __adaptation_index(
+  vector<double> adaptation_index = __adaptation_index(
       doubleFeatures.at("spike_skipf")[0], intFeatures.at("max_spike_skip")[0],
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
-      Offset, doubleFeatures.at("peak_time"), adaptation_index);
-  if (retVal > 0) {
+      Offset, doubleFeatures.at("peak_time"));
+  if (!adaptation_index.empty()) {
     setVec(DoubleFeatureData, StringData, "adaptation_index", adaptation_index);
   }
-  return retVal;
+  return adaptation_index.size();
 }
 
 // *** adaptation_index2 ***
