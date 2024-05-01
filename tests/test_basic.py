@@ -434,7 +434,7 @@ def test_setDerivativeThreshold():
             features)
     AP_begin_voltage_orig = feature_values[0]['AP_begin_voltage'][1]
 
-    set_derivative_threshold(5)
+    set_derivative_threshold(5.0)
     feature_values = \
         get_feature_values(
             [trace],
@@ -562,7 +562,7 @@ def test_min_AHP_indices_strict():
 
     import efel
 
-    for strict, n_of_ahp in [(False, 17), (True, 16)]:
+    for strict, n_of_ahp in [(0, 17), (1, 16)]:
         efel.reset()
         set_int_setting('strict_stiminterval', strict)
 
@@ -848,7 +848,7 @@ def test_AP_end_indices():
 
     efel.reset()
 
-    set_double_setting("DownDerivativeThreshold", -24)
+    set_double_setting("DownDerivativeThreshold", -24.0)
     feature_values = \
         get_feature_values(
             [trace],
@@ -1901,8 +1901,8 @@ def test_multiple_decay_time_constant_after_stim():
 
     features = ['multiple_decay_time_constant_after_stim']
 
-    set_double_setting("multi_stim_start", [stim_start])
-    set_double_setting("multi_stim_end", [stim_end])
+    set_double_setting("multi_stim_start", stim_start)
+    set_double_setting("multi_stim_end", stim_end)
 
     feature_values = get_feature_values([trace], features)[0]
 
