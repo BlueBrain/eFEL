@@ -36,59 +36,35 @@ import efel.cppcore as cppcore
 import efel.pyfeatures as pyfeatures
 from efel.pyfeatures.pyfeatures import get_cpp_feature
 
-
 _settings = efel.Settings()
-_int_settings = {}
-_double_settings = {}
-_string_settings = {}
+
+
+def set_setting(setting_name: str, new_value: int | float | str) -> None:
+    """Set a certain setting to a new value.
+
+    Args:
+        setting_name: Name of the setting to change.
+        new_value: New value for the setting.
+    """
+    _settings.set_setting(setting_name, new_value)
+
+
+def get_settings() -> efel.Settings:
+    """Returns the current settings of eFEL."""
+    return _settings
 
 
 def reset():
-    """Resets the efel to its initial state
-
-    The user can set certain values in the efel, like the spike threshold.
-    These values are persisten. This function will reset these value to their
-    original state.
+    """Resets the efel settings to their default values.
+    see :py:func:`efel.Settings`
     """
-    global _settings, _int_settings, _double_settings, _string_settings
+    global _settings
     _settings = efel.Settings()
-    _int_settings = {}
-    _double_settings = {}
-    _string_settings = {}
-
-    set_double_setting('spike_skipf', 0.1)
-    set_int_setting('max_spike_skip', 2)
-    set_double_setting('Threshold', _settings.threshold)
-    set_double_setting('DerivativeThreshold', _settings.derivative_threshold)
-    set_double_setting(
-        'DownDerivativeThreshold',
-        _settings.down_derivative_threshold)
-    set_double_setting('interp_step', 0.1)
-    set_double_setting('burst_factor', 1.5)
-    set_double_setting('strict_burst_factor', 2.0)
-    set_double_setting('voltage_base_start_perc', 0.9)
-    set_double_setting('voltage_base_end_perc', 1.0)
-    set_double_setting('current_base_start_perc', 0.9)
-    set_double_setting('current_base_end_perc', 1.0)
-    set_double_setting('rise_start_perc', 0.0)
-    set_double_setting('rise_end_perc', 1.0)
-    set_double_setting("initial_perc", 0.1)
-    set_double_setting("min_spike_height", 20.0)
-    set_int_setting("strict_stiminterval", 0)
-    set_double_setting("initburst_freq_threshold", 50)
-    set_double_setting("initburst_sahp_start", 5)
-    set_double_setting("initburst_sahp_end", 100)
-    set_int_setting("DerivativeWindow", 3)
-    set_str_setting("voltage_base_mode", "mean")
-    set_str_setting("current_base_mode", "mean")
-    set_double_setting("precision_threshold", 1e-10)
-    set_double_setting("sahp_start", 5.0)
-    set_int_setting("ignore_first_ISI", 1)
-    set_double_setting("impedance_max_freq", 50.0)
-
+    _settings.reset_to_default()
     _initialise()
 
 
+@deprecated("Use `set_setting('dependencyfile_path', location)` instead")
 def set_dependency_file_location(location: str | Path) -> None:
     """Sets the location of the Dependency file.
 
@@ -103,10 +79,7 @@ def set_dependency_file_location(location: str | Path) -> None:
     Raises:
         FileNotFoundError: If the path to the dependency file doesn't exist.
     """
-    location = Path(location)
-    if not location.exists():
-        raise FileNotFoundError(f"Path to dependency file {location} doesn't exist")
-    _settings.dependencyfile_path = str(location)
+    _settings.set_setting('dependencyfile_path', str(location))
 
 
 def get_dependency_file_location() -> str:
@@ -118,6 +91,7 @@ def get_dependency_file_location() -> str:
     return _settings.dependencyfile_path
 
 
+@deprecated("Use `set_setting('Threshold', new_threshold)` instead")
 def set_threshold(new_threshold: float) -> None:
     """Set the spike detection threshold in the eFEL, default -20.0
 
@@ -125,10 +99,11 @@ def set_threshold(new_threshold: float) -> None:
         new_threshold: The new spike detection threshold value (in the same units
                        as the traces, e.g. mV).
     """
-    _settings.threshold = new_threshold
-    set_double_setting('Threshold', _settings.threshold)
+    _settings.set_setting('Threshold', new_threshold)
 
 
+@deprecated("Use `set_setting('DerivativeThreshold', "
+            "new_derivative_threshold)` instead")
 def set_derivative_threshold(new_derivative_threshold: float) -> None:
     """Set the threshold for the derivative for detecting the spike onset.
 
@@ -139,8 +114,7 @@ def set_derivative_threshold(new_derivative_threshold: float) -> None:
         new_derivative_threshold: The new derivative threshold value (in the same units
                                   as the traces, e.g. mV/ms).
     """
-    _settings.derivative_threshold = new_derivative_threshold
-    set_double_setting('DerivativeThreshold', _settings.derivative_threshold)
+    _settings.set_setting('DerivativeThreshold', new_derivative_threshold)
 
 
 def get_feature_names() -> list[str]:
@@ -239,34 +213,36 @@ def _initialise() -> None:
     # flush the GErrorString from previous runs by calling getgError()
     cppcore.getgError()
 
-    # First set some settings that are used by the feature extraction
+    # Set the settings in the cppcore
+    settings_attrs = vars(_settings)
+    for setting_name, setting_value in settings_attrs.items():
+        if isinstance(setting_value, int):
+            cppcore.setFeatureInt(setting_name, [setting_value])
+        elif isinstance(setting_value, float):
+            if isinstance(setting_value, list):
+                cppcore.setFeatureDouble(setting_name, setting_value)
+            else:
+                cppcore.setFeatureDouble(setting_name, [setting_value])
+        elif isinstance(setting_value, str):
+            cppcore.setFeatureString(setting_name, setting_value)
 
-    for setting_name, int_setting in list(_int_settings.items()):
-        cppcore.setFeatureInt(setting_name, [int_setting])
 
-    for setting_name, double_setting in list(_double_settings.items()):
-        if isinstance(double_setting, list):
-            cppcore.setFeatureDouble(setting_name, double_setting)
-        else:
-            cppcore.setFeatureDouble(setting_name, [double_setting])
-
-    for setting_name, str_setting in list(_string_settings.items()):
-        cppcore.setFeatureString(setting_name, str_setting)
-
-
+@deprecated("Use `set_setting()` instead")
 def set_int_setting(setting_name: str, new_value: int) -> None:
-    """Set a certain integer setting to a new value"""
-    _int_settings[setting_name] = new_value
+    """Set a certain integer setting to a new value."""
+    _settings.set_int(setting_name, new_value)
 
 
+@deprecated("Use `set_setting()` instead")
 def set_double_setting(setting_name: str, new_value: float) -> None:
-    """Set a certain double setting to a new value"""
-    _double_settings[setting_name] = new_value
+    """Set a certain double setting to a new value."""
+    _settings.set_double(setting_name, new_value)
 
 
+@deprecated("Use `set_setting()` instead")
 def set_str_setting(setting_name: str, new_value: str) -> None:
-    """Set a certain string setting to a new value"""
-    _string_settings[setting_name] = new_value
+    """Set a certain string setting to a new value."""
+    _settings.set_str(setting_name, new_value)
 
 
 @overload
