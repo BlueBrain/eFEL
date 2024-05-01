@@ -1,140 +1,140 @@
-LibV1:interpolate
-LibV5:peak_indices	    	#LibV1:interpolate
-LibV1:doublet_ISI	#LibV1:peak_time #LibV1:interpolate 
-LibV1:peak_voltage		    #LibV5:peak_indices #LibV1:interpolate 
-LibV1:mean_frequency	    #LibV1:peak_time #LibV1:interpolate 
-LibV1:peak_time 	#LibV5:peak_indices #LibV1:interpolate 
-LibV1:time_to_first_spike   #LibV1:peak_time #LibV1:interpolate 
-LibV1:adaptation_index 	    #LibV1:peak_time #LibV1:interpolate 
-LibV1:adaptation_index2	#LibV1:peak_time #LibV1:interpolate 
-LibV1:spike_width2	 	    #LibV5:min_AHP_indices #LibV1:interpolate 
-LibV1:AP_width  #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
-LibV1:AP_height             #LibV1:peak_voltage #LibV1:interpolate 
-LibV1:AP_amplitude          #LibV5:AP_begin_indices #LibV1:peak_voltage #LibV1:peak_time #LibV1:interpolate 
-LibV1:AHP_depth_abs_slow	#LibV5:peak_indices #LibV1:interpolate 
-LibV1:AHP_slow_time         #LibV1:AHP_depth_abs_slow #LibV1:interpolate 
-LibV1:time_constant #LibV1:interpolate 
-LibV1:voltage_deflection #LibV1:interpolate 
-LibV5:voltage_deflection_vb_ssse #LibV5:voltage_base #LibV5:steady_state_voltage_stimend  #LibV1:interpolate 
-LibV1:ohmic_input_resistance    #LibV1:voltage_deflection #LibV1:interpolate 
-LibV5:ohmic_input_resistance_vb_ssse    #LibV5:voltage_deflection_vb_ssse #LibV1:interpolate 
-LibV1:maximum_voltage #LibV1:interpolate 
-LibV1:minimum_voltage #LibV1:interpolate 
-LibV1:steady_state_voltage #LibV1:interpolate 
-LibV3:depolarized_base #LibV5:AP_end_indices #LibV5:AP_begin_indices #LibV1:interpolate
-LibV1:AHP_depth	#LibV5:voltage_base	#LibV5:min_AHP_values #LibV1:interpolate 
-LibV1:AHP_depth_slow    #LibV5:voltage_base	#LibV1:AHP_depth_abs_slow #LibV1:interpolate
-LibV2:AP_rise_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices #LibV1:interpolate
-LibV5:AP_end_indices        #LibV5:peak_indices #LibV1:interpolate
-LibV2:AP_fall_indices       #LibV5:peak_indices     #LibV5:AP_begin_indices     #LibV5:AP_end_indices #LibV1:interpolate 
-LibV2:AP_duration	        #LibV5:AP_begin_indices #LibV5:AP_end_indices #LibV1:interpolate 
-LibV2:AP_duration_half_width	#LibV2:AP_rise_indices	#LibV2:AP_fall_indices #LibV1:interpolate 
-LibV2:AP_rise_time	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV2:AP_fall_time	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 
-LibV2:AP_rise_rate	#LibV5:AP_begin_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV2:AP_fall_rate	#LibV5:peak_indices	#LibV5:AP_end_indices #LibV1:interpolate 
-LibV2:fast_AHP	#LibV5:AP_begin_indices	#LibV5:min_AHP_indices #LibV1:interpolate 
-LibV2:AP_amplitude_change	#LibV1:AP_amplitude #LibV1:interpolate 
-LibV2:AP_duration_change	#LibV2:AP_duration #LibV1:interpolate 
-LibV2:AP_rise_rate_change	#LibV2:AP_rise_rate #LibV1:interpolate 
-LibV2:AP_fall_rate_change	#LibV2:AP_fall_rate #LibV1:interpolate 
-LibV2:fast_AHP_change	#LibV2:fast_AHP #LibV1:interpolate 
-LibV2:AP_duration_half_width_change	#LibV2:AP_duration_half_width #LibV1:interpolate 
-LibV2:steady_state_hyper #LibV1:interpolate 
-LibV2:amp_drop_first_second	#LibV1:peak_voltage #LibV1:interpolate 
-LibV2:amp_drop_first_last	#LibV1:peak_voltage #LibV1:interpolate 
-LibV2:amp_drop_second_last	#LibV1:peak_voltage #LibV1:interpolate 
-LibV2:max_amp_difference	#LibV1:peak_voltage #LibV1:interpolate 
-LibV1:AP_amplitude_diff	#LibV1:AP_amplitude #LibV1:interpolate 
-LibV1:AHP_depth_diff	#LibV1:AHP_depth #LibV1:interpolate 
-LibV5:min_AHP_indices 	    #LibV5:peak_indices #LibV1:interpolate 
-LibV5:min_AHP_values 	    #LibV5:min_AHP_indices #LibV1:interpolate 
-LibV5:number_initial_spikes 	    #LibV1:peak_time #LibV1:interpolate 
-LibV5:AP1_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:APlast_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:AP2_amp 	    #LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:AP1_peak 	    #LibV1:peak_voltage #LibV1:interpolate 
-LibV5:AP2_peak 	    #LibV1:peak_voltage #LibV1:interpolate 
-LibV5:AP2_AP1_diff 	    #LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:AP2_AP1_peak_diff 	    #LibV1:peak_voltage #LibV1:interpolate 
-LibV5:AP1_width     #LibV5:spike_half_width #LibV1:interpolate 
-LibV5:AP2_width     #LibV5:spike_half_width #LibV1:interpolate 
-LibV5:APlast_width     #LibV5:spike_half_width #LibV1:interpolate 
-LibV5:AHP_depth_from_peak #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
-LibV5:AHP_time_from_peak #LibV5:peak_indices #LibV5:min_AHP_indices #LibV1:interpolate 
-LibV5:AHP1_depth_from_peak #LibV5:AHP_depth_from_peak #LibV1:interpolate 
-LibV5:AHP2_depth_from_peak #LibV5:AHP_depth_from_peak #LibV1:interpolate 
-LibV5:time_to_second_spike   #LibV1:peak_time #LibV1:interpolate 
-LibV5:time_to_last_spike   #LibV1:peak_time #LibV1:interpolate 
-LibV5:inv_time_to_first_spike   #LibV1:time_to_first_spike #LibV1:interpolate 
-LibV5:spike_half_width 	    #LibV5:min_AHP_indices	#LibV5:peak_indices #LibV1:interpolate 
-LibV5:AP_begin_indices      #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:interpolate
-LibV5:AHP_depth_abs         #LibV5:min_AHP_values #LibV1:interpolate 
-LibV5:AP_begin_width 	    #LibV5:min_AHP_indices	#LibV5:AP_begin_indices #LibV1:interpolate 
-LibV5:AP_begin_voltage  #LibV5:AP_begin_indices #LibV1:interpolate 
-LibV5:AP_begin_time     #LibV5:AP_begin_indices #LibV1:interpolate 
-LibV5:AP1_begin_voltage  #LibV5:AP_begin_voltage #LibV1:interpolate 
-LibV5:AP2_begin_voltage  #LibV5:AP_begin_voltage #LibV1:interpolate 
-LibV5:AP1_begin_width  #LibV5:AP_begin_width #LibV1:interpolate 
-LibV5:AP2_begin_width  #LibV5:AP_begin_width #LibV1:interpolate 
-LibV5:voltage_deflection_begin #LibV1:interpolate 
-LibV5:is_not_stuck #LibV1:peak_time #LibV1:interpolate 
-LibV5:mean_AP_amplitude #LibV1:AP_amplitude #LibV1:interpolate 
-LibV5:voltage_after_stim #LibV1:interpolate 
-LibV5:AP2_AP1_begin_width_diff 	    #LibV5:AP_begin_width #LibV1:interpolate 
-LibV5:AP_phaseslope #LibV5:AP_begin_indices #LibV1:interpolate 
-LibV5:all_ISI_values #LibV1:peak_time #LibV1:interpolate 
-LibV5:AP_amplitude_from_voltagebase #LibV5:voltage_base #LibV1:peak_voltage    #LibV1:interpolate 
-LibV5:min_voltage_between_spikes #LibV5:peak_indices #LibV1:interpolate 
-LibV5:voltage #LibV1:interpolate 
-LibV5:current #LibV1:interpolate 
-LibV5:time #LibV1:interpolate 
-LibV5:steady_state_voltage_stimend #LibV1:interpolate 
-LibV5:voltage_base #LibV1:interpolate
-LibV5:current_base #LibV1:interpolate
-LibV5:decay_time_constant_after_stim #LibV1:interpolate 
-LibV5:sag_time_constant #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:sag_amplitude #LibV1:interpolate
-LibV5:multiple_decay_time_constant_after_stim #LibV5:decay_time_constant_after_stim #LibV1:interpolate
-LibV5:maximum_voltage_from_voltagebase #LibV5:voltage_base #LibV1:maximum_voltage #LibV1:interpolate 
-LibV5:sag_amplitude #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:voltage_deflection_vb_ssse #LibV1:interpolate 
-LibV5:sag_ratio1 #LibV1:minimum_voltage #LibV5:sag_amplitude #LibV5:voltage_base #LibV1:interpolate 
-LibV5:sag_ratio2 #LibV1:minimum_voltage #LibV5:steady_state_voltage_stimend #LibV5:voltage_base #LibV1:interpolate 
-LibV5:AP_peak_upstroke     #LibV5:AP_begin_indices #LibV5:peak_indices #LibV1:interpolate
-LibV5:AP_peak_downstroke   #LibV5:min_AHP_indices #LibV5:peak_indices #LibV1:interpolate
-LibV5:min_between_peaks_indices 	    #LibV5:peak_indices #LibV1:interpolate 
-LibV5:min_between_peaks_values 	    #LibV5:min_between_peaks_indices #LibV1:interpolate 
-LibV5:AP_width_between_threshold    #LibV5:min_between_peaks_indices #LibV1:interpolate 
-LibV5:burst_begin_indices    #LibV5:all_ISI_values #LibV1:interpolate
-LibV5:burst_end_indices    #LibV5:burst_begin_indices #LibV1:interpolate
-LibV5:strict_burst_mean_freq    #LibV1:peak_time #LibV5:burst_begin_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:strict_interburst_voltage    #LibV5:peak_indices #LibV5:burst_begin_indices #LibV1:interpolate
-LibV5:ADP_peak_indices    #LibV5:min_AHP_indices #LibV5:min_between_peaks_indices #LibV1:interpolate
-LibV5:ADP_peak_values     #LibV5:ADP_peak_indices #LibV1:interpolate
-LibV5:ADP_peak_amplitude  #LibV5:ADP_peak_values #LibV5:min_AHP_values #LibV1:interpolate
-LibV5:interburst_min_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:interburst_min_values      #LibV5:interburst_min_indices #LibV1:interpolate
-LibV5:postburst_min_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:postburst_min_values      #LibV5:postburst_min_indices #LibV1: interpolate
-LibV5:postburst_slow_ahp_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:postburst_slow_ahp_values      #LibV5:postburst_slow_ahp_indices #LibV1:interpolate
-LibV5:time_to_interburst_min     #LibV5:interburst_min_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:time_to_postburst_slow_ahp     #LibV5:postburst_slow_ahp_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:postburst_fast_ahp_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:postburst_fast_ahp_values      #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:postburst_adp_peak_indices     #LibV5:postburst_fast_ahp_indices #LibV5:postburst_slow_ahp_indices #LibV1:interpolate
-LibV5:postburst_adp_peak_values      #LibV5:postburst_adp_peak_indices #LibV1:interpolate
-LibV5:time_to_postburst_fast_ahp     #LibV5:postburst_fast_ahp_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:time_to_postburst_adp_peak     #LibV5:postburst_adp_peak_indices #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
-LibV5:interburst_15percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_15percent_values      #LibV5:interburst_15percent_indices #LibV1:interpolate
-LibV5:interburst_20percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_20percent_values      #LibV5:interburst_20percent_indices #LibV1:interpolate
-LibV5:interburst_25percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_25percent_values      #LibV5:interburst_25percent_indices #LibV1:interpolate
-LibV5:interburst_30percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_30percent_values      #LibV5:interburst_30percent_indices #LibV1:interpolate
-LibV5:interburst_40percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_40percent_values      #LibV5:interburst_40percent_indices #LibV1:interpolate
-LibV5:interburst_60percent_indices     #LibV5:peak_indices #LibV5:burst_end_indices #LibV5:postburst_fast_ahp_indices #LibV1:interpolate
-LibV5:interburst_60percent_values      #LibV5:interburst_60percent_indices #LibV1:interpolate
-LibV5:interburst_duration              #LibV1:peak_time #LibV5:burst_end_indices #LibV1:interpolate
+BasicFeatures:interpolate
+SpikeEvent:peak_indices	    	#BasicFeatures:interpolate
+SpikeEvent:doublet_ISI	#SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeShape:peak_voltage		    #SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeEvent:mean_frequency	    #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:peak_time 	#SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeEvent:time_to_first_spike   #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:adaptation_index 	    #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:adaptation_index2	#SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeShape:spike_width2	 	    #SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeShape:AP_width  #SpikeEvent:peak_indices #SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeShape:AP_height             #SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:AP_amplitude          #SpikeShape:AP_begin_indices #SpikeShape:peak_voltage #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeShape:AHP_depth_abs_slow	#SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:AHP_slow_time         #SpikeShape:AHP_depth_abs_slow #BasicFeatures:interpolate 
+Subthreshold:time_constant #BasicFeatures:interpolate 
+Subthreshold:voltage_deflection #BasicFeatures:interpolate 
+Subthreshold:voltage_deflection_vb_ssse #Subthreshold:voltage_base #Subthreshold:steady_state_voltage_stimend  #BasicFeatures:interpolate 
+Subthreshold:ohmic_input_resistance    #Subthreshold:voltage_deflection #BasicFeatures:interpolate 
+Subthreshold:ohmic_input_resistance_vb_ssse    #Subthreshold:voltage_deflection_vb_ssse #BasicFeatures:interpolate 
+Subthreshold:maximum_voltage #BasicFeatures:interpolate 
+Subthreshold:minimum_voltage #BasicFeatures:interpolate 
+Subthreshold:steady_state_voltage #BasicFeatures:interpolate 
+SpikeShape:depolarized_base #SpikeShape:AP_end_indices #SpikeShape:AP_begin_indices #BasicFeatures:interpolate
+SpikeShape:AHP_depth	#Subthreshold:voltage_base	#SpikeShape:min_AHP_values #BasicFeatures:interpolate 
+SpikeShape:AHP_depth_slow    #Subthreshold:voltage_base	#SpikeShape:AHP_depth_abs_slow #BasicFeatures:interpolate
+SpikeShape:AP_rise_indices       #SpikeEvent:peak_indices     #SpikeShape:AP_begin_indices #BasicFeatures:interpolate
+SpikeShape:AP_end_indices        #SpikeEvent:peak_indices #BasicFeatures:interpolate
+SpikeShape:AP_fall_indices       #SpikeEvent:peak_indices     #SpikeShape:AP_begin_indices     #SpikeShape:AP_end_indices #BasicFeatures:interpolate 
+SpikeShape:AP_duration	        #SpikeShape:AP_begin_indices #SpikeShape:AP_end_indices #BasicFeatures:interpolate 
+SpikeShape:AP_duration_half_width	#SpikeShape:AP_rise_indices	#SpikeShape:AP_fall_indices #BasicFeatures:interpolate 
+SpikeShape:AP_rise_time	#SpikeShape:AP_begin_indices	#SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:AP_fall_time	#SpikeEvent:peak_indices	#SpikeShape:AP_end_indices #BasicFeatures:interpolate 
+SpikeShape:AP_rise_rate	#SpikeShape:AP_begin_indices	#SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:AP_fall_rate	#SpikeEvent:peak_indices	#SpikeShape:AP_end_indices #BasicFeatures:interpolate 
+SpikeShape:fast_AHP	#SpikeShape:AP_begin_indices	#SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeShape:AP_amplitude_change	#SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:AP_duration_change	#SpikeShape:AP_duration #BasicFeatures:interpolate 
+SpikeShape:AP_rise_rate_change	#SpikeShape:AP_rise_rate #BasicFeatures:interpolate 
+SpikeShape:AP_fall_rate_change	#SpikeShape:AP_fall_rate #BasicFeatures:interpolate 
+SpikeShape:fast_AHP_change	#SpikeShape:fast_AHP #BasicFeatures:interpolate 
+SpikeShape:AP_duration_half_width_change	#SpikeShape:AP_duration_half_width #BasicFeatures:interpolate 
+Subthreshold:steady_state_hyper #BasicFeatures:interpolate 
+SpikeShape:amp_drop_first_second	#SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:amp_drop_first_last	#SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:amp_drop_second_last	#SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:max_amp_difference	#SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:AP_amplitude_diff	#SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:AHP_depth_diff	#SpikeShape:AHP_depth #BasicFeatures:interpolate 
+SpikeShape:min_AHP_indices 	    #SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:min_AHP_values 	    #SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeEvent:number_initial_spikes 	    #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeShape:AP1_amp 	    #SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:APlast_amp 	    #SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:AP2_amp 	    #SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:AP1_peak 	    #SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:AP2_peak 	    #SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:AP2_AP1_diff 	    #SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+SpikeShape:AP2_AP1_peak_diff 	    #SpikeShape:peak_voltage #BasicFeatures:interpolate 
+SpikeShape:AP1_width     #SpikeShape:spike_half_width #BasicFeatures:interpolate 
+SpikeShape:AP2_width     #SpikeShape:spike_half_width #BasicFeatures:interpolate 
+SpikeShape:APlast_width     #SpikeShape:spike_half_width #BasicFeatures:interpolate 
+SpikeShape:AHP_depth_from_peak #SpikeEvent:peak_indices #SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeShape:AHP_time_from_peak #SpikeEvent:peak_indices #SpikeShape:min_AHP_indices #BasicFeatures:interpolate 
+SpikeShape:AHP1_depth_from_peak #SpikeShape:AHP_depth_from_peak #BasicFeatures:interpolate 
+SpikeShape:AHP2_depth_from_peak #SpikeShape:AHP_depth_from_peak #BasicFeatures:interpolate 
+SpikeEvent:time_to_second_spike   #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:time_to_last_spike   #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:inv_time_to_first_spike   #SpikeEvent:time_to_first_spike #BasicFeatures:interpolate 
+SpikeShape:spike_half_width 	    #SpikeShape:min_AHP_indices	#SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:AP_begin_indices      #SpikeShape:min_AHP_indices #SpikeEvent:peak_indices #BasicFeatures:interpolate
+SpikeShape:AHP_depth_abs         #SpikeShape:min_AHP_values #BasicFeatures:interpolate 
+SpikeShape:AP_begin_width 	    #SpikeShape:min_AHP_indices	#SpikeShape:AP_begin_indices #BasicFeatures:interpolate 
+SpikeShape:AP_begin_voltage  #SpikeShape:AP_begin_indices #BasicFeatures:interpolate 
+SpikeShape:AP_begin_time     #SpikeShape:AP_begin_indices #BasicFeatures:interpolate 
+SpikeShape:AP1_begin_voltage  #SpikeShape:AP_begin_voltage #BasicFeatures:interpolate 
+SpikeShape:AP2_begin_voltage  #SpikeShape:AP_begin_voltage #BasicFeatures:interpolate 
+SpikeShape:AP1_begin_width  #SpikeShape:AP_begin_width #BasicFeatures:interpolate 
+SpikeShape:AP2_begin_width  #SpikeShape:AP_begin_width #BasicFeatures:interpolate 
+Subthreshold:voltage_deflection_begin #BasicFeatures:interpolate 
+SpikeEvent:is_not_stuck #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeShape:mean_AP_amplitude #SpikeShape:AP_amplitude #BasicFeatures:interpolate 
+Subthreshold:voltage_after_stim #BasicFeatures:interpolate 
+SpikeShape:AP2_AP1_begin_width_diff 	    #SpikeShape:AP_begin_width #BasicFeatures:interpolate 
+SpikeShape:AP_phaseslope #SpikeShape:AP_begin_indices #BasicFeatures:interpolate 
+SpikeEvent:all_ISI_values #SpikeEvent:peak_time #BasicFeatures:interpolate 
+SpikeEvent:AP_amplitude_from_voltagebase #Subthreshold:voltage_base #SpikeShape:peak_voltage    #BasicFeatures:interpolate 
+SpikeShape:min_voltage_between_spikes #SpikeEvent:peak_indices #BasicFeatures:interpolate 
+BasicFeatures:voltage #BasicFeatures:interpolate 
+BasicFeatures:current #BasicFeatures:interpolate 
+BasicFeatures:time #BasicFeatures:interpolate 
+Subthreshold:steady_state_voltage_stimend #BasicFeatures:interpolate 
+Subthreshold:voltage_base #BasicFeatures:interpolate
+Subthreshold:current_base #BasicFeatures:interpolate
+Subthreshold:decay_time_constant_after_stim #BasicFeatures:interpolate 
+Subthreshold:sag_time_constant #Subthreshold:minimum_voltage #Subthreshold:steady_state_voltage_stimend #Subthreshold:sag_amplitude #BasicFeatures:interpolate
+Subthreshold:multiple_decay_time_constant_after_stim #Subthreshold:decay_time_constant_after_stim #BasicFeatures:interpolate
+Subthreshold:maximum_voltage_from_voltagebase #Subthreshold:voltage_base #Subthreshold:maximum_voltage #BasicFeatures:interpolate 
+Subthreshold:sag_amplitude #Subthreshold:minimum_voltage #Subthreshold:steady_state_voltage_stimend #Subthreshold:voltage_deflection_vb_ssse #BasicFeatures:interpolate 
+Subthreshold:sag_ratio1 #Subthreshold:minimum_voltage #Subthreshold:sag_amplitude #Subthreshold:voltage_base #BasicFeatures:interpolate 
+Subthreshold:sag_ratio2 #Subthreshold:minimum_voltage #Subthreshold:steady_state_voltage_stimend #Subthreshold:voltage_base #BasicFeatures:interpolate 
+SpikeShape:AP_peak_upstroke     #SpikeShape:AP_begin_indices #SpikeEvent:peak_indices #BasicFeatures:interpolate
+SpikeShape:AP_peak_downstroke   #SpikeShape:min_AHP_indices #SpikeEvent:peak_indices #BasicFeatures:interpolate
+SpikeShape:min_between_peaks_indices 	    #SpikeEvent:peak_indices #BasicFeatures:interpolate 
+SpikeShape:min_between_peaks_values 	    #SpikeShape:min_between_peaks_indices #BasicFeatures:interpolate 
+SpikeShape:AP_width_between_threshold    #SpikeShape:min_between_peaks_indices #BasicFeatures:interpolate 
+SpikeEvent:burst_begin_indices    #SpikeEvent:all_ISI_values #BasicFeatures:interpolate
+SpikeEvent:burst_end_indices    #SpikeEvent:burst_begin_indices #BasicFeatures:interpolate
+SpikeEvent:strict_burst_mean_freq    #SpikeEvent:peak_time #SpikeEvent:burst_begin_indices #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:strict_interburst_voltage    #SpikeEvent:peak_indices #SpikeEvent:burst_begin_indices #BasicFeatures:interpolate
+SpikeShape:ADP_peak_indices    #SpikeShape:min_AHP_indices #SpikeShape:min_between_peaks_indices #BasicFeatures:interpolate
+SpikeShape:ADP_peak_values     #SpikeShape:ADP_peak_indices #BasicFeatures:interpolate
+SpikeShape:ADP_peak_amplitude  #SpikeShape:ADP_peak_values #SpikeShape:min_AHP_values #BasicFeatures:interpolate
+SpikeEvent:interburst_min_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_min_values      #SpikeEvent:interburst_min_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_min_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_min_values      #SpikeEvent:postburst_min_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_slow_ahp_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_slow_ahp_values      #SpikeEvent:postburst_slow_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:time_to_interburst_min     #SpikeEvent:interburst_min_indices #SpikeEvent:peak_time #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:time_to_postburst_slow_ahp     #SpikeEvent:postburst_slow_ahp_indices #SpikeEvent:peak_time #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_fast_ahp_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_fast_ahp_values      #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_adp_peak_indices     #SpikeEvent:postburst_fast_ahp_indices #SpikeEvent:postburst_slow_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:postburst_adp_peak_values      #SpikeEvent:postburst_adp_peak_indices #BasicFeatures:interpolate
+SpikeEvent:time_to_postburst_fast_ahp     #SpikeEvent:postburst_fast_ahp_indices #SpikeEvent:peak_time #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:time_to_postburst_adp_peak     #SpikeEvent:postburst_adp_peak_indices #SpikeEvent:peak_time #SpikeEvent:burst_end_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_15percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_15percent_values      #SpikeEvent:interburst_15percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_20percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_20percent_values      #SpikeEvent:interburst_20percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_25percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_25percent_values      #SpikeEvent:interburst_25percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_30percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_30percent_values      #SpikeEvent:interburst_30percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_40percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_40percent_values      #SpikeEvent:interburst_40percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_60percent_indices     #SpikeEvent:peak_indices #SpikeEvent:burst_end_indices #SpikeEvent:postburst_fast_ahp_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_60percent_values      #SpikeEvent:interburst_60percent_indices #BasicFeatures:interpolate
+SpikeEvent:interburst_duration              #SpikeEvent:peak_time #SpikeEvent:burst_end_indices #BasicFeatures:interpolate

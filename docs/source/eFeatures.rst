@@ -18,8 +18,19 @@ Spike event features
 
 .. image:: _static/figures/inv_ISI.png
 
-`LibV1`_ : time_to_first_spike
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : peak_time
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The times of the maxima of the peaks
+
+- **Required features**: peak_indices
+- **Units**: ms
+- **Pseudocode**: ::
+
+    peak_time = time[peak_indices]
+
+`SpikeEvent`_ : time_to_first_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time from the start of the stimulus to the maximum of the first peak
 
@@ -30,8 +41,8 @@ Time from the start of the stimulus to the maximum of the first peak
     time_to_first_spike = peaktime[0] - stimstart
 
 
-`LibV5`_ : time_to_second_spike
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_second_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time from the start of the stimulus to the maximum of the second peak
 
@@ -42,8 +53,8 @@ Time from the start of the stimulus to the maximum of the second peak
     time_to_second_spike = peaktime[1] - stimstart
 
 
-`LibV5`_ : inv_time_to_first_spike
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : inv_time_to_first_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1.0 over time to first spike (times 1000 to convert it to Hz); returns 0 when no spike
 
@@ -69,8 +80,8 @@ The interspike intervals (i.e. time intervals) between adjacent peaks.
     isi_values = numpy.diff(peak_time)[1:]
 
 
-`LibV1`_ : doublet_ISI
-~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : doublet_ISI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time interval between the first two peaks
 
@@ -81,8 +92,8 @@ The time interval between the first two peaks
     doublet_ISI = peak_time[1] - peak_time[0]
 
 
-`LibV5`_ : all_ISI_values
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : all_ISI_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The interspike intervals, i.e., the time intervals between adjacent peaks.
 
@@ -146,8 +157,8 @@ Computes all inverse spike interval values.
     all_isi_values_vec = numpy.diff(peak_time)
     inv_isi_values = 1000.0 / all_isi_values_vec
 
-`LibV5`_ : time_to_last_spike
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_last_spike
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 time from stimulus start to last spike
 
@@ -165,7 +176,7 @@ time from stimulus start to last spike
 
 number of spikes in the trace, including outside of stimulus interval
 
-- **Required features**: LibV1:peak_indices
+- **Required features**: peak_indices
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -179,7 +190,7 @@ number of spikes in the trace, including outside of stimulus interval
 
 number of spikes inside the stimulus interval
 
-- **Required features**: LibV1:peak_time
+- **Required features**: peak_time
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -189,12 +200,12 @@ number of spikes inside the stimulus interval
 **Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
 "Spikecount_stimint", while still available, will be removed in the future.
 
-`LibV5`_ : number_initial_spikes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : number_initial_spikes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 number of spikes at the beginning of the stimulus
 
-- **Required features**: LibV1:peak_time
+- **Required features**: peak_time
 - **Required parameters**: initial_perc (default=0.1)
 - **Units**: constant
 - **Pseudocode**: ::
@@ -204,12 +215,12 @@ number of spikes at the beginning of the stimulus
         (peak_time >= stimstart) & \
         (peak_time <= stimstart + initial_length)))
 
-`LibV1`_ : mean_frequency
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : mean_frequency
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean frequency of the firing rate
 
-- **Required features**: stim_start, stim_end, LibV1:peak_time
+- **Required features**: stim_start, stim_end, peak_time
 - **Units**: Hz
 - **Pseudocode**: ::
 
@@ -218,8 +229,8 @@ The mean frequency of the firing rate
     last_spike_time = peak_time[peak_time < stim_end][-1]
     mean_frequency = 1000 * spikecount / (last_spike_time - stim_start)
 
-`LibV5`_ : ISI_semilog_slope
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Python efeature`_ : ISI_semilog_slope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slope of a linear fit to a semilog plot of the ISI values.
 
@@ -304,8 +315,8 @@ The first ISI can be taken into account if ignore_first_ISI is set to 0.
     irregularity_index = numpy.mean(numpy.absolute(ISI_values[1:] - ISI_values[:-1]))
 
 
-`LibV1`_ : adaptation_index
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : adaptation_index
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normalized average difference of two consecutive ISIs, skipping the first ISIs
 
@@ -333,8 +344,8 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
 
-`LibV1`_ : adaptation_index_2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : adaptation_index_2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normalized average difference of two consecutive ISIs, starting at the second ISI
 
@@ -392,8 +403,8 @@ then the spikes are not considered to be part of any burst
 
     return burst_mean_freq
 
-`LibV5`_ : strict_burst_mean_freq
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : strict_burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean frequency during a burst for each burst
 
@@ -468,8 +479,8 @@ Starting 5 ms after that peak take the voltage average until 5 ms before the fir
 
         interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
 
-`LibV5`_ : strict_interburst_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : strict_interburst_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltage average in between two bursts
 
@@ -498,8 +509,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
         interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
 
-`LibV5`_ : interburst_min_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : interburst_min_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage between the end of a burst and the next spike.
 
@@ -519,8 +530,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         ) for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
-`LibV5`_ : postburst_min_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : postburst_min_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage after the end of a burst.
 
@@ -551,8 +562,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 v[peak_indices[burst_end_indices[-1]]:]
             ))
 
-`LibV5`_ : postburst_slow_ahp_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : postburst_slow_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The slow AHP voltage after the end of a burst.
 
@@ -581,8 +592,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             else:
                 postburst_slow_ahp.append(numpy.min(v[i_start:]))
 
-`LibV5`_ : time_to_interburst_min
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_interburst_min
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time between the last spike of a burst and the minimum between that spike and the next.
 
@@ -603,8 +614,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
 
-`LibV5`_ : time_to_postburst_slow_ahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_postburst_slow_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time between the last spike of a burst and the slow ahp afterwards.
 
@@ -623,8 +634,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
-`LibV5`_ : postburst_fast_ahp_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : postburst_fast_ahp_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The fast AHP voltage after the end of a burst.
 
@@ -659,8 +670,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     return postburst_fahp
 
-`LibV5`_ : postburst_adp_peak_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : postburst_adp_peak_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The small ADP peak after the fast AHP after the end of a burst.
 
@@ -686,8 +697,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         return None
     return adp_peak_values
 
-`LibV5`_ : time_to_postburst_fast_ahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_postburst_fast_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time to the fast AHP after the end of a burst.
 
@@ -703,8 +714,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     [t[fahpi] - peak_time[burst_endi[i]] for i, fahpi in enumerate(postburst_fahpi)]
 
-`LibV5`_ : time_to_postburst_adp_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : time_to_postburst_adp_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time to the small ADP peak after the fast AHP after the end of a burst.
 
@@ -734,8 +745,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return time_to_postburst_adp_peaks
 
 
-`LibV5`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
 
@@ -757,8 +768,8 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
             interburst_XXpercent_values.append(v[index_at_XXpercent])
 
-`LibV5`_ : interburst_duration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeEvent`_ : interburst_duration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Duration between the last spike of each burst and the next spike.
 
@@ -783,7 +794,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
 Length of the second isi over the median of the rest of the isis.
 The first isi is not taken into account, because it could bias the feature.
-See LibV1: ISI_values feature for more details.
+See ISI_values feature for more details.
 
 If ignore_first_ISI is set to 0, then signle burst ratio becomes
 the length of the first isi over the median of the rest of the isis.
@@ -803,7 +814,7 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
 
 The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
 
-- **Required features**: LibV5: burst_begin_indices, LibV5: burst_end_indices
+- **Required features**: burst_begin_indices, burst_end_indices
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -861,46 +872,35 @@ Spike shape features
 
 .. image:: _static/figures/AP_Amplitude.png
 
-`LibV1`_ : peak_time
-~~~~~~~~~~~~~~~~~~~~
 
-The times of the maxima of the peaks
-
-- **Required features**: LibV5:peak_indices
-- **Units**: ms
-- **Pseudocode**: ::
-
-    peak_time = time[peak_indices]
-
-
-`LibV1`_ : peak_voltage
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : peak_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltages at the maxima of the peaks
 
-- **Required features**: LibV5:peak_indices
+- **Required features**: peak_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
     peak_voltage = voltage[peak_indices]
 
-`LibV1`_ : AP_height
-~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_height
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Same as peak_voltage: The voltages at the maxima of the peaks
 
-- **Required features**: LibV1:peak_voltage
+- **Required features**: peak_voltage
 - **Units**: mV
 - **Pseudocode**: ::
 
     AP_height = peak_voltage
 
-`LibV1`_ : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_amplitude, AP1_amp, AP2_amp, APlast_amp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from spike onset
 
-- **Required features**: LibV5:AP_begin_indices, LibV1:peak_voltage (mV)
+- **Required features**: AP_begin_indices, peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -909,124 +909,124 @@ The relative height of the action potential from spike onset
     AP2_amp = AP_amplitude[1]
     APlast_amp = AP_amplitude[-1]
 
-`LibV5`_ : mean_AP_amplitude
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : mean_AP_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The mean of all of the action potential amplitudes
 
-- **Required features**: LibV1:AP_amplitude (mV)
+- **Required features**: AP_amplitude (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     mean_AP_amplitude = numpy.mean(AP_amplitude)
 
-`LibV2`_ : AP_Amplitude_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_Amplitude_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the amplitudes of the second and the first action potential
 divided by the amplitude of the first action potential
 
-- **Required features**: LibV1:AP_amplitude
+- **Required features**: AP_amplitude
 - **Units**: constant
 - **Pseudocode**: ::
 
     AP_amplitude_change = (AP_amplitude[1:] - AP_amplitude[0]) / AP_amplitude[0]
 
-`LibV5`_ : AP_amplitude_from_voltagebase
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_amplitude_from_voltagebase
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relative height of the action potential from voltage base
 
-- **Required features**: LibV5:voltage_base, LibV1:peak_voltage (mV)
+- **Required features**: voltage_base, peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AP_amplitude_from_voltagebase = peak_voltage - voltage_base
 
-`LibV5`_ : AP1_peak, AP2_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP1_peak, AP2_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The peak voltage of the first and second action potentials
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AP1_peak = peak_voltage[0]
     AP2_peak = peak_voltage[1]
 
-`LibV5`_ : AP2_AP1_diff
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP2_AP1_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference amplitude of the second to first spike
 
-- **Required features**: LibV1:AP_amplitude (mV)
+- **Required features**: AP_amplitude (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AP2_AP1_diff = AP_amplitude[1] - AP_amplitude[0]
 
-`LibV5`_ : AP2_AP1_peak_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP2_AP1_peak_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference peak voltage of the second to first spike
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AP2_AP1_diff = peak_voltage[1] - peak_voltage[0]
 
-`LibV2`_ : amp_drop_first_second
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : amp_drop_first_second
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the amplitude of the first and the second peak
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     amp_drop_first_second = peak_voltage[0] - peak_voltage[1]
 
-`LibV2`_ : amp_drop_first_last
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : amp_drop_first_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the amplitude of the first and the last peak
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     amp_drop_first_last = peak_voltage[0] - peak_voltage[-1]
 
-`LibV2`_ : amp_drop_second_last
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : amp_drop_second_last
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the amplitude of the second and the last peak
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     amp_drop_second_last = peak_voltage[1] - peak_voltage[-1]
 
-`LibV2`_ : max_amp_difference
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : max_amp_difference
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Maximum difference of the height of two subsequent peaks
 
-- **Required features**: LibV1:peak_voltage (mV)
+- **Required features**: peak_voltage (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     max_amp_difference = numpy.max(peak_voltage[:-1] - peak_voltage[1:])
 
-`LibV1`_ : AP_amplitude_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_amplitude_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the amplitude of two subsequent peaks
 
-- **Required features**: LibV1:AP_amplitude (mV)
+- **Required features**: AP_amplitude (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1034,107 +1034,107 @@ Difference of the amplitude of two subsequent peaks
 
 .. image:: _static/figures/AHP.png
 
-`LibV5`_ : min_AHP_values
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : min_AHP_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization.
 
-- **Required features**: LibV5:min_AHP_indices
+- **Required features**: min_AHP_indices
 - **Units**: mV
 
-`LibV5`_ : AHP_depth_abs
-~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth_abs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization.
 Is the same as min_AHP_values
 
-- **Required features**: LibV5:min_AHP_values (mV)
+- **Required features**: min_AHP_values (mV)
 - **Units**: mV
 
-`LibV1`_ : AHP_depth_abs_slow
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth_abs_slow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values at the first after-hyperpolarization starting 
 a given number of ms (default: 5) after the peak
 
-- **Required features**: LibV1:peak_indices
+- **Required features**: peak_indices
 - **Units**: mV
 
-`LibV1`_ : AHP_depth_slow
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth_slow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Relative voltage values at the first after-hyperpolarization starting 
 a given number of ms (default: 5) after the peak
 
-- **Required features**: LibV5:voltage_base (mV), LibV1:AHP_depth_abs_slow (mV)
+- **Required features**: voltage_base (mV), AHP_depth_abs_slow (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AHP_depth_slow = AHP_depth_abs_slow[:] - voltage_base
 
-`LibV1`_ : AHP_slow_time
-~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_slow_time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
 interspike interval 
 
-- **Required features**: LibV1:AHP_depth_abs_slow
+- **Required features**: AHP_depth_abs_slow
 - **Units**: constant
   
-`LibV1`_ : AHP_depth
-~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Relative voltage values at the first after-hyperpolarization
 
-- **Required features**: LibV5:voltage_base (mV), LibV5:min_AHP_values (mV)
+- **Required features**: voltage_base (mV), min_AHP_values (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     min_AHP_values = first_min_element(voltage, peak_indices)
     AHP_depth = min_AHP_values[:] - voltage_base
 
-`LibV1`_ : AHP_depth_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of subsequent relative voltage values at the first after-hyperpolarization
 
-- **Required features**: LibV1:AHP_depth (mV)
+- **Required features**: AHP_depth (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     AHP_depth_diff = AHP_depth[1:] - AHP_depth[:-1]
 
-`LibV2`_ : fast_AHP
-~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : fast_AHP
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value of the action potential onset relative to the subsequent AHP
 
 Ignores the last spike
 
-- **Required features**: LibV5:AP_begin_indices, LibV5:min_AHP_values
+- **Required features**: AP_begin_indices, min_AHP_values
 - **Units**: mV
 - **Pseudocode**: ::
 
     fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
 
-`LibV2`_ : fast_AHP_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : fast_AHP_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the fast AHP of the second and the first action potential
 divided by the fast AHP of the first action potential
 
-- **Required features**: LibV2:fast_AHP
+- **Required features**: fast_AHP
 - **Units**: constant
 - **Pseudocode**: ::
 
     fast_AHP_change = (fast_AHP[1:] - fast_AHP[0]) / fast_AHP[0]
 
-`LibV5`_ : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage difference between AP peaks and first AHP depths
 
-- **Required features**: LibV1:peak_indices, LibV5:min_AHP_indices
+- **Required features**: peak_indices, min_AHP_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1142,26 +1142,26 @@ Voltage difference between AP peaks and first AHP depths
     AHP1_depth_from_peak = AHP_depth_from_peak[0]
     AHP2_depth_from_peak = AHP_depth_from_peak[1]
 
-`LibV5`_ : AHP_time_from_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AHP_time_from_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between AP peaks and first AHP depths
 
-- **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
+- **Required features**: peak_indices, min_AHP_values (mV)
 - **Units**: ms
 - **Pseudocode**: ::
 
     min_AHP_indices = first_min_element(voltage, peak_indices)
     AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
 
-`LibV5`_ : ADP_peak_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : ADP_peak_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Absolute voltage values of the small afterdepolarization peak
 
 strict_stiminterval should be set to True for this feature to behave as expected.
 
-- **Required features**: LibV5:min_AHP_indices, LibV5:min_between_peaks_indices
+- **Required features**: min_AHP_indices, min_between_peaks_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1169,26 +1169,26 @@ strict_stiminterval should be set to True for this feature to behave as expected
         [numpy.max(v[i:j + 1]) for (i, j) in zip(min_AHP_indices, min_v_indices)]
     )
 
-`LibV5`_ : ADP_peak_amplitude
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : ADP_peak_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Amplitude of the small afterdepolarization peak with respect to the fast AHP voltage
 
 strict_stiminterval should be set to True for this feature to behave as expected.
 
-- **Required features**: LibV5:min_AHP_values, LibV5:ADP_peak_values
+- **Required features**: min_AHP_values, ADP_peak_values
 - **Units**: mV
 - **Pseudocode**: ::
 
     adp_peak_amplitude = adp_peak_values - min_AHP_values
 
-`LibV3`_ : depolarized_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : depolarized_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Mean voltage between consecutive spikes
 (from the end of one spike to the beginning of the next one)
 
-- **Required features**: LibV5:AP_end_indices, LibV5:AP_begin_indices
+- **Required features**: AP_end_indices, AP_begin_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1198,12 +1198,12 @@ Mean voltage between consecutive spikes
     ):
         depolarized_base.append(numpy.mean(voltage[start_idx:end_idx]))
 
-`LibV5`_ : min_voltage_between_spikes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : min_voltage_between_spikes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Minimal voltage between consecutive spikes
 
-- **Required features**: LibV5:peak_indices
+- **Required features**: peak_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1211,8 +1211,8 @@ Minimal voltage between consecutive spikes
     for peak1, peak2 in zip(peak_indices[:-1], peak_indices[1:]):
         min_voltage_between_spikes.append(numpy.min(voltage[peak1:peak2]))
 
-`LibV5`_ : min_between_peaks_values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : min_between_peaks_values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Minimal voltage between consecutive spikes
 
@@ -1221,7 +1221,7 @@ if strict stiminterval is True, and minimum between last spike and last voltage 
 if strict stiminterval is False
 
 
-- **Required features**: LibV5:min_between_peaks_indices
+- **Required features**: min_between_peaks_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1231,12 +1231,12 @@ if strict stiminterval is False
 .. image:: _static/figures/AP_duration_half_width.png
 
 
-`LibV2`_ : AP_duration_half_width
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_duration_half_width
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Width of spike at half spike amplitude, with spike onset as described in LibV5: AP_begin_time
+Width of spike at half spike amplitude, with spike onset as described in AP_begin_time
 
-- **Required features**: LibV2: AP_rise_indices, LibV2: AP_fall_indices
+- **Required features**: AP_rise_indices, AP_fall_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1244,13 +1244,13 @@ Width of spike at half spike amplitude, with spike onset as described in LibV5: 
     AP_fall_indices = index_after_peak((v(peak_indices) - v(AP_begin_indices)) / 2)
     AP_duration_half_width = t(AP_fall_indices) - t(AP_rise_indices)
 
-`LibV2`_ : AP_duration_half_width_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_duration_half_width_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the FWHM of the second and the first action potential
 divided by the FWHM of the first action potential
 
-- **Required features**: LibV2: AP_duration_half_width
+- **Required features**: AP_duration_half_width
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -1258,14 +1258,14 @@ divided by the FWHM of the first action potential
         AP_duration_half_width[1:] - AP_duration_half_width[0]
     ) / AP_duration_half_width[0]
 
-`LibV1`_ : AP_width
-~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_width
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at threshold, bounded by minimum AHP
 
 Can use strict_stiminterval compute only for data in stimulus interval.
 
-- **Required features**: LibV1: peak_indices, LibV5: min_AHP_indices, threshold
+- **Required features**: peak_indices, min_AHP_indices, threshold
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1276,36 +1276,36 @@ Can use strict_stiminterval compute only for data in stimulus interval.
         offset_time[i] = t[numpy.where(v[onset_index:min_AHP_indices[i+1]] < threshold)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
 
-`LibV2`_ : AP_duration
-~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_duration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Duration of an action potential from onset to offset
 
-- **Required features**: LibV5:AP_begin_indices, LibV5:AP_end_indices
+- **Required features**: AP_begin_indices, AP_end_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
     AP_duration = time[AP_end_indices] - time[AP_begin_indices]
 
-`LibV2`_ : AP_duration_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_duration_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the durations of the second and the first action potential divided by the duration of the first action potential
 
-- **Required features**: LibV2:AP_duration
+- **Required features**: AP_duration
 - **Units**: constant
 - **Pseudocode**: ::
 
     AP_duration_change = (AP_duration[1:] - AP_duration[0]) / AP_duration[0]
 
-`LibV5`_ : AP_width_between_threshold
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_width_between_threshold
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at threshold, bounded by minimum between peaks
 
 Can use strict_stiminterval to not use minimum after stimulus end.
 
-- **Required features**: LibV1: peak_indices, LibV5: min_between_peaks_indices, threshold
+- **Required features**: peak_indices, min_between_peaks_indices, threshold
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1316,13 +1316,13 @@ Can use strict_stiminterval to not use minimum after stimulus end.
         offset_time[i] = t[numpy.where(v[onset_index:min_between_peaks_indices[i+1]] < threshold)[0]]
         AP_width[i] = t(offset_time[i]) - t(onset_time[i])
 
-`LibV5`_ : spike_half_width, AP1_width, AP2_width, APlast_width
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : spike_half_width, AP1_width, AP2_width, APlast_width
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at half spike amplitude, 
 with the spike amplitude taken as the difference between the minimum between two peaks and the next peak
 
-- **Required features**: LibV5: peak_indices, LibV5: min_AHP_indices
+- **Required features**: peak_indices, min_AHP_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1347,13 +1347,13 @@ with the spike amplitude taken as the difference between the minimum between two
     APlast_width = spike_half_width[-1]
 
 
-`LibV1`_ : spike_width2
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : spike_width2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at half spike amplitude, with the spike onset taken as the maximum of the second derivative of the voltage in the range between
 the minimum between two peaks and the next peak
 
-- **Required features**: LibV5: peak_indices, LibV5: min_AHP_indices
+- **Required features**: peak_indices, min_AHP_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1376,12 +1376,12 @@ the minimum between two peaks and the next peak
         spike_width2[i] = t[fall_idx] + t_dev_fall - t[rise_idx] - t_dev_rise
 
 
-`LibV5`_ : AP_begin_width, AP1_begin_width, AP2_begin_width
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_begin_width, AP1_begin_width, AP2_begin_width
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Width of spike at spike start
 
-- **Required features**: LibV5: min_AHP_indices, LibV5: AP_begin_indices
+- **Required features**: min_AHP_indices, AP_begin_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1393,23 +1393,23 @@ Width of spike at spike start
     AP1_begin_width = AP_begin_width[0]
     AP2_begin_width = AP_begin_width[1]
 
-`LibV5`_ : AP2_AP1_begin_width_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP2_AP1_begin_width_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference width of the second to first spike
 
-- **Required features**: LibV5: AP_begin_width
+- **Required features**: AP_begin_width
 - **Units**: ms
 - **Pseudocode**: ::
 
     AP2_AP1_begin_width_diff = AP_begin_width[1] - AP_begin_width[0]
 
-`LibV5`_ : AP_begin_voltage, AP1_begin_voltage, AP2_begin_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_begin_voltage, AP1_begin_voltage, AP2_begin_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage at spike start
 
-- **Required features**:  LibV5: AP_begin_indices
+- **Required features**: AP_begin_indices
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1417,23 +1417,23 @@ Voltage at spike start
     AP1_begin_voltage = AP_begin_voltage[0]
     AP2_begin_voltage = AP_begin_voltage[1]
 
-`LibV5`_ : AP_begin_time
-~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_begin_time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time at spike start. Spike start is defined as where the first derivative of the voltage trace is higher than 10 V/s , for at least 5 points
 
-- **Required features**:  LibV5: AP_begin_indices
+- **Required features**: AP_begin_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
     AP_begin_time = t[AP_begin_indices]
 
-`LibV5`_ : AP_peak_upstroke
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_peak_upstroke
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Maximum of rise rate of spike
 
-- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices
+- **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
 - **Pseudocode**: ::
 
@@ -1442,12 +1442,12 @@ Maximum of rise rate of spike
         ap_peak_upstroke.append(numpy.max(dvdt[apbi:pi]))
 
 
-`LibV5`_ : AP_peak_downstroke
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_peak_downstroke
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Minimum of fall rate from spike
 
-- **Required features**: LibV5: min_AHP_indices, LibV5: peak_indices
+- **Required features**: min_AHP_indices, peak_indices
 - **Units**: V/s
 - **Pseudocode**: ::
 
@@ -1455,13 +1455,13 @@ Minimum of fall rate from spike
     for ahpi, pi in zip(min_ahp_indices, peak_indices):
         ap_peak_downstroke.append(numpy.min(dvdt[pi:ahpi]))
 
-`LibV2`_ : AP_rise_time
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_rise_time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between the AP threshold and the peak, given a window
 (default: from 0% to 100% of the AP amplitude)
 
-- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices, LibV1: AP_amplitude
+- **Required features**: AP_begin_indices, peak_indices, AP_amplitude
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -1483,23 +1483,23 @@ Time between the AP threshold and the peak, given a window
 
         rise_times.append(time[new_end_indice] - time[new_begin_indice])
 
-`LibV2`_ : AP_fall_time
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_fall_time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time from action potential maximum to the offset
 
-- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Required features**: AP_end_indices, peak_indices
 - **Units**: ms
 - **Pseudocode**: ::
 
     AP_fall_time = time[AP_end_indices] - time[peak_indices]
 
-`LibV2`_ : AP_rise_rate
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_rise_rate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage change rate during the rising phase of the action potential
 
-- **Required features**: LibV5: AP_begin_indices, LibV5: peak_indices
+- **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
 - **Pseudocode**: ::
 
@@ -1507,12 +1507,12 @@ Voltage change rate during the rising phase of the action potential
         time[peak_indices] - time[AP_begin_indices]
     )
 
-`LibV2`_ : AP_fall_rate
-~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_fall_rate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage change rate during the falling phase of the action potential
 
-- **Required features**: LibV5: AP_end_indices, LibV5: peak_indices
+- **Required features**: AP_end_indices, peak_indices
 - **Units**: V/s
 - **Pseudocode**: ::
 
@@ -1520,38 +1520,38 @@ Voltage change rate during the falling phase of the action potential
         time[AP_end_indices] - time[peak_indices]
     )
 
-`LibV2`_ : AP_rise_rate_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_rise_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the rise rates of the second and the first action potential
 divided by the rise rate of the first action potential
 
-- **Required features**: LibV2: AP_rise_rate_change
+- **Required features**: AP_rise_rate_change
 - **Units**: constant
 - **Pseudocode**: ::
 
     AP_rise_rate_change = (AP_rise_rate[1:] - AP_rise_rate[0]) / AP_rise_rate[0]
 
-`LibV2`_ : AP_fall_rate_change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_fall_rate_change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference of the fall rates of the second and the first action potential
 divided by the fall rate of the first action potential
 
-- **Required features**: LibV2: AP_fall_rate_change
+- **Required features**: AP_fall_rate_change
 - **Units**: constant
 - **Pseudocode**: ::
 
     AP_fall_rate_change = (AP_fall_rate[1:] - AP_fall_rate[0]) / AP_fall_rate[0]
 
-`LibV5`_ : AP_phaseslope
-~~~~~~~~~~~~~~~~~~~~~~~~
+`SpikeShape`_ : AP_phaseslope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Slope of the V, dVdt phasespace plot at the beginning of every spike
 
 (at the point where the derivative crosses the DerivativeThreshold)
 
-- **Required features**: LibV5:AP_begin_indices
+- **Required features**: AP_begin_indices
 - **Parameters**: AP_phaseslope_range
 - **Units**: 1/(ms)
 - **Pseudocode**: ::
@@ -1582,7 +1582,7 @@ The end of the initial burst is detected when the ISIs frequency gets lower than
 Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
 and initburst_sahp_end (in ms) after the last spike of the burst.
 
-- **Required features**: LibV1: peak_time 
+- **Required features**: peak_time 
 - **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
 - **Units**: mV
 
@@ -1591,7 +1591,7 @@ and initburst_sahp_end (in ms) after the last spike of the burst.
 
 Slow AHP voltage from steady_state_voltage_stimend after initial burst
 
-- **Required features**: LibV5: steady_state_voltage_stimend, initburst_sahp
+- **Required features**: steady_state_voltage_stimend, initburst_sahp
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1602,7 +1602,7 @@ Slow AHP voltage from steady_state_voltage_stimend after initial burst
 
 Slow AHP voltage from voltage base after initial burst
 
-- **Required features**: LibV5: voltage_base, initburst_sahp
+- **Required features**: voltage_base, initburst_sahp
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1614,8 +1614,8 @@ Subthreshold features
 .. image:: _static/figures/voltage_features.png
 
 
-`LibV5`_ : steady_state_voltage_stimend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : steady_state_voltage_stimend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage during the last 10% of the stimulus duration.
 
@@ -1628,8 +1628,8 @@ The average voltage during the last 10% of the stimulus duration.
     end_time = stim_end
     steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t < end_time) & (t >= begin_time))])
 
-`LibV2`_ : steady_state_hyper
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : steady_state_hyper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Steady state voltage during hyperpolarization for 30 data points (after interpolation)
 
@@ -1640,8 +1640,8 @@ Steady state voltage during hyperpolarization for 30 data points (after interpol
     stim_end_idx = numpy.argwhere(time >= stim_end)[0][0]
     steady_state_hyper = numpy.mean(voltage[stim_end_idx - 35:stim_end_idx - 5])
 
-`LibV1`_ : steady_state_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : steady_state_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage after the stimulus
 
@@ -1652,8 +1652,8 @@ The average voltage after the stimulus
     steady_state_voltage = numpy.mean(voltage[numpy.where((t <= max(t)) & (t > stim_end))])
 
 
-`LibV5`_ : voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage during the last 10% of time before the stimulus.
 
@@ -1666,8 +1666,8 @@ The average voltage during the last 10% of time before the stimulus.
         (t >= voltage_base_start_perc * stim_start) &
         (t <= voltage_base_end_perc * stim_start))])
 
-`LibV5`_ : current_base
-~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : current_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average current during the last 10% of time before the stimulus.
 
@@ -1684,8 +1684,8 @@ The average current during the last 10% of time before the stimulus.
     elif current_base_mode == "median":
         current_base = numpy.median(current_slice)
 
-`LibV1`_ : time_constant
-~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The membrane time constant
 
@@ -1774,8 +1774,8 @@ Yield the time constant of that decay.
 
     time_constant = -1. / slope
 
-`LibV5`_ : decay_time_constant_after_stim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : decay_time_constant_after_stim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The decay time constant of the voltage right after the stimulus
 
@@ -1795,8 +1795,8 @@ The decay time constant of the voltage right after the stimulus
 
     decay_time_constant_after_stim = -1. / slope
 
-`LibV5`_ : multiple_decay_time_constant_after_stim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : multiple_decay_time_constant_after_stim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When multiple stimuli are applied, this function returns a list of decay time constants
 each computed on the voltage right after each stimulus.
@@ -1818,8 +1818,8 @@ Each is a list containing the start and end times of each stimulus present in th
             decay_time_constant_after_stim(stim_start, stim_end)
         )
 
-`LibV5`_ : sag_time_constant
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : sag_time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The decay time constant of the exponential voltage decay from the bottom of the sag to the steady-state.
 
@@ -1854,8 +1854,8 @@ The golden search algorithm is not used, since the data is expected to be noisy 
 
 .. image:: _static/figures/sag.png
 
-`LibV5`_ : sag_amplitude
-~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : sag_amplitude
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The difference between the minimal voltage and the steady state at stimend
 
@@ -1870,8 +1870,8 @@ The difference between the minimal voltage and the steady state at stimend
         sag_amplitude = None
 
 
-`LibV5`_ : sag_ratio1
-~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : sag_ratio1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ratio between the sag amplitude and the maximal sag extend from voltage base
 
@@ -1885,8 +1885,8 @@ The ratio between the sag amplitude and the maximal sag extend from voltage base
     else:
         sag_ratio1 = None
 
-`LibV5`_ : sag_ratio2
-~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : sag_ratio2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ratio between the maximal extends of sag from steady state and voltage base
 
@@ -1900,8 +1900,8 @@ The ratio between the maximal extends of sag from steady state and voltage base
     else:
         sag_ratio2 = None
 
-`LibV1`_ : ohmic_input_resistance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : ohmic_input_resistance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ratio between the voltage deflection and stimulus current
 
@@ -1912,8 +1912,8 @@ The ratio between the voltage deflection and stimulus current
 
     ohmic_input_resistance = voltage_deflection / stimulus_current
 
-`LibV5`_ : ohmic_input_resistance_vb_ssse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : ohmic_input_resistance_vb_ssse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ratio between the voltage deflection (between voltage base and steady-state voltage at stimend) and stimulus current
 
@@ -1924,8 +1924,8 @@ The ratio between the voltage deflection (between voltage base and steady-state 
 
     ohmic_input_resistance_vb_ssse = voltage_deflection_vb_ssse / stimulus_current
 
-`LibV5`_ : voltage_deflection_vb_ssse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : voltage_deflection_vb_ssse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The voltage deflection between voltage base and steady-state voltage at stimend
 
@@ -1939,8 +1939,8 @@ the average voltage during the last 10% of the stimulus duration.
 
     voltage_deflection_vb_ssse = steady_state_voltage_stimend - voltage_base
 
-`LibV1`_ : voltage_deflection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : voltage_deflection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 The voltage deflection between voltage base and steady-state voltage at stimend
 
@@ -1958,8 +1958,8 @@ before the end of the stimulus duration.
     steady_state_voltage_stimend = numpy.mean(V[stim_end_idx-10:stim_end_idx-5])
     voltage_deflection = steady_state_voltage_stimend - voltage_base
 
-`LibV5`_ : voltage_deflection_begin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : voltage_deflection_begin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 The voltage deflection between voltage base and steady-state voltage soon after stimulation start
 
@@ -1978,8 +1978,8 @@ the average voltage taken from 5% to 15% of the stimulus duration.
     steady_state_voltage_stimend = numpy.mean(V[condition])
     voltage_deflection = steady_state_voltage_stimend - voltage_base
 
-`LibV5`_ : voltage_after_stim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : voltage_after_stim
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 The mean voltage after the stimulus in
 (stim_end + 25%*end_period, stim_end + 75%*end_period)
@@ -1993,8 +1993,8 @@ The mean voltage after the stimulus in
     condition = numpy.all((tstart < t, t < tend), axis=0)
     voltage_after_stim = numpy.mean(V[condition])
 
-`LibV1`_ : minimum_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : minimum_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum of the voltage during the stimulus
 
@@ -2004,8 +2004,8 @@ The minimum of the voltage during the stimulus
 
     minimum_voltage = min(voltage[numpy.where((t >= stim_start) & (t <= stim_end))])
 
-`LibV1`_ : maximum_voltage
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : maximum_voltage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The maximum of the voltage during the stimulus
 
@@ -2015,8 +2015,8 @@ The maximum of the voltage during the stimulus
 
     maximum_voltage = max(voltage[numpy.where((t >= stim_start) & (t <= stim_end))])
 
-`LibV5`_ : maximum_voltage_from_voltagebase
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`Subthreshold`_ : maximum_voltage_from_voltagebase
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difference between maximum voltage during stimulus and voltage base
 
@@ -2034,12 +2034,12 @@ Requested eFeatures
 Cpp features
 ------------
 
-LibV1 : AHP_depth_last
-~~~~~~~~~~~~~~~~~~~~~~
+AHP_depth_last
+~~~~~~~~~~~~~~
 
 Relative voltage values at the last after-hyperpolarization
 
-- **Required features**: LibV5:voltage_base (mV), LibV5:last_AHP_values (mV)
+- **Required features**: voltage_base (mV), last_AHP_values (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -2047,12 +2047,12 @@ Relative voltage values at the last after-hyperpolarization
     AHP_depth = last_AHP_values[:] - voltage_base
 
 
-LibV5 : AHP_time_from_peak_last
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+AHP_time_from_peak_last
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Time between AP peaks and last AHP depths
 
-- **Required features**: LibV1:peak_indices, LibV5:min_AHP_values (mV)
+- **Required features**: peak_indices, min_AHP_values (mV)
 - **Units**: ms
 - **Pseudocode**: ::
 
@@ -2060,58 +2060,58 @@ Time between AP peaks and last AHP depths
     AHP_time_from_peak_last = t[last_AHP_indices[:]] - t[peak_indices[i]]
 
 
-LibV5 : steady_state_voltage_stimend_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+steady_state_voltage_stimend_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The average voltage during the last 90% of the stimulus duration realtive to voltage_base
 
-- **Required features**: LibV5: steady_state_voltage_stimend (mV), LibV5: voltage_base (mV)
+- **Required features**: steady_state_voltage_stimend (mV), voltage_base (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     steady_state_voltage_stimend_from_voltage_base = steady_state_voltage_stimend - voltage_base
 
 
-LibV5 : min_duringstim_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+min_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage during stimulus
 
-- **Required features**: LibV5: min_duringstim (mV), LibV5: voltage_base (mV)
+- **Required features**: min_duringstim (mV), voltage_base (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     min_duringstim_from_voltage_base = minimum_voltage - voltage_base
 
 
-LibV5 : max_duringstim_from_voltage_base
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+max_duringstim_from_voltage_base
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum voltage during stimulus
 
-- **Required features**: LibV5: max_duringstim (mV), LibV5: voltage_base (mV)
+- **Required features**: max_duringstim (mV), voltage_base (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     max_duringstim_from_voltage_base = maximum_voltage - voltage_base
 
-LibV5 : diff_max_duringstim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff_max_duringstim
+~~~~~~~~~~~~~~~~~~~
 
 Difference between maximum and steady state during stimulation
 
-- **Required features**: LibV5: max_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
+- **Required features**: max_duringstim (mV), steady_state_voltage_stimend (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
     diff_max_duringstim: max_duringstim - steady_state_voltage_stimend
 
-LibV5 : diff_min_duringstim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff_min_duringstim
+~~~~~~~~~~~~~~~~~~~
 
 Difference between minimum and steady state during stimulation
 
-- **Required features**: LibV5: min_duringstim (mV), LibV5: steady_state_voltage_stimend (mV)
+- **Required features**: min_duringstim (mV), steady_state_voltage_stimend (mV)
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -2130,7 +2130,7 @@ A depolarization block is detected when the voltage stays higher than the mean o
 
 A hyperpolarization block is detected when, after stimulus start, the voltage stays below -75 mV for longer than 50 ms.
 
-- **Required features**: LibV5: AP_begin_voltage
+- **Required features**: AP_begin_voltage
 - **Units**: constant
 
 `Python efeature`_ : impedance
@@ -2140,7 +2140,7 @@ Computes the impedance given a ZAP current input and its voltage response.
 It will return the frequency at which the impedance is maximal, in the range (0, impedance_max_freq] Hz,
 with impedance_max_freq being a setting with 50.0 as a default value.
 
-- **Required features**: current, spike_count, LibV5:voltage_base, LibV5:current_base
+- **Required features**: current, spike_count, voltage_base, current_base
 - **Units**: Hz
 - **Pseudocode**: ::
 
@@ -2164,8 +2164,7 @@ with impedance_max_freq being a setting with 50.0 as a default value.
 
 
 
-.. _LibV1: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV1.cpp
-.. _LibV2: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV2.cpp
-.. _LibV3: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV3.cpp
-.. _LibV5: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/LibV5.cpp
+.. _SpikeEvent: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeEvent.cpp
+.. _SpikeShape: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeShape.cpp
+.. _Subthreshold: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/Subthreshold.cpp
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, EPFL/Blue Brain Project                                   
+/* Copyright (c) 2015-2024, EPFL/Blue Brain Project                                   
  *                                                                               
  * This file is part of eFEL <https://github.com/BlueBrain/eFEL>                 
  *                                                                               
@@ -14,22 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License      
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                   
- */        
+ */
 
-#ifndef __FILLFPTRTBL
-#define __FILLFPTRTBL
+#include "mapoperations.h"
+#include "Utils.h"
 
-#include "types.h"
+#include <vector>
+#include <stdexcept>
 
-#include "BasicFeatures.h"
-#include "SpikeEvent.h"
-#include "SpikeShape.h"
-#include "Subthreshold.h"
+using std::vector;
 
-extern feature2function FptrTableBF;
-extern feature2function FptrTableSE;
-extern feature2function FptrTableSS;
-extern feature2function FptrTableST;
-
-int FillFptrTable();
-#endif
+namespace BasicFeatures {
+int interpolate(mapStr2intVec& IntFeatureData,
+                mapStr2doubleVec& DoubleFeatureData,
+                mapStr2Str& StringData);
+int voltage(mapStr2intVec& IntFeatureData,
+            mapStr2doubleVec& DoubleFeatureData,
+            mapStr2Str& StringData);
+int current(mapStr2intVec& IntFeatureData,
+            mapStr2doubleVec& DoubleFeatureData,
+            mapStr2Str& StringData);
+int time(mapStr2intVec& IntFeatureData,
+         mapStr2doubleVec& DoubleFeatureData,
+         mapStr2Str& StringData);
+}
