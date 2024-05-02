@@ -21,15 +21,15 @@
 
 #include "types.h"
 
-#include "LibV1.h"
-#include "LibV2.h"
-#include "LibV3.h"
-#include "LibV5.h"
+#include "BasicFeatures.h"
+#include "SpikeEvent.h"
+#include "SpikeShape.h"
+#include "Subthreshold.h"
 
-extern feature2function FptrTableV1;
-extern feature2function FptrTableV2;
-extern feature2function FptrTableV3;
-extern feature2function FptrTableV5;
+extern feature2function FptrTableBF;
+extern feature2function FptrTableSE;
+extern feature2function FptrTableSS;
+extern feature2function FptrTableST;
 
 int FillFptrTable();
 #endif

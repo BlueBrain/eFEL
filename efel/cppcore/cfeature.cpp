@@ -30,10 +30,10 @@ using std::endl;
 cFeature::cFeature(const string& strDepFile, const string& outdir)
     : logger(outdir) {
   FillFptrTable();
-  mapFptrLib["LibV1"] = &FptrTableV1;
-  mapFptrLib["LibV2"] = &FptrTableV2;
-  mapFptrLib["LibV3"] = &FptrTableV3;
-  mapFptrLib["LibV5"] = &FptrTableV5;
+  mapFptrLib["BasicFeatures"] = &FptrTableBF;
+  mapFptrLib["SpikeEvent"] = &FptrTableSE;
+  mapFptrLib["SpikeShape"] = &FptrTableSS;
+  mapFptrLib["Subthreshold"] = &FptrTableST;
 
   fillfeaturetypes();
 

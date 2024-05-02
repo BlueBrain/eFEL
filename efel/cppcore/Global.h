@@ -23,10 +23,10 @@
 #include <string>
 #include <vector>
 
-feature2function FptrTableV1;
-feature2function FptrTableV2;
-feature2function FptrTableV3;
-feature2function FptrTableV5;
+feature2function FptrTableBF;
+feature2function FptrTableSE;
+feature2function FptrTableSS;
+feature2function FptrTableST;
 feature2function FptrTable;
 
 std::map<std::string, feature2function*> mapFptrLib;
