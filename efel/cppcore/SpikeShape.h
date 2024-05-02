@@ -39,7 +39,7 @@ int AP1_amp(mapStr2intVec& IntFeatureData,
             mapStr2Str& StringData);
 int AP2_amp(mapStr2intVec& IntFeatureData,
             mapStr2doubleVec& DoubleFeatureData,
-            mapStr2Str& StringData)
+            mapStr2Str& StringData);
 int mean_AP_amplitude(mapStr2intVec& IntFeatureData,
                       mapStr2doubleVec& DoubleFeatureData,
                       mapStr2Str& StringData);

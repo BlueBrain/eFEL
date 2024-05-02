@@ -17,6 +17,8 @@
  */
 
 
+#include "SpikeShape.h"
+
 #include <math.h>
 
 #include <algorithm>

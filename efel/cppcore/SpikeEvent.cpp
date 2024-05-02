@@ -17,6 +17,8 @@
  */
 
 
+#include "SpikeEvent.h"
+
 #include <math.h>
 
 #include <algorithm>

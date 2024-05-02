@@ -91,7 +91,6 @@ int time_to_interburst_min(mapStr2intVec& IntFeatureData,
 int postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
                                mapStr2doubleVec& DoubleFeatureData,
                                mapStr2Str& StringData);
-
 int postburst_slow_ahp_values(mapStr2intVec& IntFeatureData,
                               mapStr2doubleVec& DoubleFeatureData,
                               mapStr2Str& StringData);
