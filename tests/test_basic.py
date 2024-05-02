@@ -38,10 +38,8 @@ import pytest
 
 from efel.io import load_ascii_input
 from efel.api import get_feature_values
-from efel.api import set_double_setting
-from efel.api import set_int_setting
+from efel.api import set_setting
 from efel.api import set_derivative_threshold
-from efel.api import set_str_setting
 from efel.api import get_distance
 
 
@@ -564,7 +562,7 @@ def test_min_AHP_indices_strict():
 
     for strict, n_of_ahp in [(0, 17), (1, 16)]:
         efel.reset()
-        set_int_setting('strict_stiminterval', strict)
+        set_setting('strict_stiminterval', strict)
 
         stim_start = 700.0
         stim_end = 2700.0
@@ -621,7 +619,7 @@ def test_strict_stiminterval():
 
     for strict, n_of_spikes in [(0, 5), (1, 3)]:
         efel.reset()
-        set_int_setting("strict_stiminterval", strict)
+        set_setting("strict_stiminterval", strict)
 
         stim_start = 600.0
         stim_end = 750.0
@@ -702,7 +700,7 @@ def test_ISI_values_noIgnore():
 
     features = ['ISI_values']
 
-    set_int_setting("ignore_first_ISI", 0)
+    set_setting("ignore_first_ISI", 0)
 
     feature_values = \
         get_feature_values(
@@ -711,7 +709,7 @@ def test_ISI_values_noIgnore():
     isi_values_no_ignore = feature_values[0]['ISI_values']
 
     efel.reset()
-    set_int_setting("ignore_first_ISI", 1)
+    set_setting("ignore_first_ISI", 1)
 
     feature_values = \
         get_feature_values(
@@ -848,7 +846,7 @@ def test_AP_end_indices():
 
     efel.reset()
 
-    set_double_setting("DownDerivativeThreshold", -24.0)
+    set_setting("DownDerivativeThreshold", -24.0)
     feature_values = \
         get_feature_values(
             [trace],
@@ -994,7 +992,7 @@ def test_voltagebase_median():
 
     import efel
     efel.reset()
-    set_str_setting("voltage_base_mode", "median")
+    set_setting("voltage_base_mode", "median")
 
     trace, time, voltage, stim_start, stim_end = load_data(
         'mean_frequency1', interp=True)
@@ -1044,7 +1042,7 @@ def test_currentbase_median():
     """basic: Test currentbase with median"""
     import efel
     efel.reset()
-    set_str_setting("current_base_mode", "median")
+    set_setting("current_base_mode", "median")
 
     data = numpy.loadtxt(testdata_dir / 'basic' / 'current.txt')
     current = data[:, 1]
@@ -1258,7 +1256,7 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.03627393790836)
 
     efel.reset()
-    set_double_setting('interp_step', 0.01)
+    set_setting('interp_step', 0.01)
     feature_values = \
         get_feature_values(
             [trace],
@@ -1268,8 +1266,8 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.5055215)
 
     efel.reset()
-    set_double_setting('interp_step', 0.01)
-    set_int_setting('DerivativeWindow', 30)
+    set_setting('interp_step', 0.01)
+    set_setting('DerivativeWindow', 30)
     feature_values = \
         get_feature_values(
             [trace],
@@ -1369,7 +1367,7 @@ def test_ohmic_inputresistance():
     features = ['ohmic_input_resistance', 'voltage_deflection']
 
     stimulus_current = 10.0
-    set_double_setting('stimulus_current', stimulus_current)
+    set_setting('stimulus_current', stimulus_current)
     feature_values = \
         get_feature_values(
             [trace],
@@ -1393,7 +1391,7 @@ def test_ohmic_input_resistance_zero_stimulus_current():
     features = ['ohmic_input_resistance']
 
     stimulus_current = 0.0
-    set_double_setting('stimulus_current', stimulus_current)
+    set_setting('stimulus_current', stimulus_current)
     feature_values = get_feature_values([trace], features)
 
     ohmic_input_resistance = feature_values[0]['ohmic_input_resistance']
@@ -1597,7 +1595,7 @@ def test_ohmic_input_resistance_vb_ssse():
     features = ['ohmic_input_resistance_vb_ssse', 'voltage_deflection_vb_ssse']
 
     stimulus_current = 10.0
-    set_double_setting('stimulus_current', stimulus_current)
+    set_setting('stimulus_current', stimulus_current)
     feature_values = \
         get_feature_values(
             [trace],
@@ -1622,7 +1620,7 @@ def test_ohmic_input_resistance_vb_ssse_zero_stimulus_current():
     trace = {'T': time, 'V': voltage, 'stim_start': [500.0], 'stim_end': [900.0]}
 
     stimulus_current = 0.0
-    set_double_setting('stimulus_current', stimulus_current)
+    set_setting('stimulus_current', stimulus_current)
     feature_values = get_feature_values([trace], ['ohmic_input_resistance_vb_ssse'])
     ohmic_input_resistance = feature_values[0]['ohmic_input_resistance_vb_ssse']
     assert ohmic_input_resistance is None
@@ -1901,8 +1899,8 @@ def test_multiple_decay_time_constant_after_stim():
 
     features = ['multiple_decay_time_constant_after_stim']
 
-    set_double_setting("multi_stim_start", stim_start)
-    set_double_setting("multi_stim_end", stim_end)
+    set_setting("multi_stim_start", stim_start)
+    set_setting("multi_stim_end", stim_end)
 
     feature_values = get_feature_values([trace], features)[0]
 
@@ -2059,7 +2057,7 @@ def test_unfinished_peak():
     """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
-    set_int_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', 1)
 
     dt = 0.1
     v = numpy.zeros(int(100 / dt)) - 70.0
@@ -2348,7 +2346,7 @@ def test_AP_width_between_threshold():
     efel.reset()
 
     threshold = -48.0
-    set_double_setting("Threshold", threshold)
+    set_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
 
@@ -2389,10 +2387,10 @@ def test_AP_width_between_threshold_strict():
 
     import efel
     efel.reset()
-    set_int_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', 1)
 
     threshold = -48.0
-    set_double_setting("Threshold", threshold)
+    set_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
 
@@ -3106,7 +3104,7 @@ def test_burst_indices():
     """basic: Test burst_begin_indices and burst_end_indices"""
     import efel
     efel.reset()
-    set_int_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3142,7 +3140,7 @@ def test_strict_burst_mean_freq():
     """basic: Test strict_burst_mean_freq"""
     import efel
     efel.reset()
-    set_int_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3189,7 +3187,7 @@ def test_strict_burst_number():
     """basic: Test strict_burst_number"""
     import efel
     efel.reset()
-    set_int_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3237,7 +3235,7 @@ def test_strict_interburst_voltage():
     """basic: Test strict_interburst_voltage"""
     import efel
     efel.reset()
-    set_int_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', 0)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3299,7 +3297,7 @@ def test_AP_width_spike_before_stim_start():
 
     assert len(ap_width) == 15
 
-    set_int_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', 1)
     feature_values = \
         get_feature_values(
             [trace],
@@ -3337,7 +3335,7 @@ def test_ADP_peak_amplitude():
     """basic: Test ADP_peak_amplitude"""
     import efel
     efel.reset()
-    set_int_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', 1)
 
     stim_start = 250.0
     stim_end = 1600.0
@@ -3562,7 +3560,7 @@ def test_postburst_min_values():
         import efel
         efel.reset()
         # use this to have all spikes in burst for burst3_url case
-        set_double_setting('strict_burst_factor', 4.0)
+        set_setting('strict_burst_factor', 4.0)
 
         time, voltage = load_ascii_input(url)
 

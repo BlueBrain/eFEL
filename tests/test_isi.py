@@ -99,7 +99,7 @@ class TestRegularISI:
 
     def test_ISI_log_slope_skip_ValueError(self):
         with pytest.raises(ValueError):
-            efel.set_double_setting("spike_skipf", 1.0)
+            efel.set_setting("spike_skipf", 1.0)
             get_feature_values(
                 [self.trace],
                 ["ISI_log_slope_skip"], raise_warnings=False)[0]
@@ -142,7 +142,7 @@ class TestThreeSpikes:
         assert self.feature_values["single_burst_ratio"] is None
 
         # set ignore_first_ISI=False
-        efel.set_int_setting("ignore_first_ISI", 0)
+        efel.set_setting("ignore_first_ISI", 0)
         self.feature_values = get_feature_values(
             [self.trace],
             self.features, raise_warnings=False)[0]
