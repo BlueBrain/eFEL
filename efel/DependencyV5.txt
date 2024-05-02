@@ -84,7 +84,7 @@ Subthreshold:voltage_after_stim #BasicFeatures:interpolate
 SpikeShape:AP2_AP1_begin_width_diff 	    #SpikeShape:AP_begin_width #BasicFeatures:interpolate 
 SpikeShape:AP_phaseslope #SpikeShape:AP_begin_indices #BasicFeatures:interpolate 
 SpikeEvent:all_ISI_values #SpikeEvent:peak_time #BasicFeatures:interpolate 
-SpikeEvent:AP_amplitude_from_voltagebase #Subthreshold:voltage_base #SpikeShape:peak_voltage    #BasicFeatures:interpolate 
+SpikeShape:AP_amplitude_from_voltagebase #Subthreshold:voltage_base #SpikeShape:peak_voltage    #BasicFeatures:interpolate 
 SpikeShape:min_voltage_between_spikes #SpikeEvent:peak_indices #BasicFeatures:interpolate 
 BasicFeatures:voltage #BasicFeatures:interpolate 
 BasicFeatures:current #BasicFeatures:interpolate 

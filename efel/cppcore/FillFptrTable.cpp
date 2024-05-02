@@ -117,7 +117,7 @@ int FillFptrTable() {
     return SpikeEvent::interburst_XXpercent_indices(intData, doubleData, strData, 60);
   };
   FptrTableSE["interburst_duration"] = &SpikeEvent::interburst_duration;
-  FptrTableSE["peak_inis_not_stuckdices"] = &SpikeEvent::is_not_stuck;
+  FptrTableSE["is_not_stuck"] = &SpikeEvent::is_not_stuck;
 
   //******************  FptrTableSS *****************************
   // eFeatures
@@ -166,7 +166,7 @@ int FillFptrTable() {
   FptrTableSS["AP_duration"] = &SpikeShape::AP_duration;
   FptrTableSS["AP_duration_change"] = &SpikeShape::AP_duration_change;
   FptrTableSS["AP_width_between_threshold"] = &SpikeShape::AP_width_between_threshold;
-  FptrTableSS["spike_width1"] = &SpikeShape::spike_width1;
+  FptrTableSS["spike_half_width"] = &SpikeShape::spike_width1;
   FptrTableSS["AP1_width"] = &SpikeShape::AP1_width;
   FptrTableSS["AP2_width"] = &SpikeShape::AP2_width;
   FptrTableSS["APlast_width"] = &SpikeShape::APlast_width;
