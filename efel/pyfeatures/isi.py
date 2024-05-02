@@ -125,7 +125,7 @@ def _isi_log_slope_core(
 
     try:
         slope, _ = np.polyfit(x, log_isi_values, 1)
-    except np.linalg.LinAlgError as e:
+    except (np.linalg.LinAlgError, SystemError) as e:
         warnings.warn(f"Error in polyfit: {e}")
         return None
 
