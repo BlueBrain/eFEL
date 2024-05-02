@@ -31,13 +31,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from pathlib import Path
-import numpy
-
 import pytest
 
 from efel.settings import Settings
-from efel.api import set_setting
+from efel.api import set_setting, get_settings
 
 
 def test_set_setting():
@@ -51,24 +48,16 @@ def test_set_setting_invalid_type():
     """Test that the set_setting method raises a ValueError
     when given an invalid type."""
     settings = Settings()
-    try:
+    with pytest.raises(ValueError):
         settings.set_setting("Threshold", "-30.0")
-    except ValueError:
-        assert True
-    else:
-        assert False
 
 
 def test_set_setting_dependencyfile_path_not_found():
     """Test that the set_setting method raises a FileNotFoundError
     when given a nonexistent file."""
     settings = Settings()
-    try:
+    with pytest.raises(FileNotFoundError):
         settings.set_setting("dependencyfile_path", "nonexistent_file.txt")
-    except FileNotFoundError:
-        assert True
-    else:
-        assert False
 
 
 def test_reset_to_default():
@@ -78,3 +67,45 @@ def test_reset_to_default():
     settings.Threshold = -30.0
     settings.reset_to_default()
     assert settings.Threshold == -20.0
+
+
+def test_get_settings():
+    """Test that the get_settings method returns an instance of efel.Settings."""
+    settings = get_settings()
+    assert isinstance(settings, Settings)
+
+
+def test_str_method():
+    """Test that the __str__ method returns the correct string representation."""
+    settings = Settings()
+    expected_output = (
+        "Threshold: -20.0\n"
+        "DerivativeThreshold: 10.0\n"
+        "DownDerivativeThreshold: -12.0\n"
+        f"dependencyfile_path: {settings.dependencyfile_path}\n"
+        "spike_skipf: 0.1\n"
+        "max_spike_skip: 2\n"
+        "interp_step: 0.1\n"
+        "burst_factor: 1.5\n"
+        "strict_burst_factor: 2.0\n"
+        "voltage_base_start_perc: 0.9\n"
+        "voltage_base_end_perc: 1.0\n"
+        "current_base_start_perc: 0.9\n"
+        "current_base_end_perc: 1.0\n"
+        "rise_start_perc: 0.0\n"
+        "rise_end_perc: 1.0\n"
+        "initial_perc: 0.1\n"
+        "min_spike_height: 20.0\n"
+        "strict_stiminterval: False\n"
+        "initburst_freq_threshold: 50\n"
+        "initburst_sahp_start: 5\n"
+        "initburst_sahp_end: 100\n"
+        "DerivativeWindow: 3\n"
+        "voltage_base_mode: mean\n"
+        "current_base_mode: mean\n"
+        "precision_threshold: 1e-10\n"
+        "sahp_start: 5.0\n"
+        "ignore_first_ISI: True\n"
+        "impedance_max_freq: 50.0"
+    )
+    assert str(settings) == expected_output

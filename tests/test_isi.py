@@ -142,7 +142,7 @@ class TestThreeSpikes:
         assert self.feature_values["single_burst_ratio"] is None
 
         # set ignore_first_ISI=False
-        efel.set_setting("ignore_first_ISI", 0)
+        efel.set_setting("ignore_first_ISI", False)
         self.feature_values = get_feature_values(
             [self.trace],
             self.features, raise_warnings=False)[0]

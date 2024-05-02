@@ -39,7 +39,6 @@ import pytest
 from efel.io import load_ascii_input
 from efel.api import get_feature_values
 from efel.api import set_setting
-from efel.api import set_derivative_threshold
 from efel.api import get_distance
 
 
@@ -413,7 +412,7 @@ def test_setDerivativeThreshold():
             features)
     AP_begin_voltage_orig = feature_values[0]['AP_begin_voltage'][1]
 
-    set_derivative_threshold(5.0)
+    set_setting('DerivativeThreshold', 5.0)
     feature_values = \
         get_feature_values(
             [trace],
@@ -541,7 +540,7 @@ def test_min_AHP_indices_strict():
 
     import efel
 
-    for strict, n_of_ahp in [(0, 17), (1, 16)]:
+    for strict, n_of_ahp in [(False, 17), (True, 16)]:
         efel.reset()
         set_setting('strict_stiminterval', strict)
 
@@ -598,7 +597,7 @@ def test_strict_stiminterval():
 
     import efel
 
-    for strict, n_of_spikes in [(0, 5), (1, 3)]:
+    for strict, n_of_spikes in [(False, 5), (True, 3)]:
         efel.reset()
         set_setting("strict_stiminterval", strict)
 
@@ -681,7 +680,7 @@ def test_ISI_values_noIgnore():
 
     features = ['ISI_values']
 
-    set_setting("ignore_first_ISI", 0)
+    set_setting("ignore_first_ISI", False)
 
     feature_values = \
         get_feature_values(
@@ -690,7 +689,7 @@ def test_ISI_values_noIgnore():
     isi_values_no_ignore = feature_values[0]['ISI_values']
 
     efel.reset()
-    set_setting("ignore_first_ISI", 1)
+    set_setting("ignore_first_ISI", True)
 
     feature_values = \
         get_feature_values(
@@ -2038,7 +2037,7 @@ def test_unfinished_peak():
     """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
-    set_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', True)
 
     dt = 0.1
     v = numpy.zeros(int(100 / dt)) - 70.0
@@ -2368,7 +2367,7 @@ def test_AP_width_between_threshold_strict():
 
     import efel
     efel.reset()
-    set_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', True)
 
     threshold = -48.0
     set_setting("Threshold", threshold)
@@ -3085,7 +3084,7 @@ def test_burst_indices():
     """basic: Test burst_begin_indices and burst_end_indices"""
     import efel
     efel.reset()
-    set_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', False)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3121,7 +3120,7 @@ def test_strict_burst_mean_freq():
     """basic: Test strict_burst_mean_freq"""
     import efel
     efel.reset()
-    set_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', False)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3168,7 +3167,7 @@ def test_strict_burst_number():
     """basic: Test strict_burst_number"""
     import efel
     efel.reset()
-    set_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', False)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3216,7 +3215,7 @@ def test_strict_interburst_voltage():
     """basic: Test strict_interburst_voltage"""
     import efel
     efel.reset()
-    set_setting('ignore_first_ISI', 0)
+    set_setting('ignore_first_ISI', False)
 
     time, voltage = load_ascii_input(burst1_url)
     time, voltage = interpolate(time, voltage, 0.1)
@@ -3278,7 +3277,7 @@ def test_AP_width_spike_before_stim_start():
 
     assert len(ap_width) == 15
 
-    set_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', True)
     feature_values = \
         get_feature_values(
             [trace],
@@ -3316,7 +3315,7 @@ def test_ADP_peak_amplitude():
     """basic: Test ADP_peak_amplitude"""
     import efel
     efel.reset()
-    set_setting('strict_stiminterval', 1)
+    set_setting('strict_stiminterval', True)
 
     stim_start = 250.0
     stim_end = 1600.0

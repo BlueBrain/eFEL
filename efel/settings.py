@@ -53,7 +53,7 @@ class Settings:
         rise_end_perc (float): Rise end percentage (default: 1.0).
         initial_perc (float): Initial percentage (default: 0.1).
         min_spike_height (float): Minimum spike height (default: 20.0).
-        strict_stiminterval (int): Strict stimulus interval (default: 0).
+        strict_stiminterval (bool): Strict stimulus interval (default: False).
         initburst_freq_threshold (int): Initial burst frequency threshold
         (default: 50)
         initburst_sahp_start (int): Initial burst SAHP start (default: 5).
@@ -63,7 +63,7 @@ class Settings:
         current_base_mode (str): Current base mode (default: "mean").
         precision_threshold (float): Precision threshold (default: 1e-10).
         sahp_start (float): SAHP start (default: 5.0).
-        ignore_first_ISI (int): Ignore first ISI (default: 1).
+        ignore_first_ISI (bool): Ignore first ISI (default: True).
         impedance_max_freq (float): Impedance maximum frequency (default: 50.0).
     """
 
@@ -87,7 +87,7 @@ class Settings:
     rise_end_perc: float = 1.0
     initial_perc: float = 0.1
     min_spike_height: float = 20.0
-    strict_stiminterval: int = 0
+    strict_stiminterval: bool = False
     initburst_freq_threshold: int = 50
     initburst_sahp_start: int = 5
     initburst_sahp_end: int = 100
@@ -96,15 +96,17 @@ class Settings:
     current_base_mode: str = "mean"
     precision_threshold: float = 1e-10
     sahp_start: float = 5.0
-    ignore_first_ISI: int = 1
+    ignore_first_ISI: bool = True
     impedance_max_freq: float = 50.0
 
-    def set_setting(self, setting_name: str, new_value: Union[int, float, str]) -> None:
+    def set_setting(self,
+                    setting_name: str,
+                    new_value: Union[int, float, str, bool]) -> None:
         """Set a certain setting to a new value.
 
         Args:
             setting_name (str): Name of the setting to be modified.
-            new_value (Union[int, float, str]): New value for the setting.
+            new_value (Union[int, float, str, bool]): New value for the setting.
 
         Raises:
             ValueError: If the value is of the wrong type.
@@ -114,10 +116,9 @@ class Settings:
         if hasattr(self, setting_name):
             expected_types = {f.name: f.type for f in fields(self)}
             expected_type = expected_types.get(setting_name)
-            if expected_type and expected_type != type(new_value):
-                expected_type_name = expected_type.__name__
+            if expected_type and not isinstance(new_value, expected_type):
                 raise ValueError(f"Invalid value for setting '{setting_name}'. "
-                                 f"Expected type: {expected_type_name}.")
+                                 f"Expected type: {expected_type.__name__}.")
         else:
             logger.warning("Setting '%s' not found in settings. "
                            "Adding it as a new setting.", setting_name)
@@ -129,18 +130,6 @@ class Settings:
                                         "doesn't exist")
 
         setattr(self, setting_name, new_value)
-
-    @deprecated("Use set_setting instead")
-    def set_int(self, setting_name: str, new_value: int) -> None:
-        self.set_setting(setting_name, new_value)
-
-    @deprecated("Use set_setting instead")
-    def set_double(self, setting_name: str, new_value: float) -> None:
-        self.set_setting(setting_name, new_value)
-
-    @deprecated("Use set_setting instead")
-    def set_str(self, setting_name: str, new_value: str) -> None:
-        self.set_setting(setting_name, new_value)
 
     def reset_to_default(self):
         """Reset settings to their default values"""

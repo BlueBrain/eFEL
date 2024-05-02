@@ -79,7 +79,7 @@ def set_dependency_file_location(location: str | Path) -> None:
     Raises:
         FileNotFoundError: If the path to the dependency file doesn't exist.
     """
-    _settings.set_setting('dependencyfile_path', str(location))
+    set_setting('dependencyfile_path', str(location))
 
 
 def get_dependency_file_location() -> str:
@@ -99,7 +99,7 @@ def set_threshold(new_threshold: float) -> None:
         new_threshold: The new spike detection threshold value (in the same units
                        as the traces, e.g. mV).
     """
-    _settings.set_setting('Threshold', new_threshold)
+    set_setting('Threshold', new_threshold)
 
 
 @deprecated("Use `set_setting('DerivativeThreshold', "
@@ -114,7 +114,7 @@ def set_derivative_threshold(new_derivative_threshold: float) -> None:
         new_derivative_threshold: The new derivative threshold value (in the same units
                                   as the traces, e.g. mV/ms).
     """
-    _settings.set_setting('DerivativeThreshold', new_derivative_threshold)
+    set_setting('DerivativeThreshold', new_derivative_threshold)
 
 
 def get_feature_names() -> list[str]:
@@ -216,6 +216,8 @@ def _initialise() -> None:
     # Set the settings in the cppcore
     settings_attrs = vars(_settings)
     for setting_name, setting_value in settings_attrs.items():
+        if isinstance(setting_value, bool):
+            setting_value = int(setting_value)
         if isinstance(setting_value, int):
             cppcore.setFeatureInt(setting_name, [setting_value])
         elif isinstance(setting_value, float):
@@ -230,19 +232,19 @@ def _initialise() -> None:
 @deprecated("Use `set_setting()` instead")
 def set_int_setting(setting_name: str, new_value: int) -> None:
     """Set a certain integer setting to a new value."""
-    _settings.set_int(setting_name, new_value)
+    set_setting(setting_name, new_value)
 
 
 @deprecated("Use `set_setting()` instead")
 def set_double_setting(setting_name: str, new_value: float) -> None:
     """Set a certain double setting to a new value."""
-    _settings.set_double(setting_name, new_value)
+    set_setting(setting_name, new_value)
 
 
 @deprecated("Use `set_setting()` instead")
 def set_str_setting(setting_name: str, new_value: str) -> None:
     """Set a certain string setting to a new value."""
-    _settings.set_str(setting_name, new_value)
+    set_setting(setting_name, new_value)
 
 
 @overload
