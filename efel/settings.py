@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class Settings:
     """eFEL settings class.
 
-    Configurable Settings:
+    Attributes:
         Threshold (float): Spike detection threshold (default: -20.0).
         DerivativeThreshold (float): Threshold value for derivative calculations
         (default: 10.0).
