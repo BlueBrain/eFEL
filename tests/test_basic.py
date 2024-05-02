@@ -619,7 +619,7 @@ def test_strict_stiminterval():
 
     import efel
 
-    for strict, n_of_spikes in [(False, 5), (True, 3)]:
+    for strict, n_of_spikes in [(0, 5), (1, 3)]:
         efel.reset()
         set_int_setting("strict_stiminterval", strict)
 
@@ -2059,7 +2059,7 @@ def test_unfinished_peak():
     """basic: Test if unfinished peak doesn't break spike_count"""
 
     import efel
-    set_int_setting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', 1)
 
     dt = 0.1
     v = numpy.zeros(int(100 / dt)) - 70.0
@@ -2347,7 +2347,7 @@ def test_AP_width_between_threshold():
     import efel
     efel.reset()
 
-    threshold = -48
+    threshold = -48.0
     set_double_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
@@ -2389,9 +2389,9 @@ def test_AP_width_between_threshold_strict():
 
     import efel
     efel.reset()
-    set_int_setting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', 1)
 
-    threshold = -48
+    threshold = -48.0
     set_double_setting("Threshold", threshold)
     stim_start = 200.0
     stim_end = 1200.0
@@ -3337,7 +3337,7 @@ def test_ADP_peak_amplitude():
     """basic: Test ADP_peak_amplitude"""
     import efel
     efel.reset()
-    set_int_setting('strict_stiminterval', True)
+    set_int_setting('strict_stiminterval', 1)
 
     stim_start = 250.0
     stim_end = 1600.0
