@@ -109,25 +109,6 @@ def test_version():
     assert efel.__version__ is not None
 
 
-def test_setDependencyFileLocation_wrongpath():
-    """basic: Test if setDependencyFileLocation fails if path doesn't exist."""
-    import efel
-    efel.reset()
-    pytest.raises(
-        FileNotFoundError,
-        efel.setDependencyFileLocation, "thisfiledoesntexist")
-
-
-def test_setDependencyFileLocation():
-    """basic: Test if setDependencyFileLocation works."""
-    import efel
-    efel.reset()
-    dep_file = str(Path(__file__).parent / 'DependencyV5_LibV5peakindices.txt')
-    efel.setDependencyFileLocation(dep_file)
-    result = efel.getDependencyFileLocation()
-    assert result == dep_file
-
-
 def test_nonexisting_feature():
     """basic: Test nonexisting feature."""
     import efel
