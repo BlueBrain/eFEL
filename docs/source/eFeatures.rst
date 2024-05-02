@@ -2026,11 +2026,6 @@ Difference between maximum voltage during stimulus and voltage base
 
     maximum_voltage_from_voltagebase = maximum_voltage - voltage_base
 
-
-Python features
----------------
-
-
 `Python efeature`_ : depol_block_bool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
