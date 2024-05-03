@@ -7,11 +7,11 @@ eFeature descriptions
 A pdf document describing the eFeatures is available
 `here <http://bluebrain.github.io/eFEL/efeature-documentation.pdf>`_.
 
-Not every eFeature has a description in this document yet,
-the complete set will be available shortly.
+Time, voltage and current (if given) are interpolated using `interp_step` setting (default `interp_step = 0.1` ms) before efeatures are extracted from them.
+Since, they are technically features in eFEL, you can retrieve the interpolated time, voltage and current (if given), like any other feature.
 
-Implemented eFeatures (to be continued)
-=======================================
+Implemented eFeatures
+=====================
 
 Spike event features
 --------------------
