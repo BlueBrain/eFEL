@@ -40,6 +40,19 @@ time_to_first_spike
 
     time_to_first_spike = peaktime[0] - stimstart
 
+time_to_last_spike
+~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Time from stimulus start to last spike
+
+- **Required features**: peak_time (ms), stimstart (ms)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    if len(peak_time) > 0:
+        time_to_last_spike = peak_time[-1] - stimstart
+    else:
+        time_to_last_spike = 0
 
 time_to_second_spike
 ~~~~~~~~~~~~~~~~~~~~
@@ -79,19 +92,6 @@ ISI_values
 
     isi_values = numpy.diff(peak_time)[1:]
 
-
-doublet_ISI
-~~~~~~~~~~~
-
-`SpikeEvent`_ : The time interval between the first two peaks
-
-- **Required features**: peak_time (ms)
-- **Units**: ms
-- **Pseudocode**: ::
-
-    doublet_ISI = peak_time[1] - peak_time[0]
-
-
 all_ISI_values
 ~~~~~~~~~~~~~~
 
@@ -103,6 +103,17 @@ all_ISI_values
 
     all_isi_values_vec = numpy.diff(peak_time)
 
+inv_ISI_values
+~~~~~~~~~~~~~~
+
+`ISI Python efeature`_ : Computes all inverse spike interval values.
+
+- **Required features**: peak_time (ms)
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    all_isi_values_vec = numpy.diff(peak_time)
+    inv_isi_values = 1000.0 / all_isi_values_vec
 
 inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv_last_ISI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,89 +156,16 @@ inv_first_ISI, inv_second_ISI, inv_third_ISI, inv_fourth_ISI, inv_fifth_ISI, inv
     else:
         inv_last_ISI = 0
 
-inv_ISI_values
-~~~~~~~~~~~~~~
+doublet_ISI
+~~~~~~~~~~~
 
-`ISI Python efeature`_ : Computes all inverse spike interval values.
+`SpikeEvent`_ : The time interval between the first two peaks
 
 - **Required features**: peak_time (ms)
-- **Units**: Hz
-- **Pseudocode**: ::
-
-    all_isi_values_vec = numpy.diff(peak_time)
-    inv_isi_values = 1000.0 / all_isi_values_vec
-
-time_to_last_spike
-~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : Time from stimulus start to last spike
-
-- **Required features**: peak_time (ms), stimstart (ms)
 - **Units**: ms
 - **Pseudocode**: ::
 
-    if len(peak_time) > 0:
-        time_to_last_spike = peak_time[-1] - stimstart
-    else:
-        time_to_last_spike = 0
-
-spike_count
-~~~~~~~~~~~
-
-`Python efeature`_ : Number of spikes in the trace, including outside of stimulus interval
-
-- **Required features**: peak_indices
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spike_count = len(peak_indices)
-
-**Note**: "spike_count" is the new name for the feature "Spikecount".
-"Spikecount", while still available, will be removed in the future.
-
-spike_count_stimint
-~~~~~~~~~~~~~~~~~~~
-
-`Python efeature`_ : Number of spikes inside the stimulus interval
-
-- **Required features**: peak_time
-- **Units**: constant
-- **Pseudocode**: ::
-
-    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
-    spike_count_stimint = len(peaktimes_stimint)
-
-**Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
-"Spikecount_stimint", while still available, will be removed in the future.
-
-number_initial_spikes
-~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : Number of spikes at the beginning of the stimulus
-
-- **Required features**: peak_time
-- **Required parameters**: initial_perc (default=0.1)
-- **Units**: constant
-- **Pseudocode**: ::
-
-    initial_length = (stimend - stimstart) * initial_perc
-    number_initial_spikes = len(numpy.where( \
-        (peak_time >= stimstart) & \
-        (peak_time <= stimstart + initial_length)))
-
-mean_frequency
-~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : The mean frequency of the firing rate
-
-- **Required features**: stim_start, stim_end, peak_time
-- **Units**: Hz
-- **Pseudocode**: ::
-
-    condition = np.all((stim_start < peak_time, peak_time < stim_end), axis=0)
-    spikecount = len(peak_time[condition])
-    last_spike_time = peak_time[peak_time < stim_end][-1]
-    mean_frequency = 1000 * spikecount / (last_spike_time - stim_start)
+    doublet_ISI = peak_time[1] - peak_time[0]
 
 ISI_semilog_slope
 ~~~~~~~~~~~~~~~~~
@@ -368,6 +306,88 @@ The adaptation index is zero for a constant firing rate and bigger than zero for
     ISI_sub = ISI_values[1:] - ISI_values[:-1]
     adaptation_index = numpy.mean(ISI_sum / ISI_sub)
 
+spike_count
+~~~~~~~~~~~
+
+`Python efeature`_ : Number of spikes in the trace, including outside of stimulus interval
+
+- **Required features**: peak_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spike_count = len(peak_indices)
+
+**Note**: "spike_count" is the new name for the feature "Spikecount".
+"Spikecount", while still available, will be removed in the future.
+
+spike_count_stimint
+~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Number of spikes inside the stimulus interval
+
+- **Required features**: peak_time
+- **Units**: constant
+- **Pseudocode**: ::
+
+    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
+    spike_count_stimint = len(peaktimes_stimint)
+
+**Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
+"Spikecount_stimint", while still available, will be removed in the future.
+
+number_initial_spikes
+~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Number of spikes at the beginning of the stimulus
+
+- **Required features**: peak_time
+- **Required parameters**: initial_perc (default=0.1)
+- **Units**: constant
+- **Pseudocode**: ::
+
+    initial_length = (stimend - stimstart) * initial_perc
+    number_initial_spikes = len(numpy.where( \
+        (peak_time >= stimstart) & \
+        (peak_time <= stimstart + initial_length)))
+
+mean_frequency
+~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The mean frequency of the firing rate
+
+- **Required features**: stim_start, stim_end, peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    condition = np.all((stim_start < peak_time, peak_time < stim_end), axis=0)
+    spikecount = len(peak_time[condition])
+    last_spike_time = peak_time[peak_time < stim_end][-1]
+    mean_frequency = 1000 * spikecount / (last_spike_time - stim_start)
+
+strict_burst_mean_freq
+~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The mean frequency during a burst for each burst
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: burst_begin_indices, burst_end_indices, peak_time
+- **Units**: Hz
+- **Pseudocode**: ::
+
+    if burst_begin_indices is None or burst_end_indices is None:
+        strict_burst_mean_freq = None
+    else:
+        strict_burstmean_freq = (
+            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
+                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
+            )
+        )
+
 burst_mean_freq
 ~~~~~~~~~~~~~~~
 
@@ -403,41 +423,6 @@ then the spikes are not considered to be part of any burst
 
     return burst_mean_freq
 
-strict_burst_mean_freq
-~~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : The mean frequency during a burst for each burst
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
-
-- **Required features**: burst_begin_indices, burst_end_indices, peak_time
-- **Units**: Hz
-- **Pseudocode**: ::
-
-    if burst_begin_indices is None or burst_end_indices is None:
-        strict_burst_mean_freq = None
-    else:
-        strict_burstmean_freq = (
-            (burst_end_indices - burst_begin_indices + 1) * 1000 / (
-                peak_time[burst_end_indices] - peak_time[burst_begin_indices]
-            )
-        )
-
-burst_number
-~~~~~~~~~~~~
-
-`Python efeature`_ : The number of bursts
-
-- **Required features**: burst_mean_freq
-- **Units**: constant
-- **Pseudocode**: ::
-
-    burst_number = len(burst_mean_freq)
-
 strict_burst_number
 ~~~~~~~~~~~~~~~~~~~
 
@@ -455,29 +440,94 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     burst_number = len(strict_burst_mean_freq)
 
-interburst_voltage
-~~~~~~~~~~~~~~~~~~
+burst_number
+~~~~~~~~~~~~
 
-`ISI Python efeature`_ : The voltage average in between two bursts
+`Python efeature`_ : The number of bursts
 
-Iterating over the burst ISI indices determine the last peak before the burst. 
-Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
-
-- **Required features**: burst_ISI_indices, peak_indices
-- **Units**: mV
+- **Required features**: burst_mean_freq
+- **Units**: constant
 - **Pseudocode**: ::
 
-    interburst_voltage = []
-    for idx in burst_ISI_idxs:
-        ts_idx = peak_idxs[idx]
-        t_start = time[ts_idx] + 5
-        start_idx = numpy.argwhere(time < t_start)[-1][0]
+    burst_number = len(burst_mean_freq)
 
-        te_idx = peak_idxs[idx + 1]
-        t_end = time[te_idx] - 5
-        end_idx = numpy.argwhere(time > t_end)[0][0]
+single_burst_ratio
+~~~~~~~~~~~~~~~~~~
 
-        interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
+`ISI Python efeature`_ : Length of the second isi over the median of the rest of the isis.
+The first isi is not taken into account, because it could bias the feature.
+See ISI_values feature for more details.
+
+If ignore_first_ISI is set to 0, then signle burst ratio becomes
+the length of the first isi over the median of the rest of the isis.
+
+- **Required features**: ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    single_burst_ratio = ISI_values[0] / numpy.mean(ISI_values)
+
+spikes_per_burst
+~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Number of spikes in each burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: burst_begin_indices, burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spike_per_bursts = []
+    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
+        spike_per_bursts.append(idx_end - idx_begin + 1)
+
+spikes_per_burst_diff
+~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Difference of number of spikes between each burst and the next one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    spikes_per_burst[:-1] - spikes_per_burst[1:]
+
+spikes_in_burst1_burst2_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Difference of number of spikes between the first burst and the second one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst_diff
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst_diff[0]])
+
+spikes_in_burst1_burstlast_diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Difference of number of spikes between the first burst and the last one.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: spikes_per_burst
+- **Units**: constant
+- **Pseudocode**: ::
+
+    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
 strict_interburst_voltage
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -509,6 +559,30 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
         interburst_voltage.append(numpy.mean(v[start_idx:end_idx + 1]))
 
+interburst_voltage
+~~~~~~~~~~~~~~~~~~
+
+`ISI Python efeature`_ : The voltage average in between two bursts
+
+Iterating over the burst ISI indices determine the last peak before the burst. 
+Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
+
+- **Required features**: burst_ISI_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_voltage = []
+    for idx in burst_ISI_idxs:
+        ts_idx = peak_idxs[idx]
+        t_start = time[ts_idx] + 5
+        start_idx = numpy.argwhere(time < t_start)[-1][0]
+
+        te_idx = peak_idxs[idx + 1]
+        t_end = time[te_idx] - 5
+        end_idx = numpy.argwhere(time > t_end)[0][0]
+
+        interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
+
 interburst_min_values
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -529,6 +603,92 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             v[peak_indices[i]:peak_indices[i + 1]]
         ) for i in burst_end_indices if i + 1 < len(peak_indices)
     ]
+
+interburst_duration
+~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Duration between the last spike of each burst and the next spike.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    interburst_duration = [
+        peak_time[idx + 1] - peak_time[idx]
+        for idx in burst_end_indices
+        if idx + 1 < len(peak_time)
+    ]
+
+interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    interburst_XXpercent_values = []
+    for i, postburst_fahp_i in enumerate(postburst_fahpi):
+        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
+            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
+            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percentage / 100.
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            interburst_XXpercent_values.append(v[index_at_XXpercent])
+
+time_to_interburst_min
+~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The time between the last spike of a burst and the minimum between that spike and the next.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_interburst_min = [
+        t[peak_indices[i] + numpy.argmin(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        )] - peak_time[i]
+        for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
+time_to_postburst_slow_ahp
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The time between the last spike of a burst and the slow ahp afterwards.
+
+The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_slow_ahp_indices, burst_end_indices, peak_time
+- **Units**: ms
+- **Pseudocode**: ::
+
+    time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
 postburst_min_values
 ~~~~~~~~~~~~~~~~~~~~
@@ -591,48 +751,6 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 postburst_slow_ahp.append(numpy.min(v[i_start:end_idx]))
             else:
                 postburst_slow_ahp.append(numpy.min(v[i_start:]))
-
-time_to_interburst_min
-~~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : The time between the last spike of a burst and the minimum between that spike and the next.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
-
-- **Required features**: peak_indices, burst_end_indices, peak_time
-- **Units**: ms
-- **Pseudocode**: ::
-
-    time_to_interburst_min = [
-        t[peak_indices[i] + numpy.argmin(
-            v[peak_indices[i]:peak_indices[i + 1]]
-        )] - peak_time[i]
-        for i in burst_end_indices if i + 1 < len(peak_indices)
-    ]
-
-time_to_postburst_slow_ahp
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : The time between the last spike of a burst and the slow ahp afterwards.
-
-The number of ms to skip after the spike to skip fast AHP and look for slow AHP can be set with sahp_start.
-Default is 5.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_slow_ahp_indices, burst_end_indices, peak_time
-- **Units**: ms
-- **Pseudocode**: ::
-
-    time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
 postburst_fast_ahp_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -745,127 +863,6 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return time_to_postburst_adp_peaks
 
 
-interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    interburst_XXpercent_values = []
-    for i, postburst_fahp_i in enumerate(postburst_fahpi):
-        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
-            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
-            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percentage / 100.
-            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
-            interburst_XXpercent_values.append(v[index_at_XXpercent])
-
-interburst_duration
-~~~~~~~~~~~~~~~~~~~
-
-`SpikeEvent`_ : Duration between the last spike of each burst and the next spike.
-
-This implementation does not assume that every spike belongs to a burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: burst_end_indices, peak_time
-- **Units**: ms
-- **Pseudocode**: ::
-
-    interburst_duration = [
-        peak_time[idx + 1] - peak_time[idx]
-        for idx in burst_end_indices
-        if idx + 1 < len(peak_time)
-    ]
-
-single_burst_ratio
-~~~~~~~~~~~~~~~~~~
-
-`ISI Python efeature`_ : Length of the second isi over the median of the rest of the isis.
-The first isi is not taken into account, because it could bias the feature.
-See ISI_values feature for more details.
-
-If ignore_first_ISI is set to 0, then signle burst ratio becomes
-the length of the first isi over the median of the rest of the isis.
-
-- **Required features**: ISI_values
-- **Units**: constant
-- **Pseudocode**: ::
-
-    single_burst_ratio = ISI_values[0] / numpy.mean(ISI_values)
-
-spikes_per_burst
-~~~~~~~~~~~~~~~~
-
-`Python efeature`_ : Number of spikes in each burst.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: burst_begin_indices, burst_end_indices
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spike_per_bursts = []
-    for idx_begin, idx_end in zip(burst_begin_indices, burst_end_indices):
-        spike_per_bursts.append(idx_end - idx_begin + 1)
-
-spikes_per_burst_diff
-~~~~~~~~~~~~~~~~~~~~~
-
-`Python efeature`_ : Difference of number of spikes between each burst and the next one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    spikes_per_burst[:-1] - spikes_per_burst[1:]
-
-spikes_in_burst1_burst2_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Python efeature`_ : Difference of number of spikes between the first burst and the second one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst_diff
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst_diff[0]])
-
-spikes_in_burst1_burstlast_diff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Python efeature`_ : Difference of number of spikes between the first burst and the last one.
-
-The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
-
-The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
-
-- **Required features**: spikes_per_burst
-- **Units**: constant
-- **Pseudocode**: ::
-
-    numpy.array([spikes_per_burst[0] - spikes_per_burst[-1]])
 
 Spike shape features
 --------------------
@@ -1042,6 +1039,18 @@ min_AHP_values
 - **Required features**: min_AHP_indices
 - **Units**: mV
 
+AHP_depth
+~~~~~~~~~
+
+`SpikeShape`_ : Relative voltage values at the first after-hyperpolarization
+
+- **Required features**: voltage_base (mV), min_AHP_values (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    min_AHP_values = first_min_element(voltage, peak_indices)
+    AHP_depth = min_AHP_values[:] - voltage_base
+
 AHP_depth_abs
 ~~~~~~~~~~~~~
 
@@ -1050,6 +1059,67 @@ Is the same as min_AHP_values
 
 - **Required features**: min_AHP_values (mV)
 - **Units**: mV
+
+AHP_depth_diff
+~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Difference of subsequent relative voltage values at the first after-hyperpolarization
+
+- **Required features**: AHP_depth (mV)
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AHP_depth_diff = AHP_depth[1:] - AHP_depth[:-1]
+
+AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Voltage difference between AP peaks and first AHP depths
+
+- **Required features**: peak_indices, min_AHP_indices
+- **Units**: mV
+- **Pseudocode**: ::
+
+    AHP_depth_from_peak =  v[peak_indices] - v[min_AHP_indices]
+    AHP1_depth_from_peak = AHP_depth_from_peak[0]
+    AHP2_depth_from_peak = AHP_depth_from_peak[1]
+
+AHP_time_from_peak
+~~~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Time between AP peaks and first AHP depths
+
+- **Required features**: peak_indices, min_AHP_values (mV)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    min_AHP_indices = first_min_element(voltage, peak_indices)
+    AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
+
+fast_AHP
+~~~~~~~~
+
+`SpikeShape`_ : Voltage value of the action potential onset relative to the subsequent AHP
+
+Ignores the last spike
+
+- **Required features**: AP_begin_indices, min_AHP_values
+- **Units**: mV
+- **Pseudocode**: ::
+
+    fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
+
+fast_AHP_change
+~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Difference of the fast AHP of the second and the first action potential
+divided by the fast AHP of the first action potential
+
+- **Required features**: fast_AHP
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fast_AHP_change = (fast_AHP[1:] - fast_AHP[0]) / fast_AHP[0]
 
 AHP_depth_abs_slow
 ~~~~~~~~~~~~~~~~~~
@@ -1080,79 +1150,6 @@ interspike interval
 
 - **Required features**: AHP_depth_abs_slow
 - **Units**: constant
-  
-AHP_depth
-~~~~~~~~~
-
-`SpikeShape`_ : Relative voltage values at the first after-hyperpolarization
-
-- **Required features**: voltage_base (mV), min_AHP_values (mV)
-- **Units**: mV
-- **Pseudocode**: ::
-
-    min_AHP_values = first_min_element(voltage, peak_indices)
-    AHP_depth = min_AHP_values[:] - voltage_base
-
-AHP_depth_diff
-~~~~~~~~~~~~~~
-
-`SpikeShape`_ : Difference of subsequent relative voltage values at the first after-hyperpolarization
-
-- **Required features**: AHP_depth (mV)
-- **Units**: mV
-- **Pseudocode**: ::
-
-    AHP_depth_diff = AHP_depth[1:] - AHP_depth[:-1]
-
-fast_AHP
-~~~~~~~~
-
-`SpikeShape`_ : Voltage value of the action potential onset relative to the subsequent AHP
-
-Ignores the last spike
-
-- **Required features**: AP_begin_indices, min_AHP_values
-- **Units**: mV
-- **Pseudocode**: ::
-
-    fast_AHP = voltage[AP_begin_indices[:-1]] - voltage[min_AHP_indices[:-1]]
-
-fast_AHP_change
-~~~~~~~~~~~~~~~
-
-`SpikeShape`_ : Difference of the fast AHP of the second and the first action potential
-divided by the fast AHP of the first action potential
-
-- **Required features**: fast_AHP
-- **Units**: constant
-- **Pseudocode**: ::
-
-    fast_AHP_change = (fast_AHP[1:] - fast_AHP[0]) / fast_AHP[0]
-
-AHP_depth_from_peak, AHP1_depth_from_peak, AHP2_depth_from_peak
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`SpikeShape`_ : Voltage difference between AP peaks and first AHP depths
-
-- **Required features**: peak_indices, min_AHP_indices
-- **Units**: mV
-- **Pseudocode**: ::
-
-    AHP_depth_from_peak =  v[peak_indices] - v[min_AHP_indices]
-    AHP1_depth_from_peak = AHP_depth_from_peak[0]
-    AHP2_depth_from_peak = AHP_depth_from_peak[1]
-
-AHP_time_from_peak
-~~~~~~~~~~~~~~~~~~
-
-`SpikeShape`_ : Time between AP peaks and first AHP depths
-
-- **Required features**: peak_indices, min_AHP_values (mV)
-- **Units**: ms
-- **Pseudocode**: ::
-
-    min_AHP_indices = first_min_element(voltage, peak_indices)
-    AHP_time_from_peak = t[min_AHP_indices[:]] - t[peak_indices[i]]
 
 ADP_peak_values
 ~~~~~~~~~~~~~~~
