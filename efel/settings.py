@@ -116,9 +116,12 @@ class Settings:
         if hasattr(self, setting_name):
             expected_types = {f.name: f.type for f in fields(self)}
             expected_type = expected_types.get(setting_name)
-            if expected_type and not isinstance(new_value, expected_type):
-                raise ValueError(f"Invalid value for setting '{setting_name}'. "
-                                 f"Expected type: {expected_type.__name__}.")
+            if expected_type is not None:
+                if expected_type == float and isinstance(new_value, int):
+                    new_value = expected_type(new_value)
+                elif not isinstance(new_value, expected_type):
+                    raise ValueError(f"Invalid value for setting '{setting_name}'. "
+                                     f"Expected type: {expected_type.__name__}.")
         else:
             logger.warning("Setting '%s' not found in settings. "
                            "Adding it as a new setting.", setting_name)

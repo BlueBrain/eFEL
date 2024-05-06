@@ -52,6 +52,29 @@ def test_set_setting_invalid_type():
         settings.set_setting("Threshold", "-30.0")
 
 
+def test_set_setting_invalid_type2():
+    """Test that the set_setting method raises a ValueError
+    when given an invalid type."""
+    settings = Settings()
+    with pytest.raises(ValueError):
+        settings.set_setting("voltage_base_mode", 1)
+
+
+def test_set_setting_invalid_type3():
+    """Test that the set_setting method raises a ValueError
+    when given an invalid type."""
+    settings = Settings()
+    with pytest.raises(ValueError):
+        settings.set_setting("max_spike_skip", 1.0)
+
+
+def test_set_setting_convert_type():
+    """Test that the set_setting method accepts int for
+    float features"""
+    settings = Settings()
+    settings.set_setting("Threshold", -30)
+
+
 def test_set_setting_dependencyfile_path_not_found():
     """Test that the set_setting method raises a FileNotFoundError
     when given a nonexistent file."""
