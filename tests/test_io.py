@@ -294,3 +294,66 @@ def test_load_neo_file_nwb():
             for trace in traces:
                 assert trace['stim_start'] == [250]
                 assert trace['stim_end'] == [600]
+
+
+@pytest.fixture
+def json_filename():
+    filename = 'tmp.json'
+    yield filename
+    if os.path.exists(filename):
+        os.remove(filename)
+
+
+@pytest.fixture
+def csv_filename():
+    filename = 'tmp.csv'
+    yield filename
+    if os.path.exists(filename):
+        os.remove(filename)
+
+
+def test_save_feature_to_json(json_filename):
+    """Test saving of the features to JSON file."""
+    import efel
+    import os
+    import json
+    feature_values = {
+        'spikes_per_burst': [4],
+        'peak_time': [330.4, 343.2, 382.7, 468.5],
+        'AP_height': [11.4, 11.7125, 12.2375, 12.2]
+    }
+    efel.io.save_feature_to_json(feature_values, json_filename)
+    assert os.path.exists(json_filename)
+    with open(json_filename, 'r') as f:
+        loaded_data = json.load(f)
+        assert loaded_data == feature_values
+
+
+def test_save_feature_to_csv(csv_filename):
+    """Test saving of the features to CSV file."""
+    import efel
+    import os
+    import csv
+
+    feature_values = {
+        'spikes_per_burst': [4],
+        'peak_time': [330.4, 343.2, 382.7, 468.5],
+        'AP_height': [11.4, 11.7125, 12.2375, 12.2]
+    }
+
+    efel.io.save_feature_to_csv(feature_values, csv_filename)
+    assert os.path.exists(csv_filename)
+
+    loaded_data = {}
+    with open(csv_filename, 'r') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        for col_name in header:
+            loaded_data[col_name] = []
+
+        for row in reader:
+            for i, value in enumerate(row):
+                if value.strip():
+                    loaded_data[header[i]].append(float(value))
+
+    assert loaded_data == feature_values
