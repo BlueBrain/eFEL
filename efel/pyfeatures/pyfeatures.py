@@ -25,7 +25,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-import sys
 from efel.pyfeatures.cppfeature_access import _get_cpp_data, get_cpp_feature
 from efel.pyfeatures.isi import *
 from typing_extensions import deprecated
@@ -75,12 +74,6 @@ all_pyfeatures = [
     'inv_fifth_ISI',
     'inv_last_ISI'
 ]
-
-
-def register_feature(feature):
-    """Register a new feature."""
-    all_pyfeatures.append(feature.__name__)
-    setattr(sys.modules['.'.join(__name__.split('.')[:-1])], feature.__name__, feature)
 
 
 def voltage() -> np.ndarray | None:

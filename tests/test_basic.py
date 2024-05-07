@@ -40,6 +40,7 @@ from efel.io import load_ascii_input
 from efel.api import get_feature_values
 from efel.api import set_setting
 from efel.api import get_distance
+from efel.api import register_feature
 
 
 testdata_dir = Path(__file__).parent / 'testdata'
@@ -4522,3 +4523,25 @@ def test_spontaneous_firing():
     numpy.testing.assert_allclose(ap_fall_time, ap_fall_time_expected)
     numpy.testing.assert_allclose(ap_rise_rate, ap_rise_rate_expected)
     numpy.testing.assert_allclose(ap_fall_rate, ap_fall_rate_expected)
+
+
+def test_register_feature():
+    """basic: Test register feature"""
+    import efel
+    efel.reset()
+
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
+    def test_feature():
+        v = efel.pyfeatures.get_cpp_feature("voltage")
+        stim_start = efel.pyfeatures.pyfeatures._get_cpp_data("stim_start")
+        return numpy.array([v[0], stim_start])
+
+    efel.register_feature(test_feature)
+    result = efel.get_feature_values([trace], ["test_feature"])[0]["test_feature"]
+    assert result[0] == -80.0
+    assert result[1] == 25.0
