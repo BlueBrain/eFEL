@@ -32,8 +32,15 @@ import warnings
 
 import numpy as np
 from sklearn.cluster import KMeans
+import sys
 from efel import cppcore
 
+def register_feature(feature):
+    """Register a new feature."""
+    all_pyfeatures.append(feature.__name__)
+    current_module = sys.modules[__name__]
+    parent_module = sys.modules['.'.join(__name__.split('.')[:-1])]
+_    setattr(parent_module, feature.__name__, feature)
 
 all_pyfeatures = [
     "voltage",
@@ -219,6 +226,12 @@ def tonic_after_burst(max_isis: float = 50.0) -> np.ndarray:
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
     peak_times = get_cpp_feature("peak_time")
+    a = get_cpp_feature("AHP_depth_abs")
+    print(len(a),list(a))
+    b = get_cpp_feature("AHP_depth_abs_slow")
+    print(len(b), list(b))
+    ahp = all_postburst_min_values()
+    print(ahp)
 
     # if we have no or one spike, there cannot be a burst
     if peak_times is None or len(peak_times) == 1:
@@ -229,14 +242,18 @@ def tonic_after_burst(max_isis: float = 50.0) -> np.ndarray:
 
     # if all isis are less than max_isis, we assume it is a single burst
     if max(isis) < max_isis:
-        return np.array([1])
+        return np.array([0])
 
     # if we have only two large isis, we assume it is not a burst
     if len(isis) < 2:
         return np.array([0])
 
     thresh = _get_burst_thresh(isis)
-
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.hist(isis, bins=50)
+    plt.axvline(thresh)
+    plt.savefig('test.pdf')
     small_isis = isis[isis < thresh]
     tonic = 0.0
     if len(small_isis[small_isis > max_isis]) > 0:
