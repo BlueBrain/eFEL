@@ -1,2 +1,3 @@
 *.pyc
 cppcore.so
+*.ipynb_checkpoints/
