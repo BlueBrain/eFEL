@@ -4536,16 +4536,16 @@ def test_register_feature():
     trace['stim_start'] = [25]
     trace['stim_end'] = [75]
 
-    def test_feature():
+    def new_feature():
         v = efel.pyfeatures.get_cpp_feature("voltage")
         stim_start = efel.pyfeatures.pyfeatures._get_cpp_data("stim_start")
         return numpy.array([v[0], stim_start])
 
-    efel.register_feature(test_feature)
-    result = efel.get_feature_values([trace], ["test_feature"])[0]["test_feature"]
+    efel.register_feature(new_feature)
+    result = efel.get_feature_values([trace], ["new_feature"])[0]["new_feature"]
     assert result[0] == -80.0
     assert result[1] == 25.0
 
     # remove it to keep other tests untouched
-    del efel.pyfeatures.test_feature
+    del efel.pyfeatures.new_feature
     del efel.pyfeatures.all_pyfeatures[-1]
