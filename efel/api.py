@@ -411,7 +411,7 @@ def get_mean_feature_values(
     return featureDicts  # type: ignore
 
 
-def register_feature(feature_function: callable):
+def register_feature(feature_function: Callable):
     """Register a new feature."""
     pyfeatures.all_pyfeatures.append(feature_function.__name__)
     setattr(pyfeatures, feature_function.__name__, feature_function)
