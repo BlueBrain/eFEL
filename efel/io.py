@@ -213,13 +213,6 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
 
 def save_feature_to_json(feature_values, filename):
     """Save feature values as a JSON file."""
-    with open(filename, 'w') as f:
-        json.dump(feature_values, f, default=lambda x: int(x)
-                  if isinstance(x, np.int64) else x)
-
-
-def save_feature_to_json(feature_values, filename):
-    """Save feature values as a JSON file."""
     class NumpyEncoder(json.JSONEncoder):
         def default(self, o):
             if isinstance(o, np.integer):
