@@ -4545,3 +4545,7 @@ def test_register_feature():
     result = efel.get_feature_values([trace], ["test_feature"])[0]["test_feature"]
     assert result[0] == -80.0
     assert result[1] == 25.0
+
+    # remove it to keep other tests untouched
+    del efel.pyfeatures.test_feature
+    del efel.pyfeatures.all_pyfeatures[-1]
