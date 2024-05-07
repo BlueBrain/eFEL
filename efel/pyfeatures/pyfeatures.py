@@ -35,12 +35,6 @@ from sklearn.cluster import KMeans
 import sys
 from efel import cppcore
 
-def register_feature(feature):
-    """Register a new feature."""
-    all_pyfeatures.append(feature.__name__)
-    current_module = sys.modules[__name__]
-    parent_module = sys.modules['.'.join(__name__.split('.')[:-1])]
-_    setattr(parent_module, feature.__name__, feature)
 
 all_pyfeatures = [
     "voltage",
@@ -162,13 +156,13 @@ def strict_burst_number() -> np.ndarray:
     return np.array([burst_mean_freq.size])
 
 
-def _get_burst_thresh(isis):
+def _get_burst_thresh(isis, max_isis=50.0):
     """Find a split of isis for inter and intra bursts.
 
     The high number of n_init increases stability of the algorithm.
     """
     kmeans = KMeans(n_clusters=2, n_init=100).fit(isis.reshape(len(isis), 1))
-    return kmeans.cluster_centers_.mean(axis=0)[0]
+    return min(max_isis, kmeans.cluster_centers_.mean(axis=0)[0])
 
 
 def all_burst_number(max_isis: float = 50.0) -> np.ndarray:
@@ -202,19 +196,26 @@ def all_burst_number(max_isis: float = 50.0) -> np.ndarray:
 
     thresh = _get_burst_thresh(isis)
 
-    # if som isis in the left group larger than max_isis, it may contain tonic, so we remove one
-    # burst in final computation
-    small_isis = isis[isis < thresh]
-    tonic = False
-    if len(small_isis[small_isis > max_isis]) > 0:
-        tonic = True
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+
+    n_tonic = 0
+    for i, isi in enumerate(isis):
+        if isi > thresh:
+            time_shift = 5
+            lowest = min(voltage[(time > peak_times[i]) & (time < peak_times[i + 1])])
+            slow_lowest = min(
+                voltage[(time > peak_times[i] + time_shift) & (time < peak_times[i + 1])]
+            )
+            if lowest < slow_lowest and isis[i - 1] > thresh:
+                n_tonic += 1
 
     # if the smallest of right group is to large, it is not bursting
     if min(isis[isis > thresh]) > 4000:
         return np.array([0])
 
-    if tonic:
-        return np.array([len(isis[isis > thresh])])
+    if n_tonic:
+        return np.array([len(isis[isis > thresh]) - n_tonic])
     return np.array([len(isis[isis > thresh]) + 1])
 
 
@@ -226,12 +227,6 @@ def tonic_after_burst(max_isis: float = 50.0) -> np.ndarray:
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
     peak_times = get_cpp_feature("peak_time")
-    a = get_cpp_feature("AHP_depth_abs")
-    print(len(a),list(a))
-    b = get_cpp_feature("AHP_depth_abs_slow")
-    print(len(b), list(b))
-    ahp = all_postburst_min_values()
-    print(ahp)
 
     # if we have no or one spike, there cannot be a burst
     if peak_times is None or len(peak_times) == 1:
@@ -249,16 +244,21 @@ def tonic_after_burst(max_isis: float = 50.0) -> np.ndarray:
         return np.array([0])
 
     thresh = _get_burst_thresh(isis)
-    import matplotlib.pyplot as plt
-    plt.figure()
-    plt.hist(isis, bins=50)
-    plt.axvline(thresh)
-    plt.savefig('test.pdf')
-    small_isis = isis[isis < thresh]
-    tonic = 0.0
-    if len(small_isis[small_isis > max_isis]) > 0:
-        tonic = len(small_isis[small_isis > max_isis]) + 1
-    return np.array([tonic])
+
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+    n_tonic = 0
+    for i, isi in enumerate(isis):
+        if isi > thresh:
+            time_shift = 5
+            lowest = min(voltage[(time > peak_times[i]) & (time < peak_times[i + 1])])
+            slow_lowest = min(
+                voltage[(time > peak_times[i] + time_shift) & (time < peak_times[i + 1])]
+            )
+            if lowest < slow_lowest and isis[i - 1] > thresh:
+                n_tonic += 1
+
+    return np.array([n_tonic + 1 if n_tonic else 0])
 
 
 def all_postburst_min_values(max_isis: float = 50.0, raise_warnings: bool = False) -> np.ndarray:

@@ -383,7 +383,6 @@ def getFeatureValues(
 
 def get_py_feature(feature_name: str) -> np.ndarray | None:
     """Return values of the given feature name."""
-    print(dir(pyfeatures))
     return getattr(pyfeatures, feature_name)()
 
 
