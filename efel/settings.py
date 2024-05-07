@@ -121,15 +121,20 @@ class Settings:
             try:
                 converted_value = expected_type(new_value)
                 if not isinstance(new_value, expected_type):
-                    logger.debug(
+                    log_message = (
                         "Value '%s' of type '%s' for setting '%s' "
-                        "has been converted to '%s' of type '%s'.",
+                        "has been converted to '%s' of type '%s'."
+                    ) % (
                         new_value,
                         type(new_value).__name__,
                         setting_name,
                         converted_value,
                         expected_type.__name__
                     )
+                    if expected_type is int and isinstance(new_value, float):
+                        logger.warning(log_message)
+                    else:
+                        logger.debug(log_message)
             except (ValueError, TypeError):
                 raise ValueError(f"Invalid value for setting '{setting_name}'. "
                                  f"Expected type: {expected_type.__name__}.")

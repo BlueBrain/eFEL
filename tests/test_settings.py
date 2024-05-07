@@ -59,7 +59,12 @@ def test_set_setting_conversion(caplog,
     and logs a debug warning when converting types."""
     settings = Settings()
 
-    with caplog.at_level(logging.DEBUG):
+    if setting_name == "initburst_freq_threshold":
+        logger_level = logging.WARNING
+    else:
+        logger_level = logging.DEBUG
+
+    with caplog.at_level(logger_level):
         settings.set_setting(setting_name, new_value)
 
         expected_log_message = (
