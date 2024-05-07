@@ -120,7 +120,7 @@ class Settings:
                 raise ValueError(f"Invalid value for setting '{setting_name}'. "
                                  f"Expected type: {expected_type.__name__}.")
         else:
-            logger.warning("Setting '%s' not found in settings. "
+            logger.debug("Setting '%s' not found in settings. "
                            "Adding it as a new setting.", setting_name)
 
         if setting_name == "dependencyfile_path":
