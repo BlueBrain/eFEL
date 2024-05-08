@@ -116,20 +116,41 @@ class Settings:
         if hasattr(self, setting_name):
             expected_types = {f.name: f.type for f in fields(self)}
             expected_type = expected_types.get(setting_name)
-            if expected_type and not isinstance(new_value, expected_type):
+            if expected_type is None:
+                raise TypeError(f"type not found for setting '{setting_name}'")
+            try:
+                converted_value = expected_type(new_value)
+                if not isinstance(new_value, expected_type):
+                    log_message = (
+                        "Value '%s' of type '%s' for setting '%s' "
+                        "has been converted to '%s' of type '%s'."
+                    ) % (
+                        new_value,
+                        type(new_value).__name__,
+                        setting_name,
+                        converted_value,
+                        expected_type.__name__
+                    )
+                    if expected_type is int and isinstance(new_value, float) and \
+                       new_value != converted_value:
+                        logger.warning(log_message)
+                    else:
+                        logger.debug(log_message)
+            except (ValueError, TypeError):
                 raise ValueError(f"Invalid value for setting '{setting_name}'. "
                                  f"Expected type: {expected_type.__name__}.")
         else:
             logger.debug("Setting '%s' not found in settings. "
                          "Adding it as a new setting.", setting_name)
+            converted_value = new_value
 
         if setting_name == "dependencyfile_path":
-            path = Path(str(new_value))
+            path = Path(str(converted_value))
             if not path.exists():
-                raise FileNotFoundError(f"Path to dependency file {new_value}"
+                raise FileNotFoundError(f"Path to dependency file {converted_value}"
                                         "doesn't exist")
 
-        setattr(self, setting_name, new_value)
+        setattr(self, setting_name, converted_value)
 
     def reset_to_default(self):
         """Reset settings to their default values"""

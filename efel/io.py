@@ -19,6 +19,8 @@ Copyright (c) 2015, EPFL/Blue Brain Project
  along with this library; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import csv
+import json
 from pathlib import Path
 import neo
 import numpy as np
@@ -207,3 +209,34 @@ def load_neo_file(file_name: str, stim_start=None, stim_end=None, **kwargs) -> l
         efel_blocks.append(efel_segments)
 
     return efel_blocks
+
+
+def save_feature_to_json(feature_values, filename):
+    """Save feature values as a JSON file."""
+    class NumpyEncoder(json.JSONEncoder):
+        def default(self, o):
+            if isinstance(o, np.integer):
+                return int(o)
+            elif isinstance(o, np.floating):
+                return float(o)
+            elif isinstance(o, np.ndarray):
+                return o.tolist()
+            else:
+                return super().default(o)
+
+    with open(filename, 'w') as f:
+        json.dump(feature_values, f, cls=NumpyEncoder)
+
+
+def save_feature_to_csv(feature_values, filename):
+    """Save feature values as a CSV file."""
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(feature_values.keys())
+        max_list_length = max(len(value) if isinstance(value, (list, np.ndarray))
+                              else 1 for value in feature_values.values())
+        for i in range(max_list_length):
+            row_data = [value[i] if isinstance(value, (list, np.ndarray))
+                        and i < len(value) else ''
+                        for value in feature_values.values()]
+            writer.writerow(row_data)
