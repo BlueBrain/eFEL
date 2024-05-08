@@ -151,5 +151,6 @@
     "interburst_40percent_values": "mV",
     "interburst_60percent_values": "mV",
     "interburst_duration": "ms",
-    "phaseslope_max": "V/s"
+    "phaseslope_max": "V/s",
+    "peak_to_valley": "s"
 }

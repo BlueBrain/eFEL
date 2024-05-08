@@ -194,7 +194,7 @@ number of spikes inside the stimulus interval
 - **Units**: constant
 - **Pseudocode**: ::
 
-    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
+    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end))
     spike_count_stimint = len(peaktimes_stimint)
 
 **Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
@@ -270,7 +270,7 @@ See Python efeature: ISIs feature for more details.
 
 The slope of a linear fit to a loglog plot of the ISI values, but not taking into account the first ISI values.
 
-The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1). 
+The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1).
 However, if this number of ISI values to skip is higher than max_spike_skip, then max_spike_skip is taken instead.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
@@ -320,7 +320,7 @@ The first ISI can be taken into account if ignore_first_ISI is set to 0.
 
 Normalized average difference of two consecutive ISIs, skipping the first ISIs
 
-The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1). 
+The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1).
 However, if this number of ISI values to skip is higher than max_spike_skip, then max_spike_skip is taken instead.
 
 The adaptation index is zero for a constant firing rate and bigger than zero for a decreasing firing rate
@@ -460,7 +460,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
 The voltage average in between two bursts
 
-Iterating over the burst ISI indices determine the last peak before the burst. 
+Iterating over the burst ISI indices determine the last peak before the burst.
 Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
 
 - **Required features**: burst_ISI_indices, peak_indices
@@ -657,7 +657,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             stop_i = stim_end_index
         else:
             stop_i = len(v) - 1
-        
+
         v_crop = v[peak_indices[i]:stop_i]
         # get where the voltage is going up
         crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
@@ -745,7 +745,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
     return time_to_postburst_adp_peaks
 
 
-`SpikeEvent`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+`SpikeEvent`_ : interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
@@ -1054,7 +1054,7 @@ Is the same as min_AHP_values
 `SpikeShape`_ : AHP_depth_abs_slow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Absolute voltage values at the first after-hyperpolarization starting 
+Absolute voltage values at the first after-hyperpolarization starting
 a given number of ms (default: 5) after the peak
 
 - **Required features**: peak_indices
@@ -1063,7 +1063,7 @@ a given number of ms (default: 5) after the peak
 `SpikeShape`_ : AHP_depth_slow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Relative voltage values at the first after-hyperpolarization starting 
+Relative voltage values at the first after-hyperpolarization starting
 a given number of ms (default: 5) after the peak
 
 - **Required features**: voltage_base (mV), AHP_depth_abs_slow (mV)
@@ -1076,11 +1076,11 @@ a given number of ms (default: 5) after the peak
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
-interspike interval 
+interspike interval
 
 - **Required features**: AHP_depth_abs_slow
 - **Units**: constant
-  
+
 `SpikeShape`_ : AHP_depth
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1319,7 +1319,7 @@ Can use strict_stiminterval to not use minimum after stimulus end.
 `SpikeShape`_ : spike_half_width, AP1_width, AP2_width, APlast_width
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Width of spike at half spike amplitude, 
+Width of spike at half spike amplitude,
 with the spike amplitude taken as the difference between the minimum between two peaks and the next peak
 
 - **Required features**: peak_indices, min_AHP_indices
@@ -1334,7 +1334,7 @@ with the spike amplitude taken as the difference between the minimum between two
         delta_v = v[rise_idx] - v[rise_idx - 1]
         delta_t = t[rise_idx] - t[rise_idx - 1]
         t_dev_rise = delta_t * v_dev / delta_v
-        
+
         fall_idx = numpy.where(v[peak_indices[i-1]:min_AHP_indices[i]] < v_half_width)[0]
         v_dev = v_half_width - v[fall_idx]
         delta_v = v[fall_idx] - v[fall_idx - 1]
@@ -1367,7 +1367,7 @@ the minimum between two peaks and the next peak
         delta_v = v[rise_idx] - v[rise_idx - 1]
         delta_t = t[rise_idx] - t[rise_idx - 1]
         t_dev_rise = delta_t * v_dev / delta_v
-        
+
         fall_idx = numpy.where(v[peak_indices[i + 1]:] < v_half_width)[0]
         v_dev = v_half_width - v[fall_idx]
         delta_v = v[fall_idx] - v[fall_idx - 1]
@@ -1582,7 +1582,7 @@ The end of the initial burst is detected when the ISIs frequency gets lower than
 Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
 and initburst_sahp_end (in ms) after the last spike of the burst.
 
-- **Required features**: peak_time 
+- **Required features**: peak_time
 - **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
 - **Units**: mV
 
@@ -1860,7 +1860,7 @@ The golden search algorithm is not used, since the data is expected to be noisy 
 The difference between the minimal voltage and the steady state at stimend
 
 - **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, minimum_voltage, voltage_deflection_stim_ssse
-- **Parameters**: 
+- **Parameters**:
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1876,7 +1876,7 @@ The difference between the minimal voltage and the steady state at stimend
 The ratio between the sag amplitude and the maximal sag extend from voltage base
 
 - **Required features**: t, V, stim_start, stim_end, sag_amplitude, voltage_base, minimum_voltage
-- **Parameters**: 
+- **Parameters**:
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -1891,7 +1891,7 @@ The ratio between the sag amplitude and the maximal sag extend from voltage base
 The ratio between the maximal extends of sag from steady state and voltage base
 
 - **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, voltage_base, minimum_voltage
-- **Parameters**: 
+- **Parameters**:
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -1941,7 +1941,7 @@ the average voltage during the last 10% of the stimulus duration.
 
 `Subthreshold`_ : voltage_deflection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
 The voltage deflection between voltage base and steady-state voltage at stimend
 
 The voltage base used is the average voltage during all of the time before the stimulus
@@ -1960,7 +1960,7 @@ before the end of the stimulus duration.
 
 `Subthreshold`_ : voltage_deflection_begin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
 The voltage deflection between voltage base and steady-state voltage soon after stimulation start
 
 The voltage base used is the average voltage during all of the time before the stimulus
@@ -1980,7 +1980,7 @@ the average voltage taken from 5% to 15% of the stimulus duration.
 
 `Subthreshold`_ : voltage_after_stim
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
 The mean voltage after the stimulus in
 (stim_end + 25%*end_period, stim_end + 75%*end_period)
 
@@ -2067,9 +2067,25 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+`Extracellular`_ : peak_to_valley
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+time in seconds between the negative and positive peaks.
+
+If the negative peaks precedes the positive one, the value of the feature is positive.
+Conversely, when the positive peak precedes the negative one, the value is negative
+
+- **Input**: None
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+    ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
+    ptv[ptv == 0] = np.nan
 
 .. _SpikeEvent: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeEvent.cpp
 .. _SpikeShape: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeShape.cpp
 .. _Subthreshold: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/Subthreshold.cpp
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
+.. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
