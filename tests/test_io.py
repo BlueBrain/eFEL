@@ -344,8 +344,6 @@ def test_save_feature(filename, index):
 
     assert os.path.exists(filename)
     loaded_data = load_data(filename)
-    print(feature_values)
-    print(loaded_data)
     for key in feature_values.keys():
         if feature_values[key] is not None and loaded_data[key]:
             assert np.allclose(feature_values[key],

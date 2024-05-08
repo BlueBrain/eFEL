@@ -131,7 +131,8 @@ class Settings:
                         converted_value,
                         expected_type.__name__
                     )
-                    if expected_type is int and isinstance(new_value, float):
+                    if expected_type is int and isinstance(new_value, float) and \
+                       new_value != converted_value:
                         logger.warning(log_message)
                     else:
                         logger.debug(log_message)

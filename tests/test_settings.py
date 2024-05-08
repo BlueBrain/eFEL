@@ -48,7 +48,8 @@ def test_set_setting():
 @pytest.mark.parametrize("setting_name, new_value, converted_value, expected_type", [
     ("Threshold", "-30.0", -30.0, float),
     ("strict_stiminterval", 0, False, bool),
-    ("initburst_freq_threshold", -50.9, -50, int)
+    ("initburst_freq_threshold", -50.9, -50, int),
+    ("initburst_sahp_start", 5.5, 5, int)
 ])
 def test_set_setting_conversion(caplog,
                                 setting_name,
