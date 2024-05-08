@@ -294,3 +294,61 @@ def test_load_neo_file_nwb():
             for trace in traces:
                 assert trace['stim_start'] == [250]
                 assert trace['stim_end'] == [600]
+
+
+@pytest.fixture(params=['tmp.json', 'tmp.csv'])
+def filename(request):
+    yield request.param
+    if os.path.exists(request.param):
+        os.remove(request.param)
+
+
+def load_data(filename):
+    import csv
+    import json
+    if filename.endswith('.json'):
+        with open(filename, 'r') as f:
+            return json.load(f)
+    elif filename.endswith('.csv'):
+        loaded_data = {}
+        with open(filename, 'r') as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            for col_name in header:
+                loaded_data[col_name] = []
+
+            for row in reader:
+                for col_name, value in zip(header, row):
+                    if value != '':
+                        loaded_data[col_name].append(float(value))
+
+            for loaded_key in loaded_data.keys():
+                if not loaded_data[loaded_key]:
+                    loaded_data[loaded_key] = None
+        return loaded_data
+
+
+@pytest.mark.parametrize("index", [2, 3, 5])
+def test_save_feature(filename, index):
+    """Test saving of the features to file."""
+    import efel
+    blocks = efel.io.load_neo_file(nwb1_filename, 250, 600)
+    trace = blocks[0][0][index]
+    features = ['peak_time', 'AP_height', 'peak_indices', 'spikes_per_burst']
+    feature_values = efel.get_feature_values([trace], features)[0]
+
+    if filename.endswith('.json'):
+        efel.io.save_feature_to_json(feature_values, filename)
+    elif filename.endswith('.csv'):
+        efel.io.save_feature_to_csv(feature_values, filename)
+
+    assert os.path.exists(filename)
+    loaded_data = load_data(filename)
+    for key in feature_values.keys():
+        if feature_values[key] is not None and loaded_data[key]:
+            assert np.allclose(feature_values[key],
+                               loaded_data[key],
+                               rtol=1e-05,
+                               atol=1e-08)
+        else:
+            assert feature_values[key] == loaded_data[key]
