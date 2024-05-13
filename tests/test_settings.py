@@ -35,6 +35,7 @@ import pytest
 
 from efel.settings import Settings
 from efel.api import set_setting, get_settings
+import logging
 
 
 def test_set_setting():
@@ -44,12 +45,66 @@ def test_set_setting():
     assert settings.Threshold == -30.0
 
 
+@pytest.mark.parametrize("setting_name, new_value, converted_value, expected_type", [
+    ("Threshold", "-30.0", -30.0, float),
+    ("strict_stiminterval", 0, False, bool),
+    ("initburst_freq_threshold", -50.9, -50, int),
+    ("initburst_sahp_start", 5.5, 5, int)
+])
+def test_set_setting_conversion(caplog,
+                                setting_name,
+                                new_value,
+                                converted_value,
+                                expected_type):
+    """Test that the set_setting method correctly updates a setting
+    and logs a debug warning when converting types."""
+    settings = Settings()
+
+    if setting_name == "initburst_freq_threshold":
+        logger_level = logging.WARNING
+    else:
+        logger_level = logging.DEBUG
+
+    with caplog.at_level(logger_level):
+        settings.set_setting(setting_name, new_value)
+
+        expected_log_message = (
+            "Value '%s' of type '%s' for setting '%s' "
+            "has been converted to '%s' of type '%s'." % (
+                new_value,
+                type(new_value).__name__,
+                setting_name,
+                converted_value,
+                expected_type.__name__
+            )
+        )
+    assert any(record.message == expected_log_message for record in caplog.records)
+
+
+def test_set_setting_new_setting(caplog):
+    """Test that the set_setting method correctly adds a new setting
+    when the setting is not present."""
+    settings = Settings()
+    setting_name = "stim_start"
+    new_value = 100
+
+    with caplog.at_level(logging.DEBUG):
+        settings.set_setting(setting_name, new_value)
+
+    assert getattr(settings, setting_name) == new_value
+    expected_log_message = (
+        "Setting '%s' not found in settings. "
+        "Adding it as a new setting." % setting_name
+    )
+    assert any(record.message == expected_log_message for record in caplog.records)
+    assert getattr(settings, setting_name) == new_value
+
+
 def test_set_setting_invalid_type():
-    """Test that the set_setting method raises a ValueError
-    when given an invalid type."""
+    """Test that the set_setting raises a ValueError when given an invalid type."""
     settings = Settings()
     with pytest.raises(ValueError):
-        settings.set_setting("Threshold", "-30.0")
+        settings.set_setting("Threshold", [-30.0])
 
 
 def test_set_setting_dependencyfile_path_not_found():
