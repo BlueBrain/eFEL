@@ -182,7 +182,7 @@ def get_distance(
 
     if trace_check:
         trace_check_success = get_feature_values(
-            [trace], ['trace_check'])[0]  # type: ignore
+            [trace], ['trace_check'], None, True, True)[0]
 
         if trace_check_success["trace_check"] is None:
             return error_dist
@@ -401,14 +401,14 @@ def get_mean_feature_values(
         parallel_map=None,
         return_list=True,
         raise_warnings=raise_warnings)
-    for featureDict in featureDicts:  # type: ignore
+    for featureDict in featureDicts:
         for (key, values) in list(featureDict.items()):
             if values is None or len(values) == 0:
                 featureDict[key] = None
             else:
                 featureDict[key] = np.mean(values)
 
-    return featureDicts  # type: ignore
+    return featureDicts
 
 
 def register_feature(feature_function: Callable):
