@@ -303,7 +303,10 @@ int cFeature::getFeature(string strName, vector<T>& vec) {
       return -1;
     }
     vec = getMapData<T>(strName, *dataMap);
-    if (vec.empty()) GErrorStr += "Feature [" + strName + "] data is missing\n";
+    if (vec.empty()) {
+      GErrorStr += "Feature [" + strName + "] data is missing\n";
+      return -1;
+    }
 
     logger << "Calculated feature " << strName << ":" << vec << endl;
     return vec.size();
