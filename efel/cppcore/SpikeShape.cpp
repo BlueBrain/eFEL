@@ -475,7 +475,7 @@ int SpikeShape::min_AHP_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::min_AHP_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
-  return -1;
+  return 1;
 }
 
 // Difference with SpikeShape is that this function doesn't return -1 if there are no
@@ -550,7 +550,7 @@ int SpikeShape::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
 int SpikeShape::AHP_slow_time(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  return -1;
+  return 1;
 }
 
 // *** AHP_depth_slow ***
