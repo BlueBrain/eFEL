@@ -475,7 +475,10 @@ int SpikeShape::min_AHP_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::min_AHP_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices"});
+  int retVal = intFeatures.at("min_AHP_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // Difference with SpikeShape is that this function doesn't return -1 if there are no
@@ -550,7 +553,10 @@ int SpikeShape::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
 int SpikeShape::AHP_slow_time(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  return 1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"AHP_depth_abs_slow"});
+  int retVal = doubleFeatures.at("AHP_depth_abs_slow").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // *** AHP_depth_slow ***
@@ -818,7 +824,10 @@ int SpikeShape::ADP_peak_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::ADP_peak_values(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"ADP_peak_indices"});
+  int retVal = intFeatures.at("ADP_peak_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // strict_stiminterval should be True when using this feature
@@ -994,7 +1003,10 @@ int SpikeShape::min_between_peaks_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::min_between_peaks_values(mapStr2intVec& IntFeatureData,
                                     mapStr2doubleVec& DoubleFeatureData,
                                     mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_between_peaks_indices"});
+  int retVal = intFeatures.at("min_between_peaks_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // *** AP_duration_half_width according to E8 and E16 ***
