@@ -159,6 +159,12 @@ To get a list with all the available feature names
 efel.get_feature_names()
 ```
 
+To change the spike detection threshold setting (default is -20 mV)
+
+```python
+efel.set_setting('Threshold', -30)
+```
+
 The python function to extract features is get_feature_values(...).
 Below is a short example on how to use this function. The code and example
 trace are available
@@ -204,6 +210,9 @@ def main():
     # Multiple traces can be passed to the eFEL at the same time, so the
     # argument should be a list
     traces = [trace1]
+
+    # set the threshold for spike detection to -20 mV
+    efel.set_setting('Threshold', -20)
 
     # Now we pass 'traces' to the efel and ask it to calculate the feature
     # values

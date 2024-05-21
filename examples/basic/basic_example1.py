@@ -41,6 +41,9 @@ def main():
     # argument should be a list
     traces = [trace1]
 
+    # set the threshold for spike detection to -20 mV
+    efel.set_setting('Threshold', -20)
+
     # Now we pass 'traces' to the efel and ask it to calculate the feature
     # values
     traces_results = efel.get_feature_values(traces,
