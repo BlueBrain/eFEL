@@ -435,8 +435,8 @@
     "interburst_60percent_indices": null,
     "interburst_60percent_values": null,
     "interburst_duration": null,
-    "interburst_min_indices": [],
-    "interburst_min_values": [],
+    "interburst_min_indices": null,
+    "interburst_min_values": null,
     "interburst_voltage": [
         -38.820613862535545
     ],
@@ -624,7 +624,7 @@
     "strict_burst_number": [
         1
     ],
-    "strict_interburst_voltage": [],
+    "strict_interburst_voltage": null,
     "time": [
         0.0,
         0.1,
@@ -30632,7 +30632,7 @@
     "time_to_first_spike": [
         8.000000000092427
     ],
-    "time_to_interburst_min": [],
+    "time_to_interburst_min": null,
     "time_to_last_spike": [
         1937.7999999986964
     ],
@@ -60680,7 +60680,7 @@
     "spikes_per_burst": [
         2
     ],
-    "spikes_per_burst_diff": [],
+    "spikes_per_burst_diff": null,
     "spikes_in_burst1_burst2_diff": null,
     "spikes_in_burst1_burstlast_diff": null,
     "depol_block": null,
@@ -60723,7 +60723,7 @@
     "strict_burst_mean_freq": [
         7.99041151
     ],
-    "strict_interburst_voltage": [],
+    "strict_interburst_voltage": null,
     "ADP_peak_amplitude": [
         0.0,
         2.6873666528663236,
@@ -60748,8 +60748,8 @@
         -41.12299346923828,
         -38.12341871769886
     ],
-    "interburst_min_indices": [],
-    "interburst_min_values": [],
+    "interburst_min_indices": null,
+    "interburst_min_values": null,
     "postburst_min_indices": [
         26465
     ],
