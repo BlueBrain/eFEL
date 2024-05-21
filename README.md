@@ -164,6 +164,7 @@ To change the spike detection threshold setting (default is -20 mV)
 ```python
 efel.set_setting('Threshold', -30)
 ```
+For a full list of available settings, please refer to the [Setting class](./efel/settings.py)
 
 The python function to extract features is get_feature_values(...).
 Below is a short example on how to use this function. The code and example
