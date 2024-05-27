@@ -1679,11 +1679,20 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 int SpikeShape::AP_begin_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
+  vector<int> min_ahp_idx;
   // Retrieve all required double and int features at once
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
   const auto& intFeatures =
-      getFeatures(IntFeatureData, {"peak_indices", "min_AHP_indices"});
+      getFeatures(IntFeatureData, {"peak_indices"});
+  try{
+    const auto& intFeaturesSpecial = getFeatures(IntFeatureData,
+                                                 {"min_AHP_indices"});
+    min_ahp_idx = intFeaturesSpecial.at("min_AHP_indices");
+  // Edge case for 1 spike and no min_AHP_indices:
+  // continue with empty vector.
+  } catch (const EmptyFeatureError& e) {}
+    catch (const FeatureComputationError& e) {}
 
   vector<int> apbi;
 
@@ -1706,8 +1715,8 @@ int SpikeShape::AP_begin_indices(mapStr2intVec& IntFeatureData,
   retVal = __AP_begin_indices(
       doubleFeatures.at("T"), doubleFeatures.at("V"),
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
-      intFeatures.at("peak_indices"), intFeatures.at("min_AHP_indices"), apbi,
-      dTh[0], derivative_window[0]);
+      intFeatures.at("peak_indices"), min_ahp_idx, apbi, dTh[0],
+      derivative_window[0]);
 
   // Save feature value
   if (retVal >= 0) {

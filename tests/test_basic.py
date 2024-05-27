@@ -1258,6 +1258,38 @@ def test_derivwindow1():
     numpy.testing.assert_allclose(AP_begin_voltage, -45.505521563640386)
 
 
+def test_AP_begin_indices_edge_case():
+    """basic: Test AP_begin_indices edge case.
+
+    Edge case: one spike, with no AHP_min_indices afterwards.
+    """
+    import efel
+    efel.reset()
+
+    stim_start = 100.0
+    stim_end = 1000.0
+
+    time, voltage = load_ascii_input(derivwindow1_url)
+    trace = {}
+
+    # remove last parts of data to be in case where
+    # min_AHP_indices is None
+    trace['T'] = time[:-50]
+    trace['V'] = voltage[:-50]
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_begin_indices', 'min_AHP_indices']
+
+    feature_values = \
+        get_feature_values(
+            [trace],
+            features)
+    assert feature_values[0]['min_AHP_indices'] is None
+    # even though min_AHP_indices is None, we can still find AP_begin_indices
+    feature_values[0]['AP_begin_indices'][0] == 9772
+
+
 def test_spike_count1():
     """basic: Test spike_count 1"""
 
