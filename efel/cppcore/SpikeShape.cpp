@@ -2279,7 +2279,7 @@ int SpikeShape::AP_fall_rate_change(mapStr2intVec& IntFeatureData,
 static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
                            double stimStart, double stimEnd,
                            vector<double>& ap_phaseslopes, vector<int> apbi,
-                           double range) {
+                           int range) {
   vector<double> dvdt(v.size());
   vector<double> dv;
   vector<double> dt;
@@ -2292,8 +2292,8 @@ static int __AP_phaseslope(const vector<double>& v, const vector<double>& t,
 
   for (size_t i = 0; i < apbi.size(); i++) {
     apbegin_index = apbi[i];
-    range_min_index = apbegin_index - int(range);
-    range_max_index = apbegin_index + int(range);
+    range_min_index = apbegin_index - range;
+    range_max_index = apbegin_index + range;
     if (range_min_index < 0 || range_max_index < 0) return -1;
     if (range_min_index > (int)t.size() || range_max_index > (int)t.size())
       return -1;
