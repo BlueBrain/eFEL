@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+5.6.29 - 2024-06
+----------------
+
+- Added AP_phaseslope_range to efel.settings as int with default value of 2
+
 5.6.27 - 2024-05
 ----------------
 
-- FIxed edge case (1 spike and no min_AHP_indices dependency) in AP_begin_indices
+- Fixed edge case (1 spike and no min_AHP_indices dependency) in AP_begin_indices
 
 5.6.20 - 2024-05
 ----------------
