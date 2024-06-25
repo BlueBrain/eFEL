@@ -1549,7 +1549,7 @@ AP_phaseslope
 (at the point where the derivative crosses the DerivativeThreshold)
 
 - **Required features**: AP_begin_indices
-- **Parameters**: AP_phaseslope_range
+- **Parameters**: AP_phaseslope_range (default=2)
 - **Units**: 1/(ms)
 - **Pseudocode**: ::
 
