@@ -2316,14 +2316,16 @@ int SpikeShape::AP_phaseslope(mapStr2intVec& IntFeatureData,
                          mapStr2Str& StringData) {
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData,
-                  {"V", "T", "stim_start", "stim_end", "AP_phaseslope_range"});
-  const auto& intFeatures = getFeatures(IntFeatureData, {"AP_begin_indices"});
+                  {"V", "T", "stim_start", "stim_end"});
+  const auto& intFeatures = 
+      getFeatures(IntFeatureData,
+                  {"AP_begin_indices", "AP_phaseslope_range"});
   vector<double> ap_phaseslopes;
   int retVal = __AP_phaseslope(doubleFeatures.at("V"), doubleFeatures.at("T"),
                                doubleFeatures.at("stim_start")[0],
                                doubleFeatures.at("stim_end")[0], ap_phaseslopes,
                                intFeatures.at("AP_begin_indices"),
-                               doubleFeatures.at("AP_phaseslope_range")[0]);
+                               intFeatures.at("AP_phaseslope_range")[0]);
 
   if (retVal > 0) {
     setVec(DoubleFeatureData, StringData, "AP_phaseslope", ap_phaseslopes);

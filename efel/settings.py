@@ -98,6 +98,7 @@ class Settings:
     sahp_start: float = 5.0
     ignore_first_ISI: bool = True
     impedance_max_freq: float = 50.0
+    AP_phaseslope_range: int = 2
 
     def set_setting(self,
                     setting_name: str,
