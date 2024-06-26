@@ -159,8 +159,8 @@
     "recovery_slope": "V/s",
     "neg_peak_relative": "constant",
     "pos_peak_relative": "constant",
-    "neg_peak_diff": "constant",
-    "pos_peak_diff": "constant",
+    "neg_peak_diff": "s",
+    "pos_peak_diff": "s",
     "neg_image": "constant",
     "pos_image": "constant"
 }

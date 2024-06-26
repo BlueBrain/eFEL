@@ -135,4 +135,5 @@ def test_efeature_units():
 
     # Compare with the units in efel.units
     for feature_name, unit in feature_units.items():
+        print(feature_name, unit)
         assert units.get_unit(feature_name) == unit

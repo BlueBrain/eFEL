@@ -2067,24 +2067,26 @@ with impedance_max_freq being a setting with 50.0 as a default value.
 
 `Extracellular`_
 
-Extracellular features can be calculated using data from a multielectrode array (MEA). 
-These feature were written by Alessio Buccino and are described in 
-`Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ . 
-The feautures can either absolute, computed for each channel separately, or relative, 
-computed with respect to the channel with the largest extracellular signal amplitude:
+Extracellular features can be calculated using data from a multielectrode array (MEA).
+These feature were written by Alessio Buccino and are described in
+`Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
+The feautures can either absolute, computed for each channel separately, or
+relative, computed with respect to the channel with the largest extracellular
+signal amplitude:
 
 
 peak_to_valley
 ~~~~~~~~~~~~~~
 
-`Extracellular`_ (absolute): time in seconds between the negative and positive peaks.
+`Extracellular`_ (absolute): time in seconds between the negative and
+positive peaks.
 
-If the negative peaks precedes the positive one, the value of the feature is positive.
-Conversely, when the positive peak precedes the negative one, the value is negative.
-It take an array of MEA recordings and the sampling frequency as input.
+If the negative peaks precedes the positive one, the value of the feature is
+positive. Conversely, when the positive peak precedes the negative one, the 
+value is negative. It take an array of MEA recordings and the sampling
+frequency as input.
 
-- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), 
-sampling_frequency (float, rate at which the waveforms are sampled (Hz))
+- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), sampling_frequency (float, rate at which the waveforms are sampled (Hz))
 - **Required features**: None
 - **Units**: s
 - **Pseudocode**: ::
@@ -2122,9 +2124,9 @@ halfwidth
 
 `Extracellular`_  (absolute): time in seconds waveform width.
 
-Width of waveform at half of its amplitude in seconds. If the positive peak precedes the
-negative one, the value is negative. This procedure helps to maximize the shape information
-carried by the feature value.
+Width of waveform at half of its amplitude in seconds. If the positive peak
+precedes the negative one, the value is negative. This procedure helps to
+maximize the shape information carried by the feature value.
 
 - **Input**: None
 - **Required features**: None
@@ -2146,13 +2148,13 @@ carried by the feature value.
 repolarization_slope
 ~~~~~~~~~~~~~~~~~~~~
 
-`Extracellular`_  (absolute): dV/dT of the action potential between the negative peak and
-the baseline.
+`Extracellular`_  (absolute): dV/dT of the action potential between the
+negative peak and the baseline.
 
-After reaching its maximum depolarization, the neuronal potential will recover.
-The repolarization slope is defined as the dV/dT of the action potential between the
-negative peak and the baseline.Optionally the function returns also the indices per waveform where the
-potential crosses baseline.
+After reaching its maximum depolarization, the neuronal potential will recover
+. The repolarization slope is defined as the dV/dT of the action potential
+between the negative peak and the baseline.Optionally the function returns
+also the indices per waveform where the potential crosses baseline.
 
 - **Input**: waveforms, sampling_frequency
 - **Required features**: None
@@ -2196,13 +2198,12 @@ potential crosses baseline.
 recovery_slope
 ~~~~~~~~~~~~~~
 
-`Extracellular`_  (absolute): After depolarization, the neuron repolarizes until the signal peaks. 
-The recovery slope is the slope of the action potential after the peak, returning to the 
-baseline in dV/dT. The slope is computed within a user-defined window after 
-the peak (default = 0.7 ms).
+`Extracellular`_  (absolute): After depolarization, the neuron repolarizes
+until the signal peaks. The recovery slope is the slope of the action
+potential after the peak, returning to the baseline in dV/dT. The slope is
+computed within a user-defined window after the peak (default = 0.7 ms).
 
-- **Input**: waveforms, sampling_frequency, window (float, length after 
-peak wherein to compute recovery slope (ms))
+- **Input**: waveforms, sampling_frequency, window (float, length after peak wherein to compute recovery slope (ms))
 - **Required features**: None
 - **Units**: V/s
 - **Pseudocode**: ::
@@ -2232,9 +2233,9 @@ peak wherein to compute recovery slope (ms))
 neg_peak_relative
 ~~~~~~~~~~~~~~~~~
 
-`Extracellular`_  (relative): The relative amplitude of the negative peak with respect to
- the negative signal peak of the channel with the largest amplitude. For the largest-amplitude 
- channel, this feature has a value of 1.
+`Extracellular`_  (relative): The relative amplitude of the negative peak
+with respect to the negative signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 1.
 
 - **Input**: waveforms
 - **Required features**: None
@@ -2251,9 +2252,9 @@ neg_peak_relative
 pos_peak_relative
 ~~~~~~~~~~~~~~~~~
 
-`Extracellular`_  (relative): The relative amplitude of the positive signal peak with respect to the positive 
-signal peak of the channel with the largest amplitude. For the largest-amplitude channel, this feature has 
-a value of 1.
+`Extracellular`_  (relative): The relative amplitude of the positive signal
+peak with respect to the positive signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 1.
 
 - **Input**: waveforms
 - **Required features**: None
@@ -2266,13 +2267,15 @@ a value of 1.
 
     return relative_peaks
 
+
 neg_peak_diff
 ~~~~~~~~~~~~~
 
-`Extracellular`_  (relative): The time difference between the negative signal peak with respect to the 
-negative signal peak of the channel with the largest amplitude. For the largest-amplitude channel, 
-this feature has a value of 0. Note that values can also be negative if the respective negative signal 
-peak occurs earlier than the negative signal peak on the largest-amplitude channel.
+`Extracellular`_  (relative): The time difference between the negative signal
+peak with respect to the negative signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 0.
+Note that values can also be negative if the respective negative signal peak
+occurs earlier than the negative signal peak on the largest-amplitude channel.
 
 - **Input**: waveforms, sampling_frequency
 - **Required features**: None
@@ -2291,10 +2294,12 @@ peak occurs earlier than the negative signal peak on the largest-amplitude chann
 pos_peak_diff
 ~~~~~~~~~~~~~
 
-`Extracellular`_  (relative): The time difference between the positive peak with respect to the occurrence 
-of the positive peak of the channel with the largest amplitude. For the largest-amplitude channel, 
-this feature has a value of 0. Note that values can also be negative if the respective positive signal 
-peak occurs earlier than the positive signal peak on the largest-amplitude channel.
+`Extracellular`_  (relative): The time difference between the positive peak
+with respect to the occurrence of the positive peak of the channel with the
+largest amplitude. For the largest-amplitude channel, this feature has a value
+of 0. Note that values can also be negative if the respective positive signal
+peak occurs earlier than the positive signal peak on the largest-amplitude
+channel.
 
 - **Input**: waveforms, sampling_frequency
 - **Required features**: None
@@ -2313,8 +2318,9 @@ peak occurs earlier than the positive signal peak on the largest-amplitude chann
 neg_image
 ~~~~~~~~~
 
-`Extracellular`_  (relative): Voltage values at the time of the negative signal peak on the largest-amplitude channel. 
-The values are normalized by the negative signal-amplitude value on the largest-amplitude channel.
+`Extracellular`_  (relative): Voltage values at the time of the negative signal
+peak on the largest-amplitude channel. The values are normalized by the
+negative signal-amplitude value on the largest-amplitude channel.
 
 - **Input**: waveforms
 - **Required features**: None
@@ -2335,8 +2341,9 @@ The values are normalized by the negative signal-amplitude value on the largest-
 pos_image
 ~~~~~~~~~
 
-`Extracellular`_  (relative): The voltage values at the time of the positive signal peak on the largest-amplitude channel. 
-The values are normalized by the positive signal-amplitude value on the largest-amplitude channel.
+`Extracellular`_  (relative): The voltage values at the time of the positive
+signal peak on the largest-amplitude channel. The values are normalized by the
+positive signal-amplitude value on the largest-amplitude channel.
 
 - **Input**: waveforms
 - **Required features**: None
