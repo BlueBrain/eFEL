@@ -475,7 +475,10 @@ int SpikeShape::min_AHP_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::min_AHP_values(mapStr2intVec& IntFeatureData,
                           mapStr2doubleVec& DoubleFeatureData,
                           mapStr2Str& StringData) {
-  return -1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_AHP_indices"});
+  int retVal = intFeatures.at("min_AHP_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // Difference with SpikeShape is that this function doesn't return -1 if there are no
@@ -550,7 +553,10 @@ int SpikeShape::AHP_depth_abs_slow(mapStr2intVec& IntFeatureData,
 int SpikeShape::AHP_slow_time(mapStr2intVec& IntFeatureData,
                          mapStr2doubleVec& DoubleFeatureData,
                          mapStr2Str& StringData) {
-  return -1;
+  const auto& doubleFeatures = getFeatures(DoubleFeatureData, {"AHP_depth_abs_slow"});
+  int retVal = doubleFeatures.at("AHP_depth_abs_slow").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // *** AHP_depth_slow ***
@@ -818,7 +824,10 @@ int SpikeShape::ADP_peak_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::ADP_peak_values(mapStr2intVec& IntFeatureData,
                            mapStr2doubleVec& DoubleFeatureData,
                            mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"ADP_peak_indices"});
+  int retVal = intFeatures.at("ADP_peak_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // strict_stiminterval should be True when using this feature
@@ -994,7 +1003,10 @@ int SpikeShape::min_between_peaks_indices(mapStr2intVec& IntFeatureData,
 int SpikeShape::min_between_peaks_values(mapStr2intVec& IntFeatureData,
                                     mapStr2doubleVec& DoubleFeatureData,
                                     mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"min_between_peaks_indices"});
+  int retVal = intFeatures.at("min_between_peaks_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 // *** AP_duration_half_width according to E8 and E16 ***
@@ -1667,11 +1679,20 @@ static int __AP_begin_indices(const vector<double>& t, const vector<double>& v,
 int SpikeShape::AP_begin_indices(mapStr2intVec& IntFeatureData,
                             mapStr2doubleVec& DoubleFeatureData,
                             mapStr2Str& StringData) {
+  vector<int> min_ahp_idx;
   // Retrieve all required double and int features at once
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"T", "V", "stim_start", "stim_end"});
   const auto& intFeatures =
-      getFeatures(IntFeatureData, {"peak_indices", "min_AHP_indices"});
+      getFeatures(IntFeatureData, {"peak_indices"});
+  try{
+    const auto& intFeaturesSpecial = getFeatures(IntFeatureData,
+                                                 {"min_AHP_indices"});
+    min_ahp_idx = intFeaturesSpecial.at("min_AHP_indices");
+  // Edge case for 1 spike and no min_AHP_indices:
+  // continue with empty vector.
+  } catch (const EmptyFeatureError& e) {}
+    catch (const FeatureComputationError& e) {}
 
   vector<int> apbi;
 
@@ -1694,8 +1715,8 @@ int SpikeShape::AP_begin_indices(mapStr2intVec& IntFeatureData,
   retVal = __AP_begin_indices(
       doubleFeatures.at("T"), doubleFeatures.at("V"),
       doubleFeatures.at("stim_start")[0], doubleFeatures.at("stim_end")[0],
-      intFeatures.at("peak_indices"), intFeatures.at("min_AHP_indices"), apbi,
-      dTh[0], derivative_window[0]);
+      intFeatures.at("peak_indices"), min_ahp_idx, apbi, dTh[0],
+      derivative_window[0]);
 
   // Save feature value
   if (retVal >= 0) {

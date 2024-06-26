@@ -40,6 +40,7 @@ from efel.io import load_ascii_input
 from efel.api import get_feature_values
 from efel.api import set_setting
 from efel.api import get_distance
+from efel.api import register_feature
 
 
 testdata_dir = Path(__file__).parent / 'testdata'
@@ -1255,6 +1256,38 @@ def test_derivwindow1():
 
     AP_begin_voltage = feature_values[0]['AP_begin_voltage'][0]
     numpy.testing.assert_allclose(AP_begin_voltage, -45.505521563640386)
+
+
+def test_AP_begin_indices_edge_case():
+    """basic: Test AP_begin_indices edge case.
+
+    Edge case: one spike, with no AHP_min_indices afterwards.
+    """
+    import efel
+    efel.reset()
+
+    stim_start = 100.0
+    stim_end = 1000.0
+
+    time, voltage = load_ascii_input(derivwindow1_url)
+    trace = {}
+
+    # remove last parts of data to be in case where
+    # min_AHP_indices is None
+    trace['T'] = time[:-50]
+    trace['V'] = voltage[:-50]
+    trace['stim_start'] = [stim_start]
+    trace['stim_end'] = [stim_end]
+
+    features = ['AP_begin_indices', 'min_AHP_indices']
+
+    feature_values = \
+        get_feature_values(
+            [trace],
+            features)
+    assert feature_values[0]['min_AHP_indices'] is None
+    # even though min_AHP_indices is None, we can still find AP_begin_indices
+    feature_values[0]['AP_begin_indices'][0] == 9772
 
 
 def test_spike_count1():
@@ -4522,3 +4555,29 @@ def test_spontaneous_firing():
     numpy.testing.assert_allclose(ap_fall_time, ap_fall_time_expected)
     numpy.testing.assert_allclose(ap_rise_rate, ap_rise_rate_expected)
     numpy.testing.assert_allclose(ap_fall_rate, ap_fall_rate_expected)
+
+
+def test_register_feature():
+    """basic: Test register feature"""
+    import efel
+    efel.reset()
+
+    trace = {}
+    trace['T'] = numpy.arange(0, 100, 0.1)
+    trace['V'] = numpy.ones(len(trace['T'])) * -80.0
+    trace['stim_start'] = [25]
+    trace['stim_end'] = [75]
+
+    def new_feature():
+        v = efel.pyfeatures.get_cpp_feature("voltage")
+        stim_start = efel.pyfeatures.pyfeatures._get_cpp_data("stim_start")
+        return numpy.array([v[0], stim_start])
+
+    efel.register_feature(new_feature)
+    result = efel.get_feature_values([trace], ["new_feature"])[0]["new_feature"]
+    assert result[0] == -80.0
+    assert result[1] == 25.0
+
+    # remove it to keep other tests untouched
+    del efel.pyfeatures.new_feature
+    del efel.pyfeatures.all_pyfeatures[-1]

@@ -557,7 +557,10 @@ int SpikeEvent::burst_begin_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::burst_end_indices(mapStr2intVec& IntFeatureData,
                              mapStr2doubleVec& DoubleFeatureData,
                              mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"burst_begin_indices"});
+  int retVal = intFeatures.at("burst_begin_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 static int __strict_burst_mean_freq(const vector<double>& PVTime,
@@ -695,7 +698,10 @@ int SpikeEvent::interburst_min_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::interburst_min_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"interburst_min_indices"});
+  int retVal = intFeatures.at("interburst_min_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 static int __postburst_min_indices(const vector<double>& t,
@@ -767,7 +773,10 @@ int SpikeEvent::postburst_min_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::postburst_min_values(mapStr2intVec& IntFeatureData,
                                 mapStr2doubleVec& DoubleFeatureData,
                                 mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"postburst_min_indices"});
+  int retVal = intFeatures.at("postburst_min_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 int SpikeEvent::time_to_interburst_min(mapStr2intVec& IntFeatureData,
@@ -897,7 +906,10 @@ int SpikeEvent::postburst_slow_ahp_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::postburst_slow_ahp_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"postburst_slow_ahp_indices"});
+  int retVal = intFeatures.at("postburst_slow_ahp_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 int SpikeEvent::time_to_postburst_slow_ahp(mapStr2intVec& IntFeatureData,
@@ -1010,7 +1022,10 @@ int SpikeEvent::postburst_fast_ahp_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::postburst_fast_ahp_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"postburst_fast_ahp_indices"});
+  int retVal = intFeatures.at("postburst_fast_ahp_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 static int __postburst_adp_peak_indices(const vector<double>& t, const vector<double>& v,
@@ -1077,7 +1092,10 @@ int SpikeEvent::postburst_adp_peak_indices(mapStr2intVec& IntFeatureData,
 int SpikeEvent::postburst_adp_peak_values(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData) {
-  return 1;
+  const auto& intFeatures = getFeatures(IntFeatureData, {"postburst_adp_peak_indices"});
+  int retVal = intFeatures.at("postburst_adp_peak_indices").size();
+  if (retVal <= 0) return -1;
+  return retVal;
 }
 
 int SpikeEvent::time_to_postburst_fast_ahp(mapStr2intVec& IntFeatureData,

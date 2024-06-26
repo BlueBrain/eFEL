@@ -290,7 +290,7 @@ def spikes_per_burst():
     burst_begin_indices = get_cpp_feature("burst_begin_indices")
     burst_end_indices = get_cpp_feature("burst_end_indices")
 
-    if burst_begin_indices is None:
+    if burst_begin_indices is None or len(burst_begin_indices) < 1:
         return None
 
     ap_per_bursts = []
@@ -303,7 +303,7 @@ def spikes_per_burst():
 def spikes_per_burst_diff():
     """Calculate the diff between the spikes in each burst and the next one"""
     spikes_per_burst_values = spikes_per_burst()
-    if spikes_per_burst_values is None:
+    if spikes_per_burst_values is None or len(spikes_per_burst_values) < 2:
         return None
 
     return spikes_per_burst_values[:-1] - spikes_per_burst_values[1:]
