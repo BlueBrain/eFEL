@@ -161,6 +161,7 @@ def test_str_method():
         "precision_threshold: 1e-10\n"
         "sahp_start: 5.0\n"
         "ignore_first_ISI: True\n"
-        "impedance_max_freq: 50.0"
+        "impedance_max_freq: 50.0\n"
+        "AP_phaseslope_range: 2"
     )
     assert str(settings) == expected_output
