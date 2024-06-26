@@ -2064,13 +2064,67 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
-`Extracellular`_ : peak_to_valley
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-time in seconds between the negative and positive peaks.
+`Extracellular`_
+
+Extracellular features can be calculated using data from a multielectrode array (MEA). 
+These feature were written by Alessio Buccino and are described in 
+`Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ . 
+The feautures can either absolute, computed for each channel separately, or relative, 
+computed with respect to the channel with the largest extracellular signal amplitude:
+
+
+peak_to_valley
+~~~~~~~~~~~~~~
+
+`Extracellular`_ (absolute): time in seconds between the negative and positive peaks.
 
 If the negative peaks precedes the positive one, the value of the feature is positive.
-Conversely, when the positive peak precedes the negative one, the value is negative
+Conversely, when the positive peak precedes the negative one, the value is negative.
+It take an array of MEA recordings and the sampling frequency as input.
+
+- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), 
+sampling_frequency (float, rate at which the waveforms are sampled (Hz))
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    def _get_trough_and_peak_idx(waveform, after_max_trough=False):
+    """
+    Return the indices into the input waveforms of the detected troughs
+    (minimum of waveform) and peaks (maximum of waveform, after trough).
+
+    Assumes negative troughs and positive peaks
+
+    Returns 0 if not detected
+    """
+    if after_max_trough:
+        max_through_idx = np.unravel_index(
+            np.argmin(waveform),
+            waveform.shape)[1]
+        trough_idx = (
+            np.argmin(waveform[:, max_through_idx:], axis=1) + max_through_idx
+        )
+        peak_idx = (
+            np.argmax(waveform[:, max_through_idx:], axis=1) + max_through_idx
+        )
+    else:
+        trough_idx = np.argmin(waveform, axis=1)
+        peak_idx = np.argmax(waveform, axis=1)
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+    ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
+    ptv[ptv == 0] = np.nan
+
+
+halfwidth
+~~~~~~~~~
+
+`Extracellular`_  (absolute): time in seconds waveform width.
+
+Width of waveform at half of its amplitude in seconds. If the positive peak precedes the
+negative one, the value is negative. This procedure helps to maximize the shape information
+carried by the feature value.
 
 - **Input**: None
 - **Required features**: None
@@ -2078,8 +2132,226 @@ Conversely, when the positive peak precedes the negative one, the value is negat
 - **Pseudocode**: ::
 
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
-    ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
-    ptv[ptv == 0] = np.nan
+    ptratio = np.empty(trough_idx.shape[0])
+    ptratio[:] = np.nan
+    for i in range(waveforms.shape[0]):
+        if peak_idx[i] == 0 and trough_idx[i] == 0:
+            continue
+        ptratio[i] = np.abs(waveforms[i, peak_idx[i]] /
+                            waveforms[i, trough_idx[i]])
+
+    return ptratio
+
+
+repolarization_slope
+~~~~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (absolute): dV/dT of the action potential between the negative peak and
+the baseline.
+
+After reaching its maximum depolarization, the neuronal potential will recover.
+The repolarization slope is defined as the dV/dT of the action potential between the
+negative peak and the baseline.Optionally the function returns also the indices per waveform where the
+potential crosses baseline.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+
+    rslope = np.empty(waveforms.shape[0])
+    rslope[:] = np.nan
+    return_to_base_idx = np.empty(waveforms.shape[0], dtype=np.int_)
+    return_to_base_idx[:] = 0
+
+    time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
+    for i in range(waveforms.shape[0]):
+        if trough_idx[i] == 0:
+            continue
+
+        rtrn_idx = np.where(waveforms[i, trough_idx[i]:] >= 0)[0]
+        if len(rtrn_idx) == 0:
+            continue
+
+        return_to_base_idx[i] = (
+            rtrn_idx[0] + trough_idx[i]
+        )  # first time after  trough, where waveform is at baseline
+
+        if return_to_base_idx[i] - trough_idx[i] < 3:
+            continue
+        slope = _get_slope(
+            time[trough_idx[i]:return_to_base_idx[i]],
+            waveforms[i, trough_idx[i]:return_to_base_idx[i]]
+        )
+        rslope[i] = slope[0]
+
+    if not return_idx:
+        return rslope
+    else:
+        return rslope, return_to_base_idx
+
+
+recovery_slope
+~~~~~~~~~~~~~~
+
+`Extracellular`_  (absolute): After depolarization, the neuron repolarizes until the signal peaks. 
+The recovery slope is the slope of the action potential after the peak, returning to the 
+baseline in dV/dT. The slope is computed within a user-defined window after 
+the peak (default = 0.7 ms).
+
+- **Input**: waveforms, sampling_frequency, window (float, length after 
+peak wherein to compute recovery slope (ms))
+- **Required features**: None
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    _, peak_idx = _get_trough_and_peak_idx(waveforms)
+        rslope = np.empty(waveforms.shape[0])
+        rslope[:] = np.nan
+
+        time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
+
+        for i in range(waveforms.shape[0]):
+            if peak_idx[i] in [0, waveforms.shape[1]]:
+                continue
+            max_idx = int(peak_idx[i] + ((window / 1000) * sampling_frequency))
+            max_idx = np.min([max_idx, waveforms.shape[1]])
+
+            if len(time[peak_idx[i]:max_idx]) < 3:
+                continue
+            slope = _get_slope(
+                time[peak_idx[i]:max_idx], waveforms[i, peak_idx[i]:max_idx]
+            )
+            rslope[i] = slope[0]
+
+        return rslope
+
+
+neg_peak_relative
+~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The relative amplitude of the negative peak with respect to
+ the negative signal peak of the channel with the largest amplitude. For the largest-amplitude 
+ channel, this feature has a value of 1.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fun = np.min
+    peak_amp = np.abs(fun(waveforms))
+    relative_peaks = np.abs(fun(waveforms, 1)) / peak_amp
+
+    return relative_peaks
+
+
+pos_peak_relative
+~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The relative amplitude of the positive signal peak with respect to the positive 
+signal peak of the channel with the largest amplitude. For the largest-amplitude channel, this feature has 
+a value of 1.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fun = np.max
+    peak_amp = np.abs(fun(waveforms))
+    relative_peaks = np.abs(fun(waveforms, 1)) / peak_amp
+
+    return relative_peaks
+
+neg_peak_diff
+~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The time difference between the negative signal peak with respect to the 
+negative signal peak of the channel with the largest amplitude. For the largest-amplitude channel, 
+this feature has a value of 0. Note that values can also be negative if the respective negative signal 
+peak occurs earlier than the negative signal peak on the largest-amplitude channel.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    argfun = np.argmin
+
+    peak_chan = np.unravel_index(argfun(waveforms), waveforms.shape)[0]
+    peak_time = argfun(waveforms[peak_chan])
+    relative_peak_times = (argfun(waveforms, 1) - peak_time) / fs
+
+    return relative_peak_times
+
+
+pos_peak_diff
+~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The time difference between the positive peak with respect to the occurrence 
+of the positive peak of the channel with the largest amplitude. For the largest-amplitude channel, 
+this feature has a value of 0. Note that values can also be negative if the respective positive signal 
+peak occurs earlier than the positive signal peak on the largest-amplitude channel.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    argfun = np.argmax
+
+    peak_chan = np.unravel_index(argfun(waveforms), waveforms.shape)[0]
+    peak_time = argfun(waveforms[peak_chan])
+    relative_peak_times = (argfun(waveforms, 1) - peak_time) / fs
+
+    return relative_peak_times
+
+
+neg_image
+~~~~~~~~~
+
+`Extracellular`_  (relative): Voltage values at the time of the negative signal peak on the largest-amplitude channel. 
+The values are normalized by the negative signal-amplitude value on the largest-amplitude channel.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    funarg = np.argmin
+    fun = np.min
+
+    peak_channel, peak_time = np.unravel_index(
+        funarg(waveforms), waveforms.shape
+    )
+    relative_peaks = waveforms[:, peak_time] / fun(waveforms[peak_channel])
+
+    return relative_peaks
+
+
+pos_image
+~~~~~~~~~
+
+`Extracellular`_  (relative): The voltage values at the time of the positive signal peak on the largest-amplitude channel. 
+The values are normalized by the positive signal-amplitude value on the largest-amplitude channel.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    funarg = np.argmax
+    fun = np.max
+
+    peak_channel, peak_time = np.unravel_index(
+        funarg(waveforms), waveforms.shape
+    )
+    relative_peaks = waveforms[:, peak_time] / fun(waveforms[peak_channel])
+
+    return relative_peaks
 
 .. _SpikeEvent: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeEvent.cpp
 .. _SpikeShape: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeShape.cpp
