@@ -1541,35 +1541,6 @@ divided by the fall rate of the first action potential
 
     AP_fall_rate_change = (AP_fall_rate[1:] - AP_fall_rate[0]) / AP_fall_rate[0]
 
-AP_phaseslope
-~~~~~~~~~~~~~
-
-`SpikeShape`_ : Slope of the V, dVdt phasespace plot at the beginning of every spike
-
-(at the point where the derivative crosses the DerivativeThreshold)
-
-- **Required features**: AP_begin_indices
-- **Parameters**: AP_phaseslope_range (default=2)
-- **Units**: 1/(ms)
-- **Pseudocode**: ::
-
-    range_max_idxs = AP_begin_indices + AP_phseslope_range
-    range_min_idxs = AP_begin_indices - AP_phseslope_range
-    AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
-
-phaseslope_max
-~~~~~~~~~~~~~~
-
-`Python efeature`_ : Computes the maximum of the phase slope.
-Attention, this feature is sensitive to interpolation timestep.
-
-- **Required features**: time, voltage
-- **Units**: V/s
-- **Pseudocode**: ::
-
-    phaseslope = numpy.diff(voltage) / numpy.diff(time)
-    phaseslope_max = numpy.array([numpy.max(phaseslope)])
-
 initburst_sahp
 ~~~~~~~~~~~~~~
 
@@ -2064,6 +2035,37 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+AP_phaseslope
+~~~~~~~~~~~~~
+
+`Phase efeature`_ : Slope of the V, dVdt phasespace plot at the beginning of every spike
+
+(at the point where the derivative crosses the DerivativeThreshold)
+
+- **Required features**: AP_begin_indices
+- **Parameters**: AP_phaseslope_range (default=2)
+- **Units**: 1/(ms)
+- **Pseudocode**: ::
+
+    range_max_idxs = AP_begin_indices + AP_phseslope_range
+    range_min_idxs = AP_begin_indices - AP_phseslope_range
+    AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
+
+phaseslope_max
+~~~~~~~~~~~~~~
+
+`Phase efeature`_ : Computes the maximum of the phase slope.
+Attention, this feature is sensitive to interpolation timestep.
+
+- **Required features**: time, voltage
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
+
+Also, check the following eFeatures: AP_fall_rate, AP_fall_rate_change
+, AP_peak_downstroke, AP_peak_upstroke, AP_rise_rate and AP_rise_rate_change.
 
 `Extracellular`_
 
@@ -2365,4 +2367,5 @@ positive signal-amplitude value on the largest-amplitude channel.
 .. _Subthreshold: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/Subthreshold.cpp
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
+.. _Phase efeature:  https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
