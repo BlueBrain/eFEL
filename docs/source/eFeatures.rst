@@ -2035,6 +2035,9 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+Phase Plane features
+--------------------
+
 AP_phaseslope
 ~~~~~~~~~~~~~
 
@@ -2067,9 +2070,10 @@ Attention, this feature is sensitive to interpolation timestep.
 Also, check the following eFeatures: AP_fall_rate, AP_fall_rate_change
 , AP_peak_downstroke, AP_peak_upstroke, AP_rise_rate and AP_rise_rate_change.
 
-`Extracellular`_
+Extracellular features
+----------------------
 
-Extracellular features can be calculated using data from a multielectrode array (MEA).
+Extracellular features can be calculated for data from a multielectrode (MEA) array.
 These feature were written by Alessio Buccino and are described in
 `Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
 The feautures can either absolute, computed for each channel separately, or
