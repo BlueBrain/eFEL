@@ -2035,7 +2035,7 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
-Phase Plane features
+Phase Analysis features
 --------------------
 
 AP_phaseslope
@@ -2088,7 +2088,7 @@ peak_to_valley
 positive peaks.
 
 If the negative peaks precedes the positive one, the value of the feature is
-positive. Conversely, when the positive peak precedes the negative one, the 
+positive. Conversely, when the positive peak precedes the negative one, the
 value is negative. It take an array of MEA recordings and the sampling
 frequency as input.
 
