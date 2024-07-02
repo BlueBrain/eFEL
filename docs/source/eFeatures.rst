@@ -2036,7 +2036,7 @@ with impedance_max_freq being a setting with 50.0 as a default value.
         return None
 
 Phase Analysis features
---------------------
+-----------------------
 
 AP_phaseslope
 ~~~~~~~~~~~~~

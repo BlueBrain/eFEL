@@ -8,12 +8,8 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 5.6.29 - 2024-06
 ----------------
 
-- Adding extracellular features:
-`"peak_to_valley", "halfwidth", "peak_trough_ratio", "repolarization_slope", "recovery_slope",
-"neg_peak_relative", "pos_peak_relative", "neg_peak_diff", "pos_peak_diff", "neg_image"` and `"pos_image"`
-- creating separate category for phase analysis in the documentation and moving doc of existing features
-under this category: `"AP_phaseslope", "phaseslope_max"`. Phase features which can fall into two categories:
-`"AP_fall_rate", "AP_fall_rate_change", "AP_peak_downstroke", "AP_peak_upstroke", "AP_rise_rate"` and `"AP_rise_rate_change"``
+- Adding extracellular features: `"peak_to_valley", "halfwidth", "peak_trough_ratio", "repolarization_slope", "recovery_slope","neg_peak_relative", "pos_peak_relative", "neg_peak_diff", "pos_peak_diff", "neg_image"` and `"pos_image"`
+- creating separate category for phase analysis in the documentation and moving doc of existing features under this category: `"AP_phaseslope", "phaseslope_max"`. Phase features which can fall into two categories: `"AP_fall_rate", "AP_fall_rate_change", "AP_peak_downstroke", "AP_peak_upstroke", "AP_rise_rate"` and `"AP_rise_rate_change"``
 
 5.6.29 - 2024-06
 ----------------
