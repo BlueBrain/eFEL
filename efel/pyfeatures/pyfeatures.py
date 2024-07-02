@@ -32,7 +32,6 @@ from typing_extensions import deprecated
 import numpy as np
 from numpy.fft import *
 
-
 all_pyfeatures = [
     'voltage',
     'time',

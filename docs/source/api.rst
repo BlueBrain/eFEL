@@ -17,6 +17,7 @@ Submodules
    io
    pyfeatures.cppfeature_access
    pyfeatures.isi
+   pyfeatures.extrafeats
    pyfeatures.multitrace
    pyfeatures.pyfeatures
    pyfeatures.validation
