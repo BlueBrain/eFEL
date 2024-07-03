@@ -1,9 +1,9 @@
 """Extra features functions"""
 
 """
-Copyright (c) 2016-2020, EPFL/Blue Brain Project
+Copyright (c) 2024, EPFL/Blue Brain Project
 
- This file is part of BluePyOpt <https://github.com/BlueBrain/BluePyOpt>
+ This file is part of eFEL <https://github.com/BlueBrain/eFEL>
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License version 3.0 as published
@@ -36,6 +36,42 @@ all_1D_features = [
 ]
 
 
+def _get_slope(x, y):
+    """
+    Return the slope of x and y data, using scipy.signal.linregress
+    """
+    from scipy.stats import linregress
+
+    slope = linregress(x, y)
+    return slope
+
+
+def _get_trough_and_peak_idx(waveform, after_max_trough=False):
+    """
+    Return the indices of the detected troughs (minimum of waveform)
+    and peaks (maximum of waveform, after trough) of the input waveforms.
+
+    Assumes negative troughs and positive peaks
+
+    Returns 0 if not detected
+    """
+    if after_max_trough:
+        max_through_idx = np.unravel_index(
+            np.argmin(waveform),
+            waveform.shape)[1]
+        trough_idx = (
+            np.argmin(waveform[:, max_through_idx:], axis=1) + max_through_idx
+        )
+        peak_idx = (
+            np.argmax(waveform[:, max_through_idx:], axis=1) + max_through_idx
+        )
+    else:
+        trough_idx = np.argmin(waveform, axis=1)
+        peak_idx = np.argmax(waveform, axis=1)
+
+    return trough_idx, peak_idx
+
+
 def calculate_features(
     waveforms,
     sampling_frequency,
@@ -54,14 +90,13 @@ def calculate_features(
     feature_names : list or None (if None, compute all)
         features to compute
     recovery_slope_window : float
-        windowlength in ms after peak wherein recovery slope is computed
+        window length in ms after peak wherein recovery slope is computed
 
     Returns
     -------
     metrics : dict  (num_waveforms x num_metrics)
         Dictionary with computed metrics. Keys are the metric names, values
             are the computed features
-
     """
     metrics = dict()
 
@@ -146,7 +181,6 @@ def peak_to_valley(waveforms, sampling_frequency):
     -------
     np.ndarray (num_waveforms)
         peak_to_valley in seconds
-
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
@@ -156,7 +190,7 @@ def peak_to_valley(waveforms, sampling_frequency):
 
 def peak_trough_ratio(waveforms):
     """
-    Normalized ratio peak height and trough depth
+    Normalized ratio of peak height over trough depth
 
     Assumes baseline is 0
 
@@ -167,10 +201,8 @@ def peak_trough_ratio(waveforms):
 
     Returns
     -------
-
     np.ndarray (num_waveforms)
         Peak to trough ratio
-
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     ptratio = np.empty(trough_idx.shape[0])
@@ -186,10 +218,10 @@ def peak_trough_ratio(waveforms):
 
 def halfwidth(waveforms, sampling_frequency, return_idx=False):
     """
-    Width of waveform at its half of amplitude.
+    Width of waveform at half of its amplitude.
     If the peak precedes the trough, halfwidth is negative.
 
-    Computes the width of the waveform peak at half it's height
+    Computes the width of the waveform peak at half its height
 
     Parameters
     ----------
@@ -203,11 +235,9 @@ def halfwidth(waveforms, sampling_frequency, return_idx=False):
 
     Returns
     -------
-
     np.ndarray or (np.ndarray, np.ndarray, np.ndarray)
         Halfwidth of the waveforms or (Halfwidth of the waveforms,
         index_cross_pre_peak, index_cross_post_peak)
-
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     hw = np.empty(waveforms.shape[0])
@@ -290,7 +320,6 @@ def repolarization_slope(waveforms, sampling_frequency, return_idx=False):
 
     Returns
     -------
-
     np.ndarray or (np.ndarray, np.ndarray)
         Repolarization slope of the waveforms or (Repolarization slope of the
         waveforms, return to base index)
@@ -325,8 +354,8 @@ def repolarization_slope(waveforms, sampling_frequency, return_idx=False):
 
     if not return_idx:
         return rslope
-    else:
-        return rslope, return_to_base_idx
+
+    return rslope, return_to_base_idx
 
 
 def recovery_slope(waveforms, sampling_frequency, window):
@@ -348,7 +377,6 @@ def recovery_slope(waveforms, sampling_frequency, window):
         rate at which the waveforms are sampled (Hz)
     window : float
         length after peak wherein to compute recovery slope (ms)
-
 
     Returns
     -------
@@ -379,20 +407,19 @@ def recovery_slope(waveforms, sampling_frequency, window):
 
 def peak_image(waveforms, sign="negative"):
     """
-    Normalized amplitude at the time of minimum or maximum peak.
+    Normalized amplitude at the time of peak minimum or maximum.
 
     Parameters
     ----------
     waveforms  : numpy.ndarray (num_waveforms x num_samples)
         waveforms to compute features for
     sign : str
-        "pos" | "neg"
+        "positive" | "negative"
 
     Returns
     -------
     np.ndarray
         Peak images for the waveforms
-
     """
     assert len(waveforms) > 1
 
@@ -419,8 +446,6 @@ def relative_amplitude(waveforms, sign="negative"):
     ----------
     waveforms  : numpy.ndarray (num_waveforms x num_samples)
         waveforms to compute features for
-    fs : float
-        Sampling rate in Hz
     sign : str
         "positive" | "negative"
 
@@ -428,7 +453,6 @@ def relative_amplitude(waveforms, sign="negative"):
     -------
     np.ndarray
         Relative amplitudes for the waveforms
-
     """
     assert len(waveforms) > 1
 
@@ -460,7 +484,6 @@ def peak_time_diff(waveforms, fs, sign="negative"):
     -------
     np.ndarray
         Peak time differences for the waveforms
-
     """
     assert len(waveforms) > 1
 
@@ -474,42 +497,6 @@ def peak_time_diff(waveforms, fs, sign="negative"):
     relative_peak_times = (argfun(waveforms, 1) - peak_time) / fs
 
     return relative_peak_times
-
-
-def _get_slope(x, y):
-    """
-    Retrun the slope of x and y data, using scipy.signal.linregress
-    """
-    from scipy.stats import linregress
-
-    slope = linregress(x, y)
-    return slope
-
-
-def _get_trough_and_peak_idx(waveform, after_max_trough=False):
-    """
-    Return the indices into the input waveforms of the detected troughs
-    (minimum of waveform) and peaks (maximum of waveform, after trough).
-
-    Assumes negative troughs and positive peaks
-
-    Returns 0 if not detected
-    """
-    if after_max_trough:
-        max_through_idx = np.unravel_index(
-            np.argmin(waveform),
-            waveform.shape)[1]
-        trough_idx = (
-            np.argmin(waveform[:, max_through_idx:], axis=1) + max_through_idx
-        )
-        peak_idx = (
-            np.argmax(waveform[:, max_through_idx:], axis=1) + max_through_idx
-        )
-    else:
-        trough_idx = np.argmin(waveform, axis=1)
-        peak_idx = np.argmax(waveform, axis=1)
-
-    return trough_idx, peak_idx
 
 
 def _upsample_wf(waveforms, upsample):

@@ -29,7 +29,6 @@ def test_peak_trough_ratio():
     """extrafeats: Test peak_trough_ratio"""
     ptratio = extrafeats.peak_trough_ratio(waveform)
     assert len(ptratio) == 1
-    print(ptratio)
     assert ptratio[0] == pytest.approx(0.53804035)
 
 

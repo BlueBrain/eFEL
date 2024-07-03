@@ -1428,7 +1428,8 @@ AP_begin_time
 AP_peak_upstroke
 ~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Maximum of rise rate of spike
+`SpikeShape`_ : Maximum of rise rate of spike.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
@@ -1442,7 +1443,8 @@ AP_peak_upstroke
 AP_peak_downstroke
 ~~~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Minimum of fall rate from spike
+`SpikeShape`_ : Minimum of fall rate from spike.
+This feature can used for AP phase analysis.
 
 - **Required features**: min_AHP_indices, peak_indices
 - **Units**: V/s
@@ -1494,7 +1496,8 @@ AP_fall_time
 AP_rise_rate
 ~~~~~~~~~~~~
 
-`SpikeShape`_ : Voltage change rate during the rising phase of the action potential
+`SpikeShape`_ : Voltage change rate during the rising phase of the action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
@@ -1507,7 +1510,8 @@ AP_rise_rate
 AP_fall_rate
 ~~~~~~~~~~~~
 
-`SpikeShape`_ : Voltage change rate during the falling phase of the action potential
+`SpikeShape`_ : Voltage change rate during the falling phase of the action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_end_indices, peak_indices
 - **Units**: V/s
@@ -1521,7 +1525,8 @@ AP_rise_rate_change
 ~~~~~~~~~~~~~~~~~~~
 
 `SpikeShape`_ : Difference of the rise rates of the second and the first action potential
-divided by the rise rate of the first action potential
+divided by the rise rate of the first action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_rise_rate_change
 - **Units**: constant
@@ -1533,13 +1538,44 @@ AP_fall_rate_change
 ~~~~~~~~~~~~~~~~~~~
 
 `SpikeShape`_ : Difference of the fall rates of the second and the first action potential
-divided by the fall rate of the first action potential
+divided by the fall rate of the first action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_fall_rate_change
 - **Units**: constant
 - **Pseudocode**: ::
 
     AP_fall_rate_change = (AP_fall_rate[1:] - AP_fall_rate[0]) / AP_fall_rate[0]
+
+AP_phaseslope
+~~~~~~~~~~~~~
+
+`SpikeShape`_ : Slope of the V, dVdt phasespace plot at the beginning of every spike
+(at the point where the derivative crosses the DerivativeThreshold).
+This feature can used for AP phase analysis.
+
+- **Required features**: AP_begin_indices
+- **Parameters**: AP_phaseslope_range (default=2)
+- **Units**: 1/(ms)
+- **Pseudocode**: ::
+
+    range_max_idxs = AP_begin_indices + AP_phseslope_range
+    range_min_idxs = AP_begin_indices - AP_phseslope_range
+    AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
+
+phaseslope_max
+~~~~~~~~~~~~~~
+
+`Python efeature`_ : Computes the maximum of the phase slope.
+Attention, this feature is sensitive to interpolation timestep.
+This feature can used for AP phase analysis.
+
+- **Required features**: time, voltage
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    phaseslope = numpy.diff(voltage) / numpy.diff(time)
+    phaseslope_max = numpy.array([numpy.max(phaseslope)])
 
 initburst_sahp
 ~~~~~~~~~~~~~~
@@ -2035,48 +2071,13 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
-Phase Analysis features
------------------------
-
-AP_phaseslope
-~~~~~~~~~~~~~
-
-`Phase efeature`_ : Slope of the V, dVdt phasespace plot at the beginning of every spike
-
-(at the point where the derivative crosses the DerivativeThreshold)
-
-- **Required features**: AP_begin_indices
-- **Parameters**: AP_phaseslope_range (default=2)
-- **Units**: 1/(ms)
-- **Pseudocode**: ::
-
-    range_max_idxs = AP_begin_indices + AP_phseslope_range
-    range_min_idxs = AP_begin_indices - AP_phseslope_range
-    AP_phaseslope = (dvdt[range_max_idxs] - dvdt[range_min_idxs]) / (v[range_max_idxs] - v[range_min_idxs])
-
-phaseslope_max
-~~~~~~~~~~~~~~
-
-`Phase efeature`_ : Computes the maximum of the phase slope.
-Attention, this feature is sensitive to interpolation timestep.
-
-- **Required features**: time, voltage
-- **Units**: V/s
-- **Pseudocode**: ::
-
-    phaseslope = numpy.diff(voltage) / numpy.diff(time)
-    phaseslope_max = numpy.array([numpy.max(phaseslope)])
-
-Also, check the following eFeatures: AP_fall_rate, AP_fall_rate_change
-, AP_peak_downstroke, AP_peak_upstroke, AP_rise_rate and AP_rise_rate_change.
-
 Extracellular features
 ----------------------
 
-Extracellular features can be calculated for data from a multielectrode (MEA) array.
-These feature were written by Alessio Buccino and are described in
+Extracellular features can be calculated for data from a microelectrode array (MEA).
+These features were written by Alessio Buccino and are described in
 `Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
-The feautures can either absolute, computed for each channel separately, or
+The feautures can be either absolute, computed for each channel separately, or
 relative, computed with respect to the channel with the largest extracellular
 signal amplitude:
 
@@ -2087,38 +2088,15 @@ peak_to_valley
 `Extracellular`_ (absolute): time in seconds between the negative and
 positive peaks.
 
-If the negative peaks precedes the positive one, the value of the feature is
+If the negative peak precedes the positive one, the value of the feature is
 positive. Conversely, when the positive peak precedes the negative one, the
-value is negative. It take an array of MEA recordings and the sampling
+value is negative. It takes an array of MEA recordings and the sampling
 frequency as input.
 
-- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), sampling_frequency (float, rate at which the waveforms are sampled (Hz))
+- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), sampling_frequency (float: rate at which the waveforms are sampled (Hz))
 - **Required features**: None
 - **Units**: s
 - **Pseudocode**: ::
-
-    def _get_trough_and_peak_idx(waveform, after_max_trough=False):
-    """
-    Return the indices into the input waveforms of the detected troughs
-    (minimum of waveform) and peaks (maximum of waveform, after trough).
-
-    Assumes negative troughs and positive peaks
-
-    Returns 0 if not detected
-    """
-    if after_max_trough:
-        max_through_idx = np.unravel_index(
-            np.argmin(waveform),
-            waveform.shape)[1]
-        trough_idx = (
-            np.argmin(waveform[:, max_through_idx:], axis=1) + max_through_idx
-        )
-        peak_idx = (
-            np.argmax(waveform[:, max_through_idx:], axis=1) + max_through_idx
-        )
-    else:
-        trough_idx = np.argmin(waveform, axis=1)
-        peak_idx = np.argmax(waveform, axis=1)
 
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
@@ -2128,13 +2106,13 @@ frequency as input.
 halfwidth
 ~~~~~~~~~
 
-`Extracellular`_  (absolute): time in seconds waveform width.
+`Extracellular`_  (absolute): waveform width in seconds.
 
 Width of waveform at half of its amplitude in seconds. If the positive peak
 precedes the negative one, the value is negative. This procedure helps to
 maximize the shape information carried by the feature value.
 
-- **Input**: None
+- **Input**: waveforms, sampling_frequency
 - **Required features**: None
 - **Units**: s
 - **Pseudocode**: ::
@@ -2157,10 +2135,10 @@ repolarization_slope
 `Extracellular`_  (absolute): dV/dT of the action potential between the
 negative peak and the baseline.
 
-After reaching its maximum depolarization, the neuronal potential will recover
-. The repolarization slope is defined as the dV/dT of the action potential
-between the negative peak and the baseline.Optionally the function returns
-also the indices per waveform where the potential crosses baseline.
+After reaching its maximum depolarization, the neuronal potential will recover.
+The repolarization slope is defined as the dV/dT of the action potential
+between the negative peak and the baseline. Optionally the function returns
+also the indices per waveform where the potential crosses the baseline.
 
 - **Input**: waveforms, sampling_frequency
 - **Required features**: None
@@ -2209,31 +2187,31 @@ until the signal peaks. The recovery slope is the slope of the action
 potential after the peak, returning to the baseline in dV/dT. The slope is
 computed within a user-defined window after the peak (default = 0.7 ms).
 
-- **Input**: waveforms, sampling_frequency, window (float, length after peak wherein to compute recovery slope (ms))
+- **Input**: waveforms, sampling_frequency, window (float: length after peak wherein to compute recovery slope (ms))
 - **Required features**: None
 - **Units**: V/s
 - **Pseudocode**: ::
 
     _, peak_idx = _get_trough_and_peak_idx(waveforms)
-        rslope = np.empty(waveforms.shape[0])
-        rslope[:] = np.nan
+    rslope = np.empty(waveforms.shape[0])
+    rslope[:] = np.nan
 
-        time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
+    time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
 
-        for i in range(waveforms.shape[0]):
-            if peak_idx[i] in [0, waveforms.shape[1]]:
-                continue
-            max_idx = int(peak_idx[i] + ((window / 1000) * sampling_frequency))
-            max_idx = np.min([max_idx, waveforms.shape[1]])
+    for i in range(waveforms.shape[0]):
+        if peak_idx[i] in [0, waveforms.shape[1]]:
+            continue
+        max_idx = int(peak_idx[i] + ((window / 1000) * sampling_frequency))
+        max_idx = np.min([max_idx, waveforms.shape[1]])
 
-            if len(time[peak_idx[i]:max_idx]) < 3:
-                continue
-            slope = _get_slope(
-                time[peak_idx[i]:max_idx], waveforms[i, peak_idx[i]:max_idx]
-            )
-            rslope[i] = slope[0]
+        if len(time[peak_idx[i]:max_idx]) < 3:
+            continue
+        slope = _get_slope(
+            time[peak_idx[i]:max_idx], waveforms[i, peak_idx[i]:max_idx]
+        )
+        rslope[i] = slope[0]
 
-        return rslope
+    return rslope
 
 
 neg_peak_relative
@@ -2371,5 +2349,4 @@ positive signal-amplitude value on the largest-amplitude channel.
 .. _Subthreshold: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/Subthreshold.cpp
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
-.. _Phase efeature:  https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
