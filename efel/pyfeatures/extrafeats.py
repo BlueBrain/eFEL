@@ -293,8 +293,8 @@ def halfwidth(waveforms, sampling_frequency, return_idx=False):
 
     if not return_idx:
         return hw
-    else:
-        return hw, cross_pre_pk, cross_post_pk
+
+    return hw, cross_pre_pk, cross_post_pk
 
 
 def repolarization_slope(waveforms, sampling_frequency, return_idx=False):
