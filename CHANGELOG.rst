@@ -9,9 +9,8 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 ----------------
 
 - Adding extracellular features: `"peak_to_valley", "halfwidth", "peak_trough_ratio", "repolarization_slope", "recovery_slope","neg_peak_relative", "pos_peak_relative", "neg_peak_diff", "pos_peak_diff", "neg_image"` and `"pos_image"`
-- Creating separate category for Phase Analysis features in the c++ code and documentation.
-- Moving doc of existing phase analysis features under this category: `"AP_phaseslope", "phaseslope_max"`.
-- Phase features which fall into two categories: `"AP_fall_rate", "AP_fall_rate_change", "AP_peak_downstroke", "AP_peak_upstroke", "AP_rise_rate"` and `"AP_rise_rate_change"`` are kept in the existing category and documentation.
+- Add example for extracellular features
+- Documentation update to mention features that can be used fo phase analysis: `"AP_phaseslope", "phaseslope_max"`, `"AP_fall_rate", "AP_fall_rate_change", "AP_peak_downstroke", "AP_peak_upstroke", "AP_rise_rate"` and `"AP_rise_rate_change"``
 
 5.6.29 - 2024-06
 ----------------
