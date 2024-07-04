@@ -1,4 +1,4 @@
-"""Extra features functions"""
+"""Extracellular features functions"""
 
 """
 Copyright (c) 2024, EPFL/Blue Brain Project
@@ -81,22 +81,19 @@ def calculate_features(
 ):
     """Calculate features for all waveforms
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sampling_frequency  : float
-        rate at which the waveforms are sampled (Hz)
-    feature_names : list or None (if None, compute all)
-        features to compute
-    recovery_slope_window : float
-        window length in ms after peak wherein recovery slope is computed
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sampling_frequency  : float
+            rate at which the waveforms are sampled (Hz)
+        feature_names : list or None (if None, compute all)
+            features to compute
+        recovery_slope_window : float
+            window length in ms after peak wherein recovery slope is computed
 
-    Returns
-    -------
-    metrics : dict  (num_waveforms x num_metrics)
-        Dictionary with computed metrics. Keys are the metric names, values
-            are the computed features
+    Returns:
+        dict (num_waveforms x num_metrics): Dictionary with computed metrics.
+            Keys are the metric names, values are the computed features
     """
     metrics = dict()
 
@@ -170,17 +167,14 @@ def peak_to_valley(waveforms, sampling_frequency):
     Time between trough and peak. If the peak precedes the trough,
     peak_to_valley is negative.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute feature for
-    sampling_frequency  : float
-        rate at which the waveforms are sampled (Hz)
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute feature for
+        sampling_frequency  : float
+            rate at which the waveforms are sampled (Hz)
 
-    Returns
-    -------
-    np.ndarray (num_waveforms)
-        peak_to_valley in seconds
+    Returns:
+        np.ndarray (num_waveforms): peak_to_valley in seconds
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
@@ -194,15 +188,12 @@ def peak_trough_ratio(waveforms):
 
     Assumes baseline is 0
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute feature for
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute feature for
 
-    Returns
-    -------
-    np.ndarray (num_waveforms)
-        Peak to trough ratio
+    Returns:
+        np.ndarray (num_waveforms): Peak to trough ratio
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     ptratio = np.empty(trough_idx.shape[0])
@@ -216,28 +207,30 @@ def peak_trough_ratio(waveforms):
     return ptratio
 
 
-def halfwidth(waveforms, sampling_frequency, return_idx=False):
+def halfwidth(
+    waveforms,
+    sampling_frequency,
+    return_idx=False
+):
     """
     Width of waveform at half of its amplitude.
     If the peak precedes the trough, halfwidth is negative.
 
     Computes the width of the waveform peak at half its height
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sampling_frequency  : float
-        rate at which the waveforms are sampled (Hz)
-    return_idx : bool
-        if true, also returns index of threshold crossing before and
-        index of threshold crossing after peak
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sampling_frequency  : float
+            rate at which the waveforms are sampled (Hz)
+        return_idx : bool
+            if true, also returns index of threshold crossing before and
+            index of threshold crossing after peak
 
-    Returns
-    -------
-    np.ndarray or (np.ndarray, np.ndarray, np.ndarray)
-        Halfwidth of the waveforms or (Halfwidth of the waveforms,
-        index_cross_pre_peak, index_cross_post_peak)
+    Returns:
+        np.ndarray or (np.ndarray, np.ndarray, np.ndarray):
+            Halfwidth of the waveforms or (Halfwidth of the waveforms,
+            index_cross_pre_peak, index_cross_post_peak)
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
     hw = np.empty(waveforms.shape[0])
@@ -297,7 +290,10 @@ def halfwidth(waveforms, sampling_frequency, return_idx=False):
     return hw, cross_pre_pk, cross_post_pk
 
 
-def repolarization_slope(waveforms, sampling_frequency, return_idx=False):
+def repolarization_slope(waveforms,
+                         sampling_frequency,
+                         return_idx=False
+                         ):
     """
     Return slope of repolarization period between trough and baseline
 
@@ -308,21 +304,18 @@ def repolarization_slope(waveforms, sampling_frequency, return_idx=False):
     Optionally the function returns also the indices per waveform where the
     potential crosses baseline.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sampling_frequency  : float
-        rate at which the waveforms are sampled (Hz)
-    return_idx : bool
-        if true, also returns index of threshold crossing before and
-        index of threshold crossing after peak
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sampling_frequency  : float
+            rate at which the waveforms are sampled (Hz)
+        return_idx : bool
+            if true, also returns index of threshold crossing before and
+            index of threshold crossing after peak
 
-    Returns
-    -------
-    np.ndarray or (np.ndarray, np.ndarray)
-        Repolarization slope of the waveforms or (Repolarization slope of the
-        waveforms, return to base index)
+    Returns:
+        np.ndarray or (np.ndarray, np.ndarray): Repolarization slope of the
+            waveforms or (Repolarization slope of the waveforms, return to base index)
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
 
@@ -369,19 +362,16 @@ def recovery_slope(waveforms, sampling_frequency, window):
     Takes a numpy array of waveforms and returns an array with
     recovery slopes per waveform.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sampling_frequency  : float
-        rate at which the waveforms are sampled (Hz)
-    window : float
-        length after peak wherein to compute recovery slope (ms)
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sampling_frequency  : float
+            rate at which the waveforms are sampled (Hz)
+        window : float
+            length after peak wherein to compute recovery slope (ms)
 
-    Returns
-    -------
-    np.ndarray
-        Recovery slope of the waveforms
+    Returns:
+        np.ndarray: Recovery slope of the waveforms
     """
     _, peak_idx = _get_trough_and_peak_idx(waveforms)
     rslope = np.empty(waveforms.shape[0])
@@ -409,17 +399,14 @@ def peak_image(waveforms, sign="negative"):
     """
     Normalized amplitude at the time of peak minimum or maximum.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sign : str
-        "positive" | "negative"
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sign : str
+            "positive" | "negative"
 
-    Returns
-    -------
-    np.ndarray
-        Peak images for the waveforms
+    Returns:
+        np.ndarray: Peak images for the waveforms
     """
     assert len(waveforms) > 1
 
@@ -442,17 +429,14 @@ def relative_amplitude(waveforms, sign="negative"):
     """
     Normalized amplitude with respect to channel with largest amplitude.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    sign : str
-        "positive" | "negative"
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        sign : str
+            "positive" | "negative"
 
-    Returns
-    -------
-    np.ndarray
-        Relative amplitudes for the waveforms
+    Returns:
+        np.ndarray: Relative amplitudes for the waveforms
     """
     assert len(waveforms) > 1
 
@@ -471,19 +455,16 @@ def peak_time_diff(waveforms, fs, sign="negative"):
     """
     Peak time differences with respect to channel with largest amplitude.
 
-    Parameters
-    ----------
-    waveforms  : numpy.ndarray (num_waveforms x num_samples)
-        waveforms to compute features for
-    fs : float
-        Sampling rate in Hz
-    sign : str
-        "positive" | "negative"
+    Args:
+        waveforms  : numpy.ndarray (num_waveforms x num_samples)
+            waveforms to compute features for
+        fs : float
+            Sampling rate in Hz
+        sign : str
+            "positive" | "negative"
 
-    Returns
-    -------
-    np.ndarray
-        Peak time differences for the waveforms
+    Returns:
+        np.ndarray: Peak time differences for the waveforms
     """
     assert len(waveforms) > 1
 
