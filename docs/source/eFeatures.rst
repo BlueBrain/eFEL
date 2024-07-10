@@ -208,7 +208,7 @@ ISI_log_slope_skip
 
 `ISI Python efeature`_ : The slope of a linear fit to a loglog plot of the ISI values, but not taking into account the first ISI values.
 
-The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1). 
+The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1).
 However, if this number of ISI values to skip is higher than max_spike_skip, then max_spike_skip is taken instead.
 
 - **Required features**: t, V, stim_start, stim_end, ISI_values
@@ -258,7 +258,7 @@ adaptation_index
 
 `SpikeEvent`_ : Normalized average difference of two consecutive ISIs, skipping the first ISIs
 
-The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1). 
+The proportion of ISI values to be skipped is given by spike_skipf (between 0 and 1).
 However, if this number of ISI values to skip is higher than max_spike_skip, then max_spike_skip is taken instead.
 
 The adaptation index is zero for a constant firing rate and bigger than zero for a decreasing firing rate
@@ -329,7 +329,7 @@ spike_count_stimint
 - **Units**: constant
 - **Pseudocode**: ::
 
-    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end)) 
+    peaktimes_stimint = numpy.where((peak_time >= stim_start) & (peak_time <= stim_end))
     spike_count_stimint = len(peaktimes_stimint)
 
 **Note**: "spike_count_stimint" is the new name for the feature "Spikecount_stimint".
@@ -564,7 +564,7 @@ interburst_voltage
 
 `ISI Python efeature`_ : The voltage average in between two bursts
 
-Iterating over the burst ISI indices determine the last peak before the burst. 
+Iterating over the burst ISI indices determine the last peak before the burst.
 Starting 5 ms after that peak take the voltage average until 5 ms before the first peak of the subsequent burst.
 
 - **Required features**: burst_ISI_indices, peak_indices
@@ -625,7 +625,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         if idx + 1 < len(peak_time)
     ]
 
-interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values 
+interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `SpikeEvent`_ : Voltage value after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
@@ -775,7 +775,7 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
             stop_i = stim_end_index
         else:
             stop_i = len(v) - 1
-        
+
         v_crop = v[peak_indices[i]:stop_i]
         # get where the voltage is going up
         crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
@@ -1124,7 +1124,7 @@ divided by the fast AHP of the first action potential
 AHP_depth_abs_slow
 ~~~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Absolute voltage values at the first after-hyperpolarization starting 
+`SpikeShape`_ : Absolute voltage values at the first after-hyperpolarization starting
 a given number of ms (default: 5) after the peak
 
 - **Required features**: peak_indices
@@ -1133,7 +1133,7 @@ a given number of ms (default: 5) after the peak
 AHP_depth_slow
 ~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Relative voltage values at the first after-hyperpolarization starting 
+`SpikeShape`_ : Relative voltage values at the first after-hyperpolarization starting
 a given number of ms (default: 5) after the peak
 
 - **Required features**: voltage_base (mV), AHP_depth_abs_slow (mV)
@@ -1146,7 +1146,7 @@ AHP_slow_time
 ~~~~~~~~~~~~~
 
 `SpikeShape`_ : Time difference between slow AHP (see AHP_depth_abs_slow) and peak, divided by
-interspike interval 
+interspike interval
 
 - **Required features**: AHP_depth_abs_slow
 - **Units**: constant
@@ -1316,7 +1316,7 @@ Can use strict_stiminterval to not use minimum after stimulus end.
 spike_half_width, AP1_width, AP2_width, APlast_width
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Width of spike at half spike amplitude, 
+`SpikeShape`_ : Width of spike at half spike amplitude,
 with the spike amplitude taken as the difference between the minimum between two peaks and the next peak
 
 - **Required features**: peak_indices, min_AHP_indices
@@ -1331,7 +1331,7 @@ with the spike amplitude taken as the difference between the minimum between two
         delta_v = v[rise_idx] - v[rise_idx - 1]
         delta_t = t[rise_idx] - t[rise_idx - 1]
         t_dev_rise = delta_t * v_dev / delta_v
-        
+
         fall_idx = numpy.where(v[peak_indices[i-1]:min_AHP_indices[i]] < v_half_width)[0]
         v_dev = v_half_width - v[fall_idx]
         delta_v = v[fall_idx] - v[fall_idx - 1]
@@ -1364,7 +1364,7 @@ the minimum between two peaks and the next peak
         delta_v = v[rise_idx] - v[rise_idx - 1]
         delta_t = t[rise_idx] - t[rise_idx - 1]
         t_dev_rise = delta_t * v_dev / delta_v
-        
+
         fall_idx = numpy.where(v[peak_indices[i + 1]:] < v_half_width)[0]
         v_dev = v_half_width - v[fall_idx]
         delta_v = v[fall_idx] - v[fall_idx - 1]
@@ -1428,7 +1428,8 @@ AP_begin_time
 AP_peak_upstroke
 ~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Maximum of rise rate of spike
+`SpikeShape`_ : Maximum of rise rate of spike.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
@@ -1442,7 +1443,8 @@ AP_peak_upstroke
 AP_peak_downstroke
 ~~~~~~~~~~~~~~~~~~
 
-`SpikeShape`_ : Minimum of fall rate from spike
+`SpikeShape`_ : Minimum of fall rate from spike.
+This feature can used for AP phase analysis.
 
 - **Required features**: min_AHP_indices, peak_indices
 - **Units**: V/s
@@ -1494,7 +1496,8 @@ AP_fall_time
 AP_rise_rate
 ~~~~~~~~~~~~
 
-`SpikeShape`_ : Voltage change rate during the rising phase of the action potential
+`SpikeShape`_ : Voltage change rate during the rising phase of the action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_begin_indices, peak_indices
 - **Units**: V/s
@@ -1507,7 +1510,8 @@ AP_rise_rate
 AP_fall_rate
 ~~~~~~~~~~~~
 
-`SpikeShape`_ : Voltage change rate during the falling phase of the action potential
+`SpikeShape`_ : Voltage change rate during the falling phase of the action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_end_indices, peak_indices
 - **Units**: V/s
@@ -1521,7 +1525,8 @@ AP_rise_rate_change
 ~~~~~~~~~~~~~~~~~~~
 
 `SpikeShape`_ : Difference of the rise rates of the second and the first action potential
-divided by the rise rate of the first action potential
+divided by the rise rate of the first action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_rise_rate_change
 - **Units**: constant
@@ -1533,7 +1538,8 @@ AP_fall_rate_change
 ~~~~~~~~~~~~~~~~~~~
 
 `SpikeShape`_ : Difference of the fall rates of the second and the first action potential
-divided by the fall rate of the first action potential
+divided by the fall rate of the first action potential.
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_fall_rate_change
 - **Units**: constant
@@ -1545,8 +1551,8 @@ AP_phaseslope
 ~~~~~~~~~~~~~
 
 `SpikeShape`_ : Slope of the V, dVdt phasespace plot at the beginning of every spike
-
-(at the point where the derivative crosses the DerivativeThreshold)
+(at the point where the derivative crosses the DerivativeThreshold).
+This feature can used for AP phase analysis.
 
 - **Required features**: AP_begin_indices
 - **Parameters**: AP_phaseslope_range (default=2)
@@ -1562,6 +1568,7 @@ phaseslope_max
 
 `Python efeature`_ : Computes the maximum of the phase slope.
 Attention, this feature is sensitive to interpolation timestep.
+This feature can used for AP phase analysis.
 
 - **Required features**: time, voltage
 - **Units**: V/s
@@ -1579,7 +1586,7 @@ The end of the initial burst is detected when the ISIs frequency gets lower than
 Then the sahp is searched for the interval between initburst_sahp_start (in ms) after the last spike of the burst,
 and initburst_sahp_end (in ms) after the last spike of the burst.
 
-- **Required features**: peak_time 
+- **Required features**: peak_time
 - **Parameters**: initburst_freq_threshold (default=50), initburst_sahp_start (default=5), initburst_sahp_end (default=100)
 - **Units**: mV
 
@@ -1857,7 +1864,7 @@ sag_amplitude
 `Subthreshold`_ : The difference between the minimal voltage and the steady state at stimend
 
 - **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, minimum_voltage, voltage_deflection_stim_ssse
-- **Parameters**: 
+- **Parameters**:
 - **Units**: mV
 - **Pseudocode**: ::
 
@@ -1873,7 +1880,7 @@ sag_ratio1
 `Subthreshold`_ : The ratio between the sag amplitude and the maximal sag extend from voltage base
 
 - **Required features**: t, V, stim_start, stim_end, sag_amplitude, voltage_base, minimum_voltage
-- **Parameters**: 
+- **Parameters**:
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -1888,7 +1895,7 @@ sag_ratio2
 `Subthreshold`_ : The ratio between the maximal extends of sag from steady state and voltage base
 
 - **Required features**: t, V, stim_start, stim_end, steady_state_voltage_stimend, voltage_base, minimum_voltage
-- **Parameters**: 
+- **Parameters**:
 - **Units**: constant
 - **Pseudocode**: ::
 
@@ -1938,7 +1945,7 @@ the average voltage during the last 10% of the stimulus duration.
 
 voltage_deflection
 ~~~~~~~~~~~~~~~~~~
-    
+
 `Subthreshold`_ : The voltage deflection between voltage base and steady-state voltage at stimend
 
 The voltage base used is the average voltage during all of the time before the stimulus
@@ -1957,7 +1964,7 @@ before the end of the stimulus duration.
 
 voltage_deflection_begin
 ~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
 `Subthreshold`_ : The voltage deflection between voltage base and steady-state voltage soon after stimulation start
 
 The voltage base used is the average voltage during all of the time before the stimulus
@@ -1977,7 +1984,7 @@ the average voltage taken from 5% to 15% of the stimulus duration.
 
 voltage_after_stim
 ~~~~~~~~~~~~~~~~~~
-    
+
 `Subthreshold`_ : The mean voltage after the stimulus in
 (stim_end + 25%*end_period, stim_end + 75%*end_period)
 
@@ -2064,10 +2071,282 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+Extracellular features
+----------------------
 
+Extracellular features can be calculated for data from a microelectrode array (MEA).
+These features were written by Alessio Buccino and are described in
+`Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
+The feautures can be either absolute, computed for each channel separately, or
+relative, computed with respect to the channel with the largest extracellular
+signal amplitude:
+
+
+peak_to_valley
+~~~~~~~~~~~~~~
+
+`Extracellular`_ (absolute): time in seconds between the negative and
+positive peaks.
+
+If the negative peak precedes the positive one, the value of the feature is
+positive. Conversely, when the positive peak precedes the negative one, the
+value is negative. It takes an array of MEA recordings and the sampling
+frequency as input.
+
+- **Input**: waveforms(numpy.ndarray (num_waveforms x num_samples)), sampling_frequency (float: rate at which the waveforms are sampled (Hz))
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+    ptv = (peak_idx - trough_idx) * (1 / sampling_frequency)
+    ptv[ptv == 0] = np.nan
+
+
+halfwidth
+~~~~~~~~~
+
+`Extracellular`_  (absolute): waveform width in seconds.
+
+Width of waveform at half of its amplitude in seconds. If the positive peak
+precedes the negative one, the value is negative. This procedure helps to
+maximize the shape information carried by the feature value.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+    ptratio = np.empty(trough_idx.shape[0])
+    ptratio[:] = np.nan
+    for i in range(waveforms.shape[0]):
+        if peak_idx[i] == 0 and trough_idx[i] == 0:
+            continue
+        ptratio[i] = np.abs(waveforms[i, peak_idx[i]] /
+                            waveforms[i, trough_idx[i]])
+
+    return ptratio
+
+
+repolarization_slope
+~~~~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (absolute): dV/dT of the action potential between the
+negative peak and the baseline.
+
+After reaching its maximum depolarization, the neuronal potential will recover.
+The repolarization slope is defined as the dV/dT of the action potential
+between the negative peak and the baseline. Optionally the function returns
+also the indices per waveform where the potential crosses the baseline.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
+
+    rslope = np.empty(waveforms.shape[0])
+    rslope[:] = np.nan
+    return_to_base_idx = np.empty(waveforms.shape[0], dtype=np.int_)
+    return_to_base_idx[:] = 0
+
+    time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
+    for i in range(waveforms.shape[0]):
+        if trough_idx[i] == 0:
+            continue
+
+        rtrn_idx = np.where(waveforms[i, trough_idx[i]:] >= 0)[0]
+        if len(rtrn_idx) == 0:
+            continue
+
+        return_to_base_idx[i] = (
+            rtrn_idx[0] + trough_idx[i]
+        )  # first time after  trough, where waveform is at baseline
+
+        if return_to_base_idx[i] - trough_idx[i] < 3:
+            continue
+        slope = _get_slope(
+            time[trough_idx[i]:return_to_base_idx[i]],
+            waveforms[i, trough_idx[i]:return_to_base_idx[i]]
+        )
+        rslope[i] = slope[0]
+
+    if not return_idx:
+        return rslope
+    else:
+        return rslope, return_to_base_idx
+
+
+recovery_slope
+~~~~~~~~~~~~~~
+
+`Extracellular`_  (absolute): After depolarization, the neuron repolarizes
+until the signal peaks. The recovery slope is the slope of the action
+potential after the peak, returning to the baseline in dV/dT. The slope is
+computed within a user-defined window after the peak (default = 0.7 ms).
+
+- **Input**: waveforms, sampling_frequency, window (float: length after peak wherein to compute recovery slope (ms))
+- **Required features**: None
+- **Units**: V/s
+- **Pseudocode**: ::
+
+    _, peak_idx = _get_trough_and_peak_idx(waveforms)
+    rslope = np.empty(waveforms.shape[0])
+    rslope[:] = np.nan
+
+    time = np.arange(0, waveforms.shape[1]) * (1 / sampling_frequency)  # in s
+
+    for i in range(waveforms.shape[0]):
+        if peak_idx[i] in [0, waveforms.shape[1]]:
+            continue
+        max_idx = int(peak_idx[i] + ((window / 1000) * sampling_frequency))
+        max_idx = np.min([max_idx, waveforms.shape[1]])
+
+        if len(time[peak_idx[i]:max_idx]) < 3:
+            continue
+        slope = _get_slope(
+            time[peak_idx[i]:max_idx], waveforms[i, peak_idx[i]:max_idx]
+        )
+        rslope[i] = slope[0]
+
+    return rslope
+
+
+neg_peak_relative
+~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The relative amplitude of the negative peak
+with respect to the negative signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 1.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fun = np.min
+    peak_amp = np.abs(fun(waveforms))
+    relative_peaks = np.abs(fun(waveforms, 1)) / peak_amp
+
+    return relative_peaks
+
+
+pos_peak_relative
+~~~~~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The relative amplitude of the positive signal
+peak with respect to the positive signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 1.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    fun = np.max
+    peak_amp = np.abs(fun(waveforms))
+    relative_peaks = np.abs(fun(waveforms, 1)) / peak_amp
+
+    return relative_peaks
+
+
+neg_peak_diff
+~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The time difference between the negative signal
+peak with respect to the negative signal peak of the channel with the largest
+amplitude. For the largest-amplitude channel, this feature has a value of 0.
+Note that values can also be negative if the respective negative signal peak
+occurs earlier than the negative signal peak on the largest-amplitude channel.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    argfun = np.argmin
+
+    peak_chan = np.unravel_index(argfun(waveforms), waveforms.shape)[0]
+    peak_time = argfun(waveforms[peak_chan])
+    relative_peak_times = (argfun(waveforms, 1) - peak_time) / fs
+
+    return relative_peak_times
+
+
+pos_peak_diff
+~~~~~~~~~~~~~
+
+`Extracellular`_  (relative): The time difference between the positive peak
+with respect to the occurrence of the positive peak of the channel with the
+largest amplitude. For the largest-amplitude channel, this feature has a value
+of 0. Note that values can also be negative if the respective positive signal
+peak occurs earlier than the positive signal peak on the largest-amplitude
+channel.
+
+- **Input**: waveforms, sampling_frequency
+- **Required features**: None
+- **Units**: s
+- **Pseudocode**: ::
+
+    argfun = np.argmax
+
+    peak_chan = np.unravel_index(argfun(waveforms), waveforms.shape)[0]
+    peak_time = argfun(waveforms[peak_chan])
+    relative_peak_times = (argfun(waveforms, 1) - peak_time) / fs
+
+    return relative_peak_times
+
+
+neg_image
+~~~~~~~~~
+
+`Extracellular`_  (relative): Voltage values at the time of the negative signal
+peak on the largest-amplitude channel. The values are normalized by the
+negative signal-amplitude value on the largest-amplitude channel.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    funarg = np.argmin
+    fun = np.min
+
+    peak_channel, peak_time = np.unravel_index(
+        funarg(waveforms), waveforms.shape
+    )
+    relative_peaks = waveforms[:, peak_time] / fun(waveforms[peak_channel])
+
+    return relative_peaks
+
+
+pos_image
+~~~~~~~~~
+
+`Extracellular`_  (relative): The voltage values at the time of the positive
+signal peak on the largest-amplitude channel. The values are normalized by the
+positive signal-amplitude value on the largest-amplitude channel.
+
+- **Input**: waveforms
+- **Required features**: None
+- **Units**: constant
+- **Pseudocode**: ::
+
+    funarg = np.argmax
+    fun = np.max
+
+    peak_channel, peak_time = np.unravel_index(
+        funarg(waveforms), waveforms.shape
+    )
+    relative_peaks = waveforms[:, peak_time] / fun(waveforms[peak_channel])
+
+    return relative_peaks
 
 .. _SpikeEvent: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeEvent.cpp
 .. _SpikeShape: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/SpikeShape.cpp
 .. _Subthreshold: https://github.com/BlueBrain/eFEL/blob/master/efel/cppcore/Subthreshold.cpp
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
+.. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
