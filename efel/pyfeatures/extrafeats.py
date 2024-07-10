@@ -20,6 +20,8 @@ Copyright (c) 2024, EPFL/Blue Brain Project
 """
 
 import numpy as np
+from scipy.stats import linregress
+from scipy.signal import resample_poly
 
 all_1D_features = [
     "peak_to_valley",
@@ -40,7 +42,6 @@ def _get_slope(x, y):
     """
     Return the slope of x and y data, using scipy.signal.linregress
     """
-    from scipy.stats import linregress
 
     slope = linregress(x, y)
     return slope
@@ -56,14 +57,14 @@ def _get_trough_and_peak_idx(waveform, after_max_trough=False):
     Returns 0 if not detected
     """
     if after_max_trough:
-        max_through_idx = np.unravel_index(
+        max_trough_idx = np.unravel_index(
             np.argmin(waveform),
             waveform.shape)[1]
         trough_idx = (
-            np.argmin(waveform[:, max_through_idx:], axis=1) + max_through_idx
+            np.argmin(waveform[:, max_trough_idx:], axis=1) + max_trough_idx
         )
         peak_idx = (
-            np.argmax(waveform[:, max_through_idx:], axis=1) + max_through_idx
+            np.argmax(waveform[:, max_trough_idx:], axis=1) + max_trough_idx
         )
     else:
         trough_idx = np.argmin(waveform, axis=1)
@@ -315,7 +316,8 @@ def repolarization_slope(waveforms,
 
     Returns:
         np.ndarray or (np.ndarray, np.ndarray): Repolarization slope of the
-            waveforms or (Repolarization slope of the waveforms, return to base index)
+            waveforms or (Repolarization slope of the waveforms, return to base
+            index)
     """
     trough_idx, peak_idx = _get_trough_and_peak_idx(waveforms)
 
@@ -481,7 +483,6 @@ def peak_time_diff(waveforms, fs, sign="negative"):
 
 
 def _upsample_wf(waveforms, upsample):
-    from scipy.signal import resample_poly
 
     ndim = len(waveforms.shape)
     waveforms_up = resample_poly(waveforms, up=upsample, down=1, axis=ndim - 1)
