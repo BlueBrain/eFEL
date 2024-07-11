@@ -14,6 +14,13 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 - fixed current interpolation
 - fixed stim_end value in impedance test data file
 
+5.7.0 - 2024-07
+----------------
+
+- Adding extracellular features: `"peak_to_valley", "halfwidth", "peak_trough_ratio", "repolarization_slope", "recovery_slope","neg_peak_relative", "pos_peak_relative", "neg_peak_diff", "pos_peak_diff", "neg_image"` and `"pos_image"`
+- Add example for extracellular features
+- Documentation update to mention features that can be used fo phase analysis: `"AP_phaseslope", "phaseslope_max"`, `"AP_fall_rate", "AP_fall_rate_change", "AP_peak_downstroke", "AP_peak_upstroke", "AP_rise_rate"` and `"AP_rise_rate_change"``
+
 5.6.29 - 2024-06
 ----------------
 

@@ -145,5 +145,16 @@
     "interburst_40percent_values": "mV",
     "interburst_60percent_values": "mV",
     "interburst_duration": "ms",
-    "phaseslope_max": "V/s"
+    "phaseslope_max": "V/s",
+    "peak_to_valley": "s",
+    "halfwidth": "s",
+    "peak_trough_ratio": "constant",
+    "repolarization_slope": "V/s",
+    "recovery_slope": "V/s",
+    "neg_peak_relative": "constant",
+    "pos_peak_relative": "constant",
+    "neg_peak_diff": "s",
+    "pos_peak_diff": "s",
+    "neg_image": "constant",
+    "pos_image": "constant"
 }
