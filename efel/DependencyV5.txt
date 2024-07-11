@@ -90,6 +90,7 @@ BasicFeatures:voltage #BasicFeatures:interpolate
 BasicFeatures:current #BasicFeatures:interpolate 
 BasicFeatures:time #BasicFeatures:interpolate 
 Subthreshold:steady_state_voltage_stimend #BasicFeatures:interpolate 
+Subthreshold:steady_state_current_stimend #BasicFeatures:interpolate 
 Subthreshold:voltage_base #BasicFeatures:interpolate
 Subthreshold:current_base #BasicFeatures:interpolate
 Subthreshold:decay_time_constant_after_stim #BasicFeatures:interpolate 

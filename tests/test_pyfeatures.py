@@ -87,7 +87,7 @@ traces_data = {
         'v_col': 2,
         'i_col': 3,
         'stim_start': 100.0,
-        'stim_end': 51000.0}
+        'stim_end': 5100.0}
 }
 
 

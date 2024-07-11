@@ -195,6 +195,7 @@ int FillFptrTable() {
 
   //******************  FptrTableST *****************************
   FptrTableST["steady_state_voltage_stimend"] = &Subthreshold::steady_state_voltage_stimend;
+  FptrTableST["steady_state_current_stimend"] = &Subthreshold::steady_state_current_stimend;
   FptrTableST["steady_state_hyper"] = &Subthreshold::steady_state_hyper;
   FptrTableST["steady_state_voltage"] = &Subthreshold::steady_state_voltage;
   FptrTableST["voltage_base"] = &Subthreshold::voltage_base;
