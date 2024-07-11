@@ -62,12 +62,12 @@ int Subthreshold::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   size_t start_index = distance(times.begin(), start_it);
   size_t stop_index = distance(times.begin(), stop_it);
 
-  double mean = accumulate(voltages.begin() + start_index,
-                           voltages.begin() + stop_index, 0.0);
   size_t mean_size = stop_index - start_index;
 
   vector<double> ssv;
   if (mean_size > 0) {
+    double mean = accumulate(voltages.begin() + start_index,
+                             voltages.begin() + stop_index, 0.0);
     mean /= mean_size;
     ssv.push_back(mean);
     setVec(DoubleFeatureData, StringData, "steady_state_voltage_stimend", ssv);
@@ -96,12 +96,12 @@ int Subthreshold::steady_state_current_stimend(mapStr2intVec& IntFeatureData,
   size_t start_index = distance(times.begin(), start_it);
   size_t stop_index = distance(times.begin(), stop_it);
 
-  double mean = accumulate(currents.begin() + start_index,
-                           currents.begin() + stop_index, 0.0);
   size_t mean_size = stop_index - start_index;
 
   vector<double> ssc;
   if (mean_size > 0) {
+    double mean = accumulate(currents.begin() + start_index,
+                             currents.begin() + stop_index, 0.0);
     mean /= mean_size;
     ssc.push_back(mean);
     setVec(DoubleFeatureData, StringData, "steady_state_current_stimend", ssc);
