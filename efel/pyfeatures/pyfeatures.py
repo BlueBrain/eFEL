@@ -149,6 +149,7 @@ def impedance():
     # for case when stimulus starts at t=0, use steady_state_voltage_stimend as proxy
     if holding_voltage is None:
         holding_voltage = get_cpp_feature("steady_state_voltage_stimend")
+        print(holding_voltage)
     normalized_voltage = voltage_trace - holding_voltage
     current_trace = current()
     if current_trace is not None:

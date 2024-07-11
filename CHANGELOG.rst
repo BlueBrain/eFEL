@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+5.7.1 - 2024-07
+---------------
+
+- When stimulus starts at 0 for impedance (which can happen often), use test_steady_state_voltage_stimend to get holding voltage, and equivalent for holding current.
+  Since at the end of the stimulus, we expect the current and voltage to vary rapidly around the holding value, this is a good enough proxy to get it.
+- implemented test_steady_state_current_stimend, along with documentation and test
+- fixed current interpolation
+- fixed stim_end value in impedance test data file
+
 5.6.29 - 2024-06
 ----------------
 

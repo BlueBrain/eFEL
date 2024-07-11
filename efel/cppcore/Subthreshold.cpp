@@ -80,8 +80,6 @@ int Subthreshold::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
 int Subthreshold::steady_state_current_stimend(mapStr2intVec& IntFeatureData,
                                         mapStr2doubleVec& DoubleFeatureData,
                                         mapStr2Str& StringData) {
-  // setVec(DoubleFeatureData, StringData, "steady_state_current_stimend", [0.0]);
-  // return 1;
   const auto& doubleFeatures =
       getFeatures(DoubleFeatureData, {"I", "T", "stim_end", "stim_start"});
 
