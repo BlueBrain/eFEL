@@ -62,6 +62,7 @@ spiking_from_beginning_to_end_url = (
     / 'spiking_from_beginning_to_end.txt'
 )
 spontaneous_url = testdata_dir / 'basic' / 'spontaneous.txt'
+impedance_url = testdata_dir / 'basic' / 'impedance.txt'
 
 testdata_url = testdata_dir / 'allfeatures' / 'testdata.txt'
 
@@ -1801,6 +1802,34 @@ def test_steady_state_voltage_stimend():
     numpy.testing.assert_allclose(
         steady_state_voltage_stimend,
         feature_values['steady_state_voltage_stimend'][0]
+    )
+
+
+def test_steady_state_current_stimend():
+    """basic: Test steady_state_current_stimend"""
+
+    import efel
+    efel.reset()
+
+    trace = {
+        'stim_start': [100.0],
+        'stim_end': [5100.0]
+    }
+    data = numpy.loadtxt(impedance_url)
+    trace['T'] = data[:, 0]
+    trace['V'] = data[:, 1]
+    trace['I'] = data[:, 2]
+
+    features = ['steady_state_current_stimend']
+
+    feature_values = \
+        get_feature_values(
+            [trace],
+            features)[0]
+
+    numpy.testing.assert_allclose(
+        -1.44246348e-10,
+        feature_values['steady_state_current_stimend'][0]
     )
 
 

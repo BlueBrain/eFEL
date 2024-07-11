@@ -176,6 +176,7 @@ void cFeature::fillfeaturetypes() {
   featuretypes["current"] = "double";
   featuretypes["time"] = "double";
   featuretypes["steady_state_voltage_stimend"] = "double";
+  featuretypes["steady_state_current_stimend"] = "double";
   featuretypes["voltage_base"] = "double";
   featuretypes["current_base"] = "double";
   featuretypes["decay_time_constant_after_stim"] = "double";

@@ -44,7 +44,7 @@ int BasicFeatures::interpolate(mapStr2intVec& IntFeatureData,
     I = getFeature(DoubleFeatureData, "I");
     LinearInterpolation(InterpStep, T, I, TIntrpolI, IIntrpol);
     setVec(DoubleFeatureData, StringData, "I", IIntrpol);
-    setVec(DoubleFeatureData, StringData, "T", TIntrpol);
+    setVec(DoubleFeatureData, StringData, "T", TIntrpolI);
   } catch (...) {
   }  // pass, it is optional
   return 1;

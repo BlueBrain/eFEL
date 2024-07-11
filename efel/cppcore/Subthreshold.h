@@ -28,6 +28,9 @@ namespace Subthreshold {
 int steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
                                  mapStr2doubleVec& DoubleFeatureData,
                                  mapStr2Str& StringData);
+int steady_state_current_stimend(mapStr2intVec& IntFeatureData,
+                                 mapStr2doubleVec& DoubleFeatureData,
+                                 mapStr2Str& StringData);
 int steady_state_hyper(mapStr2intVec& IntFeatureData,
                        mapStr2doubleVec& DoubleFeatureData,
                        mapStr2Str& StringData);

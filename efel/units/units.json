@@ -109,6 +109,7 @@
     "steady_state_hyper": "mV",
     "steady_state_voltage": "mV",
     "steady_state_voltage_stimend": "mV",
+    "steady_state_current_stimend": "nA",
     "strict_burst_mean_freq": "Hz",
     "strict_burst_number": "constant",
     "strict_interburst_voltage": "mV",

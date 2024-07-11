@@ -1632,6 +1632,20 @@ steady_state_voltage_stimend
     end_time = stim_end
     steady_state_voltage_stimend = numpy.mean(voltage[numpy.where((t < end_time) & (t >= begin_time))])
 
+steady_state_current_stimend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Subthreshold`_ : The average current during the last 10% of the stimulus duration.
+
+- **Required features**: t, I, stim_start, stim_end
+- **Units**: nA
+- **Pseudocode**: ::
+
+    stim_duration = stim_end - stim_start
+    begin_time = stim_end - 0.1 * stim_duration
+    end_time = stim_end
+    steady_state_current_stimend = numpy.mean(current[numpy.where((t < end_time) & (t >= begin_time))])
+
 steady_state_hyper
 ~~~~~~~~~~~~~~~~~~
 

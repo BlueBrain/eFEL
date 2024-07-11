@@ -104,7 +104,7 @@ def get_allfeature_values():
         for x in all_featurenames
         if x
         not in db_featurenames
-        + ["current", "current_base", "impedance"]
+        + ["current", "current_base", "impedance", "steady_state_current_stimend"]
     ]
 
     with warnings.catch_warnings():

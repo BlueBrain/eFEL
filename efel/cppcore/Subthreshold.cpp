@@ -62,15 +62,49 @@ int Subthreshold::steady_state_voltage_stimend(mapStr2intVec& IntFeatureData,
   size_t start_index = distance(times.begin(), start_it);
   size_t stop_index = distance(times.begin(), stop_it);
 
-  double mean = accumulate(voltages.begin() + start_index,
-                           voltages.begin() + stop_index, 0.0);
   size_t mean_size = stop_index - start_index;
 
   vector<double> ssv;
   if (mean_size > 0) {
+    double mean = accumulate(voltages.begin() + start_index,
+                             voltages.begin() + stop_index, 0.0);
     mean /= mean_size;
     ssv.push_back(mean);
     setVec(DoubleFeatureData, StringData, "steady_state_voltage_stimend", ssv);
+    return 1;
+  }
+  return -1;
+}
+
+// *** The average voltage during the last 90% of the stimulus duration. ***
+int Subthreshold::steady_state_current_stimend(mapStr2intVec& IntFeatureData,
+                                        mapStr2doubleVec& DoubleFeatureData,
+                                        mapStr2Str& StringData) {
+  const auto& doubleFeatures =
+      getFeatures(DoubleFeatureData, {"I", "T", "stim_end", "stim_start"});
+
+  const vector<double>& currents = doubleFeatures.at("I");
+  const vector<double>& times = doubleFeatures.at("T");
+  const double stimStart = doubleFeatures.at("stim_start")[0];
+  const double stimEnd = doubleFeatures.at("stim_end")[0];
+
+  double start_time = stimEnd - 0.1 * (stimEnd - stimStart);
+  auto start_it = find_if(times.begin(), times.end(),
+                          [start_time](double x) { return x >= start_time; });
+  auto stop_it = find_if(times.begin(), times.end(),
+                         [stimEnd](double x) { return x >= stimEnd; });
+  size_t start_index = distance(times.begin(), start_it);
+  size_t stop_index = distance(times.begin(), stop_it);
+
+  size_t mean_size = stop_index - start_index;
+
+  vector<double> ssc;
+  if (mean_size > 0) {
+    double mean = accumulate(currents.begin() + start_index,
+                             currents.begin() + stop_index, 0.0);
+    mean /= mean_size;
+    ssc.push_back(mean);
+    setVec(DoubleFeatureData, StringData, "steady_state_current_stimend", ssc);
     return 1;
   }
   return -1;
