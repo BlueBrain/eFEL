@@ -145,18 +145,17 @@ def impedance():
     Z_max_freq = _get_cpp_data("impedance_max_freq")
     voltage_trace = get_cpp_feature("voltage")
     holding_voltage = get_cpp_feature("voltage_base")
-    # for case when stimulus starts at t=0, use steady_state_voltage_stimend as proxy
+    # when stimulus starts at t=0, use steady_state_voltage_stimend as proxy
     if holding_voltage is None:
         holding_voltage = get_cpp_feature("steady_state_voltage_stimend")
-        print(holding_voltage)
-    normalized_voltage = voltage_trace - holding_voltage
+    normalized_voltage = voltage_trace - holding_voltage[0]
     current_trace = current()
     if current_trace is not None:
         holding_current = get_cpp_feature("current_base")
-         # for case when stimulus starts at t=0, use steady_state_current_stimend as proxy
+        # when stimulus starts at t=0, use steady_state_current_stimend as proxy
         if holding_current is None:
             holding_current = get_cpp_feature("steady_state_current_stimend")
-        normalized_current = current_trace - holding_current
+        normalized_current = current_trace - holding_current[0]
         n_spikes = spike_count()
         if n_spikes < 1:  # if there is no spikes in ZAP
             fft_volt = np.fft.fft(normalized_voltage)
