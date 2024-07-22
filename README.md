@@ -53,7 +53,7 @@
     <td>Citation</td>
     <td>
         <a href="https://doi.org/10.5281/zenodo.593869">
-        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.8146607.svg" alt="DOI"/>
+        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.593869.svg" alt="DOI"/>
     </a>
     </td>
 </tr>
@@ -76,31 +76,11 @@ At the moment we provide a way to automatically compile and install the library
 as a Python module. Instructions on how to compile the eFEL as a standalone C++
 library can be found [here](http://efel.readthedocs.io/en/latest/installation.html#installing-the-c-standalone-library).
 
+How to cite
+===========
+If you use this repository in your work, please refer to the "Cite this repository" button at the top of the repository page to get various citation formats, including APA and BibTeX.
 
-Citation
-========
-
-When you use this eFEL software for your research, we ask you to cite the following publications (this includes poster presentations):
-
-```
-    @article{efel,
-        title={eFEL},
-        DOI={10.5281/zenodo.593869},
-        url={https://doi.org/10.5281/zenodo.593869}
-        abstractNote={The Electrophys Feature Extraction Library (eFEL) allows neuroscientists to automatically extract features from time series data recorded from neurons (both in vitro and in silico). Examples are the action potential width and amplitude in voltage traces recorded during whole-cell patch clamp experiments. The user of the library provides a set of traces and selects the features to be calculated. The library will then extract the requested features and return the values to the user.},
-        publisher={Zenodo},
-        author={Ranjan, Rajnish and
-                Van Geit, Werner and
-                Moor, Ruben and
-                Rössert, Christian and
-                Riquelme, Juan Luis and
-                Damart, Tanguy and
-                Jaquier, Aurélien and
-                Tuncel, Anil},
-        year={2023},
-        month={Jul}
-    }
-```
+For detailed citation information, please refer to the `CITATION.cff <./CITATION.cff>`_ file.
 
 Requirements
 ============
