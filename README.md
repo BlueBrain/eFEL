@@ -78,9 +78,9 @@ library can be found [here](http://efel.readthedocs.io/en/latest/installation.ht
 
 How to cite
 ===========
-If you use this repository in your work, please refer to the "Cite this repository" button at the top of the repository page to get various citation formats, including APA and BibTeX.
+When you use this eFEL software for your research, we ask you to cite it (this includes poster presentations) by referring to the "Cite this repository" button at the top of the repository page to get various citation formats, including APA and BibTeX.
 
-For detailed citation information, please refer to the `CITATION.cff <./CITATION.cff>`_ file.
+For detailed citation information, please refer to the [CITATION.cff](./CITATION.cff) file.
 
 Requirements
 ============
