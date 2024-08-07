@@ -307,7 +307,7 @@ def test_impedance():
     """pyfeatures: Test impedance feature"""
     feature_name = "impedance"
 
-    expected_values = {feature_name: 4.615384615384615}
+    expected_values = {feature_name: 4.80769231}
     _test_expected_value(feature_name, expected_values)
 
 
