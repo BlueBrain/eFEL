@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+5.6.7 - 2024-08
+---------------
+
+- Fixed impedance feature (frequency index was inconsistent with smooth Z)
+
 5.7.1 - 2024-07
 ---------------
 
