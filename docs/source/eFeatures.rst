@@ -1710,7 +1710,7 @@ time_constant
 The extraction of the time constant requires a voltage trace of a cell in a hyper- polarized state.
 Starting at stim start find the beginning of the exponential decay where the first derivative of V(t) is smaller than -0.005 V/s in 5 subsequent points.
 The flat subsequent to the exponential decay is defined as the point where the first derivative of the voltage trace is bigger than -0.005
-and the mean of the follwowing 70 points as well.
+and the mean of the follwowing 70 ms as well.
 If the voltage trace between the beginning of the decay and the flat includes more than 9 points, fit an exponential decay.
 Yield the time constant of that decay.
 
@@ -1802,16 +1802,19 @@ decay_time_constant_after_stim
 - **Units**: ms
 - **Pseudocode**: ::
 
-    time_interval = t[numpy.where(t => decay_start_after_stim &
-                       t < decay_end_after_stim)] - t[numpy.where(t == stim_end)]
-    voltage_interval = abs(voltages[numpy.where(t => decay_start_after_stim &
-                                    t < decay_end_after_stim)]
-                           - voltages[numpy.where(t == decay_start_after_stim)])
+    interval_indices = numpy.where(
+        (time >= interval_start) & (time < interval_end))
+    stim_start_index = get_index(time, stim_start)
+    interval_time = time[interval_indices] - stim_end
+    interval_voltage = abs(
+        voltage[interval_indices] -
+        voltage[stim_start_index])
 
-    log_voltage_interval = numpy.log(voltage_interval)
-    slope, _ = numpy.polyfit(time_interval, log_voltage_interval, 1)
+    # fit
+    log_interval_voltage = numpy.log(interval_voltage)
+    slope, _ = numpy.polyfit(interval_time, log_interval_voltage, 1)
 
-    decay_time_constant_after_stim = -1. / slope
+    tau = -1. / slope
 
 multiple_decay_time_constant_after_stim
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

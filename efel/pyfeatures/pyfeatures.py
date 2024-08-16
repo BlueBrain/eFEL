@@ -71,7 +71,10 @@ all_pyfeatures = [
     'inv_third_ISI',
     'inv_fourth_ISI',
     'inv_fifth_ISI',
-    'inv_last_ISI'
+    'inv_last_ISI',
+    'activation_time_constant',
+    'deactivation_time_constant',
+    'inactivation_time_constant',
 ]
 
 
@@ -352,3 +355,136 @@ def phaseslope_max() -> np.ndarray | None:
         return np.array([np.max(phaseslope)])
     except ValueError:
         return None
+
+
+def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
+    """Exponential function used in exponential fitting.
+    
+    Args:
+        t (ndarray or float): time series
+        tau (float): time constant
+        A0 (float): constant added to the exponential
+        A1 (float): constant multiplying the exponential
+    """
+    return A0 + A1 * np.exp(-t / tau)
+
+
+def activation_time_constant() -> np.ndarray | None:
+    """Time constant for an ion channel activation trace.
+    Fits for stim_start to trace maximum interval as A - B * exp(-t/tau)."""
+    from scipy.optimize import curve_fit, OptimizeWarning
+
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+
+    # isolate stimulus interval
+    stim_start_idx = np.flatnonzero(time >= stim_start)[0]
+    stim_end_idx = np.flatnonzero(time >= stim_end)[0]
+    time_interval = time[stim_start_idx:stim_end_idx]
+    voltage_interval = voltage[stim_start_idx:stim_end_idx]
+
+    # keep trace going from stim_start to voltage max
+    max_idx = np.argmax(voltage_interval)
+    time_interval = time_interval[:max_idx + 1]
+    voltage_interval = voltage_interval[:max_idx + 1]
+
+    # correct time so that it starts from 0
+    time_interval -= time_interval[0]
+
+    # fit
+    try:
+        popt, _ = curve_fit(
+            exp_fit,
+            time_interval,
+            voltage_interval,
+            p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
+            bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),  # positive tau, negative A1
+            nan_policy="omit",
+        )
+    except (ValueError, RuntimeError, OptimizeWarning):
+        return None
+
+    return np.array([abs(popt[0])])
+
+
+def deactivation_time_constant() -> np.ndarray | None:
+    """Time constant for an ion channel deactivation trace.
+    Fits for stim_start to stim_end as A + B * exp(-t/tau)."""
+    from scipy.optimize import curve_fit, OptimizeWarning
+
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+
+    # isolate stimulus interval
+    interval_indices = np.where((time >= stim_start) & (time < stim_end))
+    time_interval = time[interval_indices]
+    voltage_interval = voltage[interval_indices]
+
+    # correct time so that it starts from 0
+    time_interval -= time_interval[0]
+
+    # fit
+    try:
+        popt, _ = curve_fit(
+            exp_fit,
+            time_interval,
+            voltage_interval,
+            # p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
+            # bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+            # nan_policy="omit",
+        )
+    except (ValueError, RuntimeError, OptimizeWarning):
+        return None
+
+    return np.array([abs(popt[0])])
+
+
+def inactivation_time_constant() -> np.ndarray | None:
+    """Time constant for an ion channel inactivation trace.
+    Fits for trace maximum to stim end interval as A + B * exp(-t/tau)."""
+    from scipy.optimize import curve_fit, OptimizeWarning
+
+    # add this as a setting
+    # -> used to remove end of trace to remove artifacts due to stimulus change
+    shift = 10
+
+    stim_start = _get_cpp_data("stim_start")
+    stim_end = _get_cpp_data("stim_end")
+    voltage = get_cpp_feature("voltage")
+    time = get_cpp_feature("time")
+
+    # isolate stimulus interval
+    stim_start_idx = np.flatnonzero(time >= stim_start)[0]
+    stim_end_idx = np.flatnonzero(time >= stim_end)[0]
+    time_interval = time[stim_start_idx:stim_end_idx - shift]
+    voltage_interval = voltage[stim_start_idx:stim_end_idx - shift]
+
+    # keep trace going from voltage max to stim end
+    # remove end of trace to remove artifacts due to stimulus change
+    max_idx = np.argmax(voltage_interval)
+    time_interval = time_interval[max_idx:]
+    voltage_interval = voltage_interval[max_idx:]
+
+    # correct time so that it starts from 0
+    if time_interval.size < 1:
+        return None
+    time_interval -= time_interval[0]
+
+    # fit
+    try:
+        popt, _ = curve_fit(
+            exp_fit,
+            time_interval,
+            voltage_interval,
+            p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
+            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, negative A1
+            nan_policy="omit",
+        )
+    except (ValueError, RuntimeError, OptimizeWarning):
+        return None
+
+    return np.array([abs(popt[0])])
