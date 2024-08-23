@@ -132,7 +132,7 @@ def _load_trace(trace_name):
 
 def _load_voltage_clamp_traces(exp_type, repetition_name="repetition1"):
     """Load the voltage clamp traces from nwb file.
-    
+
     Args:
         exp_type (str): type of the experiment. Can be
             'Activation', 'Deactivation' or 'Inactivation'.
@@ -164,7 +164,7 @@ def _load_voltage_clamp_traces(exp_type, repetition_name="repetition1"):
     traces = []
     for idx in range(len(data[repetition_name]["dt"])):
         trace = {}
-        i = data[repetition_name]["current"][:,idx]
+        i = data[repetition_name]["current"][:, idx]
         t = numpy.arange(i.size) * data[repetition_name]["dt"][idx]
         # efel expects ms: s -> ms
         t = t * 1000.0
@@ -175,6 +175,7 @@ def _load_voltage_clamp_traces(exp_type, repetition_name="repetition1"):
         traces.append(trace)
 
     return traces
+
 
 def _test_expected_value(feature_name, expected_values):
     """Test expected values for feature"""
@@ -420,7 +421,7 @@ def test_deactivation_time_constant():
     deact_tau = [feat_dict["deactivation_time_constant"][0] for feat_dict in feats]
     deact_tau_ref = [
         1., 18.428159, 17.22834973, 27.27256786, 39.47847711,
-        49.2782552, 65.81509027, 71.9253926,  81.54669955, 107.68102719,
+        49.2782552, 65.81509027, 71.9253926, 81.54669955, 107.68102719,
         134.8814237, 120.34484955
     ]
     numpy.testing.assert_allclose(deact_tau, deact_tau_ref)

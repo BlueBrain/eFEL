@@ -359,7 +359,7 @@ def phaseslope_max() -> np.ndarray | None:
 
 def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
     """Exponential function used in exponential fitting.
-    
+
     Args:
         t (ndarray or float): time series
         tau (float): time constant
@@ -400,7 +400,8 @@ def activation_time_constant() -> np.ndarray | None:
             time_interval,
             voltage_interval,
             p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
-            bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),  # positive tau, negative A1
+            # positive tau, negative A1
+            bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),
             nan_policy="omit",
         )
     except (ValueError, RuntimeError, OptimizeWarning):
@@ -433,7 +434,11 @@ def deactivation_time_constant() -> np.ndarray | None:
             exp_fit,
             time_interval,
             voltage_interval,
-            p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
+            p0=(
+                1., voltage_interval[-1], max(
+                    0, voltage_interval[0] - voltage_interval[-1]
+                )
+            ),
             bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
             nan_policy="omit",
         )

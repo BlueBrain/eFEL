@@ -178,7 +178,8 @@ def test_allfeatures_on_constant_voltage():
         "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
         "Spikecount_stimint", "burst_number", "strict_burst_number", "trace_check",
         "spike_count", "spike_count_stimint", "phaseslope_max",
-        "activation_time_constant", "deactivation_time_constant", "inactivation_time_constant"
+        "activation_time_constant", "deactivation_time_constant",
+        "inactivation_time_constant"
     ]
 
     for field in array_fields:
