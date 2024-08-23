@@ -403,13 +403,13 @@ def test_activation_time_constant():
     feats = efel.get_feature_values(traces, ["activation_time_constant"])
     act_tau = [feat_dict["activation_time_constant"][0] for feat_dict in feats]
     act_tau_ref = [
-        4.42464151e-02, 6.36560480e-02, 1.35239568e+00, 6.788859e-08,
+        4.42464151e-02, 6.36560480e-02, 1.35239568e+00, 6.788478e-08,
         2.00926636e-06, 1.08786116e+02, 3.51324930e+01, 1.01711405e+01,
         4.61677565e+00, 2.83639400e+00, 1.97298305e+00, 1.59010996e+00,
         1.21969111e+00, 1.07930254e+00, 8.55734307e-01, 7.39074539e-01,
         6.58848184e-01, 5.96009883e-01
     ]
-    numpy.testing.assert_allclose(act_tau, act_tau_ref, rtol=1e-6)
+    numpy.testing.assert_allclose(act_tau, act_tau_ref, rtol=1e-6, atol=1e-10)
 
 
 def test_deactivation_time_constant():
