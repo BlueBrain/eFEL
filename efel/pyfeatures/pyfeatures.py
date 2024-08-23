@@ -379,6 +379,9 @@ def activation_time_constant() -> np.ndarray | None:
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
 
+    if voltage is None or time is None:
+        return None
+
     # isolate stimulus interval
     stim_start_idx = np.flatnonzero(time >= stim_start)[0]
     stim_end_idx = np.flatnonzero(time >= stim_end)[0]
@@ -420,6 +423,9 @@ def deactivation_time_constant() -> np.ndarray | None:
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
 
+    if voltage is None or time is None:
+        return None
+
     # isolate stimulus interval
     interval_indices = np.where((time >= stim_start) & (time < stim_end))
     time_interval = time[interval_indices]
@@ -459,6 +465,9 @@ def inactivation_time_constant() -> np.ndarray | None:
     time = get_cpp_feature("time")
     # used to remove end of trace to remove artifacts due to stimulus change
     end_skip = _get_cpp_data("inactivation_tc_end_skip")
+
+    if voltage is None or time is None:
+        return None
 
     # isolate stimulus interval
     stim_start_idx = np.flatnonzero(time >= stim_start)[0]

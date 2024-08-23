@@ -148,7 +148,7 @@ def test_allfeatures():
                 and np.allclose(feature_value, expected_value)
 
         if not equal:
-            print("Difference in feature %s: value=%s expected=%s" %
+            warnings.warn("Difference in feature %s: value=%s expected=%s" %
                   (feature_name, feature_value, expected_value))
             failed_feature = True
 
