@@ -129,6 +129,10 @@ def test_allfeatures():
     # drop Spikecount and Spikecount_stimint deprecated features
     feature_values.pop('Spikecount')
     feature_values.pop('Spikecount_stimint')
+    # remove features that expects voltage clamp trace
+    feature_values.pop('activation_time_constant')
+    feature_values.pop('deactivation_time_constant')
+    feature_values.pop('inactivation_time_constant')
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
@@ -148,7 +152,7 @@ def test_allfeatures():
                 and np.allclose(feature_value, expected_value)
 
         if not equal:
-            warnings.warn("Difference in feature %s: value=%s expected=%s" %
+            print("Difference in feature %s: value=%s expected=%s" %
                   (feature_name, feature_value, expected_value))
             failed_feature = True
 
