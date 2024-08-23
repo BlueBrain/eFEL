@@ -156,5 +156,8 @@
     "neg_peak_diff": "s",
     "pos_peak_diff": "s",
     "neg_image": "constant",
-    "pos_image": "constant"
+    "pos_image": "constant",
+    "activation_time_constant": "ms",
+    "deactivation_time_constant": "ms",
+    "inactivation_time_constant": "ms"
 }

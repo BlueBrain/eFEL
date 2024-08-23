@@ -2088,6 +2088,126 @@ with impedance_max_freq being a setting with 50.0 as a default value.
     else:
         return None
 
+activation_time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Time constant for an ion channel activation trace.
+Fits for stim_start to trace maximum interval as A - B * exp(-t/tau).
+
+Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+See voltage clamp example for more details.
+
+- **Required features**: time, voltage, stim_start, stim_end
+- **Units**: ms
+- **Pseudocode**: ::
+
+    def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
+        return A0 + A1 * np.exp(-t / tau)
+
+    # isolate stimulus interval
+    stim_start_idx = np.flatnonzero(time >= stim_start)[0]
+    stim_end_idx = np.flatnonzero(time >= stim_end)[0]
+    time_interval = time[stim_start_idx:stim_end_idx]
+    voltage_interval = voltage[stim_start_idx:stim_end_idx]
+
+    # keep trace going from stim_start to voltage max
+    max_idx = np.argmax(voltage_interval)
+    time_interval = time_interval[:max_idx + 1]
+    voltage_interval = voltage_interval[:max_idx + 1]
+
+    # correct time so that it starts from 0
+    time_interval -= time_interval[0]
+
+    # fit
+    popt, _ = curve_fit(
+        exp_fit,
+        time_interval,
+        voltage_interval,
+        p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
+        bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),  # positive tau, negative A1
+        nan_policy="omit",
+    )
+    time_constant =  np.array([abs(popt[0])])
+
+deactivation_time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Time constant for an ion channel deactivation trace.
+Fits for stim_start to stim_end as A + B * exp(-t/tau).
+
+Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+See voltage clamp example for more details.
+
+- **Required features**: time, voltage, stim_start, stim_end
+- **Units**: ms
+- **Pseudocode**: ::
+
+    def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
+        return A0 + A1 * np.exp(-t / tau)
+
+    # isolate stimulus interval
+    interval_indices = np.where((time >= stim_start) & (time < stim_end))
+    time_interval = time[interval_indices]
+    voltage_interval = voltage[interval_indices]
+
+    # correct time so that it starts from 0
+    time_interval -= time_interval[0]
+
+    # fit
+    popt, _ = curve_fit(
+        exp_fit,
+        time_interval,
+        voltage_interval,
+        p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
+        bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+        nan_policy="omit",
+    )
+    time_constant =  np.array([abs(popt[0])])
+
+inactivation_time_constant
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Python efeature`_ : Time constant for an ion channel inactivation trace.
+Fits for trace maximum to stim end interval as A + B * exp(-t/tau).
+Depends on inactivation_tc_end_skip setting, which removes a given number of data points at the end of the trace,
+right before stim_end. This is useful to remove artifacts that would bias the fit. Default is 10 data points.
+
+Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+See voltage clamp example for more details.
+
+- **Required features**: time, voltage, stim_start, stim_end, inactivation_tc_end_skip (default = 10)
+- **Units**: ms
+- **Pseudocode**: ::
+
+    def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
+        return A0 + A1 * np.exp(-t / tau)
+
+    # isolate stimulus interval
+    stim_start_idx = np.flatnonzero(time >= stim_start)[0]
+    stim_end_idx = np.flatnonzero(time >= stim_end)[0]
+    time_interval = time[stim_start_idx:stim_end_idx - end_skip]
+    voltage_interval = voltage[stim_start_idx:stim_end_idx - end_skip]
+
+    # keep trace going from voltage max to stim end
+    # remove end of trace to remove artifacts due to stimulus change
+    max_idx = np.argmax(voltage_interval)
+    time_interval = time_interval[max_idx:]
+    voltage_interval = voltage_interval[max_idx:]
+
+    # correct time so that it starts from 0
+    time_interval -= time_interval[0]
+
+    # fit
+    popt, _ = curve_fit(
+        exp_fit,
+        time_interval,
+        voltage_interval,
+        p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
+        bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+        nan_policy="omit",
+    )
+    time_constant = np.array([abs(popt[0])])
+
 Extracellular features
 ----------------------
 

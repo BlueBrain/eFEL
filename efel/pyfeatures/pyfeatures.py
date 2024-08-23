@@ -433,9 +433,9 @@ def deactivation_time_constant() -> np.ndarray | None:
             exp_fit,
             time_interval,
             voltage_interval,
-            # p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
-            # bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
-            # nan_policy="omit",
+            p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
+            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+            nan_policy="omit",
         )
     except (ValueError, RuntimeError, OptimizeWarning):
         return None
@@ -448,20 +448,18 @@ def inactivation_time_constant() -> np.ndarray | None:
     Fits for trace maximum to stim end interval as A + B * exp(-t/tau)."""
     from scipy.optimize import curve_fit, OptimizeWarning
 
-    # add this as a setting
-    # -> used to remove end of trace to remove artifacts due to stimulus change
-    shift = 10
-
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
     voltage = get_cpp_feature("voltage")
     time = get_cpp_feature("time")
+    # used to remove end of trace to remove artifacts due to stimulus change
+    end_skip = _get_cpp_data("inactivation_tc_end_skip")
 
     # isolate stimulus interval
     stim_start_idx = np.flatnonzero(time >= stim_start)[0]
     stim_end_idx = np.flatnonzero(time >= stim_end)[0]
-    time_interval = time[stim_start_idx:stim_end_idx - shift]
-    voltage_interval = voltage[stim_start_idx:stim_end_idx - shift]
+    time_interval = time[stim_start_idx:stim_end_idx - end_skip]
+    voltage_interval = voltage[stim_start_idx:stim_end_idx - end_skip]
 
     # keep trace going from voltage max to stim end
     # remove end of trace to remove artifacts due to stimulus change
@@ -481,7 +479,7 @@ def inactivation_time_constant() -> np.ndarray | None:
             time_interval,
             voltage_interval,
             p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
-            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, negative A1
+            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
             nan_policy="omit",
         )
     except (ValueError, RuntimeError, OptimizeWarning):
