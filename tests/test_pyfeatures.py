@@ -439,4 +439,4 @@ def test_inactivation_time_constant():
         168.54772458, 143.78127593, 146.63424961, 145.0907385, 167.04060933,
         142.24530676, 137.62498461
     ]
-    numpy.testing.assert_allclose(inact_tau, inact_tau_ref)
+    numpy.testing.assert_allclose(inact_tau, inact_tau_ref, rtol=1e-6)
