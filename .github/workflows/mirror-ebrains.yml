@@ -13,12 +13,12 @@ jobs:
         with:
           source_repo: "BlueBrain/eFEL"
           source_branch: "master"
-          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/BlueBrain/efel.git"
+          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN_2024 }}@gitlab.ebrains.eu/BlueBrain/efel.git"
           destination_branch: "master"
       - name: synctags
         uses: wei/git-sync@v3
         with:
           source_repo: "BlueBrain/eFEL"
           source_branch: "refs/tags/*"
-          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/BlueBrain/efel.git"
+          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN_2024 }}@gitlab.ebrains.eu/BlueBrain/efel.git"
           destination_branch: "refs/tags/*"
