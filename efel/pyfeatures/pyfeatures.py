@@ -372,7 +372,7 @@ def exp_fit(t, tau, A0, A1) -> np.ndarray | float:
 def activation_time_constant() -> np.ndarray | None:
     """Time constant for an ion channel activation trace.
     Fits for stim_start to trace maximum interval as A - B * exp(-t/tau)."""
-    from scipy.optimize import curve_fit, OptimizeWarning
+    from scipy.optimize import curve_fit
 
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
@@ -404,10 +404,10 @@ def activation_time_constant() -> np.ndarray | None:
             voltage_interval,
             p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
             # positive tau, negative A1
-            bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),
+            bounds=((0, -np.inf, -np.inf), (np.inf, np.inf, 0)),
             nan_policy="omit",
         )
-    except (ValueError, RuntimeError, OptimizeWarning):
+    except (ValueError, RuntimeError):
         return None
 
     return np.array([abs(popt[0])])
@@ -416,7 +416,7 @@ def activation_time_constant() -> np.ndarray | None:
 def deactivation_time_constant() -> np.ndarray | None:
     """Time constant for an ion channel deactivation trace.
     Fits for stim_start to stim_end as A + B * exp(-t/tau)."""
-    from scipy.optimize import curve_fit, OptimizeWarning
+    from scipy.optimize import curve_fit
 
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
@@ -445,10 +445,10 @@ def deactivation_time_constant() -> np.ndarray | None:
                     0, voltage_interval[0] - voltage_interval[-1]
                 )
             ),
-            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+            bounds=((0, -np.inf, 0), np.inf),  # positive tau, positive A1
             nan_policy="omit",
         )
-    except (ValueError, RuntimeError, OptimizeWarning):
+    except (ValueError, RuntimeError):
         return None
 
     return np.array([abs(popt[0])])
@@ -457,7 +457,7 @@ def deactivation_time_constant() -> np.ndarray | None:
 def inactivation_time_constant() -> np.ndarray | None:
     """Time constant for an ion channel inactivation trace.
     Fits for trace maximum to stim end interval as A + B * exp(-t/tau)."""
-    from scipy.optimize import curve_fit, OptimizeWarning
+    from scipy.optimize import curve_fit
 
     stim_start = _get_cpp_data("stim_start")
     stim_end = _get_cpp_data("stim_end")
@@ -493,10 +493,10 @@ def inactivation_time_constant() -> np.ndarray | None:
             time_interval,
             voltage_interval,
             p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
-            bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+            bounds=((0, -np.inf, 0), np.inf),  # positive tau, positive A1
             nan_policy="omit",
         )
-    except (ValueError, RuntimeError, OptimizeWarning):
+    except (ValueError, RuntimeError):
         return None
 
     return np.array([abs(popt[0])])

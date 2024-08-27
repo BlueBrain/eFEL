@@ -2094,7 +2094,7 @@ activation_time_constant
 `Python efeature`_ : Time constant for an ion channel activation trace.
 Fits for stim_start to trace maximum interval as A - B * exp(-t/tau).
 
-Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+**Attention!** For *voltage clamp* data, user should pass the current response as voltage to efel.
 See voltage clamp example for more details.
 
 - **Required features**: time, voltage, stim_start, stim_end
@@ -2124,7 +2124,7 @@ See voltage clamp example for more details.
         time_interval,
         voltage_interval,
         p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
-        bounds=(((0, -np.inf, -np.inf), (np.inf, np.inf, 0))),  # positive tau, negative A1
+        bounds=((0, -np.inf, -np.inf), (np.inf, np.inf, 0)),  # positive tau, negative A1
         nan_policy="omit",
     )
     time_constant =  np.array([abs(popt[0])])
@@ -2135,7 +2135,7 @@ deactivation_time_constant
 `Python efeature`_ : Time constant for an ion channel deactivation trace.
 Fits for stim_start to stim_end as A + B * exp(-t/tau).
 
-Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+**Attention!** For *voltage clamp* data, user should pass the current response as voltage to efel.
 See voltage clamp example for more details.
 
 - **Required features**: time, voltage, stim_start, stim_end
@@ -2159,7 +2159,7 @@ See voltage clamp example for more details.
         time_interval,
         voltage_interval,
         p0=(1., voltage_interval[-1], max(0, voltage_interval[0] - voltage_interval[-1])),
-        bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+        bounds=((0, -np.inf, 0), np.inf),  # positive tau, positive A1
         nan_policy="omit",
     )
     time_constant =  np.array([abs(popt[0])])
@@ -2172,7 +2172,7 @@ Fits for trace maximum to stim end interval as A + B * exp(-t/tau).
 Depends on inactivation_tc_end_skip setting, which removes a given number of data points at the end of the trace,
 right before stim_end. This is useful to remove artifacts that would bias the fit. Default is 10 data points.
 
-Attention! For voltage clamp data, user should pass the current response as voltage to efel.
+**Attention!** For *voltage clamp* data, user should pass the current response as voltage to efel.
 See voltage clamp example for more details.
 
 - **Required features**: time, voltage, stim_start, stim_end, inactivation_tc_end_skip (default = 10)
@@ -2203,7 +2203,7 @@ See voltage clamp example for more details.
         time_interval,
         voltage_interval,
         p0=(1., voltage_interval[-1], voltage_interval[0] - voltage_interval[-1]),
-        bounds=(((0, -np.inf, 0), np.inf)),  # positive tau, positive A1
+        bounds=((0, -np.inf, 0), np.inf),  # positive tau, positive A1
         nan_policy="omit",
     )
     time_constant = np.array([abs(popt[0])])
