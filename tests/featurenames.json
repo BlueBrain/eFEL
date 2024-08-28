@@ -173,5 +173,8 @@
     "interburst_60percent_values",
     "interburst_duration",
     "AHP_depth_slow",
-    "phaseslope_max"
+    "phaseslope_max",
+    "activation_time_constant",
+    "deactivation_time_constant",
+    "inactivation_time_constant"
 ]

@@ -65,6 +65,8 @@ class Settings:
         sahp_start (float): SAHP start (default: 5.0).
         ignore_first_ISI (bool): Ignore first ISI (default: True).
         impedance_max_freq (float): Impedance maximum frequency (default: 50.0).
+        inactivation_tc_end_skip (int): number of data points to skip before
+            stim end for inactivation_time_constant feature
     """
 
     Threshold: float = -20.0
@@ -99,6 +101,7 @@ class Settings:
     ignore_first_ISI: bool = True
     impedance_max_freq: float = 50.0
     AP_phaseslope_range: int = 2
+    inactivation_tc_end_skip: int = 10
 
     def set_setting(self,
                     setting_name: str,

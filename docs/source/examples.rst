@@ -11,3 +11,4 @@ Examples
    nmc-portal
    sonata-network
    extrafeats_example
+   voltage_clamp

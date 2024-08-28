@@ -129,6 +129,10 @@ def test_allfeatures():
     # drop Spikecount and Spikecount_stimint deprecated features
     feature_values.pop('Spikecount')
     feature_values.pop('Spikecount_stimint')
+    # remove features that expects voltage clamp trace
+    feature_values.pop('activation_time_constant')
+    feature_values.pop('deactivation_time_constant')
+    feature_values.pop('inactivation_time_constant')
     test_data_path = os.path.join(testdata_dir, 'expectedresults.json')
     with open(test_data_path, 'r') as expected_json:
         expected_results = json.load(expected_json)
@@ -177,7 +181,9 @@ def test_allfeatures_on_constant_voltage():
         "voltage_deflection", "voltage_deflection_begin", "voltage_deflection_vb_ssse",
         "depol_block", "depol_block_bool", "voltage_base", "Spikecount",
         "Spikecount_stimint", "burst_number", "strict_burst_number", "trace_check",
-        "spike_count", "spike_count_stimint", "phaseslope_max"
+        "spike_count", "spike_count_stimint", "phaseslope_max",
+        "activation_time_constant", "deactivation_time_constant",
+        "inactivation_time_constant"
     ]
 
     for field in array_fields:

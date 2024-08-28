@@ -162,6 +162,7 @@ def test_str_method():
         "sahp_start: 5.0\n"
         "ignore_first_ISI: True\n"
         "impedance_max_freq: 50.0\n"
-        "AP_phaseslope_range: 2"
+        "AP_phaseslope_range: 2\n"
+        "inactivation_tc_end_skip: 10"
     )
     assert str(settings) == expected_output

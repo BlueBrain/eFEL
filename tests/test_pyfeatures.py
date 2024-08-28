@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
+import h5py
 from pathlib import Path
 import numpy
 
@@ -87,7 +88,16 @@ traces_data = {
         'v_col': 2,
         'i_col': 3,
         'stim_start': 100.0,
-        'stim_end': 5100.0}
+        'stim_end': 5100.0},
+    'voltage_clamp': {
+        'url': testdata_dir / 'basic' / 'rCell9430.nwb',
+        'act_stim_start': 99.5,
+        'act_stim_end': 600.0,
+        'deact_stim_start': 401.0,
+        'deact_stim_end': 599.0,
+        'inact_stim_start': 100.0,
+        'inact_stim_end': 1600.0
+    }
 }
 
 
@@ -118,6 +128,53 @@ def _load_trace(trace_name):
         trace['T'], trace['V'] = load_ascii_input(url)
 
     return trace
+
+
+def _load_voltage_clamp_traces(exp_type, repetition_name="repetition1"):
+    """Load the voltage clamp traces from nwb file.
+
+    Args:
+        exp_type (str): type of the experiment. Can be
+            'Activation', 'Deactivation' or 'Inactivation'.
+    """
+    trace_data = traces_data["voltage_clamp"]
+    url = trace_data['url']
+    if exp_type == "Activation":
+        stim_start = trace_data["act_stim_start"]
+        stim_end = trace_data["act_stim_end"]
+    elif exp_type == "Deactivation":
+        stim_start = trace_data["deact_stim_start"]
+        stim_end = trace_data["deact_stim_end"]
+    elif exp_type == "Inactivation":
+        stim_start = trace_data["inact_stim_start"]
+        stim_end = trace_data["inact_stim_end"]
+    else:
+        raise ValueError(
+            "exp_type should be 'Activation', 'Deactivation' or 'Inactivation'"
+            f", got {exp_type}"
+        )
+    data = {}
+    with h5py.File(url, "r") as content:
+        reps = content["acquisition"]["timeseries"][exp_type]["repetitions"]
+        for rep_name, rep in reps.items():
+            data[rep_name] = {
+                "dt": numpy.array(rep["x_interval"], dtype="float32"),
+                "current": numpy.array(rep["data"], dtype="float32"),
+            }
+    traces = []
+    for idx in range(len(data[repetition_name]["dt"])):
+        trace = {}
+        i = data[repetition_name]["current"][:, idx]
+        t = numpy.arange(i.size) * data[repetition_name]["dt"][idx]
+        # efel expects ms: s -> ms
+        t = t * 1000.0
+        trace["T"] = t
+        trace["V"] = i  # trick: input current as if it was voltage
+        trace["stim_start"] = [stim_start]
+        trace["stim_end"] = [stim_end]
+        traces.append(trace)
+
+    return traces
 
 
 def _test_expected_value(feature_name, expected_values):
@@ -336,3 +393,50 @@ def test_phaseslope_max():
         "depol_block_db": 180.7325033,
     }
     _test_expected_value("phaseslope_max", expected_values)
+
+
+def test_activation_time_constant():
+    """Unit test for activation_time_constant."""
+    efel.reset()
+
+    traces = _load_voltage_clamp_traces("Activation")
+    feats = efel.get_feature_values(traces, ["activation_time_constant"])
+    act_tau = [feat_dict["activation_time_constant"][0] for feat_dict in feats]
+    act_tau_ref = [
+        4.42464151e-02, 6.36560480e-02, 1.35239568e+00, 6.788478e-08,
+        2.00926636e-06, 1.08786116e+02, 3.51324930e+01, 1.01711405e+01,
+        4.61677565e+00, 2.83639400e+00, 1.97298305e+00, 1.59010996e+00,
+        1.21969111e+00, 1.07930254e+00, 8.55734307e-01, 7.39074539e-01,
+        6.58848184e-01, 5.96009883e-01
+    ]
+    numpy.testing.assert_allclose(act_tau, act_tau_ref, rtol=1e-6, atol=1e-10)
+
+
+def test_deactivation_time_constant():
+    """Unit test for deactivation_time_constant."""
+    efel.reset()
+
+    traces = _load_voltage_clamp_traces("Deactivation")
+    feats = efel.get_feature_values(traces, ["deactivation_time_constant"])
+    deact_tau = [feat_dict["deactivation_time_constant"][0] for feat_dict in feats]
+    deact_tau_ref = [
+        1., 18.428159, 17.22834973, 27.27256786, 39.47847711,
+        49.2782552, 65.81509027, 71.9253926, 81.54669955, 107.68102719,
+        134.8814237, 120.34484955
+    ]
+    numpy.testing.assert_allclose(deact_tau, deact_tau_ref)
+
+
+def test_inactivation_time_constant():
+    """Unit test for inactivation_time_constant."""
+    efel.reset()
+
+    traces = _load_voltage_clamp_traces("Inactivation")
+    feats = efel.get_feature_values(traces, ["inactivation_time_constant"])
+    inact_tau = [feat_dict["inactivation_time_constant"][0] for feat_dict in feats]
+    inact_tau_ref = [
+        88.05764617, 397.85146878, 431.22382104, 239.30375528, 175.7584476,
+        168.54772458, 143.78127593, 146.63424961, 145.0907385, 167.04060933,
+        142.24530676, 137.62498461
+    ]
+    numpy.testing.assert_allclose(inact_tau, inact_tau_ref, rtol=1e-6)
