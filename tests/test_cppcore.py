@@ -258,6 +258,21 @@ class TestCppcore:
         # make sure Reusing computed value of text occurs twice
         assert contents.count(f"Reusing computed value of {feature_name}") == 2
 
+    def test_clear_function(self):
+        """cppcore: Testing Clear function to reset state"""
+        import efel
+        self.setup_data()
+
+        feature_values = list()
+        efel.cppcore.getFeature('AP_amplitude', feature_values)
+        assert len(feature_values) > 0  # Data should be present
+
+        efel.cppcore.Clear()
+
+        feature_values = list()
+        return_value = efel.cppcore.getFeature('AP_amplitude', feature_values)
+        assert return_value == -1  # Should return -1 since data is cleared
+
 
 def test_efel_assertion_error():
     """Testing if C++ assertion error is propagated to Python correctly."""
