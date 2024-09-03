@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+5.7.9 - 2024-09
+---------------
+
+- Reduces redundant dependency tree initializations in cppcore, improving feature extraction performance by up to 2.5x. Ensures getFeatureValues avoids unnecessary resets; use efel.reset to reload dependencies when needed.
+
 5.6.7 - 2024-08
 ---------------
 
