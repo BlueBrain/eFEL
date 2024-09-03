@@ -212,8 +212,11 @@ def _initialise() -> None:
     cppcore.Initialize(_settings.dependencyfile_path, "log")
     # flush the GErrorString from previous runs by calling getgError()
     cppcore.getgError()
+    _initSettings()
 
-    # Set the settings in the cppcore
+
+def _initSettings() -> None:
+    """Init the settings in cppcore."""
     settings_attrs = vars(_settings)
     for setting_name, setting_value in settings_attrs.items():
         if isinstance(setting_value, bool):
@@ -356,7 +359,8 @@ def _get_feature_values_serial(
     else:
         raise Exception('stim_start or stim_end missing from trace')
 
-    _initialise()
+    cppcore.Clear()
+    _initSettings()
 
     # Next set time, voltage and the stimulus start and end
     for item in list(trace.keys()):
