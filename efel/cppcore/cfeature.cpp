@@ -54,6 +54,13 @@ cFeature::cFeature(const string& strDepFile, const string& outdir)
   logger << "Using dependency file: " << strDepFile << endl;
 }
 
+void cFeature::clearMap()
+{
+    mapIntData.clear();
+    mapDoubleData.clear();
+    mapStrData.clear();
+}
+
 template <typename T>
 const vector<T> cFeature::getMapData(const string& strName,
                                      const map<string, vector<T>>& mapData) {

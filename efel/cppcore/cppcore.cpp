@@ -54,6 +54,12 @@ int Initialize(const char* strDepFile, const char* outdir) {
   }
 }
 
+void Clear() {
+    if (pFeature != NULL) {
+        pFeature->clearMap();
+    }
+}
+
 static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
   char *depfilename, *outfilename;
   if (!PyArg_ParseTuple(args, "ss", &depfilename, &outfilename)) {
@@ -61,6 +67,11 @@ static PyObject* CppCoreInitialize(PyObject* self, PyObject* args) {
   }
 
   Initialize(depfilename, outfilename);
+  return Py_BuildValue("");
+}
+
+static PyObject* CppCoreClear(PyObject* self, PyObject* args) {
+  Clear();
   return Py_BuildValue("");
 }
 
@@ -293,7 +304,7 @@ static PyObject* getgerrorstr(PyObject* self, PyObject* args) {
 
 static PyMethodDef CppCoreMethods[] = {
     {"Initialize", CppCoreInitialize, METH_VARARGS, "Initialise CppCore."},
-
+    {"Clear", CppCoreClear, METH_NOARGS, "Clear CppCore."},
     {"getFeature", getfeature, METH_VARARGS,
      "Get a values associated with a feature. Takes a list() to be filled."},
     {"getFeatureInt", getfeatureint, METH_VARARGS, "Get a integer feature."},
