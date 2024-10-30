@@ -1626,7 +1626,7 @@ initburst_sahp_vb
 bpap_attenuation
 ~~~~~~~~~~~~~~~~
 
-`bAP Python efeature`_ : Attenuation (ratio of the amplitude of the action potential in the soma and the dendrite) of the backpropagating action potential.
+`Multitrace Python efeature`_ : Attenuation (ratio of the amplitude of the action potential in the soma and the dendrite) of the backpropagating action potential.
 The attenuation is computed by first subtracting the resting potential from the voltage traces.
 
 Attention! This cannot be used with the efel.get_feature_values function. You have to use the efel.pyfeatures.multitrace.bpap_attenuation function,
@@ -2517,5 +2517,5 @@ positive signal-amplitude value on the largest-amplitude channel.
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
 .. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
-.. _bAP Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/multitrace.py
+.. _Multitrace Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/multitrace.py
 .. _Validation Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/validation.py
