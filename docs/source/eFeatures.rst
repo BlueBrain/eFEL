@@ -862,6 +862,17 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     return time_to_postburst_adp_peaks
 
+check_ais_initiation
+~~~~~~~~~~~~~~~~~~~~
+
+`Validation Python efeature`_ : Checks the initiation of action potential in AIS with respect to soma.
+Returns True if no spike in the soma starts earlier than in the AIS.
+
+Attention! This cannot be used with the efel.get_feature_values function. You have to use the efel.pyfeatures.validation.check_ais_initiation function,
+and pass it both the soma trace and the ais trace.
+
+- **Required features**: AP_begin_time
+- **Units**: constant
 
 
 Spike shape features
@@ -1612,6 +1623,21 @@ initburst_sahp_vb
 
     numpy.array([initburst_sahp_value[0] - voltage_base[0]])
 
+bpap_attenuation
+~~~~~~~~~~~~~~~~
+
+`bAP Python efeature`_ : Attenuation (ratio of the amplitude of the action potential in the soma and the dendrite) of the backpropagating action potential.
+The attenuation is computed by first subtracting the resting potential from the voltage traces.
+
+Attention! This cannot be used with the efel.get_feature_values function. You have to use the efel.pyfeatures.multitrace.bpap_attenuation function,
+and pass it both the soma trace and the dendrite trace.
+
+- **Required features**: voltage_base
+- **Units**: constant
+- **Pseudocode**: ::
+
+    return (numpy.max(v_soma) - vb_soma) / (numpy.max(v_dend) - vb_dend)
+
 Subthreshold features
 ---------------------
 
@@ -2216,7 +2242,11 @@ These features were written by Alessio Buccino and are described in
 `Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
 The feautures can be either absolute, computed for each channel separately, or
 relative, computed with respect to the channel with the largest extracellular
-signal amplitude:
+signal amplitude.
+
+Attention! These features cannot be extracted with the usual get_feature_values function.
+They have to be extracted using the efel.pyfeatures.extrafeats module.
+To see how to use it, have a look at the `Extracellular Features Extraction for MEA Data <https://efel.readthedocs.io/en/latest/extrafeats_example.html>`_ examples.
 
 
 peak_to_valley
@@ -2487,3 +2517,5 @@ positive signal-amplitude value on the largest-amplitude channel.
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
 .. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
+.. _bAP Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/multitrace.py
+.. _Validation Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/validation.py

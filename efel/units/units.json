@@ -159,5 +159,7 @@
     "pos_image": "constant",
     "activation_time_constant": "ms",
     "deactivation_time_constant": "ms",
-    "inactivation_time_constant": "ms"
+    "inactivation_time_constant": "ms",
+    "check_ais_initiation": "constant",
+    "bpap_attenuation": "constant"
 }
