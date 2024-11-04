@@ -17,4 +17,4 @@ test-requires = "pytest neo[neomatlabio]>=0.5.1 pytest-xdist>=3.3.1"
 test-command = "pytest -sx -n auto {project}/tests"
 
 [tool.cibuildwheel.windows]
-test-command = "pytest -sx -n auto {project}\tests"
+test-command = "pytest -sx -n auto {project}\\tests"
