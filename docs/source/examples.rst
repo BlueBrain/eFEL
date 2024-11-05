@@ -4,6 +4,7 @@ Examples
 .. toctree::
 
    python_example1
+   settings
    multiprocessing_example
    deap_optimisation
    neoIO_example

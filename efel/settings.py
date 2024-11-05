@@ -35,11 +35,11 @@ class Settings:
     Attributes:
         Threshold (float): Spike detection threshold (default: -20.0).
         DerivativeThreshold (float): Threshold value for derivative calculations
-        (default: 10.0).
+            (default: 10.0).
         DownDerivativeThreshold (float): Threshold value for downward derivative
-        calculations (default: -12.0).
+            calculations (default: -12.0).
         dependencyfile_path (str): Path to the dependency file
-        (default: 'DependencyV5.txt').
+            (default: 'DependencyV5.txt').
         spike_skipf (float): Fraction of spikes to skip (default: 0.1).
         max_spike_skip (int): Maximum number of spikes to skip (default: 2).
         interp_step (float): Interpolation step (default: 0.1).
@@ -55,7 +55,7 @@ class Settings:
         min_spike_height (float): Minimum spike height (default: 20.0).
         strict_stiminterval (bool): Strict stimulus interval (default: False).
         initburst_freq_threshold (int): Initial burst frequency threshold
-        (default: 50)
+            (default: 50).
         initburst_sahp_start (int): Initial burst SAHP start (default: 5).
         initburst_sahp_end (int): Initial burst SAHP end (default: 100).
         DerivativeWindow (int): Derivative window (default: 3).
@@ -66,7 +66,7 @@ class Settings:
         ignore_first_ISI (bool): Ignore first ISI (default: True).
         impedance_max_freq (float): Impedance maximum frequency (default: 50.0).
         inactivation_tc_end_skip (int): number of data points to skip before
-            stim end for inactivation_time_constant feature
+            stim end for inactivation_time_constant feature (default: 10).
     """
 
     Threshold: float = -20.0

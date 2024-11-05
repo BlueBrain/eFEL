@@ -393,7 +393,7 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
 The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: all_ISI_values
-- **Units**: Hz
+- **Units**: constant
 - **Pseudocode**: ::
 
     burst_begin_indices = [1]
@@ -433,7 +433,7 @@ The first spike is ignored by default. This can be changed by setting ignore_fir
 The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
 
 - **Required features**: all_ISI_values
-- **Units**: Hz
+- **Units**: constant
 - **Pseudocode**: ::
 
     burst_begin_indices = [1]
@@ -1370,7 +1370,7 @@ min_AHP_indices
 - **Pseudocode**: ::
 
     peak_indices_plus = peak_indices
-    peak_indices_plus.append(len(voltage))
+    peak_indices_plus.append(len(voltage) - 1)
     for i in range(peak_indices):
         min_AHP_indices.append(numpy.argmin(v[i:i + 1]) + i)
 
@@ -1569,6 +1569,32 @@ min_voltage_between_spikes
     min_voltage_between_spikes = []
     for peak1, peak2 in zip(peak_indices[:-1], peak_indices[1:]):
         min_voltage_between_spikes.append(numpy.min(voltage[peak1:peak2]))
+
+min_between_peaks_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of the minimal voltage between consecutive spikes
+
+The last value of min_between_peaks_values is the minimum between last spike and stimulus end
+if strict stiminterval is True, or minimum between last spike and last voltage value
+if strict stiminterval is False
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    if strict_stiminterval:
+        end_idx = numpy.argmin(t >= stim_end)[0][0]
+    else:
+        end_idx = len(time) - 1
+    peak_indices_plus = peak_indices
+    peak_indices_plus.append(end_idx)
+    for i in range(peak_indices):
+        min_between_peaks_indices.append(numpy.argmin(v[i:i + 1]) + i)
 
 min_between_peaks_values
 ~~~~~~~~~~~~~~~~~~~~~~~~
