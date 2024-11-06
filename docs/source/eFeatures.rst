@@ -18,6 +18,21 @@ Spike event features
 
 .. image:: _static/figures/inv_ISI.png
 
+peak_indices
+~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the maxima of the peaks.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**:
+- **Units**: constant
+- **Pseudocode**: ::
+
+    peak_indices = [i for i in range(1, len(v)) if v[i] > threshold and v[i - 1] < threshold]
+
 peak_time
 ~~~~~~~~~
 
@@ -364,6 +379,86 @@ mean_frequency
     last_spike_time = peak_time[peak_time < stim_end][-1]
     mean_frequency = 1000 * spikecount / (last_spike_time - stim_start)
 
+burst_begin_indices
+~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the first peak of each burst.
+
+The indices are to be applied to the peak_time feature, and not time or voltage.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: all_ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_begin_indices = [1]
+    burst_end_indices = []
+    count = 1
+
+    for i in range(2, len(isi_values)):
+        d_median = numpy.median(isi_values[count:i])
+        in_burst = (
+            len(burst_end_indices) == 0 or
+            burst_begin_indices[-1] > burst_end_indices[-1]
+        )
+
+        // look for end burst
+        if in_burst and isi_values[i] > (burst_factor * d_median):
+            burst_end_indices.append(i)
+            count = i
+
+        if isi_values[i] < isi_values[i - 1] / burst_factor:
+            if in_burst:
+                burst_begin_indices[-1] = i
+            else:
+                burst_begin_indices.append(i)
+            count = i
+
+burst_end_indices
+~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the last peak of each burst.
+
+The indices are to be applied to the peak_time feature, and not time or voltage.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: all_ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_begin_indices = [1]
+    burst_end_indices = []
+    count = 1
+
+    for i in range(2, len(isi_values)):
+        d_median = numpy.median(isi_values[count:i])
+        in_burst = (
+            len(burst_end_indices) == 0 or
+            burst_begin_indices[-1] > burst_end_indices[-1]
+        )
+
+        // look for end burst
+        if in_burst and isi_values[i] > (burst_factor * d_median):
+            burst_end_indices.append(i)
+            count = i
+
+        if isi_values[i] < isi_values[i - 1] / burst_factor:
+            if in_burst:
+                burst_begin_indices[-1] = i
+            else:
+                burst_begin_indices.append(i)
+            count = i
+
 strict_burst_mean_freq
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -387,6 +482,34 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 peak_time[burst_end_indices] - peak_time[burst_begin_indices]
             )
         )
+
+burst_ISI_indices
+~~~~~~~~~~~~~~~~~
+
+`ISI Python efeature`_ : The indices for each burst beginning. The indices are to be applied to the peak_time feature, and not time or voltage.
+
+- **Required features**: all_ISI_values
+- **Units**: constant
+- **Pseudocode**: ::
+
+    burst_indices = []
+    count = -1
+
+    for i in range(1, len(isi_values) - 1):
+        isi_p_copy = isi_values[count + 1: i]
+        n = len(isi_p_copy)
+
+        if n == 0:
+            continue
+
+        d_median = np.median(isi_p_copy)
+
+        # Check burst condition
+        if isi_values[i] > (burst_factor * d_median) and isi_values[i + 1] < (
+            isi_values[i] / burst_factor
+        ):
+            burst_indices.append(i + 1)
+            count = i - 1
 
 burst_mean_freq
 ~~~~~~~~~~~~~~~
@@ -583,6 +706,31 @@ Starting 5 ms after that peak take the voltage average until 5 ms before the fir
 
         interburst_voltage.append(numpy.mean(voltage[start_idx:end_idx + 1]))
 
+interburst_min_indices
+~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Indices at minimum voltage between the end of a burst and the next spike.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    interburst_min = [
+        numpy.argmin(
+            v[peak_indices[i]:peak_indices[i + 1]]
+        ) for i in burst_end_indices if i + 1 < len(peak_indices)
+    ]
+
 interburst_min_values
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -624,6 +772,33 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         for idx in burst_end_indices
         if idx + 1 < len(peak_time)
     ]
+
+interburst_15percent_indices, interburst_20percent_indices, interburst_25percent_indices, interburst_30percent_indices, interburst_40percent_indices, interburst_60percent_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : Indices after a given percentage (15%, 20%, 25%, 30%, 40% or 60%) of the interburst duration after the fast AHP.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+- **Required features**: postburst_fast_ahp_indices, burst_end_indices, peak_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    interburst_XXpercent_indices = []
+    for i, postburst_fahp_i in enumerate(postburst_fahpi):
+        if i < len(burst_endi) and burst_endi[i] + 1 < len(peaki):
+            time_interval = t[peaki[burst_endi[i] + 1]] - t[postburst_fahp_i]
+            time_at_XXpercent = t[postburst_fahp_i] + time_interval * percentage / 100.
+            index_at_XXpercent = numpy.argwhere(t >= time_at_XXpercent)[0][0]
+            interburst_XXpercent_indices.append(index_at_XXpercent)
 
 interburst_15percent_values, interburst_20percent_values, interburst_25percent_values, interburst_30percent_values, interburst_40percent_values, interburst_60percent_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -690,6 +865,48 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     time_to_postburst_slow_ahp_py = t[postburst_slow_ahp_indices] - peak_time[burst_end_indices]
 
+postburst_min_indices
+~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the minimum voltage after the end of a burst.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Default value is 2.0.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    postburst_min = [
+        numpy.argmin(
+            v[peak_indices[i]:peak_indices[i + 1]] 
+        ) + peak_indices[i]
+        for i in burst_end_indices
+        if i + 1 < len(peak_indices)
+    ]
+
+    if len(postburst_min) < len(burst_end_indices):
+        if t[burst_end_indices[-1]] < stim_end:
+            end_idx = numpy.where(t >= stim_end)[0][0]
+            postburst_min.append(
+                numpy.argmin(
+                    v[peak_indices[burst_end_indices[-1]]:end_idx]
+                ) + peak_indices[burst_end_indices[-1]]
+            )
+        else:
+            postburst_min.append(
+                numpy.argmin(
+                    v[peak_indices[burst_end_indices[-1]]:]
+                ) + peak_indices[burst_end_indices[-1]]
+            )
+
 postburst_min_values
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -722,6 +939,40 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 v[peak_indices[burst_end_indices[-1]]:]
             ))
 
+postburst_slow_ahp_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the slow AHP voltage after the end of a burst.
+
+The number of ms to skip after the spike (in order to skip fast AHP and look for slow AHP) can be set with sahp_start.
+Default is 5.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    postburst_slow_ahp = []
+    for i in burst_end_indices:
+        i_start = numpy.where(t >= t[peak_indices[i]] + sahp_start)[0][0]
+        if i + 1 < len(peak_indices):
+            postburst_slow_ahp.append(numpy.argmin(v[i_start:peak_indices[i + 1]]) + i_start)
+        else:
+            if t[burst_end_indices[-1]] < stim_end:
+                end_idx = numpy.where(t >= stim_end)[0][0]
+                postburst_slow_ahp.append(numpy.argmin(v[i_start:end_idx]) + i_start)
+            else:
+                postburst_slow_ahp.append(numpy.argmin(v[i_start:]) + i_start)
+
 postburst_slow_ahp_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -751,6 +1002,46 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
                 postburst_slow_ahp.append(numpy.min(v[i_start:end_idx]))
             else:
                 postburst_slow_ahp.append(numpy.min(v[i_start:]))
+
+postburst_fast_ahp_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the fast AHP voltage after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices, burst_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    postburst_fahp = []
+    for i in burst_end_indices:
+        if i + 1 < len(peak_indices):
+            stop_i = peak_indices[i + 1]
+        elif i + 1 < stim_end_index:
+            stop_i = stim_end_index
+        else:
+            stop_i = len(v) - 1
+
+        v_crop = v[peak_indices[i]:stop_i]
+        # get where the voltage is going up
+        crop_args = numpy.argwhere(numpy.diff(v_crop) >= 0)[:,0]
+        # the voltage should go up for at least two consecutive points
+        crop_arg_arg = numpy.argwhere(numpy.diff(crop_args) == 1)[0][0]
+        crop_arg = crop_args[crop_arg_arg]
+        end_i = peak_indices[i] + crop_arg + 1
+        # the fast ahp is between last peak of burst and the point where voltage is going back up
+        postburst_fahp.append(numpy.argmin(v[peak_indices[i]:end_i]) + peak_indices[i])
+
+    return postburst_fahp
 
 postburst_fast_ahp_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -787,6 +1078,33 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
         postburst_fahp.append(numpy.min(v[peak_indices[i]:end_i]))
 
     return postburst_fahp
+
+postburst_adp_peak_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeEvent`_ : The indices of the small ADP peak after the fast AHP after the end of a burst.
+
+This implementation does not assume that every spike belongs to a burst.
+
+The first spike is ignored by default. This can be changed by setting ignore_first_ISI to 0.
+
+The burst detection can be fine-tuned by changing the setting strict_burst_factor. Defalt value is 2.0.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: postburst_fast_ahp_indices, postburst_slow_ahp_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    adp_peak_indices = []
+    for i, sahpi in enumerate(postburst_sahpi):
+        if sahpi < postburst_fahpi[i]:
+            continue
+        adppeaki = numpy.argmax(v[postburst_fahpi[i]:sahpi]) + postburst_fahpi[i]
+        if adppeaki != sahpi - 1:
+            adp_peak_indices.append(adppeaki)
 
 postburst_adp_peak_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -862,6 +1180,17 @@ The burst detection can be fine-tuned by changing the setting strict_burst_facto
 
     return time_to_postburst_adp_peaks
 
+check_ais_initiation
+~~~~~~~~~~~~~~~~~~~~
+
+`Validation Python efeature`_ : Checks the initiation of action potential in AIS with respect to soma.
+Returns True if no spike in the soma starts earlier than in the AIS.
+
+Attention! This cannot be used with the efel.get_feature_values function. You have to use the efel.pyfeatures.validation.check_ais_initiation function,
+and pass it both the soma trace and the ais trace.
+
+- **Required features**: AP_begin_time
+- **Units**: constant
 
 
 Spike shape features
@@ -1031,6 +1360,20 @@ AP_amplitude_diff
 
 .. image:: _static/figures/AHP.png
 
+min_AHP_indices
+~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of the first after-hyperpolarization of each spike.
+
+- **Required features**: peak_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    peak_indices_plus = peak_indices
+    peak_indices_plus.append(len(voltage) - 1)
+    for i in range(peak_indices):
+        min_AHP_indices.append(numpy.argmin(v[i:i + 1]) + i)
+
 min_AHP_values
 ~~~~~~~~~~~~~~
 
@@ -1151,6 +1494,25 @@ interspike interval
 - **Required features**: AHP_depth_abs_slow
 - **Units**: constant
 
+ADP_peak_indices
+~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of the small afterdepolarization peak
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+strict_stiminterval should be set to True for this feature to behave as expected.
+
+- **Required features**: min_AHP_indices, min_between_peaks_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    adp_peak_indices = numpy.array(
+        [numpy.argmax(v[i:j + 1]) for (i, j) in zip(min_AHP_indices, min_v_indices)]
+    )
+
 ADP_peak_values
 ~~~~~~~~~~~~~~~
 
@@ -1208,6 +1570,32 @@ min_voltage_between_spikes
     for peak1, peak2 in zip(peak_indices[:-1], peak_indices[1:]):
         min_voltage_between_spikes.append(numpy.min(voltage[peak1:peak2]))
 
+min_between_peaks_indices
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of the minimal voltage between consecutive spikes
+
+The last value of min_between_peaks_values is the minimum between last spike and stimulus end
+if strict stiminterval is True, or minimum between last spike and last voltage value
+if strict stiminterval is False
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    if strict_stiminterval:
+        end_idx = numpy.argmin(t >= stim_end)[0][0]
+    else:
+        end_idx = len(time) - 1
+    peak_indices_plus = peak_indices
+    peak_indices_plus.append(end_idx)
+    for i in range(peak_indices):
+        min_between_peaks_indices.append(numpy.argmin(v[i:i + 1]) + i)
+
 min_between_peaks_values
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1227,6 +1615,44 @@ if strict stiminterval is False
 
 .. image:: _static/figures/AP_duration_half_width.png
 
+
+AP_rise_indices
+~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : indices at the half-height of the spike, in the rising phase of the spike.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices, AP_begin_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_rise_indices = []
+    for i in range(len(peak_indices)):
+        halfheight = (v[AP_begin_indices[i]] + v[peak_indices[i]] ) / 2.
+        diff = abs(v[AP_begin_indices[i]:peak_indices[i]] - halfheight)
+        AP_rise_indices.append(numpy.argmin(diff) + AP_begin_indices[i])
+
+AP_fall_indices
+~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : indices at the half-height of the spike, in the falling phase of the spike.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices, AP_begin_indices, AP_end_indices
+- **Units**: constant
+- **Pseudocode**: ::
+
+    AP_rise_indices = []
+    for i in range(len(peak_indices)):
+        halfheight = (v[peak_indices[i]] + v[AP_begin_indices[i]] ) / 2.
+        diff = abs(v[peak_indices[i]:AP_end_indices[i]] - halfheight)
+        AP_rise_indices.append(numpy.argmin(diff) + peak_indices[i])
 
 AP_duration_half_width
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1400,6 +1826,30 @@ AP2_AP1_begin_width_diff
 - **Pseudocode**: ::
 
     AP2_AP1_begin_width_diff = AP_begin_width[1] - AP_begin_width[0]
+
+AP_begin_indices
+~~~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of spike start.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: min_AHP_indices, peak_indices
+- **Units**: constant
+
+AP_end_indices
+~~~~~~~~~~~~~~
+
+`SpikeShape`_ : Indices of spike end.
+
+Attention! This feature represents indices of the interpolated time series.
+If you want to use it on time or voltage, make sure that you are using the interpolated output time or voltage feature,
+and not the time or voltage variable you gave as input.
+
+- **Required features**: peak_indices
+- **Units**: constant
 
 AP_begin_voltage, AP1_begin_voltage, AP2_begin_voltage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1611,6 +2061,21 @@ initburst_sahp_vb
 - **Pseudocode**: ::
 
     numpy.array([initburst_sahp_value[0] - voltage_base[0]])
+
+bpap_attenuation
+~~~~~~~~~~~~~~~~
+
+`Multitrace Python efeature`_ : Attenuation (ratio of the amplitude of the action potential in the soma and the dendrite) of the backpropagating action potential.
+The attenuation is computed by first subtracting the resting potential from the voltage traces.
+
+Attention! This cannot be used with the efel.get_feature_values function. You have to use the efel.pyfeatures.multitrace.bpap_attenuation function,
+and pass it both the soma trace and the dendrite trace.
+
+- **Required features**: voltage_base
+- **Units**: constant
+- **Pseudocode**: ::
+
+    return (numpy.max(v_soma) - vb_soma) / (numpy.max(v_dend) - vb_dend)
 
 Subthreshold features
 ---------------------
@@ -2216,7 +2681,11 @@ These features were written by Alessio Buccino and are described in
 `Buccino et al., 2024 <https://doi.org/10.1162/neco_a_01672>`_ .
 The feautures can be either absolute, computed for each channel separately, or
 relative, computed with respect to the channel with the largest extracellular
-signal amplitude:
+signal amplitude.
+
+Attention! These features cannot be extracted with the usual get_feature_values function.
+They have to be extracted using the efel.pyfeatures.extrafeats module.
+To see how to use it, have a look at the `Extracellular Features Extraction for MEA Data <https://efel.readthedocs.io/en/latest/extrafeats_example.html>`_ examples.
 
 
 peak_to_valley
@@ -2487,3 +2956,5 @@ positive signal-amplitude value on the largest-amplitude channel.
 .. _Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/pyfeatures.py
 .. _ISI Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/isi.py
 .. _Extracellular: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/extrafeats.py
+.. _Multitrace Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/multitrace.py
+.. _Validation Python efeature: https://github.com/BlueBrain/eFEL/blob/master/efel/pyfeatures/validation.py

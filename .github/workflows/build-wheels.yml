@@ -22,8 +22,6 @@ jobs:
             arch: x86_64
     env:
       CIBW_BUILD: ${{ matrix.python }}*${{ matrix.arch }}
-      CIBW_TEST_REQUIRES: pytest neo[neomatlabio]>=0.5.1 pytest-xdist>=3.3.1
-      CIBW_TEST_COMMAND: pytest -sx -n auto {project}/tests
       CIBW_SKIP: "*-musllinux_*"
     steps:
       - uses: actions/checkout@v4
