@@ -10,7 +10,32 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 
 - Removed pdf documentation file. Reason: There was no substantial information in the pdf that were not already present in the official doc.
 - added an example for using settings, and added this example to the docs
-- added to features docs: check_ais_initiation, bpap_attenuation, all indices features
+- added the (already implemented) following features to docs:
+
+  * check_ais_initiation
+  * bpap_attenuation
+  * peak_indices
+  * AP_rise_indices
+  * AP_end_indices
+  * AP_fall_indices
+  * min_AHP_indices
+  * AP_begin_indices
+  * min_between_peaks_indices
+  * burst_begin_indices
+  * burst_end_indices
+  * ADP_peak_indices
+  * interburst_min_indices
+  * postburst_min_indices
+  * postburst_slow_ahp_indices
+  * postburst_fast_ahp_indices
+  * postburst_adp_peak_indices
+  * interburst_15percent_indices
+  * interburst_20percent_indices
+  * interburst_25percent_indices
+  * interburst_30percent_indices
+  * interburst_40percent_indices
+  * interburst_60percent_indices
+  * burst_ISI_indices
 
 5.7.9 - 2024-09
 ---------------
