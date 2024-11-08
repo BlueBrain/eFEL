@@ -10,13 +10,13 @@ To get a list with all the available eFeature names::
     efel.get_feature_names()
 
 Note that the extra-cellular features, the bpap_attenuation feature and the check_ais_initiation feature are not listed above because they have to be used in a special way,
-as described `here <https://github.com/BlueBrain/eFEL/blob/master/examples/extracellular/extrafeats_example.ipynb>`_ for extra-cellular features, `here <https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#bpap_attenuation>`_ for bpap_attenuation feature and `here <https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#check_ais_initiation>`_ for check_ais_initiation feature.
+as described `here <https://github.com/BlueBrain/eFEL/blob/master/examples/extracellular/extrafeats_example.ipynb>`__ for extra-cellular features, `here <https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#bpap_attenuation>`__ for bpap_attenuation feature and `here <https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#check_ais_initiation>`__ for check_ais_initiation feature.
 
 The python function to extract eFeatures is get_feature_values(...).
 Below is a short example on how to use this function.
 
 The code and example trace are available
-`here <https://github.com/BlueBrain/eFEL/blob/master/examples/basic/basic_example1.py>`_::
+`here <https://github.com/BlueBrain/eFEL/blob/master/examples/basic/basic_example1.py>`__::
 
     """Basic example 1 for eFEL"""
 
