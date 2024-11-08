@@ -139,6 +139,8 @@ To get a list with all the available feature names
 efel.get_feature_names()
 ```
 
+Note that the extra-cellular features, the bpap_attenuation feature and the check_ais_initiation feature are not listed above because they have to be used in a special way, as described [here](https://efel.readthedocs.io/en/latest/extrafeats_example.html) for extra-cellular features, [here](https://efel.readthedocs.io/en/latest/eFeatures.html#bpap-attenuation) for bpap_attenuation feature and [here](https://efel.readthedocs.io/en/latest/eFeatures.html#check-ais-initiation) for check_ais_initiation feature.
+
 To change the spike detection threshold setting (default is -20 mV)
 
 ```python

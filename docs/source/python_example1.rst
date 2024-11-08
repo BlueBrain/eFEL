@@ -9,6 +9,9 @@ To get a list with all the available eFeature names::
 
     efel.get_feature_names()
 
+Note that the extra-cellular features, the bpap_attenuation feature and the check_ais_initiation feature are not listed above because they have to be used in a special way,
+as described `here <https://efel.readthedocs.io/en/latest/extrafeats_example.html>`_ for extra-cellular features, `here <https://efel.readthedocs.io/en/latest/eFeatures.html#bpap-attenuation>`_ for bpap_attenuation feature and `here <https://efel.readthedocs.io/en/latest/eFeatures.html#check-ais-initiation>`_ for check_ais_initiation feature.
+
 The python function to extract eFeatures is get_feature_values(...).
 Below is a short example on how to use this function.
 
