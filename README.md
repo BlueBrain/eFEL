@@ -139,6 +139,8 @@ To get a list with all the available feature names
 efel.get_feature_names()
 ```
 
+Note that the extra-cellular features, the bpap_attenuation feature and the check_ais_initiation feature are not listed above because they have to be used in a special way, as described [here](https://github.com/BlueBrain/eFEL/blob/master/examples/extracellular/extrafeats_example.ipynb) for extra-cellular features, [here](https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#bpap_attenuation) for bpap_attenuation feature and [here](https://github.com/BlueBrain/eFEL/blob/master/docs/source/eFeatures.rst#check_ais_initiation) for check_ais_initiation feature.
+
 To change the spike detection threshold setting (default is -20 mV)
 
 ```python
