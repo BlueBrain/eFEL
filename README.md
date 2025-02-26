@@ -1,3 +1,7 @@
+> [!WARNING]
+> The Blue Brain Project concluded in December 2024, so development has ceased under the BlueBrain GitHub organization.
+> Future development will take place at: https://github.com/openbraininstitute/eFEL
+
 <img src="https://raw.githubusercontent.com/BlueBrain/eFEL/master/docs/source/logo/eFELBanner.png" alt="eFEL banner" />
 
 <table>
